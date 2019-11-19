@@ -9,7 +9,7 @@ public class User {
                                                 + COLUMN_USER_ID + " INTEGER PRIMARY KEY, "
                                                 + COLUMN_USER_DATA + " JSON)";
     public int Id;
-    public ArrayList<Dish> Dishes = new ArrayList<>();
+    public ArrayList<Food> Foods = new ArrayList<>();
 
     public static User FromJson(String json){
         return null;

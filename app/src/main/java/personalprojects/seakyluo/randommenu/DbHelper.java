@@ -5,11 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class DbHelper extends SQLiteOpenHelper {
     public static SQLiteDatabase db;
+    public static File ImageFolder;
     private static DbHelper Instance;
     private static ArrayList<DatabaseChangeListener> listeners = new ArrayList<>();
 
@@ -21,6 +24,18 @@ public class DbHelper extends SQLiteOpenHelper {
     }
     public static void Init(Context context){
         Instance = new DbHelper(context, "RandomMenu.db", null, 1);
+        ImageFolder = CreateOrOpenFolder("Food");
+    }
+
+    public static File CreateOrOpenFolder(String folderName){
+        File folder = new File(Environment.getExternalStorageDirectory() + File.separator + folderName);
+        boolean success = folder.exists() || folder.mkdirs();
+        if (success) {
+            // Do something on success
+        } else {
+            // Do something else on failure
+        }
+        return folder;
     }
 
     @Override

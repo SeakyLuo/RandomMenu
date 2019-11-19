@@ -1,0 +1,132 @@
+package personalprojects.seakyluo.randommenu;
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class EditFoodActivity extends Activity {
+    public static final int CAMERA_CODE = 0, GALLERY_CODE = 1;
+    private ImageButton cancel_button, confirm_button, camera_button;
+    private ImageView food_image;
+    private String image_path;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_edit_food);
+        cancel_button = findViewById(R.id.cancel_button);
+        confirm_button = findViewById(R.id.confirm_button);
+        camera_button = findViewById(R.id.camera_button);
+        food_image = findViewById(R.id.food_image);
+
+        cancel_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        confirm_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        camera_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
+                    requestPermissions(new String[]{ Manifest.permission.CAMERA }, CAMERA_CODE);
+                }else{
+                    OpenCamera();
+                }
+            }
+        });
+    }
+
+    private void OpenCamera(){
+        File file = new File(DbHelper.ImageFolder.getPath() + File.separator + NewImageFileName());
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+        try{
+            startActivityForResult(intent, CAMERA_CODE);
+        }catch (Exception e){
+            Log.d("fuck", e.toString());
+        }
+    }
+
+    private void OpenGallery(){
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_CODE);
+        }
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, GALLERY_CODE);
+    }
+
+    private String NewImageFileName(){
+        // Create an image file name
+        return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg";
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)
+            return;
+        switch (requestCode){
+            case CAMERA_CODE:
+                OpenCamera();
+                break;
+            case GALLERY_CODE:
+                OpenGallery();
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) return;
+        Bitmap image = null;
+        switch (requestCode){
+            case CAMERA_CODE:
+                image = BitmapFactory.decodeFile(image_path = data.getData().getPath());
+                break;
+            case GALLERY_CODE:
+                try {
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    image_path = NewImageFileName();
+                    // Then saves to local
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                return;
+        }
+        food_image.setImageBitmap(image);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.push_up_in, R.anim.push_down_out);
+    }
+}
