@@ -21,6 +21,11 @@ import java.util.List;
 public class TagFragment extends Fragment {
     private RecyclerView recyclerView;
     private TagAdapter adapter = new TagAdapter();
+    private boolean showCloseButton = false;
+    public void setClose(boolean visible){
+        showCloseButton = visible;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -30,13 +35,11 @@ public class TagFragment extends Fragment {
         return view;
     }
 
-    public void SetData(List<Tag> data){
+    public void SetData(List<Tag> data){ adapter.setData(data); }
+    public List<Tag> GetData() { return adapter.getData(); }
 
-    }
-
-    public void SetEditable(boolean editable){
-
-    }
+    public void Add(Tag tag){ adapter.add(tag); }
+    public void Remove(Tag tag) { adapter.remove(tag); }
 
     private void SetRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL));
