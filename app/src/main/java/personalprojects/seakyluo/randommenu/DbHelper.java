@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 public class DbHelper extends SQLiteOpenHelper {
     public static SQLiteDatabase db;
-    public static File ImageFolder;
     private static DbHelper Instance;
     private static ArrayList<DatabaseChangeListener> listeners = new ArrayList<>();
 
@@ -24,7 +23,6 @@ public class DbHelper extends SQLiteOpenHelper {
     }
     public static void Init(Context context){
         Instance = new DbHelper(context, "RandomMenu.db", null, 1);
-        ImageFolder = CreateOrOpenFolder("Food");
     }
 
     public static File CreateOrOpenFolder(String folderName){

@@ -30,6 +30,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     private void addOne(T object){
         data.add(object);
     }
+    private void addOne(int index, T object) { data.add(index, object); }
     public void add(List<T> list){
         int count = data.size();
         for (int i = 0; i < list.size(); i++) addOne(list.get(i));
@@ -47,6 +48,14 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     public void add(T object){
         addOne(object);
         notifyItemInserted(data.size() - 1);
+    }
+    public void add(int index, T object){
+        addOne(index, object);
+        notifyItemInserted(index);
+    }
+    public void remove(int index){
+        data.remove(index);
+        notifyItemRemoved(index);
     }
     public void remove(T object){
         int index = data.indexOf(object);

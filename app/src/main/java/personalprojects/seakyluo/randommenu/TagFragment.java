@@ -16,13 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TagFragment extends Fragment {
     private RecyclerView recyclerView;
     private TagAdapter adapter = new TagAdapter();
     private boolean showCloseButton = false;
-    public void setClose(boolean visible){
+    public void SetClose(boolean visible){
         showCloseButton = visible;
     }
 
@@ -35,18 +36,24 @@ public class TagFragment extends Fragment {
         return view;
     }
 
-    public void SetData(List<Tag> data){ adapter.setData(data); }
-    public List<Tag> GetData() { return adapter.getData(); }
+    public void SetData(List<Tag> data, boolean visible){ for (Tag tag : data) Add(new ToggleTag(tag, visible)); }
+    public void SetData(List<ToggleTag> data){ adapter.setData(data); }
+    public List<ToggleTag> GetData() { return adapter.getData(); }
+    public List<Tag> GetTags(){
+        List<Tag> tags = new ArrayList<>();
+        for (ToggleTag tag: adapter.getData())
+            tags.add(tag.ToTag());
+        return tags;
+    }
 
-    public void Add(Tag tag){ adapter.add(tag); }
-    public void Remove(Tag tag) { adapter.remove(tag); }
+    public void Add(ToggleTag tag){ adapter.add(tag); }
+    public void Remove(ToggleTag tag) { adapter.remove(tag); }
+    public int CountTags() { return adapter.getData().size(); }
 
     private void SetRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL));
         recyclerView.setNestedScrollingEnabled(true);
         adapter.setActivity(getActivity());
-        adapter.add(new Tag[] { new Tag("tag"), new Tag("tag1"), new Tag("tag22"), new Tag("tag333"), new Tag("tag4444"),
-                new Tag("tag55555"), new Tag("tag666666"), new Tag("tag7777777"), new Tag("tag88888888"), new Tag("tag999999999")} );
         recyclerView.setAdapter(adapter);
     }
 }

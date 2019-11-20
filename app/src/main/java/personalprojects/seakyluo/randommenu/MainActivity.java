@@ -25,12 +25,15 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.navigation_random:
+                        if (randomFragment == null) randomFragment = new RandomFragment();
                         ShowFragment(randomFragment, RandomFragment.TAG, lastTag);
                         return true;
                     case R.id.navigation_navigation:
+                        if (navigationFragment == null) navigationFragment = new NavigationFragment();
                         ShowFragment(navigationFragment, NavigationFragment.TAG, lastTag);
                         return true;
                     case R.id.navigation_settings:
+                        if (settingsFragment == null) settingsFragment = new SettingsFragment();
                         ShowFragment(settingsFragment, SettingsFragment.TAG, lastTag);
                         return true;
                 }
@@ -52,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
             settingsFragment = new SettingsFragment();
             navView.setSelectedItemId(R.id.navigation_random);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Helper.Save();
     }
 
     @Override

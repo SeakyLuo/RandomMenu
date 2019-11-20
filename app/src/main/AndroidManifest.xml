@@ -35,6 +35,9 @@
         <activity
             android:name=".EditFoodActivity"
             android:label="EditFoodActivity" />
+        <activity
+            android:name=".ChooseTagActivity"
+            android:label="ChooseTagActivity" />
     </application>
 
 </manifest>

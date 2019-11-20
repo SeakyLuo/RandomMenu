@@ -12,13 +12,13 @@ import android.widget.TextView;
 
 public class RandomFragment extends Fragment {
     public static final String TAG = "RandomFragment";
-    private TagFragment tagFragment;
+    private FoodCardFragment foodCardFragment;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_random, container, false);
-        getFragmentManager().beginTransaction().add(R.id.tags_frame, tagFragment = new TagFragment()).commit();
+        getFragmentManager().beginTransaction().add(R.id.food_card_view, foodCardFragment = new FoodCardFragment()).commit();
         return view;
     }
 }
