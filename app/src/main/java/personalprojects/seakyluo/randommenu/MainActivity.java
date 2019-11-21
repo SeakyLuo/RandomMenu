@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //        DbHelper.Init(getApplicationContext());
-        Helper.Init();
+        Helper.Init(this);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {
@@ -95,5 +95,4 @@ public class MainActivity extends AppCompatActivity {
         }
         transaction.commit();
     }
-
 }

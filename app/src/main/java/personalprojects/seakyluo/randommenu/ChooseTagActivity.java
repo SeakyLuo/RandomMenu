@@ -81,7 +81,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         original_tags = getIntent().getParcelableArrayListExtra(TAG);
         HashSet<Tag> tag_set = new HashSet<>(original_tags);
         for (Tag tag : Settings.settings.tags) tagListAdapter.add(new ToggleTag(tag, tag_set.contains(tag)));
-        tagListAdapter.addAll(0, new AList<>(Settings.settings.tags).SetDifference(tag_set).Convert(t -> new ToggleTag(t, true)).ToArrayList());
+        tagListAdapter.addAll(0, new AList<>(tag_set).SetDifference(Settings.settings.tags).Convert(t -> new ToggleTag(t, true)).ToArrayList());
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
         LinearLayoutManager manager = new LinearLayoutManager(this);

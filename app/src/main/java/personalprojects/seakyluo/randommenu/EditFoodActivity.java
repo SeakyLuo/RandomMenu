@@ -61,11 +61,10 @@ public class EditFoodActivity extends AppCompatActivity {
                 LaunchChooseTagActivity();
         });
         cancel_button.setOnClickListener(v -> {
-            // If Data Unsaved, ask save
             if (edit_food_name.getText().toString().length() > 0 || tagFragment.GetTags().Count() > 0 || edit_note.getText().toString().length() > 0){
-
+                // If Data Unsaved, ask save
             }else{
-
+//                finish();
             }
             finish();
         });

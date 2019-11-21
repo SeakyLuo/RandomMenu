@@ -13,12 +13,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 public class Helper {
     public static File ImageFolder;
+    public static Context context;
 
-    public static void Init(){
+    public static void Init(Context context){
+        Helper.context = context;
         ImageFolder = CreateOrOpenFolder("Food");
         String settings = ReadJson(Settings.FILENAME);
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
@@ -42,47 +46,41 @@ public class Helper {
     }
 
     public static String ReadJson(String filename) {
-        File file = new File(Environment.getExternalStorageDirectory(), filename);
-        if (!file.exists()) return "";
-        int length = (int) file.length();
-        byte[] bytes = new byte[length];
-        FileInputStream in = null;
+        String ret = "";
+
         try {
-            in = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            in.read(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            InputStream inputStream = context.openFileInput(filename);
+
+            if (inputStream != null) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ((receiveString = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(receiveString).append('\n');
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
             }
         }
-        return new String(bytes);
+        catch (FileNotFoundException e) {
+            Log.e("Helper", "File not found: " + e.toString());
+        }
+        catch (IOException e) {
+            Log.e("Helper", "Can not read file: " + e.toString());
+        }
+        return ret;
     }
     public static void SaveJson(String filename, String json){
-        File file = new File(Environment.getExternalStorageDirectory(), filename);
-        FileOutputStream stream = null;
         try {
-            stream = new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
+            outputStreamWriter.write(json);
+            outputStreamWriter.close();
         }
-        try {
-            stream.write(json.getBytes());
-        } catch (IOException e) {
-
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-
-            }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
         }
     }
     public static File CreateOrOpenFolder(String folderName){
