@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        DbHelper.Init(getApplicationContext());
+//        DbHelper.Init(getApplicationContext());
+        Helper.Init();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {

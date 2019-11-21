@@ -1,14 +1,18 @@
 package personalprojects.seakyluo.randommenu;
 
+import android.database.DataSetObserver;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 public class TagAdapter extends CustomAdapter<ToggleTag> {
+    private TagClickedListener listener;
+    public void SetTagClickedListener(TagClickedListener listener) { this.listener = listener; }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -18,36 +22,33 @@ public class TagAdapter extends CustomAdapter<ToggleTag> {
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, final int position) {
         super.onBindViewHolder(holder, position);
-        ((ViewHolder)holder).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                remove(data.get(position));
-            }
+        ((ViewHolder)holder).SetOnCloseClickedListener(v -> {
+            ToggleTag tag = data.Get(position);
+            remove(tag);
+            if (listener != null) listener.TagClicked(holder, tag);
         });
     }
 
-    public void SetClose(boolean visible){
-        for (ToggleTag tag : data)
-            tag.visible = visible;
-        notifyDataSetChanged();
-    }
-
     class ViewHolder extends CustomViewHolder {
-        TextView tag_content;
+        TextView tag_name;
         ImageButton close_button;
         ViewHolder(final View view) {
             super(view);
-            tag_content = view.findViewById(R.id.tag_content);
+            tag_name = view.findViewById(R.id.tag_name);
             close_button = view.findViewById(R.id.close_button);
         }
 
         @Override
         void setData(ToggleTag data) {
-            tag_content.setText(data.name);
+            tag_name.setText(data.getName());
             close_button.setVisibility(data.visible ? View.VISIBLE : View.GONE);
         }
 
-        public void setOnClickListener(View.OnClickListener listener){
+        void SetCloseButtonVisibility(boolean visible){
+            close_button.setVisibility((data.visible = visible) ? View.VISIBLE : View.GONE);
+        }
+
+        void SetOnCloseClickedListener(View.OnClickListener listener){
             close_button.setOnClickListener(listener);
         }
     }

@@ -77,7 +77,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         else if (obj instanceof Tag){
             Tag tag = (Tag)obj;
-            values.put("name", tag.getName());
+            values.put("Name", tag.getName());
             db.insert(Tag.TABLE_NAME, null, values);
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,11 +38,12 @@ public class Helper {
     }
 
     public static void Save(){
-//        SaveJson(Settings.FILENAME, Settings.settings.ToJson());
+        SaveJson(Settings.FILENAME, Settings.settings.ToJson());
     }
 
     public static String ReadJson(String filename) {
         File file = new File(Environment.getExternalStorageDirectory(), filename);
+        if (!file.exists()) return "";
         int length = (int) file.length();
         byte[] bytes = new byte[length];
         FileInputStream in = null;

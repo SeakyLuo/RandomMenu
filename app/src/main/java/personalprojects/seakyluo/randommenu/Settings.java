@@ -3,6 +3,8 @@ package personalprojects.seakyluo.randommenu;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 
 public class Settings {
@@ -21,6 +23,7 @@ public class Settings {
                 this.tags.add(tag);
             }
         }
+        SortTags();
     }
 
     public void RemoveFood(Food food){
@@ -29,6 +32,12 @@ public class Settings {
             if (food.HasTag(tag) && tag.Less() == 0)
                 tags.remove(tag);
         }
+        SortTags();
+    }
+
+    public void SortTags(){
+        Collections.sort(tags, Tag::compareTo);
+        Collections.reverse(tags);
     }
 
     public void UpdateFood(Food before, Food after){

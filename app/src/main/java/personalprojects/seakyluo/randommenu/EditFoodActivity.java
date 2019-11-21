@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,9 +11,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -30,6 +29,7 @@ public class EditFoodActivity extends AppCompatActivity {
     public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, CHOOSE_TAG_CODE = 2;
     public static final String FOOD = "Food";
     private Food intent_food;
+    private FrameLayout tags_frame;
     private ImageButton cancel_button, confirm_button, camera_button, add_tag_button;
     private EditText edit_food_name, edit_note;
     private ImageView food_image;
@@ -39,11 +39,13 @@ public class EditFoodActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_food);
+        tags_frame = findViewById(R.id.tags_frame);
         cancel_button = findViewById(R.id.cancel_button);
         confirm_button = findViewById(R.id.confirm_button);
         camera_button = findViewById(R.id.camera_button);
         add_tag_button = findViewById(R.id.add_tag_button);
         edit_food_name = findViewById(R.id.edit_food_name);
+        edit_note = findViewById(R.id.edit_note);
         food_image = findViewById(R.id.food_image);
 
         intent_food = getIntent().getParcelableExtra(FOOD);
@@ -54,54 +56,57 @@ public class EditFoodActivity extends AppCompatActivity {
             edit_note.setText(intent_food.Note);
         }
 
-        cancel_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
+        tags_frame.setOnClickListener(v -> {
+            if (tagFragment.GetData().Count() < Tag.MAX_TAGS)
+                LaunchChooseTagActivity();
+        });
+        cancel_button.setOnClickListener(v -> {
+            // If Data Unsaved, ask save
+            if (edit_food_name.getText().toString().length() > 0 || tagFragment.GetTags().Count() > 0 || edit_note.getText().toString().length() > 0){
+
+            }else{
+
+            }
+            finish();
+        });
+        confirm_button.setOnClickListener(v -> {
+            String food_name = edit_food_name.getText().toString();
+            if (food_name.length() == 0){
+                Toast.makeText(getApplicationContext(), "Name Too Short!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (Settings.settings.ContainsFood(food_name)){
+                Toast.makeText(getApplicationContext(), "Food Exists!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            ArrayList<Tag> tags = tagFragment.GetTags().ToArrayList();
+            if (tags.size() == 0){
+                Toast.makeText(getApplicationContext(), "At least 1 tag!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String note = edit_note.getText().toString();
+            Food food = new Food(food_name, image_path, tags, note);
+            Settings.settings.AddFood(food);
+            finish();
+        });
+        camera_button.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
+                requestPermissions(new String[]{ Manifest.permission.CAMERA }, CAMERA_CODE);
+            }else{
+                OpenCamera();
             }
         });
-        confirm_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String food_name = edit_food_name.getText().toString();
-                if (food_name.length() == 0){
-                    Toast.makeText(getApplicationContext(), "Name Too Short!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (Settings.settings.ContainsFood(food_name)){
-                    Toast.makeText(getApplicationContext(), "Food Exists!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                ArrayList<Tag> tags = (ArrayList<Tag>) tagFragment.GetTags();
-                if (tags.size() == 0){
-                    Toast.makeText(getApplicationContext(), "At least 1 tag!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String note = edit_note.getText().toString();
-                Food food = new Food(food_name, image_path, tags, note);
-                Settings.settings.AddFood(food);
-                finish();
-            }
-        });
-        camera_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
-                    requestPermissions(new String[]{ Manifest.permission.CAMERA }, CAMERA_CODE);
-                }else{
-                    OpenCamera();
-                }
-            }
-        });
-        add_tag_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ChooseTagActivity.class);
-                startActivityForResult(intent, CHOOSE_TAG_CODE);
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
-            }
-        });
-        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagFragment = new TagFragment()).commit();
+        add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
+        tagFragment = new TagFragment();
+        tagFragment.SetClose(true);
+        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagFragment).commit();
+    }
+
+    private void LaunchChooseTagActivity(){
+        Intent intent = new Intent(getApplicationContext(), ChooseTagActivity.class);
+        intent.putExtra(ChooseTagActivity.TAG, tagFragment.GetTags().ToArrayList());
+        startActivityForResult(intent, CHOOSE_TAG_CODE);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
     }
 
     private void OpenCamera(){
@@ -123,7 +128,7 @@ public class EditFoodActivity extends AppCompatActivity {
     }
 
     private String NewImageFileName(){
-        // Create an image file name
+        // Create an image file Name
         return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg";
     }
 
@@ -167,14 +172,9 @@ public class EditFoodActivity extends AppCompatActivity {
                 }
                 break;
             case CHOOSE_TAG_CODE:
-                Tag tag = new Tag(data.getStringExtra(ChooseTagActivity.TAG));
-                ToggleTag toggleTag = new ToggleTag(tag, true);
-                if (tagFragment.GetData().contains(toggleTag)){
-                    Toast.makeText(this, "Tags Already Exists", Toast.LENGTH_SHORT).show();
-                }else{
-                    tagFragment.Add(toggleTag);
-                    add_tag_button.setVisibility(tagFragment.CountTags() == 10 ? View.GONE : View.VISIBLE);
-                }
+                ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.TAG);
+                for (Tag tag : tags) tagFragment.AddTag(tag);
+                add_tag_button.setVisibility(tags.size() == Tag.MAX_TAGS ? View.GONE : View.VISIBLE);
                 break;
             default:
                 break;
@@ -185,5 +185,6 @@ public class EditFoodActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.push_up_in, R.anim.push_down_out);
+        Helper.Save();
     }
 }
