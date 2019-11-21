@@ -33,7 +33,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private ImageButton cancel_button, confirm_button, camera_button, add_tag_button;
     private EditText edit_food_name, edit_note;
     private ImageView food_image;
-    private String image_path;
+    private String image_path = "";
     private TagFragment tagFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +119,7 @@ public class EditFoodActivity extends AppCompatActivity {
         });
         food_image.setOnClickListener(v -> {
             Intent intent = new Intent(this, FullScreenImageActivity.class);
-            intent.putExtra(FullScreenImageActivity.IMAGE, ((BitmapDrawable)food_image.getDrawable()).getBitmap());
+            intent.putExtra(FullScreenImageActivity.IMAGE, image_path);
             startActivity(intent);
         });
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());

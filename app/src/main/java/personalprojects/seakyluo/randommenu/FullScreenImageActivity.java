@@ -13,11 +13,12 @@ public class FullScreenImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
 
-        Bitmap image = getIntent().getParcelableExtra(IMAGE);
+        String image_path = getIntent().getStringExtra(IMAGE);
+        Bitmap image = image_path.equals("") ? null : Helper.GetFoodBitmap(image_path);
 
         ConstraintLayout fullscreen_background = findViewById(R.id.fullscreen_background);
         fullscreen_background.setOnClickListener(v -> finish());
         ImageView fullscreen_image = findViewById(R.id.fullscreen_image);
-        fullscreen_image.setImageBitmap(image);
+        if (image != null) fullscreen_image.setImageBitmap(image);
     }
 }
