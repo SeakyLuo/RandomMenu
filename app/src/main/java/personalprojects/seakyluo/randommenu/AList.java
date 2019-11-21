@@ -112,11 +112,6 @@ public class AList<T> {
     public T FindLast(BooleanLambda<T> lambda){
         return Reverse().Find(lambda);
     }
-    public AList<T> FindAll(BooleanLambda<T> lambda){
-        AList<T> collection = new AList<>();
-        for (T element: list) if (lambda.operate(element)) collection.Add(element);
-        return collection;
-    }
     public void For(ForLambda lambda) { for (int i = 0; i < Count(); i++) lambda.operate(i); }
     public void ForEach(VoidLambda<T> lambda){ for (T element: list) lambda.operate(element); }
     public <A> AList<A> Convert(ObjectLambda<T, A> lambda){
@@ -126,9 +121,7 @@ public class AList<T> {
     }
     public AList<T> Filter(BooleanLambda<T> lambda){
         AList<T> collection = new AList<>();
-        for (T element: list)
-            if (lambda.operate(element))
-                collection.Add(element);
+        for (T element: list) if (lambda.operate(element)) collection.Add(element);
         return collection;
     }
     public AList<T> Reverse(){

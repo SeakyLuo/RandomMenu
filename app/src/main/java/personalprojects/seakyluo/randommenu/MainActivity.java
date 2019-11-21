@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Helper.Save();
+        Helper.Save(this);
     }
 
     @Override

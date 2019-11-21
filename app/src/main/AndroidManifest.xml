@@ -38,6 +38,9 @@
         <activity
             android:name=".ChooseTagActivity"
             android:label="ChooseTagActivity" />
+        <activity
+            android:name=".FullScreenImageActivity"
+            android:label="FullScreenImageActivity" />
     </application>
 
 </manifest>

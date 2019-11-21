@@ -24,7 +24,7 @@ public class Helper {
     public static void Init(Context context){
         Helper.context = context;
         ImageFolder = CreateOrOpenFolder("Food");
-        String settings = ReadJson(Settings.FILENAME);
+        String settings = ReadJson(context, Settings.FILENAME);
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
     }
 
@@ -41,11 +41,11 @@ public class Helper {
         return new File(Environment.getExternalStorageDirectory(), image).getPath();
     }
 
-    public static void Save(){
-        SaveJson(Settings.FILENAME, Settings.settings.ToJson());
+    public static void Save(Context context){
+        SaveJson(context, Settings.FILENAME, Settings.settings.ToJson());
     }
 
-    public static String ReadJson(String filename) {
+    public static String ReadJson(Context context, String filename) {
         String ret = "";
 
         try {
@@ -73,7 +73,7 @@ public class Helper {
         }
         return ret;
     }
-    public static void SaveJson(String filename, String json){
+    public static void SaveJson(Context context, String filename, String json){
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
             outputStreamWriter.write(json);

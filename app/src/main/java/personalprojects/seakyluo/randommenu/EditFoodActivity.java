@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -28,7 +29,6 @@ import java.util.Date;
 public class EditFoodActivity extends AppCompatActivity {
     public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, CHOOSE_TAG_CODE = 2;
     public static final String FOOD = "Food";
-    private Food intent_food;
     private FrameLayout tags_frame;
     private ImageButton cancel_button, confirm_button, camera_button, add_tag_button;
     private EditText edit_food_name, edit_note;
@@ -48,7 +48,7 @@ public class EditFoodActivity extends AppCompatActivity {
         edit_note = findViewById(R.id.edit_note);
         food_image = findViewById(R.id.food_image);
 
-        intent_food = getIntent().getParcelableExtra(FOOD);
+        Food intent_food = getIntent().getParcelableExtra(FOOD);
         if (intent_food != null){
             edit_food_name.setText(intent_food.Name);
             if (intent_food.HasImage()) food_image.setImageBitmap(Helper.GetFoodBitmap(intent_food));
@@ -62,11 +62,17 @@ public class EditFoodActivity extends AppCompatActivity {
         });
         cancel_button.setOnClickListener(v -> {
             if (edit_food_name.getText().toString().length() > 0 || tagFragment.GetTags().Count() > 0 || edit_note.getText().toString().length() > 0){
-                // If Data Unsaved, ask save
+                AskYesNoDialog dialog = new AskYesNoDialog();
+                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
+                dialog.setMessage("You Have Unsaved Changes. \nDo you want to quit without saving?");
+                dialog.setOnYesListener(view -> finish());
+                dialog.setOnNoListener(view -> {
+                    Settings.settings.FoodDraft = new Food(edit_food_name.getText().toString(), image_path, tagFragment.GetTags().ToArrayList(), edit_note.getText().toString());
+                    finish();
+                });
             }else{
-//                finish();
+                finish();
             }
-            finish();
         });
         confirm_button.setOnClickListener(v -> {
             String food_name = edit_food_name.getText().toString();
@@ -89,11 +95,32 @@ public class EditFoodActivity extends AppCompatActivity {
             finish();
         });
         camera_button.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
-                requestPermissions(new String[]{ Manifest.permission.CAMERA }, CAMERA_CODE);
-            }else{
-                OpenCamera();
-            }
+            final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
+            helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
+                switch (menuItem.getItemId()){
+                    case R.id.open_camera_item:
+                        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
+                            requestPermissions(new String[]{ Manifest.permission.CAMERA }, CAMERA_CODE);
+                        }else{
+                            OpenCamera();
+                        }
+                        return true;
+                    case R.id.open_gallery_item:
+                        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                            requestPermissions(new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE }, GALLERY_CODE);
+                        }else{
+                            OpenGallery();
+                        }
+                        return true;
+                }
+                return false;
+            });
+            helper.show();
+        });
+        food_image.setOnClickListener(v -> {
+            Intent intent = new Intent(this, FullScreenImageActivity.class);
+            intent.putExtra(FullScreenImageActivity.IMAGE, ((BitmapDrawable)food_image.getDrawable()).getBitmap());
+            startActivity(intent);
         });
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
         tagFragment = new TagFragment();
@@ -119,9 +146,6 @@ public class EditFoodActivity extends AppCompatActivity {
     }
 
     private void OpenGallery(){
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_CODE);
-        }
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, GALLERY_CODE);
     }
@@ -182,8 +206,8 @@ public class EditFoodActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
+        Helper.Save(this);
         super.finish();
         overridePendingTransition(R.anim.push_up_in, R.anim.push_down_out);
-        Helper.Save();
     }
 }
