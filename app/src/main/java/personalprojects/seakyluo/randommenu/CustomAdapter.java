@@ -9,6 +9,8 @@ import android.view.View;
 import java.util.Comparator;
 import java.util.List;
 
+import personalprojects.seakyluo.randommenu.Models.AList;
+
 public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
     AList<T> data = new AList<>();
     Activity activity;
@@ -55,7 +57,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         notifyItemInserted(index);
     }
     public void remove(int index){
-        data.RemoveAt(index);
+        data.Pop(index);
         notifyItemRemoved(index);
     }
     public void remove(T object){

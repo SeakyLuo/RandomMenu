@@ -1,8 +1,10 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Models;
 
 import android.support.annotation.Nullable;
 
-public class ToggleTag extends Tag{
+import personalprojects.seakyluo.randommenu.Models.Tag;
+
+public class ToggleTag extends Tag {
     public boolean visible = false;
 
     public ToggleTag(Tag tag, boolean visible){

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Models;
 
 import com.google.gson.Gson;
 
@@ -15,12 +15,14 @@ public class Settings {
     public Food FoodDraft;
 
     public void AddFood(Food food){
-        Foods.add(food);
-        HashSet<Tag> tags = new HashSet<>(this.Tags);
+        Foods.add(0, food);
         for (Tag tag: food.GetTags()){
             tag.More();
-            if (!tags.contains(tag)){
-                this.Tags.add(tag);
+            int index = Tags.indexOf(tag);
+            if (index > -1){
+                Tags.set(index, tag);
+            }else{
+                Tags.add(tag);
             }
         }
         SortTags();
@@ -54,7 +56,7 @@ public class Settings {
 
     public boolean ContainsTag(String tag_name){
         for (Tag tag: Tags)
-            if (tag.getName().equals(tag_name))
+            if (tag.Name.equals(tag_name))
                 return true;
         return false;
     }

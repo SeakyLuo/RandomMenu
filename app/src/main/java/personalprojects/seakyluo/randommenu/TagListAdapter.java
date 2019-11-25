@@ -11,7 +11,11 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-public class TagListAdapter extends CustomAdapter<ToggleTag> implements ListAdapter, Filterable {
+import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.Models.ToggleTag;
+
+public class TagListAdapter extends CustomAdapter<ToggleTag> {
     private TagClickedListener listener;
     TagListAdapter(TagClickedListener listener) { this.listener = listener; }
 
@@ -23,45 +27,6 @@ public class TagListAdapter extends CustomAdapter<ToggleTag> implements ListAdap
 
     public boolean Contains(Tag target){
         return data.Contains(tag -> tag.equals(target));
-    }
-
-    @Override
-    public boolean areAllItemsEnabled() { return true; }
-    @Override
-    public boolean isEnabled(int position) { return true; }
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) { }
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) { }
-    @Override
-    public int getCount() { return data.Count(); }
-    @Override
-    public Object getItem(int position) { return data.Get(position); }
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) { return convertView; }
-    @Override
-    public int getViewTypeCount() { return 1; }
-    @Override
-    public boolean isEmpty() { return data.IsEmpty(); }
-
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                FilterResults results = new FilterResults();
-                AList<ToggleTag> filtered = data.Filter(tag -> tag.Name.contains(constraint));
-                results.count = filtered.Count();
-                results.values = filtered;
-                return results;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                data.CopyFrom((AList<ToggleTag>)results.values);
-                notifyDataSetChanged();
-            }
-        };
     }
 
     class ViewHolder extends CustomViewHolder {

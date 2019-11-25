@@ -4,15 +4,16 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -20,21 +21,24 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+
+import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class EditFoodActivity extends AppCompatActivity {
-    public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, CHOOSE_TAG_CODE = 2;
-    public static final String FOOD = "Food";
+    public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, CHOOSE_TAG_CODE = 2, WRITE_STORAGE = 3, FOOD_CODE = 4;
+    public static final String FOOD = "Food", STATUS = "Status";
     private FrameLayout tags_frame;
+    private Button delete_food_button;
     private ImageButton cancel_button, confirm_button, camera_button, add_tag_button;
     private EditText edit_food_name, edit_note;
     private ImageView food_image;
-    private String image_path = "";
-    private TagFragment tagFragment;
+    private TagsFragment tagsFragment;
+    private boolean SetFoodImage = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +48,7 @@ public class EditFoodActivity extends AppCompatActivity {
         confirm_button = findViewById(R.id.confirm_button);
         camera_button = findViewById(R.id.camera_button);
         add_tag_button = findViewById(R.id.add_tag_button);
+        delete_food_button = findViewById(R.id.delete_food_button);
         edit_food_name = findViewById(R.id.edit_food_name);
         edit_note = findViewById(R.id.edit_note);
         food_image = findViewById(R.id.food_image);
@@ -52,22 +57,23 @@ public class EditFoodActivity extends AppCompatActivity {
         if (intent_food != null){
             edit_food_name.setText(intent_food.Name);
             if (intent_food.HasImage()) food_image.setImageBitmap(Helper.GetFoodBitmap(intent_food));
-            tagFragment.SetData(intent_food.GetTags(), true);
+            tagsFragment.SetData(intent_food.GetTags(), true);
             edit_note.setText(intent_food.Note);
         }
 
         tags_frame.setOnClickListener(v -> {
-            if (tagFragment.GetData().Count() < Tag.MAX_TAGS)
+            if (tagsFragment.GetData().Count() < Tag.MAX_TAGS)
                 LaunchChooseTagActivity();
         });
         cancel_button.setOnClickListener(v -> {
-            if (edit_food_name.getText().toString().length() > 0 || tagFragment.GetTags().Count() > 0 || edit_note.getText().toString().length() > 0){
+            if (edit_food_name.getText().toString().length() > 0 || tagsFragment.GetTags().Count() > 0 || edit_note.getText().toString().length() > 0){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
                 dialog.setMessage("You Have Unsaved Changes. \nDo you want to quit without saving?");
                 dialog.setOnYesListener(view -> finish());
                 dialog.setOnNoListener(view -> {
-                    Settings.settings.FoodDraft = new Food(edit_food_name.getText().toString(), image_path, tagFragment.GetTags().ToArrayList(), edit_note.getText().toString());
+                    String image_path = Helper.SaveImage(food_image, "draft.jpg");
+                    Settings.settings.FoodDraft = new Food(edit_food_name.getText().toString(), image_path, tagsFragment.GetTags().ToArrayList(), edit_note.getText().toString());
                     finish();
                 });
             }else{
@@ -84,75 +90,92 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Food Exists!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            ArrayList<Tag> tags = tagFragment.GetTags().ToArrayList();
+            ArrayList<Tag> tags = tagsFragment.GetTags().ToArrayList();
             if (tags.size() == 0){
                 Toast.makeText(getApplicationContext(), "At least 1 tag!", Toast.LENGTH_SHORT).show();
                 return;
             }
             String note = edit_note.getText().toString();
-            Food food = new Food(food_name, image_path, tags, note);
+            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : "", tags, note);
             Settings.settings.AddFood(food);
+            setResult(RESULT_OK);
             finish();
         });
         camera_button.setOnClickListener(v -> {
-            final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
-            helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
-                switch (menuItem.getItemId()){
-                    case R.id.open_camera_item:
-                        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
-                            requestPermissions(new String[]{ Manifest.permission.CAMERA }, CAMERA_CODE);
-                        }else{
-                            OpenCamera();
-                        }
-                        return true;
-                    case R.id.open_gallery_item:
-                        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                            requestPermissions(new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE }, GALLERY_CODE);
-                        }else{
-                            OpenGallery();
-                        }
-                        return true;
-                }
-                return false;
-            });
-            helper.show();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE }, WRITE_STORAGE);
+            }else{
+                ShowMenuFlyout();
+            }
         });
         food_image.setOnClickListener(v -> {
+            FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
             Intent intent = new Intent(this, FullScreenImageActivity.class);
-            intent.putExtra(FullScreenImageActivity.IMAGE, image_path);
             startActivity(intent);
         });
+        delete_food_button.setOnClickListener(v -> {
+            AskYesNoDialog dialog = new AskYesNoDialog();
+            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
+            dialog.setMessage("Do you want to delete this food?");
+            dialog.setOnYesListener(view -> {
+                Settings.settings.RemoveFood(intent_food);
+                setResult(RESULT_OK);
+                finish();
+            });
+            dialog.setOnNoListener(view -> finish());
+        });
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
-        tagFragment = new TagFragment();
-        tagFragment.SetClose(true);
-        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagFragment).commit();
+        tagsFragment = new TagsFragment();
+        tagsFragment.SetClose(true);
+        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
     }
 
     private void LaunchChooseTagActivity(){
         Intent intent = new Intent(getApplicationContext(), ChooseTagActivity.class);
-        intent.putExtra(ChooseTagActivity.TAG, tagFragment.GetTags().ToArrayList());
+        intent.putExtra(ChooseTagActivity.TAG, tagsFragment.GetTags().ToArrayList());
         startActivityForResult(intent, CHOOSE_TAG_CODE);
         overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
     }
 
+    private void ShowMenuFlyout(){
+        final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
+        helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
+            switch (menuItem.getItemId()){
+                case R.id.open_camera_item:
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
+                        requestPermissions(new String[]{ Manifest.permission.CAMERA }, CAMERA_CODE);
+                    }else{
+                        OpenCamera();
+                    }
+                    return true;
+                case R.id.open_gallery_item:
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        requestPermissions(new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE }, GALLERY_CODE);
+                    }else{
+                        OpenGallery();
+                    }
+                    return true;
+            }
+            return false;
+        });
+        helper.show();
+    }
+    private Uri temp_camera_image_uri;
     private void OpenCamera(){
-        File file = new File(Helper.ImageFolder.getPath() + File.separator + NewImageFileName());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
-        image_path = uri.getPath();
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(intent, CAMERA_CODE);
+        try {
+            File file = File.createTempFile("temp", ".jpg", Helper.ImageFolder);
+            temp_camera_image_uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, temp_camera_image_uri);
+            startActivityForResult(intent, CAMERA_CODE);
+        } catch (IOException e) {
+
+        }
     }
 
     private void OpenGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, GALLERY_CODE);
-    }
-
-    private String NewImageFileName(){
-        // Create an image file Name
-        return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg";
     }
 
     @Override
@@ -161,6 +184,9 @@ public class EditFoodActivity extends AppCompatActivity {
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)
             return;
         switch (requestCode){
+            case WRITE_STORAGE:
+                ShowMenuFlyout();
+                break;
             case CAMERA_CODE:
                 OpenCamera();
                 break;
@@ -177,37 +203,40 @@ public class EditFoodActivity extends AppCompatActivity {
         Bitmap image = null;
         switch (requestCode){
             case CAMERA_CODE:
-                image = Helper.GetFoodBitmap(image_path);
+                try {
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), temp_camera_image_uri);
+                    SetFoodImage = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 food_image.setImageBitmap(image);
                 break;
             case GALLERY_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                     food_image.setImageBitmap(image);
-                    // Then saves to local
-                    try (FileOutputStream out = new FileOutputStream(image_path = Helper.GetImagePath(NewImageFileName()))) {
-                        image.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                    } catch (IOException e) {
-                        image_path = "";
-                    }
+                    SetFoodImage = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             case CHOOSE_TAG_CODE:
                 ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.TAG);
-                for (Tag tag : tags) tagFragment.AddTag(tag);
+                for (Tag tag : tags) tagsFragment.AddTag(tag);
                 add_tag_button.setVisibility(tags.size() == Tag.MAX_TAGS ? View.GONE : View.VISIBLE);
-                break;
-            default:
                 break;
         }
     }
 
     @Override
     public void finish() {
+        SetFoodImage = false;
         Helper.Save(this);
         super.finish();
         overridePendingTransition(R.anim.push_up_in, R.anim.push_down_out);
+    }
+
+    public enum EditFoodStatus{
+        CANCELED, SUCCESS, DELETE
     }
 }

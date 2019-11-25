@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,8 +8,10 @@ import android.support.annotation.Nullable;
 public class Tag implements Comparable, Parcelable {
     public static final String TABLE_NAME = "Tag", COLUMN_NAME = "Name", COLUMN_COUNT = "count";
     public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" + COLUMN_NAME +" text PRIMARY KEY)";
+    public static String AllCategories = "All Categories";
+    public static Tag AllCategoriesTag = new Tag(AllCategories);
     public static final int MAX_TAGS = 10;
-    protected String Name;
+    public String Name;
     protected int Counter = 0;
 
     protected Tag() {}
@@ -17,9 +19,6 @@ public class Tag implements Comparable, Parcelable {
         this.Name = name;
     }
 
-    public String getName() {
-        return Name;
-    }
     public int More() { return ++Counter; }
     public int Less() { return --Counter; }
 
@@ -31,8 +30,9 @@ public class Tag implements Comparable, Parcelable {
 
     @NonNull
     @Override
-    public String toString() {
-        return Name + "(" + Counter + ")";
+    public String toString() { return Format(Name, Counter); }
+    public static String Format(String name, int count){
+        return name + "(" + count + ")";
     }
 
     protected Tag(Parcel in) {

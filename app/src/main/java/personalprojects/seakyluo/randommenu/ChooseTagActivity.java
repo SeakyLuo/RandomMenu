@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,11 +17,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.Models.ToggleTag;
+
 public class ChooseTagActivity extends AppCompatActivity {
     public static final String TAG = "tag";
     private AutoCompleteTextView tag_box;
     private TagListAdapter tagListAdapter;
-    private TagFragment tagFragment;
+    private TagsFragment tagsFragment;
     private ArrayList<Tag> original_tags;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +77,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.back_button).setOnClickListener(v -> {
-            if (tagFragment.GetTags().SameCollection(original_tags)){
+            if (tagsFragment.GetTags().SameCollection(original_tags)){
                 setResult(RESULT_CANCELED);
                 finish();
             }else{
@@ -99,33 +103,29 @@ public class ChooseTagActivity extends AppCompatActivity {
         tagListAdapter.addAll(0, new AList<>(original_tag_set).SetDifference(Settings.settings.Tags).Convert(t -> new ToggleTag(t, true)).ToArrayList());
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
         tag_recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        tag_recycler_view.setLayoutManager(manager);
-        tag_recycler_view.setNestedScrollingEnabled(true);
         tagListAdapter.setActivity(this);
         tag_recycler_view.setAdapter(tagListAdapter);
 
-        tagFragment = new TagFragment();
-        tagFragment.SetLinear(true);
-        tagFragment.SetClose(true);
-        tagFragment.SetTags(original_tags);
-        tagFragment.SetTagClickedListener(((viewHolder, tag) -> {
+        tagsFragment = new TagsFragment();
+        tagsFragment.SetLinear(true);
+        tagsFragment.SetClose(true);
+        tagsFragment.SetTags(original_tags);
+        tagsFragment.SetTagClickedListener(((viewHolder, tag) -> {
             ((TagAdapter.ViewHolder)viewHolder).SetCloseButtonVisibility(tag.Toggle());
             tagListAdapter.set(tag, tagListAdapter.getData().IndexOf(tag));
         }));
-        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
     }
 
     private void ChooseTag(ToggleTag tag){
-        if (tagFragment.GetData().Count() == Tag.MAX_TAGS){
+        if (tagsFragment.GetData().Count() == Tag.MAX_TAGS){
             Toast.makeText(ChooseTagActivity.this, "Tags Limit!", Toast.LENGTH_SHORT).show();
         }else{
-            if (tagFragment.Contains(tag)){
-                tagFragment.Remove(tag);
+            if (tagsFragment.Contains(tag)){
+                tagsFragment.Remove(tag);
             }else{
-                tagFragment.Add(new ToggleTag(tag, true));
+                tagsFragment.Add(new ToggleTag(tag, true));
             }
         }
     }
@@ -136,7 +136,7 @@ public class ChooseTagActivity extends AppCompatActivity {
             Tag tag = new Tag(tag_name);
             if (!tagListAdapter.Contains(tag)){
                 tagListAdapter.add(new ToggleTag(tag, true));
-                tagFragment.AddTag(tag);
+                tagsFragment.AddTag(tag);
             }
             tag_box.setText("");
         }else{
@@ -146,7 +146,7 @@ public class ChooseTagActivity extends AppCompatActivity {
 
     private void FinishActivity(){
         Intent intent = new Intent();
-        ArrayList<Tag> tags = tagFragment.GetTags().ToArrayList();
+        ArrayList<Tag> tags = tagsFragment.GetTags().ToArrayList();
         intent.putExtra(TAG, tags);
         if (tags.size() == 0) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);

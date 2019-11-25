@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Models;
 
 
 import java.util.ArrayList;
@@ -6,6 +6,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+
+import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
+import personalprojects.seakyluo.randommenu.Interfaces.ForLambda;
+import personalprojects.seakyluo.randommenu.Interfaces.ObjectLambda;
+import personalprojects.seakyluo.randommenu.Interfaces.VoidLambda;
 
 public class AList<T> {
     private ArrayList<T> list = new ArrayList<>();;
@@ -44,24 +49,43 @@ public class AList<T> {
         return SameCollection(new AList<>(collection));
     }
     public T Add(T element) { list.add(element); return element; }
-    public T Add(T element, int index) { list.add(index, element); return element; }
+    public T Add(T element, int index) {
+        index = ModIndex(index);
+        list.add(index, element);
+        return element;
+    }
     public AList<T> Add(Collection<T> collection) { list.addAll(collection); return this; }
     public AList<T> Add(AList<T> collection) { list.addAll(collection.list); return this; }
-    public AList<T> Add(Collection<T> collection, int index) { list.addAll(index, collection); return this; }
-    public AList<T> Add(AList<T> collection, int index) { list.addAll(index, collection.list); return this; }
-    public boolean Remove(T element) { return list.remove(element); }
-    public boolean RemoveAt(int index) {
-        boolean success;
-        if (success = index < Count()) list.remove(index);
-        return success;
+    public AList<T> Add(Collection<T> collection, int index) {
+        index = ModIndex(index);
+        list.addAll(index, collection);
+        return this;
     }
+    public AList<T> Add(AList<T> collection, int index) { return Add(collection.list, index); }
+    public boolean Remove(T element) { return list.remove(element); }
     public boolean Remove(BooleanLambda<T> lambda){ return list.removeIf(lambda::operate); }
+    public boolean Remove(Collection<T> collection){ return list.removeAll(collection); }
+    public T Pop() {
+        return Pop(-1);
+    }
+    public T Pop(int index){
+        index = ModIndex(index);
+        T element = list.get(index);
+        list.remove(index);
+        return element;
+    }
+    public AList<T> Pop(int start, int end){
+        AList<T> collection = new AList<>();
+        start = ModIndex(start);
+        end = ModIndex(end);
+        for (int i = start; i < end; i++)
+            collection.Add(list.remove(start));
+        return collection;
+    }
     public AList<T> Without(T element){ Remove(element); return this; }
     public void Clear() { list.clear(); }
     public AList<T> Copy(){ return new AList<>(list); }
-    public void CopyFrom(AList<T> collection){
-        CopyFrom(collection.list);
-    }
+    public void CopyFrom(AList<T> collection){ CopyFrom(collection.list); }
     public void CopyFrom(Collection<T> collection){
         Clear();
         Add(collection);
@@ -90,19 +114,23 @@ public class AList<T> {
     public AList<T> Before(int index){ return Sub(0, index); }
     public AList<T> After(int index) { return Sub(index + 1, Count()); }
     public AList<T> Sub(int start, int end){
-        AList<T> newList = new AList<>();
+        AList<T> collection = new AList<>();
+        start = ModIndex(start);
+        end = ModIndex(end);
         for (int i = start; i < end; i = i + 1)
-            newList.Add(list.get(i));
-        return newList;
+            collection.Add(list.get(i));
+        return collection;
     }
     public AList<T> Sub(int start, int end, int step){
-        AList<T> newList = new AList<>();
+        AList<T> collection = new AList<>();
+        start = ModIndex(start);
+        end = ModIndex(end);
         for (int i = start; i < end; i = i + step)
-            newList.Add(list.get(i));
-        return newList;
+            collection.Add(list.get(i));
+        return collection;
     }
-    public T Get(int index){ return list.get(index); }
-    public void Set(T element, int index) { list.set(index, element); }
+    public T Get(int index){ return list.get(ModIndex(index)); }
+    public void Set(T element, int index) { list.set(ModIndex(index), element); }
     public T Find(BooleanLambda<T> lambda){
         for (T element: list)
             if (lambda.operate(element))
@@ -130,6 +158,8 @@ public class AList<T> {
         return this;
     }
     public void Swap(int item1, int item2){
+        item1 = ModIndex(item1);
+        item2 = ModIndex(item2);
         T temp = list.get(item1);
         list.set(item1, list.get(item2));
         list.set(item2, temp);
@@ -149,22 +179,9 @@ public class AList<T> {
         Collections.sort(list, comparator);
         return this;
     }
-}
-interface IntLambda<T>{
-
-}
-interface doubleLambda<T>{
-
-}
-interface BooleanLambda<T>{
-    boolean operate(T object);
-}
-interface VoidLambda<T>{
-    void operate(T object);
-}
-interface ObjectLambda<T, A>{
-    A operate(T object);
-}
-interface ForLambda{
-    void operate(int index);
+    private int ModIndex(int index){
+        int count = Count();
+        index = index % count;
+        return index < 0 ? index + count : index;
+    }
 }

@@ -13,7 +13,11 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public class TagFragment extends Fragment {
+import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.Models.ToggleTag;
+
+public class TagsFragment extends Fragment {
     private RecyclerView recyclerView;
     private TagAdapter adapter = new TagAdapter();
     private boolean showCloseButton = false;
@@ -26,7 +30,7 @@ public class TagFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tag, container, false);
+        View view = inflater.inflate(R.layout.fragment_tags, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         SetRecyclerView(recyclerView);
         return view;

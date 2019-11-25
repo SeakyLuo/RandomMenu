@@ -1,13 +1,13 @@
 package personalprojects.seakyluo.randommenu;
 
-import android.database.DataSetObserver;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class TagAdapter extends CustomAdapter<ToggleTag> {
     private TagClickedListener listener;
@@ -40,7 +40,7 @@ public class TagAdapter extends CustomAdapter<ToggleTag> {
 
         @Override
         void setData(ToggleTag data) {
-            tag_name.setText(data.getName());
+            tag_name.setText(data.Name);
             close_button.setVisibility(data.visible ? View.VISIBLE : View.GONE);
         }
 

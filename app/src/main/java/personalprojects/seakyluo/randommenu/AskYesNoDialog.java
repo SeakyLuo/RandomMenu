@@ -28,27 +28,19 @@ public class AskYesNoDialog extends DialogFragment {
         message = view.findViewById(R.id.ayn_message);
         yes = view.findViewById(R.id.ayn_yes);
         no = view.findViewById(R.id.ayn_no);
-        yes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (yesListener != null) yesListener.onClick(v);
-                // Dismiss Manually?
-                dismiss();
-            }
+        yes.setOnClickListener(v -> {
+            if (yesListener != null) yesListener.onClick(v);
+            // Dismiss Manually?
+            dismiss();
         });
-        no.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (noListener != null) noListener.onClick(v);
-                dismiss();
-            }
+        no.setOnClickListener(v -> {
+            if (noListener != null) noListener.onClick(v);
+            dismiss();
         });
         return view;
     }
 
-    public void setMessage(String message) {
-        this.message.setText(message);
-    }
+    public void setMessage(String message) { this.message.setText(message); }
     public void setYesText(String text) { yes.setText(text); }
     public void setNoText(String text) { no.setText(text); }
 }

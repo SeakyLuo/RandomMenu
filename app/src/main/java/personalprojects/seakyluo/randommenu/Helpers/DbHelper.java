@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Helpers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,6 +9,9 @@ import android.os.Environment;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.Models.User;
 
 public class DbHelper extends SQLiteOpenHelper {
     public static SQLiteDatabase db;
@@ -77,7 +80,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         else if (obj instanceof Tag){
             Tag tag = (Tag)obj;
-            values.put("Name", tag.getName());
+            values.put("Name", tag.Name);
             db.insert(Tag.TABLE_NAME, null, values);
         }
     }

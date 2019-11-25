@@ -7,14 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 public class FullScreenImageActivity extends AppCompatActivity {
-    public static final String IMAGE = "Image";
+    public static Bitmap image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
-
-        String image_path = getIntent().getStringExtra(IMAGE);
-        Bitmap image = image_path.equals("") ? null : Helper.GetFoodBitmap(image_path);
 
         ConstraintLayout fullscreen_background = findViewById(R.id.fullscreen_background);
         fullscreen_background.setOnClickListener(v -> finish());

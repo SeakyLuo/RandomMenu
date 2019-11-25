@@ -1,31 +1,43 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Helpers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.R;
 
 public class Helper {
     public static File ImageFolder;
     public static Context context;
+    public static Bitmap DefaultFoodImage;
 
     public static void Init(Context context){
         Helper.context = context;
+        DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
         ImageFolder = CreateOrOpenFolder("Food");
         String settings = ReadJson(context, Settings.FILENAME);
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
+    }
+
+    public static String Localize(String resource){
+        return "";
     }
 
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
@@ -33,9 +45,20 @@ public class Helper {
     public static Bitmap GetFoodBitmap(Food food){
         return GetFoodBitmap(food.ImagePath);
     }
-    public static Bitmap GetFoodBitmap(String path){
-        return BitmapFactory.decodeFile(path);
+    public static Bitmap GetFoodBitmap(String path){ return IsNullOrEmpty(path) ? DefaultFoodImage : BitmapFactory.decodeFile(path); }
+    public static Bitmap GetFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
+    public static String SaveImage(ImageView imageView, String filename){
+        Bitmap image = GetFoodBitmap(imageView);
+        String image_path = GetImagePath(filename);
+        try (FileOutputStream out = new FileOutputStream(image_path)) {
+            image.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        } catch (IOException e) {
+            image_path = "";
+        }
+        return image_path;
     }
+    public static String NewImageFileName(){ return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg"; }
+
 
     public static String GetImagePath(String image){
         return new File(Environment.getExternalStorageDirectory(), image).getPath();
