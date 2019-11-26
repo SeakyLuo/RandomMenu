@@ -16,6 +16,10 @@ public class Tag implements Comparable, Parcelable {
 
     protected Tag() {}
     public Tag(String name){ this.Name = name; }
+    public Tag(String name, int counter){
+        this.Name = name;
+        this.Counter = counter;
+    }
 
     public Tag More() { ++Counter; return this; }
     public Tag Less() { --Counter; return this; }

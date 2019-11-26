@@ -82,7 +82,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
                 dialog.setMessage("You have unsaved changes.\nDo you want to save it as draft?");
                 dialog.setOnYesListener(view -> {
-                    String image_path = Helper.SaveImage(food_image, "draft.jpg");
+                    String image_path = SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : Helper.SaveImage(food_image, "draft.jpg");
                     Settings.settings.FoodDraft = new Food(food_name, image_path, tags, note);
                     finish();
                 });
@@ -97,7 +97,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Name Too Short!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (Settings.settings.Foods.Any(f -> f.Name.equals(food_name))){
+            if (Settings.settings.Foods.Any(f -> f.Name.equals(food_name)) && (intent_food == null || !intent_food.Name.equals(food_name))){
                 Toast.makeText(getApplicationContext(), "Food Exists", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -107,7 +107,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
             }
             String note = edit_note.getText().toString();
-            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : "", tags, note);
+            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : intent_food == null ? "" : intent_food.ImagePath, tags, note);
             if (intent_food == null) Settings.settings.AddFood(food);
             else if (intent_food.equals(Settings.settings.FoodDraft)){
                 Settings.settings.AddFood(food);
@@ -142,7 +142,6 @@ public class EditFoodActivity extends AppCompatActivity {
                 setResult(RESULT_OK);
                 finish();
             });
-            dialog.setOnNoListener(view -> finish());
         });
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
     }
@@ -239,7 +238,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 break;
             case CHOOSE_TAG_CODE:
                 ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.TAG);
-                for (Tag tag : tags) tagsFragment.AddTag(tag);
+                tagsFragment.SetTags(tags);
                 add_tag_button.setVisibility(tags.size() == Tag.MAX_TAGS ? View.GONE : View.VISIBLE);
                 break;
         }
@@ -251,9 +250,5 @@ public class EditFoodActivity extends AppCompatActivity {
         Helper.Save(this);
         super.finish();
         overridePendingTransition(R.anim.push_up_in, R.anim.push_down_out);
-    }
-
-    public enum EditFoodStatus{
-        CANCELED, SUCCESS, DELETE
     }
 }

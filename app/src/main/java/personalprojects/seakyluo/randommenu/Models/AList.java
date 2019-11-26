@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
@@ -187,6 +188,22 @@ public class AList<T> {
     public AList<T> Sort(Comparator<? super T> comparator) {
         Collections.sort(list, comparator);
         return this;
+    }
+    public <A> HashMap<A, AList<T>> GroupBy(ObjectLambda<T, A> lambda){
+        HashMap<A, AList<T>> hashMap = new HashMap<>();
+        for (T element: list){
+            A key = lambda.operate(element);
+            AList<T> group = hashMap.getOrDefault(key, new AList<>());
+            group.Add(element);
+            hashMap.put(key, group);
+        }
+        return hashMap;
+    }
+    public HashMap<T, Integer> ToHashMap(){
+        HashMap<T, Integer> hashMap = new HashMap<>();
+        for (T element: list)
+            hashMap.put(element, hashMap.getOrDefault(element, 0));
+        return hashMap;
     }
     private int ModIndex(int index){
         int count = Count();
