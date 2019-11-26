@@ -59,5 +59,5 @@ public class TagsFragment extends Fragment {
     public void Add(ToggleTag tag){ adapter.add(tag); }
     public void Remove(ToggleTag tag) { adapter.remove(tag); }
     public boolean Contains(Tag tag) { return adapter.getData().Any(t -> t.equals(tag)); }
-    public void SetTagClickedListener(TagClickedListener listener) { adapter.SetTagClickedListener(listener); }
+    public void SetTagClickedListener(TagClickedListener listener) { adapter.SetTagCloseListener(listener); }
 }

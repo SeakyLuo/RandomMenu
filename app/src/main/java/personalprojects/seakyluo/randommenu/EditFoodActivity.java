@@ -72,19 +72,21 @@ public class EditFoodActivity extends AppCompatActivity {
                 LaunchChooseTagActivity();
         });
         cancel_button.setOnClickListener(v -> {
-            boolean nameChanged = intent_food == null ? edit_food_name.getText().toString().length() > 0 : edit_food_name.getText().toString().equals(intent_food.Name),
-                    tagChanged = intent_food == null ? tagsFragment.GetTags().Count() > 0 : tagsFragment.GetTags().SameCollection(intent_food.GetTags()),
-                    noteChanged = intent_food == null ? edit_note.getText().toString().length() > 0 : edit_note.getText().toString().equals(intent_food.Note);
+            String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
+            AList<Tag> tags = tagsFragment.GetTags();
+            boolean nameChanged = intent_food == null ? food_name.length() > 0 : !food_name.equals(intent_food.Name),
+                    tagChanged = intent_food == null ? tags.Count() > 0 : !tags.SameCollection(intent_food.GetTags()),
+                    noteChanged = intent_food == null ? note.length() > 0 : !note.equals(intent_food.Note);
             if (nameChanged || tagChanged || noteChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
-                dialog.setMessage("You Have Unsaved Changes. \nDo you want to quit without saving?");
-                dialog.setOnYesListener(view -> finish());
-                dialog.setOnNoListener(view -> {
+                dialog.setMessage("You have unsaved changes.\nDo you want to save it as draft?");
+                dialog.setOnYesListener(view -> {
                     String image_path = Helper.SaveImage(food_image, "draft.jpg");
-                    Settings.settings.FoodDraft = new Food(edit_food_name.getText().toString(), image_path, tagsFragment.GetTags(), edit_note.getText().toString());
+                    Settings.settings.FoodDraft = new Food(food_name, image_path, tags, note);
                     finish();
                 });
+                dialog.setOnNoListener(view -> finish());
             }else{
                 finish();
             }
@@ -95,8 +97,8 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Name Too Short!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (Settings.settings.ContainsFood(food_name)){
-                Toast.makeText(getApplicationContext(), "Food Exists!", Toast.LENGTH_SHORT).show();
+            if (Settings.settings.Foods.Any(f -> f.Name.equals(food_name))){
+                Toast.makeText(getApplicationContext(), "Food Exists", Toast.LENGTH_SHORT).show();
                 return;
             }
             AList<Tag> tags = tagsFragment.GetTags();
@@ -106,7 +108,11 @@ public class EditFoodActivity extends AppCompatActivity {
             }
             String note = edit_note.getText().toString();
             Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : "", tags, note);
-            if (intent_food == null || intent_food.equals(Settings.settings.FoodDraft)) Settings.settings.AddFood(food);
+            if (intent_food == null) Settings.settings.AddFood(food);
+            else if (intent_food.equals(Settings.settings.FoodDraft)){
+                Settings.settings.AddFood(food);
+                Settings.settings.FoodDraft = null;
+            }
             else Settings.settings.UpdateFood(intent_food, food);
             Intent intent = new Intent();
             intent.putExtra(FOOD, food);

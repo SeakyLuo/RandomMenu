@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 
@@ -14,12 +16,20 @@ public class Food implements Parcelable {
     private AList<Tag> Tags = new AList<>();
     public String Note = "";
     private boolean IsFavorite = false;
+    private Long DateAdded;
+
+    public Food(String name){
+        Name = name;
+    }
+
     public Food(String name, String path, AList<Tag> tags, String note){
         Name = name;
         ImagePath = path;
         Tags = tags;
         Note = note;
+        DateAdded = Calendar.getInstance().getTimeInMillis();
     }
+
     public void SetIsFavorite(boolean isFavorite){
         if (IsFavorite = isFavorite){
             Settings.settings.Favorites.Remove(this);
@@ -43,7 +53,16 @@ public class Food implements Parcelable {
     protected Food(Parcel in) {
         Name = in.readString();
         ImagePath = in.readString();
+        ArrayList<Tag> tags = new ArrayList<>();
+        in.readTypedList(tags, Tag.CREATOR);
+        Tags = new AList<>(tags);
         Note = in.readString();
+        IsFavorite = in.readByte() != 0;
+        if (in.readByte() == 0) {
+            DateAdded = null;
+        } else {
+            DateAdded = in.readLong();
+        }
     }
 
     public static final Creator<Food> CREATOR = new Creator<Food>() {
@@ -67,6 +86,14 @@ public class Food implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(Name);
         dest.writeString(ImagePath);
+        dest.writeTypedList(Tags.ToArrayList());
         dest.writeString(Note);
+        dest.writeByte((byte) (IsFavorite ? 1 : 0));
+        if (DateAdded == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(DateAdded);
+        }
     }
 }

@@ -10,8 +10,9 @@ import android.widget.TextView;
 import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class TagAdapter extends CustomAdapter<ToggleTag> {
-    private TagClickedListener listener;
-    public void SetTagClickedListener(TagClickedListener listener) { this.listener = listener; }
+    private TagClickedListener closeListener, tagListener;
+    public void SetTagCloseListener(TagClickedListener listener) { this.closeListener = listener; }
+    public void SetTagClickedListener(TagClickedListener listener) { this.tagListener = listener; }
 
     @NonNull
     @Override
@@ -22,17 +23,20 @@ public class TagAdapter extends CustomAdapter<ToggleTag> {
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, final int position) {
         super.onBindViewHolder(holder, position);
+        ToggleTag tag = data.Get(position);
         ((ViewHolder)holder).SetOnCloseClickedListener(v -> {
-            ToggleTag tag = data.Get(position);
             remove(tag);
-            if (listener != null) listener.TagClicked(holder, tag);
+            if (closeListener != null) closeListener.TagClicked(holder, tag);
+        });
+        holder.view.setOnClickListener(v -> {
+            if (tagListener != null) tagListener.TagClicked(holder, tag);
         });
     }
 
     class ViewHolder extends CustomViewHolder {
         TextView tag_name;
         ImageButton close_button;
-        ViewHolder(final View view) {
+        ViewHolder(View view) {
             super(view);
             tag_name = view.findViewById(R.id.tag_name);
             close_button = view.findViewById(R.id.close_button);

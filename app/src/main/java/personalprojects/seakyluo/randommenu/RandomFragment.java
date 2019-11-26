@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -17,36 +18,44 @@ import personalprojects.seakyluo.randommenu.Models.Settings;
 
 public class RandomFragment extends Fragment {
     public static final String TAG = "RandomFragment";
-    private AList<Food> food_pool = new AList<>();
-    private ImageButton check_button, cross_button;
+    private AList<Food> food_pool = new AList<>(), filtered = new AList<>();
     private FoodCardFragment foodCardFragment;
     private static Random random = new Random();
+    private AList<Food> Menu = new AList<>();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_random, container, false);
-        check_button = view.findViewById(R.id.check_button);
-        cross_button = view.findViewById(R.id.cross_button);
-        check_button.setOnClickListener(v -> {
+        view.findViewById(R.id.check_button).setOnClickListener(v -> {
+            Food food = NextFood();
+            if (food == null) return;
+            Menu.Add(food);
+        });
+        view.findViewById(R.id.cross_button).setOnClickListener(v -> {
             NextFood();
         });
-        cross_button.setOnClickListener(v -> {
+        view.findViewById(R.id.refresh_button).setOnClickListener(v -> {
+            food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
             NextFood();
         });
         getFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
-        food_pool.CopyFrom(Settings.settings.Foods);
+        food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
         if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(RandomPop());
         return view;
     }
 
     private Food NextFood(){
-        if (food_pool.IsEmpty()) food_pool.CopyFrom(Settings.settings.Foods);
+        if (food_pool.IsEmpty()){
+            food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
+            Toast.makeText(getContext(), "Reaches End", Toast.LENGTH_SHORT).show();
+        }
         return food_pool.IsEmpty() ? null : foodCardFragment.SetFood(RandomPop());
     }
 
     public Food RandomPop(){
-        return food_pool.Pop(random.nextInt(food_pool.Count()));
+        AList<Food> filtered = food_pool.Filter(f -> !Menu.Contains(f));
+        return filtered.Pop(random.nextInt(filtered.Count()));
     }
 
 }

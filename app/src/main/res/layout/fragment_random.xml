@@ -73,7 +73,7 @@
 
     <LinearLayout
         android:id="@+id/button_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
@@ -87,17 +87,25 @@
             android:id="@+id/check_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="80dp"
             android:background="@android:color/transparent"
+            android:layout_weight="1"
             app:srcCompat="@drawable/ic_check" />
 
         <ImageButton
             android:id="@+id/cross_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="80dp"
             android:background="@android:color/transparent"
+            android:layout_weight="1"
             app:srcCompat="@drawable/ic_cross" />
+
+        <ImageButton
+            android:id="@+id/refresh_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_refresh" />
     </LinearLayout>
 
 

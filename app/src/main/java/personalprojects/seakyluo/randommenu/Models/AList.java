@@ -1,9 +1,10 @@
 package personalprojects.seakyluo.randommenu.Models;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,6 +22,7 @@ public class AList<T> {
     public AList(Collection<T> collection) { for (T element: collection) Add(element); }
     public AList(AList<T> collection) { Add(collection); }
     public AList(T element) { Add(element); }
+
     public int Count() { return list.size(); }
     public boolean IsEmpty() { return list.size() == 0; }
     public int Count(BooleanLambda<T> lambda){
@@ -190,11 +192,5 @@ public class AList<T> {
         int count = Count();
         if (count > 0) index = index % count;
         return index < 0 ? index + count : index;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return list.toString();
     }
 }

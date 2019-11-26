@@ -40,14 +40,6 @@ public class Settings {
         AddFood(after, index);
     }
 
-    public boolean ContainsFood(String food_name){
-        return Foods.Any(f -> f.Name.equals(food_name));
-    }
-
-    public boolean ContainsTag(String tag_name){
-        return Tags.Any(t -> t.Name.equals(tag_name));
-    }
-
     public static Settings FromJson(String json){
         Gson gson = new Gson();
         try{
