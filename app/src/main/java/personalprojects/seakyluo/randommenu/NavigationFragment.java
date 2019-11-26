@@ -8,16 +8,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -42,15 +40,7 @@ public class NavigationFragment extends Fragment {
 
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        selectTagAdapter = new SelectTagAdapter(((viewHolder, tag) -> {
-            if (tag.equals(Tag.AllCategoriesTag)){
-                title_text_view.setText(Tag.Format(tag.Name, Settings.settings.Foods.size()));
-                foodAdapter.Reset();
-            }else{
-                title_text_view.setText(tag.Name);
-                foodAdapter.Filter(tag);
-            }
-        }));
+        selectTagAdapter = new SelectTagAdapter(((viewHolder, tag) ->  SelectTag(tag)));
         selectTagAdapter.SetData(Settings.settings.Tags);
         masterView.setAdapter(selectTagAdapter);
 
@@ -65,11 +55,21 @@ public class NavigationFragment extends Fragment {
         return view;
     }
 
+    public void SelectTag(ToggleTag tag){
+        if (tag.equals(Tag.AllCategoriesTag)){
+            title_text_view.setText(Tag.Format(tag.Name, Settings.settings.Foods.Count()));
+            foodAdapter.Reset();
+        }else{
+            title_text_view.setText(tag.Name);
+            foodAdapter.Filter(tag);
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
+        foodAdapter.SetData(Settings.settings.Foods);
         selectTagAdapter.SetData(Settings.settings.Tags);
-        foodAdapter.setData(Settings.settings.Foods);
     }
 }

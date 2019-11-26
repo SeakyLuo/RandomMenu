@@ -4,66 +4,57 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 
 public class Settings {
     public static String FILENAME = "RandomMenuSettings.json";
     public static Settings settings;
-    public ArrayList<Food> Foods = new ArrayList<>();
-    public ArrayList<Tag> Tags = new ArrayList<>();
-    public ArrayList<String> ToCook = new ArrayList<>();
+    public AList<Food> Foods = new AList<>();
+    public AList<Tag> Tags = new AList<>();
+    public AList<String> ToCook = new AList<>();
+    public AList<Food> Favorites = new AList<>();
     public Food FoodDraft;
 
-    public void AddFood(Food food){
-        Foods.add(0, food);
-        for (Tag tag: food.GetTags()){
+    public void AddFood(Food food, int index){
+        food.GetTags().ForEach(tag -> {
             tag.More();
-            int index = Tags.indexOf(tag);
-            if (index > -1){
-                Tags.set(index, tag);
-            }else{
-                Tags.add(tag);
-            }
-        }
+            int tag_index = Tags.IndexOf(tag);
+            if (tag_index > -1) Tags.Set(tag, tag_index);
+            else Tags.Add(tag);
+        });
+        Foods.Add(food, index);
         SortTags();
     }
+    public void AddFood(Food food){ AddFood(food, 0); }
 
     public void RemoveFood(Food food){
-        Foods.remove(food);
-        for (Tag tag: new ArrayList<>(Tags)){
-            if (food.HasTag(tag) && tag.Less() == 0)
-                Tags.remove(tag);
-        }
+        Foods.Remove(food);
+        Tags.CopyFrom(Tags.Filter(food::HasTag).ForEach(Tag::Less).Filter(Tag::IsEmpty));
         SortTags();
     }
 
-    public void SortTags(){
-        Collections.sort(Tags, Tag::compareTo);
-        Collections.reverse(Tags);
-    }
+    public void SortTags(){ Tags.Sort(Tag::compareTo).Reverse(); }
 
     public void UpdateFood(Food before, Food after){
+        int index = Foods.IndexOf(before);
         RemoveFood(before);
-        AddFood(after);
+        AddFood(after, index);
     }
 
     public boolean ContainsFood(String food_name){
-        for (Food food: Foods)
-            if (food.Name.equals(food_name))
-                return true;
-        return false;
+        return Foods.Any(f -> f.Name.equals(food_name));
     }
 
     public boolean ContainsTag(String tag_name){
-        for (Tag tag: Tags)
-            if (tag.Name.equals(tag_name))
-                return true;
-        return false;
+        return Tags.Any(t -> t.Name.equals(tag_name));
     }
 
     public static Settings FromJson(String json){
         Gson gson = new Gson();
-        return gson.fromJson(json, Settings.class);
+        try{
+            return gson.fromJson(json, Settings.class);
+        }catch (Exception e){
+            return new Settings();
+        }
     }
 
     public String ToJson(){

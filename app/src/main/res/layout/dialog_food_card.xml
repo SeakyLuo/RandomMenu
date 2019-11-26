@@ -2,7 +2,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/food_card_frame"
+    android:id="@+id/dialog_food_card_frame"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     tools:layout="@layout/fragment_food_card" />

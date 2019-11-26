@@ -23,8 +23,10 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
@@ -53,6 +55,10 @@ public class EditFoodActivity extends AppCompatActivity {
         edit_note = findViewById(R.id.edit_note);
         food_image = findViewById(R.id.food_image);
 
+        tagsFragment = new TagsFragment();
+        tagsFragment.SetClose(true);
+        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
+
         Food intent_food = getIntent().getParcelableExtra(FOOD);
         if (intent_food != null){
             edit_food_name.setText(intent_food.Name);
@@ -66,14 +72,17 @@ public class EditFoodActivity extends AppCompatActivity {
                 LaunchChooseTagActivity();
         });
         cancel_button.setOnClickListener(v -> {
-            if (edit_food_name.getText().toString().length() > 0 || tagsFragment.GetTags().Count() > 0 || edit_note.getText().toString().length() > 0){
+            boolean nameChanged = intent_food == null ? edit_food_name.getText().toString().length() > 0 : edit_food_name.getText().toString().equals(intent_food.Name),
+                    tagChanged = intent_food == null ? tagsFragment.GetTags().Count() > 0 : tagsFragment.GetTags().SameCollection(intent_food.GetTags()),
+                    noteChanged = intent_food == null ? edit_note.getText().toString().length() > 0 : edit_note.getText().toString().equals(intent_food.Note);
+            if (nameChanged || tagChanged || noteChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
                 dialog.setMessage("You Have Unsaved Changes. \nDo you want to quit without saving?");
                 dialog.setOnYesListener(view -> finish());
                 dialog.setOnNoListener(view -> {
                     String image_path = Helper.SaveImage(food_image, "draft.jpg");
-                    Settings.settings.FoodDraft = new Food(edit_food_name.getText().toString(), image_path, tagsFragment.GetTags().ToArrayList(), edit_note.getText().toString());
+                    Settings.settings.FoodDraft = new Food(edit_food_name.getText().toString(), image_path, tagsFragment.GetTags(), edit_note.getText().toString());
                     finish();
                 });
             }else{
@@ -90,15 +99,18 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Food Exists!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            ArrayList<Tag> tags = tagsFragment.GetTags().ToArrayList();
-            if (tags.size() == 0){
+            AList<Tag> tags = tagsFragment.GetTags();
+            if (tags.Count() == 0){
                 Toast.makeText(getApplicationContext(), "At least 1 tag!", Toast.LENGTH_SHORT).show();
                 return;
             }
             String note = edit_note.getText().toString();
             Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : "", tags, note);
-            Settings.settings.AddFood(food);
-            setResult(RESULT_OK);
+            if (intent_food == null || intent_food.equals(Settings.settings.FoodDraft)) Settings.settings.AddFood(food);
+            else Settings.settings.UpdateFood(intent_food, food);
+            Intent intent = new Intent();
+            intent.putExtra(FOOD, food);
+            setResult(RESULT_OK, intent);
             finish();
         });
         camera_button.setOnClickListener(v -> {
@@ -113,21 +125,20 @@ public class EditFoodActivity extends AppCompatActivity {
             Intent intent = new Intent(this, FullScreenImageActivity.class);
             startActivity(intent);
         });
+        delete_food_button.setVisibility(intent_food == null ? View.GONE : View.VISIBLE);
         delete_food_button.setOnClickListener(v -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
             dialog.setMessage("Do you want to delete this food?");
             dialog.setOnYesListener(view -> {
-                Settings.settings.RemoveFood(intent_food);
+                if (intent_food.equals(Settings.settings.FoodDraft)) Settings.settings.FoodDraft = null;
+                else Settings.settings.RemoveFood(intent_food);
                 setResult(RESULT_OK);
                 finish();
             });
             dialog.setOnNoListener(view -> finish());
         });
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
-        tagsFragment = new TagsFragment();
-        tagsFragment.SetClose(true);
-        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
     }
 
     private void LaunchChooseTagActivity(){

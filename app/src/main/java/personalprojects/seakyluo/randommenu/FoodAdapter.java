@@ -18,10 +18,9 @@ import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class FoodAdapter extends CustomAdapter<Food> {
     private FoodClickedListener listener;
-    private AList<Food> all;
-    public FoodAdapter(ArrayList<Food> data){
-        all = new AList<>(data);
-        setData(data);
+    private AList<Food> all = new AList<>();
+    public FoodAdapter(AList<Food> data){
+        SetData(data);
     }
     @NonNull
     @Override
@@ -36,6 +35,11 @@ public class FoodAdapter extends CustomAdapter<Food> {
         viewHolder.view.setOnClickListener(v -> {
             if (listener != null) listener.FoodClicked(viewHolder, data.Get(position));
         });
+    }
+
+    public void SetData(AList<Food> data){
+        all.CopyFrom(data);
+        setData(data);
     }
 
     public void Reset() {

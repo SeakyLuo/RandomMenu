@@ -39,7 +39,7 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
         });
     }
 
-    public void SetData(ArrayList<Tag> tags){
+    public void SetData(AList<Tag> tags){
         data.Clear();
         data.Add(new ToggleTag(Tag.AllCategoriesTag, true));
         data.Add(new AList<>(tags).Convert(t -> new ToggleTag(t, false)));

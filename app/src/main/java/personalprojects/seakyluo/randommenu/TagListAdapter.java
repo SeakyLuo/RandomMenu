@@ -16,17 +16,23 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class TagListAdapter extends CustomAdapter<ToggleTag> {
+    private AList<ViewHolder> viewHolders = new AList<>();
     private TagClickedListener listener;
     TagListAdapter(TagClickedListener listener) { this.listener = listener; }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_listed_tag, parent, false));
+        return viewHolders.Add(new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_listed_tag, parent, false)));
     }
 
+
     public boolean Contains(Tag target){
-        return data.Contains(tag -> tag.equals(target));
+        return data.Any(tag -> tag.equals(target));
+    }
+
+    public void SetTagVisible(Tag tag, boolean visible){
+        viewHolders.Get(data.IndexOf(t -> t.equals(tag))).SetCheckButtonVisibility(visible);
     }
 
     class ViewHolder extends CustomViewHolder {

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Models;
+package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import personalprojects.seakyluo.randommenu.FoodCardFragment;
+import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.R;
 
 public class FoodCardDialog extends DialogFragment {
@@ -18,14 +19,10 @@ public class FoodCardDialog extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_food_card, container,false);
-        getFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
-        foodCardFragment.SetFood(CurrentFood);
+        getChildFragmentManager().beginTransaction().add(R.id.dialog_food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
+        foodCardFragment.LoadFood(CurrentFood);
         return view;
     }
 
     public void SetFood(Food food){ CurrentFood = food; }
-    public void UpdateFood(Food food) {
-        SetFood(food);
-        foodCardFragment.SetFood(CurrentFood);
-    }
 }

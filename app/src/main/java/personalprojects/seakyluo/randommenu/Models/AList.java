@@ -1,6 +1,9 @@
 package personalprojects.seakyluo.randommenu.Models;
 
 
+import android.support.annotation.NonNull;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +16,7 @@ import personalprojects.seakyluo.randommenu.Interfaces.ObjectLambda;
 import personalprojects.seakyluo.randommenu.Interfaces.VoidLambda;
 
 public class AList<T> {
-    private ArrayList<T> list = new ArrayList<>();;
+    private ArrayList<T> list = new ArrayList<>();
     public AList(){}
     public AList(Collection<T> collection) { for (T element: collection) Add(element); }
     public AList(AList<T> collection) { Add(collection); }
@@ -26,9 +29,6 @@ public class AList<T> {
         return count;
     }
     public boolean Contains(T element) { return list.contains(element); }
-    public boolean Contains(BooleanLambda<T> lambda){
-        return Any(lambda);
-    }
     public boolean Any(BooleanLambda<T> lambda){
         for (T obj: list) if (lambda.operate(obj)) return true;
         return false;
@@ -85,10 +85,11 @@ public class AList<T> {
     public AList<T> Without(T element){ Remove(element); return this; }
     public void Clear() { list.clear(); }
     public AList<T> Copy(){ return new AList<>(list); }
-    public void CopyFrom(AList<T> collection){ CopyFrom(collection.list); }
-    public void CopyFrom(Collection<T> collection){
+    public AList<T> CopyFrom(AList<T> collection){ return CopyFrom(collection.list); }
+    public AList<T> CopyFrom(Collection<T> collection){
         Clear();
         Add(collection);
+        return this;
     }
     public int IndexOf(T element){ return list.indexOf(element); }
     public int IndexOf(BooleanLambda<T> lambda){
@@ -140,8 +141,14 @@ public class AList<T> {
     public T FindLast(BooleanLambda<T> lambda){
         return Reverse().Find(lambda);
     }
-    public void For(ForLambda lambda) { for (int i = 0; i < Count(); i++) lambda.operate(i); }
-    public void ForEach(VoidLambda<T> lambda){ for (T element: list) lambda.operate(element); }
+    public AList<T> For(ForLambda lambda) {
+        for (int i = 0; i < Count(); i++) lambda.operate(i);
+        return this;
+    }
+    public AList<T> ForEach(VoidLambda<T> lambda){
+        for (T element: list) lambda.operate(element);
+        return this;
+    }
     public <A> AList<A> Convert(ObjectLambda<T, A> lambda){
         AList<A> collection = new AList<A>();
         for (T element: list) collection.Add(lambda.operate(element));
@@ -181,7 +188,13 @@ public class AList<T> {
     }
     private int ModIndex(int index){
         int count = Count();
-        index = index % count;
+        if (count > 0) index = index % count;
         return index < 0 ? index + count : index;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return list.toString();
     }
 }

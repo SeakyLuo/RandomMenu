@@ -99,7 +99,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         tagListAdapter = new TagListAdapter((viewHolder, tag) -> ChooseTag(tag));
         original_tags = getIntent().getParcelableArrayListExtra(TAG);
         HashSet<Tag> original_tag_set = new HashSet<>(original_tags);
-        for (Tag tag : Settings.settings.Tags) tagListAdapter.add(new ToggleTag(tag, original_tag_set.contains(tag)));
+        Settings.settings.Tags.ForEach(tag -> tagListAdapter.add(new ToggleTag(tag, original_tag_set.contains(tag))));
         tagListAdapter.addAll(0, new AList<>(original_tag_set).SetDifference(Settings.settings.Tags).Convert(t -> new ToggleTag(t, true)).ToArrayList());
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
@@ -134,8 +134,9 @@ public class ChooseTagActivity extends AppCompatActivity {
         String tag_name = tag_box.getText().toString();
         if (tag_name.length() > 0){
             Tag tag = new Tag(tag_name);
-            if (!tagListAdapter.Contains(tag)){
-                tagListAdapter.add(new ToggleTag(tag, true));
+            if (!tagsFragment.Contains(tag)){
+                if (tagListAdapter.Contains(tag)) tagListAdapter.SetTagVisible(tag, true);
+                else tagListAdapter.add(new ToggleTag(tag, true));
                 tagsFragment.AddTag(tag);
             }
             tag_box.setText("");

@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 
 public class Tag implements Comparable, Parcelable {
     public static final String TABLE_NAME = "Tag", COLUMN_NAME = "Name", COLUMN_COUNT = "count";
-    public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" + COLUMN_NAME +" text PRIMARY KEY)";
+    public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" + COLUMN_NAME +" text PRIMARY KEY," + COLUMN_COUNT + " integer)";
     public static String AllCategories = "All Categories";
     public static Tag AllCategoriesTag = new Tag(AllCategories);
     public static final int MAX_TAGS = 10;
@@ -19,8 +19,10 @@ public class Tag implements Comparable, Parcelable {
         this.Name = name;
     }
 
-    public int More() { return ++Counter; }
-    public int Less() { return --Counter; }
+    public Tag More() { ++Counter; return this; }
+    public Tag Less() { --Counter; return this; }
+
+    public boolean IsEmpty() { return Counter == 0; }
 
     @Override
     public boolean equals(@Nullable Object obj) {
@@ -55,7 +57,7 @@ public class Tag implements Comparable, Parcelable {
     @Override
     public int compareTo(Object o) {
         Tag tag = (Tag)o;
-        return Counter > tag.Counter ? Counter - tag.Counter : Name.compareTo(tag.Name);
+        return Counter == tag.Counter ? Name.compareTo(tag.Name) : Counter - tag.Counter ;
     }
 
     @Override

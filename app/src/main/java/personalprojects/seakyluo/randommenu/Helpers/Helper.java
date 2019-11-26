@@ -116,4 +116,11 @@ public class Helper {
         }
         return folder;
     }
+
+    public static void Clear(Context context){
+        Settings.settings = new Settings();
+        Save(context);
+        for (File file: ImageFolder.listFiles())
+            file.delete();
+    }
 }

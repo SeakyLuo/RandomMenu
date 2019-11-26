@@ -13,12 +13,10 @@ public class ToggleTag extends Tag {
         this.visible = visible;
     }
 
-    public Tag ToTag() { return new Tag(this.Name); }
     public boolean Toggle() { return visible = !visible; }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj instanceof Tag) return ToTag().equals(obj);
-        return false;
+        return obj instanceof Tag && super.equals(obj);
     }
 }
