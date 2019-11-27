@@ -40,22 +40,24 @@ public class RandomFragment extends Fragment {
             NextFood();
         });
         getFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
-        food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
+        Reset();
         if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(RandomPop());
         return view;
     }
 
     private Food NextFood(){
         if (food_pool.IsEmpty()){
-            food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
+            Reset();
             Toast.makeText(getContext(), "Reaches End", Toast.LENGTH_SHORT).show();
         }
         return food_pool.IsEmpty() ? null : foodCardFragment.SetFood(RandomPop());
     }
 
     public Food RandomPop(){
-        AList<Food> filtered = food_pool.Filter(f -> !Menu.Contains(f));
-        return filtered.Pop(random.nextInt(filtered.Count()));
+        return food_pool.Pop(random.nextInt(food_pool.Count()));
     }
 
+    private void Reset(){
+        food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
+    }
 }

@@ -32,6 +32,7 @@ public class SettingsFragment extends Fragment {
             Settings.settings.Tags.Clear();
             for (Map.Entry<Tag, Integer> pair: tags.ToHashMap().entrySet())
                 Settings.settings.Tags.Add(new Tag(pair.getKey().Name, pair.getValue()));
+            Settings.settings.SortTags();
             Helper.Save(getContext());
             Toast.makeText(getContext(), "Data Adjusted!", Toast.LENGTH_SHORT).show();
         });

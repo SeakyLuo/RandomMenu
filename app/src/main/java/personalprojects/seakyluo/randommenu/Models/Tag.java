@@ -28,8 +28,12 @@ public class Tag implements Comparable, Parcelable {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (!(obj instanceof Tag)) return false;
-        return Name.equals(((Tag)obj).Name);
+        return obj instanceof Tag && Name.equals(((Tag)obj).Name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Name.hashCode();
     }
 
     @NonNull

@@ -1,10 +1,6 @@
 package personalprojects.seakyluo.randommenu.Models;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,10 +11,11 @@ import java.util.HashSet;
 import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
 import personalprojects.seakyluo.randommenu.Interfaces.ForLambda;
 import personalprojects.seakyluo.randommenu.Interfaces.ObjectLambda;
+import personalprojects.seakyluo.randommenu.Interfaces.ReduceLambda;
 import personalprojects.seakyluo.randommenu.Interfaces.VoidLambda;
+import personalprojects.seakyluo.randommenu.Interfaces.ZipVoidLambda;
 
-public class AList<T> {
-    private ArrayList<T> list = new ArrayList<>();
+public class AList<T> extends IList<T> {
     public AList(){}
     public AList(Collection<T> collection) { for (T element: collection) Add(element); }
     public AList(AList<T> collection) { Add(collection); }
@@ -68,6 +65,7 @@ public class AList<T> {
     public boolean Remove(T element) { return list.remove(element); }
     public boolean Remove(BooleanLambda<T> lambda){ return list.removeIf(lambda::operate); }
     public boolean Remove(Collection<T> collection){ return list.removeAll(collection); }
+    public boolean Remove(AList<T> collection) { return list.removeAll(collection.list); }
     public T Pop() {
         return Pop(-1);
     }
@@ -202,8 +200,26 @@ public class AList<T> {
     public HashMap<T, Integer> ToHashMap(){
         HashMap<T, Integer> hashMap = new HashMap<>();
         for (T element: list)
-            hashMap.put(element, hashMap.getOrDefault(element, 0));
+            hashMap.put(element, hashMap.getOrDefault(element, 0) + 1);
         return hashMap;
+    }
+    public <A> ZipList<T, A> Zip(Collection<A> zip){
+        return new ZipList(this, zip);
+    }
+    public <A> ZipList<T, A> Zip(IList<A> zip){
+        return new ZipList(this, zip);
+    }
+    public AList<T> Enumerate(ZipVoidLambda<Integer, T> lambda) {
+        for (int i = 0; i < Count(); i++)
+            lambda.operate(i, Get(i));
+        return this;
+    }
+    public T Reduce(ReduceLambda<T> lambda){
+        if (Count() == 0) return null;
+        T start = list.get(0);
+        for (T element: list.subList(1, Count()))
+            start = lambda.operate(start, element);
+        return start;
     }
     private int ModIndex(int index){
         int count = Count();

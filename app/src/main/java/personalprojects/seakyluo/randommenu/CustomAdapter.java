@@ -23,7 +23,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     public void setActivity(Activity activity) { this.activity = activity; }
 
     public void setData(AList<T> data){
-        this.data = data;
+        this.data.CopyFrom(data);
         notifyDataSetChanged();
     }
     public void setData(List<T> data){

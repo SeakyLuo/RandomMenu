@@ -6,10 +6,7 @@ import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
@@ -20,6 +17,7 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
     private AList<ViewHolder> viewHolders = new AList<>();
     public SelectTagAdapter(TagClickedListener listener) { this.listener = listener; }
     private static int HighlightColor = Color.parseColor("#0078D7");
+    private boolean IsLoaded = false;
 
     @NonNull
     @Override
@@ -32,11 +30,13 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
         super.onBindViewHolder(holder, position);
         ViewHolder viewHolder = (ViewHolder)holder;
         viewHolder.view.setOnClickListener(v -> {
-            viewHolders.ForEach(vh -> vh.setHighlight(false));
-            viewHolder.setHighlight(true);
-            ToggleTag tag = data.Get(position);
-            listener.TagClicked(holder, tag);
+            viewHolders.Enumerate((i, vh) ->  vh.SetHighlight(i == position));
+            listener.TagClicked(holder, data.Get(position));
         });
+    }
+
+    public void HighlightTag(Tag tag){
+        viewHolders.ForEach(vh -> vh.SetHighlight(vh.data.equals(tag)));
     }
 
     public void SetData(AList<Tag> tags){
@@ -58,10 +58,10 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
         @Override
         void setData(ToggleTag data) {
             tag_name.setText(data.equals(Tag.AllCategoriesTag) ? data.Name : data.toString());
-            setHighlight(data.visible);
+            SetHighlight(data.visible);
         }
 
-        void setHighlight(boolean isHighlight){
+        void SetHighlight(boolean isHighlight){
             if (isHighlight){
                 background.setBackgroundColor(HighlightColor);
                 tag_name.setTextColor(Color.WHITE);

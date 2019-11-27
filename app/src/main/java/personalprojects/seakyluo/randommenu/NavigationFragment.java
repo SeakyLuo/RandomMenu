@@ -24,6 +24,8 @@ public class NavigationFragment extends Fragment {
     private TextView title_text_view;
     private SelectTagAdapter selectTagAdapter;
     private FoodAdapter foodAdapter;
+    private boolean IsLoaded = false;
+    private Tag selectedTag;
 
     @Nullable
     @Override
@@ -40,22 +42,43 @@ public class NavigationFragment extends Fragment {
 
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        selectTagAdapter = new SelectTagAdapter(((viewHolder, tag) ->  SelectTag(tag)));
-        selectTagAdapter.SetData(Settings.settings.Tags);
+        selectTagAdapter = new SelectTagAdapter(((viewHolder, tag) -> selectTag(tag)));
         masterView.setAdapter(selectTagAdapter);
 
         RecyclerView detailView = view.findViewById(R.id.detailView);
-        foodAdapter = new FoodAdapter(Settings.settings.Foods);
+        foodAdapter = new FoodAdapter();
         foodAdapter.SetOnFoodClickedListener(((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
+            dialog.SetFoodEditedListener(((before, after) -> SetData()));
             dialog.showNow(getFragmentManager(), AskYesNoDialog.WARNING);
         }));
         detailView.setAdapter(foodAdapter);
+
+        IsLoaded = true;
+        SetData();
+        if (selectedTag != null){
+            selectTag(selectedTag);
+            selectTagAdapter.HighlightTag(selectedTag);
+        }
         return view;
     }
 
-    public void SelectTag(ToggleTag tag){
+    public void SetData(){
+        if (!IsLoaded) return;
+        selectTagAdapter.SetData(Settings.settings.Tags);
+        foodAdapter.SetData(Settings.settings.Foods);
+    }
+
+    public void SelectTag(Tag tag){
+        selectedTag = tag;
+        if (!IsLoaded) return;
+        selectTagAdapter.HighlightTag(tag);
+        selectTag(tag);
+    }
+
+    private void selectTag(Tag tag){
+        selectedTag = tag;
         if (tag.equals(Tag.AllCategoriesTag)){
             title_text_view.setText(Tag.Format(tag.Name, Settings.settings.Foods.Count()));
             foodAdapter.Reset();
@@ -69,7 +92,6 @@ public class NavigationFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        foodAdapter.SetData(Settings.settings.Foods);
-        selectTagAdapter.SetData(Settings.settings.Tags);
+        SetData();
     }
 }

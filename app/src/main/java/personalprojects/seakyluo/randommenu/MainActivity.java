@@ -1,6 +1,8 @@
 package personalprojects.seakyluo.randommenu;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,12 +18,14 @@ public class MainActivity extends AppCompatActivity {
     private NavigationFragment navigationFragment;
     private SettingsFragment settingsFragment;
     private String lastTag;
+    private BottomNavigationView bottomNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navView = findViewById(R.id.bottom_navigation);
-        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.navigation_navigation:
                         if (navigationFragment == null) navigationFragment = new NavigationFragment();
+                        navigationFragment.SetData();
                         ShowFragment(navigationFragment, NavigationFragment.TAG, lastTag);
                         return true;
                     case R.id.navigation_settings:
@@ -55,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             randomFragment = new RandomFragment();
             navigationFragment = new NavigationFragment();
             settingsFragment = new SettingsFragment();
-            navView.setSelectedItemId(R.id.navigation_random);
+            bottomNavigationView.setSelectedItemId(R.id.navigation_random);
         }
     }
 
@@ -74,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         try { fragmentManager.putFragment(outState, NavigationFragment.TAG, navigationFragment); }catch (IllegalStateException | NullPointerException ignored){}
         try { fragmentManager.putFragment(outState, SettingsFragment.TAG, settingsFragment); }catch (IllegalStateException | NullPointerException ignored){}
     }
-
 
     protected void ShowFragment(Fragment fragment, String tag, String lastTag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -95,5 +99,33 @@ public class MainActivity extends AppCompatActivity {
             transaction.add(R.id.content_view, fragment, tag);
         }
         transaction.commit();
+    }
+
+    public void ShowFragment(String tag){
+        if (tag.equals(lastTag)) return;
+        switch (tag){
+            case RandomFragment.TAG:
+                bottomNavigationView.setSelectedItemId(R.id.navigation_random);
+                break;
+            case NavigationFragment.TAG:
+                bottomNavigationView.setSelectedItemId(R.id.navigation_navigation);
+                break;
+            case SettingsFragment.TAG:
+                bottomNavigationView.setSelectedItemId(R.id.navigation_settings);
+                break;
+        }
+    }
+
+    public Fragment GetCurrentFragment(){
+        switch (lastTag){
+            case RandomFragment.TAG:
+                return randomFragment;
+            case NavigationFragment.TAG:
+                return navigationFragment;
+            case SettingsFragment.TAG:
+                return settingsFragment;
+            default:
+                return null;
+        }
     }
 }

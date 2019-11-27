@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -25,6 +24,8 @@ public class FoodCardFragment extends Fragment {
     private ImageView food_image;
     private ImageButton more_button;
     private Food CurrentFood;
+    private FoodEditedListener foodEditedListener;
+    private TagClickedListener tagClickedListener;
 
     @Nullable
     @Override
@@ -35,6 +36,13 @@ public class FoodCardFragment extends Fragment {
         food_image = view.findViewById(R.id.food_image);
         more_button = view.findViewById(R.id.more_button);
 
+        tagsFragment.SetTagClickedListener((viewHolder, tag) -> {
+            MainActivity activity = (MainActivity)getActivity();
+            activity.ShowFragment(NavigationFragment.TAG);
+            NavigationFragment navigationFragment = (NavigationFragment) activity.GetCurrentFragment();
+            navigationFragment.SelectTag(tag);
+            if (tagClickedListener != null) tagClickedListener.TagClicked(viewHolder, tag);
+        });
         food_image.setOnClickListener(v -> {
             FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
             startActivity(new Intent(getContext(), FullScreenImageActivity.class));
@@ -77,11 +85,22 @@ public class FoodCardFragment extends Fragment {
         return food;
     }
 
+    public void SetFoodEditedListener(FoodEditedListener listener) { this.foodEditedListener = listener; }
+    public void SetTagClickedListener(TagClickedListener listener) { this.tagClickedListener = listener; }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        if (data != null)
-            setFood(CurrentFood = data.getParcelableExtra(EditFoodActivity.FOOD));
+        if (data != null){
+            Food newFood = data.getParcelableExtra(EditFoodActivity.FOOD);
+            setFood(newFood);
+            if (foodEditedListener != null) foodEditedListener.FoodEdited(CurrentFood, newFood);
+            CurrentFood = newFood;
+        }
     }
+}
+
+interface FoodEditedListener{
+    void FoodEdited(Food before, Food after);
 }

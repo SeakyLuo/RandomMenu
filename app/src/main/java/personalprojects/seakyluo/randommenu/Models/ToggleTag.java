@@ -17,6 +17,6 @@ public class ToggleTag extends Tag {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof Tag && super.equals(obj);
+        return super.equals(obj);
     }
 }

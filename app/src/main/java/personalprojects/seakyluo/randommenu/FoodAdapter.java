@@ -1,6 +1,5 @@
 package personalprojects.seakyluo.randommenu;
 
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +18,6 @@ import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 public class FoodAdapter extends CustomAdapter<Food> {
     private FoodClickedListener listener;
     private AList<Food> all = new AList<>();
-    public FoodAdapter(AList<Food> data){
-        SetData(data);
-    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,7 +43,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
         notifyDataSetChanged();
     }
 
-    public void Filter(ToggleTag tag){
+    public void Filter(Tag tag){
         data.CopyFrom(all.Filter(f -> f.HasTag(tag)));
         notifyDataSetChanged();
     }

@@ -28,16 +28,25 @@ public class Settings {
 
     public void RemoveFood(Food food){
         Foods.Remove(food);
-        Tags.CopyFrom(Tags.Filter(food::HasTag).ForEach(Tag::Less).Filter(Tag::IsEmpty));
+        Tags.Remove(Tags.Filter(food::HasTag).ForEach(Tag::Less).Filter(Tag::IsEmpty));
         SortTags();
     }
 
     public void SortTags(){ Tags.Sort(Tag::compareTo).Reverse(); }
 
     public void UpdateFood(Food before, Food after){
-        int index = Foods.IndexOf(before);
-        RemoveFood(before);
-        AddFood(after, index);
+        Foods.Set(after, Foods.IndexOf(before));
+        AList<Tag> a = after.GetTags(), b = before.GetTags(),
+                   add = a.SetDifference(b), remove = b.SetDifference(a);
+        Tags.ForEach(t -> {
+            if (remove.Contains(t))
+                t.Less();
+        }).Remove(Tag::IsEmpty);
+        Tags.ForEach(t -> {
+            if (add.Contains(t))
+                t.More();
+        });
+        SortTags();
     }
 
     public static Settings FromJson(String json){

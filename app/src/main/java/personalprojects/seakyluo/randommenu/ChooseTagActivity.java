@@ -100,7 +100,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         original_tags = getIntent().getParcelableArrayListExtra(TAG);
         HashSet<Tag> original_tag_set = new HashSet<>(original_tags);
         Settings.settings.Tags.ForEach(tag -> tagListAdapter.add(new ToggleTag(tag, original_tag_set.contains(tag))));
-        tagListAdapter.addAll(0, new AList<>(original_tag_set).SetDifference(Settings.settings.Tags).Convert(t -> new ToggleTag(t, true)).ToArrayList());
+//        tagListAdapter.addAll(0, new AList<>(original_tag_set).SetDifference(Settings.settings.Tags).Convert(t -> new ToggleTag(t, true)).ToArrayList());
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
         tag_recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -111,7 +111,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         tagsFragment.SetLinear(true);
         tagsFragment.SetClose(true);
         tagsFragment.SetTags(original_tags);
-        tagsFragment.SetTagClickedListener(((viewHolder, tag) -> {
+        tagsFragment.SetTagCloseListener(((viewHolder, tag) -> {
             ((TagAdapter.ViewHolder)viewHolder).SetCloseButtonVisibility(tag.Toggle());
             tagListAdapter.set(tag, tagListAdapter.getData().IndexOf(tag));
         }));
@@ -147,9 +147,9 @@ public class ChooseTagActivity extends AppCompatActivity {
 
     private void FinishActivity(){
         Intent intent = new Intent();
-        ArrayList<Tag> tags = tagsFragment.GetTags().ToArrayList();
-        intent.putExtra(TAG, tags);
-        if (tags.size() == 0) setResult(RESULT_CANCELED);
+        AList<Tag> tags = tagsFragment.GetTags();
+        intent.putExtra(TAG, tags.ToArrayList());
+        if (tags.SameCollection(original_tags)) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);
         finish();
     }
