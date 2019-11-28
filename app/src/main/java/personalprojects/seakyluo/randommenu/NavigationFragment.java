@@ -55,12 +55,10 @@ public class NavigationFragment extends Fragment {
 
         IsLoaded = true;
         SetData();
-        if (pendingTag == null){
-            selectTag(Tag.AllCategoriesTag);
-        }else{
-            selectTag(pendingTag);
-            pendingTag = null;
-        }
+        if (pendingTag == null) pendingTag = Tag.AllCategoriesTag;
+        selectTag(pendingTag);
+        selectTagAdapter.HighlightTag(pendingTag);
+        pendingTag = null;
         return view;
     }
 
@@ -72,12 +70,14 @@ public class NavigationFragment extends Fragment {
 
     public void SelectTag(Tag tag){
         pendingTag = tag;
-        if (IsLoaded) selectTag(tag);
+        if (!IsLoaded) return;
+        selectTag(tag);
+        selectTagAdapter.HighlightTag(tag);
     }
 
     private void selectTag(Tag tag){
+        if (tag.equals(lastTag)) return;
         lastTag = tag;
-        selectTagAdapter.HighlightTag(tag);
         if (tag.equals(Tag.AllCategoriesTag)){
             title_text_view.setText(Tag.Format(Tag.AllCategories, Settings.settings.Foods.Count()));
             foodAdapter.Reset();
@@ -99,6 +99,8 @@ public class NavigationFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK)
             SetData();
-        SelectTag(lastTag);
+        if (!lastTag.equals(Tag.AllCategoriesTag) && !Settings.settings.Tags.Contains(lastTag)) lastTag = Tag.AllCategoriesTag;
+        selectTag(lastTag);
+        selectTagAdapter.HighlightTag(lastTag);
     }
 }

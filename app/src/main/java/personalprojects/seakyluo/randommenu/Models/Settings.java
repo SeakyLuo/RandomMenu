@@ -41,8 +41,9 @@ public class Settings {
         }).Remove(Tag::IsEmpty);
         Tags.ForEach(t -> {
             if (add.Contains(t))
-                t.More();
+                add.Remove(t.More());
         });
+        Tags.AddAll(add.ForEach(Tag::More));
         SortTags();
     }
 

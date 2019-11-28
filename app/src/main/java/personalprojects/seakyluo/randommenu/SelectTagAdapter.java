@@ -43,13 +43,11 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
 
     public void HighlightTag(Tag tag){
         ViewHolder viewHolder = (ViewHolder) viewHolders.Find(vh -> vh.data.equals(tag));
-        if (viewHolder == null){
-            pendingTag = tag;
-        }else{
-            HighlightTag(viewHolder);
-        }
+        if (viewHolder == null) pendingTag = tag;
+        else HighlightTag(viewHolder);
     }
     private void HighlightTag(ViewHolder viewHolder){
+        if (viewHolder == lastTag) return;
         if (lastTag != null) lastTag.SetHighlight(false);
         (lastTag = viewHolder).SetHighlight(true);
     }
