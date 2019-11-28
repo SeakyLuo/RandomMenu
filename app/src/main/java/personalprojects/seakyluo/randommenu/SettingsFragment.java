@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.Map;
+import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
@@ -24,12 +25,15 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         view.findViewById(R.id.adjust_data_button).setOnClickListener(v -> {
-            AList<Tag> tags = new AList<>();
-            Settings.settings.Foods.ForEach(f -> tags.AddAll(f.GetTags()));
-            Settings.settings.Tags.Clear();
-            for (Map.Entry<Tag, Integer> pair: tags.ToHashMap().entrySet())
-                Settings.settings.Tags.Add(new Tag(pair.getKey().Name, pair.getValue()));
-            Settings.settings.SortTags();
+//            AList<Tag> tags = new AList<>();
+//            Settings.settings.Foods.ForEach(f -> tags.AddAll(f.GetTags()));
+//            Settings.settings.Tags.Clear();
+//            for (Map.Entry<Tag, Integer> pair: tags.ToHashMap().entrySet())
+//                Settings.settings.Tags.Add(new Tag(pair.getKey().Name, pair.getValue()));
+//            Settings.settings.SortTags();
+
+//            Settings.settings.Favorites.ForEach(f -> f.SetIsFavorite(true));
+//            Settings.settings.Foods.ForEach(f -> f.SetIsFavorite(Settings.settings.Favorites.Contains(f)));
             Helper.Save(getContext());
             Toast.makeText(getContext(), "Data Adjusted!", Toast.LENGTH_SHORT).show();
         });

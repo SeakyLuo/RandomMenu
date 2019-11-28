@@ -113,7 +113,11 @@ public class EditFoodActivity extends AppCompatActivity {
                 Settings.settings.AddFood(food);
                 Settings.settings.FoodDraft = null;
             }
-            else Settings.settings.UpdateFood(intent_food, food);
+            else{
+                if (intent_food.HasImage() && !intent_food.ImagePath.equals(food.ImagePath))
+                    new File(intent_food.ImagePath).delete();
+                Settings.settings.UpdateFood(intent_food, food);
+            }
             Intent intent = new Intent();
             intent.putExtra(FOOD, food);
             setResult(RESULT_OK, intent);

@@ -15,7 +15,7 @@ import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class FoodAdapter extends CustomAdapter<Food> {
-    private FoodClickedListener listener;
+    private FoodClickedListener listener, longClickListener;
     private AList<Food> all = new AList<>();
     @NonNull
     @Override
@@ -24,10 +24,17 @@ public class FoodAdapter extends CustomAdapter<Food> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        ((ViewHolder)holder).view.setOnClickListener(v -> {
-            if (listener != null) listener.FoodClicked(holder, data.Get(position));
+        ViewHolder viewHolder = (ViewHolder) holder;
+        Food food = data.Get(position);
+        viewHolder.view.setOnClickListener(v -> {
+            if (listener != null) listener.FoodClicked(holder, food);
+        });
+        viewHolder.view.setOnLongClickListener(v -> {
+            boolean hasListener = longClickListener != null;
+           if (hasListener) longClickListener.FoodClicked(holder, food);
+           return hasListener;
         });
     }
 
@@ -47,10 +54,12 @@ public class FoodAdapter extends CustomAdapter<Food> {
     }
 
     public void SetOnFoodClickedListener(FoodClickedListener listener){ this.listener = listener; }
+    public void SetOnFoodLongClickListener(FoodClickedListener listener){ this.longClickListener = listener; }
 
     class ViewHolder extends CustomViewHolder {
         private ImageView food_image;
         private TextView food_name;
+        private boolean dataSet = false;
         ViewHolder(View view) {
             super(view);
             food_name = view.findViewById(R.id.food_name);

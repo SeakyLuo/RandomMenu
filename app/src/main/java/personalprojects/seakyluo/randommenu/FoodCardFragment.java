@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.Models.Settings;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -25,7 +27,7 @@ public class FoodCardFragment extends Fragment {
     private ImageView food_image;
     private ImageButton more_button;
     private Food CurrentFood;
-    private FoodEditedListener foodEditedListener;
+    private FoodEditedListener foodEditedListener, foodLikedChangedListener;
     private TagClickedListener tagClickedListener;
 
     @Nullable
@@ -38,7 +40,8 @@ public class FoodCardFragment extends Fragment {
         more_button = view.findViewById(R.id.more_button);
 
         tagsFragment.SetTagClickedListener((viewHolder, tag) -> {
-            if ((getActivity() instanceof MainActivity)) getActivity().finish();
+            FragmentActivity currentActivity = getActivity();
+            if (!(currentActivity instanceof MainActivity)) currentActivity.finish();
             MainActivity activity = (MainActivity)getActivity();
             activity.ShowFragment(NavigationFragment.TAG);
             NavigationFragment navigationFragment = (NavigationFragment) activity.GetCurrentFragment();
@@ -53,6 +56,7 @@ public class FoodCardFragment extends Fragment {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
             helper.removeItem(CurrentFood.IsFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
+                Food before = CurrentFood.Copy();
                 switch (menuItem.getItemId()){
                     case R.id.edit_food_item:
                         Intent intent = new Intent(getContext(), EditFoodActivity.class);
@@ -61,9 +65,13 @@ public class FoodCardFragment extends Fragment {
                         return true;
                     case R.id.like_food_item:
                         CurrentFood.SetIsFavorite(true);
+                        Settings.settings.SetFavorite(CurrentFood, true);
+                        foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
                     case R.id.dislike_food_item:
                         CurrentFood.SetIsFavorite(false);
+                        Settings.settings.SetFavorite(CurrentFood, false);
+                        foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
                 }
                 return false;
@@ -89,6 +97,7 @@ public class FoodCardFragment extends Fragment {
 
     public void SetFoodEditedListener(FoodEditedListener listener) { this.foodEditedListener = listener; }
     public void SetTagClickedListener(TagClickedListener listener) { this.tagClickedListener = listener; }
+    public void SetFoodLikedChangedListener(FoodEditedListener listener){ this.foodLikedChangedListener = listener; }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

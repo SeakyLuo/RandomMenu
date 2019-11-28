@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,10 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             food_image = view.findViewById(R.id.food_image);
             food_name = view.findViewById(R.id.food_name);
             fragment = new TagsFragment();
+            food_image.setOnClickListener(v -> {
+                FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
+                activity.startActivity(new Intent(activity, FullScreenImageActivity.class));
+            });
         }
 
         @Override

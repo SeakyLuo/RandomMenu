@@ -133,6 +133,12 @@ public class AList<T> extends IList<T> {
     }
     public T Get(int index){ return list.get(ModIndex(index)); }
     public void Set(T element, int index) { list.set(ModIndex(index), element); }
+    public T Find(T target){
+        for (T element: list)
+            if (element.equals(target))
+                return element;
+        return null;
+    }
     public T Find(BooleanLambda<T> lambda){
         for (T element: list)
             if (lambda.operate(element))

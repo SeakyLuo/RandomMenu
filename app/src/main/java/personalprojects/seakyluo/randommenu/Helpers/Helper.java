@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -27,6 +28,7 @@ public class Helper {
     public static File ImageFolder;
     public static Context context;
     public static Bitmap DefaultFoodImage;
+    private static HashMap<String, Bitmap> foodImageCache = new HashMap<>();
 
     public static void Init(Context context){
         Helper.context = context;
@@ -42,10 +44,17 @@ public class Helper {
 
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
 
-    public static Bitmap GetFoodBitmap(Food food){
-        return GetFoodBitmap(food.ImagePath);
+    public static Bitmap GetFoodBitmap(Food food){ return GetFoodBitmap(food.ImagePath); }
+    public static Bitmap GetFoodBitmap(String path){
+        if (IsNullOrEmpty(path)) return DefaultFoodImage;
+        Bitmap image;
+        if (foodImageCache.containsKey(path)) image = foodImageCache.get(path);
+        else {
+            image = BitmapFactory.decodeFile(path);
+            foodImageCache.put(path, image);
+        }
+        return image;
     }
-    public static Bitmap GetFoodBitmap(String path){ return IsNullOrEmpty(path) ? DefaultFoodImage : BitmapFactory.decodeFile(path); }
     public static Bitmap GetFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
     public static String SaveImage(ImageView imageView, String filename){
         Bitmap image = GetFoodBitmap(imageView);

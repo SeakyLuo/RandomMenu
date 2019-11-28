@@ -46,6 +46,13 @@ public class Settings {
         SortTags();
     }
 
+    public void SetFavorite(Food food, boolean favorite){
+        Food target = Foods.Find(food);
+        target.SetIsFavorite(favorite);
+        if (favorite) Favorites.Add(target, 0);
+        else Favorites.Remove(target);
+    }
+
     public static Settings FromJson(String json){
         Gson gson = new Gson();
         try{

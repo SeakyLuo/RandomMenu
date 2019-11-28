@@ -45,13 +45,18 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         for (int i = 0; i < list.size(); i++) addOne(list.get(i));
         notifyItemRangeInserted(count, list.size());
     }
+    public void add(AList<T> list){
+        int count = data.Count();
+        for (int i = 0; i < list.Count(); i++) addOne(list.Get(i));
+        notifyItemRangeInserted(count, list.Count());
+    }
     public void add(T[] list){
         int count = data.Count();
         for (int i = 0; i < list.length; i++) addOne(list[i]);
         notifyItemRangeInserted(count, list.length);
     }
-    public void addAll(int index, List<T> data){
-        this.data.AddAll(data, index);
+    public void add(int index, AList<T> list){
+        data.AddAll(list, index);
         notifyItemRangeInserted(index, getItemCount());
     }
     public void add(T object){
@@ -96,12 +101,10 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
 
     abstract class CustomViewHolder extends RecyclerView.ViewHolder{
         protected View view;
-        protected Context context;
         protected T data;
         CustomViewHolder(@NonNull View view) {
             super(view);
             this.view = view;
-            this.context = view.getContext();
         }
         abstract void setData(T data);
     }

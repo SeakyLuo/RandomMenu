@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.Models.ToggleTag;
@@ -34,12 +35,7 @@ public class NavigationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_navigation, container, false);
         title_text_view = view.findViewById(R.id.title_text_view);
         FloatingActionButton fab = view.findViewById(R.id.navi_fab);
-        fab.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), EditFoodActivity.class);
-            intent.putExtra(EditFoodActivity.FOOD, Settings.settings.FoodDraft);
-            startActivityForResult(intent, EditFoodActivity.FOOD_CODE);
-            getActivity().overridePendingTransition(R.anim.push_down_in, R.anim.push_up_out);
-        });
+        fab.setOnClickListener(v -> EditFood(null));
 
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
@@ -54,6 +50,7 @@ public class NavigationFragment extends Fragment {
             dialog.SetFoodEditedListener((before, after) -> SetData());
             dialog.showNow(getFragmentManager(), AskYesNoDialog.WARNING);
         });
+        foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> EditFood(food));
         detailView.setAdapter(foodAdapter);
 
         IsLoaded = true;
@@ -82,12 +79,19 @@ public class NavigationFragment extends Fragment {
         lastTag = tag;
         selectTagAdapter.HighlightTag(tag);
         if (tag.equals(Tag.AllCategoriesTag)){
-            title_text_view.setText(Tag.Format(tag.Name, Settings.settings.Foods.Count()));
+            title_text_view.setText(Tag.Format(Tag.AllCategories, Settings.settings.Foods.Count()));
             foodAdapter.Reset();
         }else{
-            title_text_view.setText(tag.Name);
+            title_text_view.setText(tag.toString());
             foodAdapter.Filter(tag);
         }
+    }
+
+    private void EditFood(Food food){
+        Intent intent = new Intent(getContext(), EditFoodActivity.class);
+        if (food != null) intent.putExtra(EditFoodActivity.FOOD, food);
+        startActivityForResult(intent, EditFoodActivity.FOOD_CODE);
+        getActivity().overridePendingTransition(R.anim.push_down_in, R.anim.push_up_out);
     }
 
     @Override

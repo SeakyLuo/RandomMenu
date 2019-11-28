@@ -29,13 +29,14 @@ public class Food implements Parcelable {
         DateAdded = Calendar.getInstance().getTimeInMillis();
     }
 
-    public void SetIsFavorite(boolean isFavorite){
-        if (IsFavorite = isFavorite){
-            Settings.settings.Favorites.Remove(this);
-        }else{
-            Settings.settings.Favorites.Add(this);
-        }
+    public Food Copy(){
+        Food food = new Food(Name, ImagePath, Tags, Note);
+        food.IsFavorite = IsFavorite;
+        food.DateAdded = DateAdded;
+        return food;
     }
+
+    public void SetIsFavorite(boolean isFavorite){ IsFavorite = isFavorite; }
     public boolean IsFavorite() { return IsFavorite; }
 
     public boolean HasImage() { return !Helper.IsNullOrEmpty(ImagePath); }

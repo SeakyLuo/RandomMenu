@@ -100,11 +100,9 @@ public class ChooseTagActivity extends AppCompatActivity {
         original_tags = getIntent().getParcelableArrayListExtra(TAG);
         HashSet<Tag> original_tag_set = new HashSet<>(original_tags);
         Settings.settings.Tags.ForEach(tag -> tagListAdapter.add(new ToggleTag(tag, original_tag_set.contains(tag))));
-//        tagListAdapter.addAll(0, new AList<>(original_tag_set).SetDifference(Settings.settings.Tags).Convert(t -> new ToggleTag(t, true)).ToArrayList());
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
         tag_recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        tagListAdapter.setActivity(this);
         tag_recycler_view.setAdapter(tagListAdapter);
 
         tagsFragment = new TagsFragment();

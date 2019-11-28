@@ -6,5 +6,7 @@ An Android app that records your cooking list.
 
 2. Don't appear in recent pop.
 
+3. Rename tag on long click.
+
 # TO FIX
 1. onActivityResult not called.

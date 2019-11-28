@@ -72,7 +72,7 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
 
         @Override
         void setData(ToggleTag data) {
-            tag_name.setText(data.equals(Tag.AllCategoriesTag) ? data.Name : data.toString());
+            tag_name.setText(data.Name);
             SetHighlight(data.visible);
         }
 
