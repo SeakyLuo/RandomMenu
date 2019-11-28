@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
@@ -68,7 +70,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
         @Override
         void setData(Food data) {
             food_name.setText(data.Name);
-            food_image.setImageBitmap(Helper.GetFoodBitmap(data.ImagePath));
+            Glide.with(view).load(data.ImagePath).into(food_image);
         }
     }
 }

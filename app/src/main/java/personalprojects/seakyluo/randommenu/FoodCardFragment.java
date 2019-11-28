@@ -14,9 +14,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.Models.Tag;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -28,7 +32,7 @@ public class FoodCardFragment extends Fragment {
     private ImageButton more_button;
     private Food CurrentFood;
     private FoodEditedListener foodEditedListener, foodLikedChangedListener;
-    private TagClickedListener tagClickedListener;
+    private OnDataItemClickedListener<Tag> tagClickedListener;
 
     @Nullable
     @Override
@@ -46,7 +50,7 @@ public class FoodCardFragment extends Fragment {
             activity.ShowFragment(NavigationFragment.TAG);
             NavigationFragment navigationFragment = (NavigationFragment) activity.GetCurrentFragment();
             navigationFragment.SelectTag(tag);
-            if (tagClickedListener != null) tagClickedListener.TagClicked(viewHolder, tag);
+            if (tagClickedListener != null) tagClickedListener.Click(viewHolder, tag);
         });
         food_image.setOnClickListener(v -> {
             FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
@@ -84,7 +88,7 @@ public class FoodCardFragment extends Fragment {
 
     private void setFood(Food food){
         food_name.setText(food.Name);
-        food_image.setImageBitmap(Helper.GetFoodBitmap(food));
+        Glide.with(this).load(food.ImagePath).into(food_image);
         tagsFragment.SetData(food.GetTags(), false);
     }
 
@@ -96,7 +100,7 @@ public class FoodCardFragment extends Fragment {
     }
 
     public void SetFoodEditedListener(FoodEditedListener listener) { this.foodEditedListener = listener; }
-    public void SetTagClickedListener(TagClickedListener listener) { this.tagClickedListener = listener; }
+    public void SetTagClickedListener(OnDataItemClickedListener listener) { this.tagClickedListener = listener; }
     public void SetFoodLikedChangedListener(FoodEditedListener listener){ this.foodLikedChangedListener = listener; }
 
     @Override

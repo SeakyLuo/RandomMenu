@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.Models.ToggleTag;
@@ -39,7 +40,7 @@ public class TagsFragment extends Fragment {
             recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL));
         }
         recyclerView.setNestedScrollingEnabled(true);
-        adapter.setActivity(getActivity());
+//        adapter.setActivity();
         recyclerView.setAdapter(adapter);
         return view;
     }
@@ -59,6 +60,6 @@ public class TagsFragment extends Fragment {
     public void Add(ToggleTag tag){ adapter.add(tag); }
     public void Remove(ToggleTag tag) { adapter.remove(tag); }
     public boolean Contains(Tag tag) { return adapter.getData().Any(t -> t.equals(tag)); }
-    public void SetTagClickedListener(TagClickedListener listener) { adapter.SetTagClickedListener(listener); }
-    public void SetTagCloseListener(TagClickedListener listener) { adapter.SetTagCloseListener(listener); }
+    public void SetTagClickedListener(OnDataItemClickedListener<ToggleTag> listener) { adapter.SetTagClickedListener(listener); }
+    public void SetTagCloseListener(OnDataItemClickedListener<ToggleTag> listener) { adapter.SetTagCloseListener(listener); }
 }

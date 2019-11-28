@@ -9,15 +9,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class FoodListAdapter extends CustomAdapter<Food> {
-    private FoodClickedListener foodClickedListener;
-    private TagClickedListener tagClickedListener;
-    public FoodListAdapter(FoodClickedListener foodClickedListener){ this.foodClickedListener = foodClickedListener; }
-    public void SetTagClickedListener(TagClickedListener tagClickedListener) { this.tagClickedListener = tagClickedListener; }
+    private OnDataItemClickedListener<Food> foodClickedListener;
+    private OnDataItemClickedListener<Tag> tagClickedListener;
+    public FoodListAdapter(OnDataItemClickedListener<Food> foodClickedListener){ this.foodClickedListener = foodClickedListener; }
+    public void SetTagClickedListener(OnDataItemClickedListener<Tag> tagClickedListener) { this.tagClickedListener = tagClickedListener; }
 
     @NonNull
     @Override
@@ -30,9 +34,9 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         super.onBindViewHolder(holder, position);
         ViewHolder viewHolder = (ViewHolder)holder;
         viewHolder.view.setOnClickListener(v -> {
-            if (foodClickedListener != null) foodClickedListener.FoodClicked(holder, data.Get(position));
+            if (foodClickedListener != null) foodClickedListener.Click(holder, data.Get(position));
         });
-        viewHolder.adapter.SetTagClickedListener(tagClickedListener);
+        viewHolder.adapter.SetTagClickedListener((v, t) -> tagClickedListener.Click(v, t));
     }
 
 
@@ -59,7 +63,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
 
         @Override
         void setData(Food data) {
-            food_image.setImageBitmap(Helper.GetFoodBitmap(data));
+            Glide.with(view).load(data.ImagePath).into(food_image);
             food_name.setText(data.Name);
             adapter.setData(data.GetTags().Convert(t -> new ToggleTag(t, false)));
         }

@@ -7,12 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class TagAdapter extends CustomAdapter<ToggleTag> {
-    private TagClickedListener closeListener, tagListener;
-    public void SetTagCloseListener(TagClickedListener listener) { this.closeListener = listener; }
-    public void SetTagClickedListener(TagClickedListener listener) { this.tagListener = listener; }
+    private OnDataItemClickedListener<ToggleTag> closeListener, tagListener;
+    public void SetTagCloseListener(OnDataItemClickedListener<ToggleTag> listener) { this.closeListener = listener; }
+    public void SetTagClickedListener(OnDataItemClickedListener<ToggleTag> listener) { this.tagListener = listener; }
 
     @NonNull
     @Override
@@ -26,10 +28,10 @@ public class TagAdapter extends CustomAdapter<ToggleTag> {
         ToggleTag tag = data.Get(position);
         ((ViewHolder)holder).SetOnCloseClickedListener(v -> {
             remove(tag);
-            if (closeListener != null) closeListener.TagClicked(holder, tag);
+            if (closeListener != null) closeListener.Click(holder, tag);
         });
         holder.view.setOnClickListener(v -> {
-            if (tagListener != null) tagListener.TagClicked(holder, tag);
+            if (tagListener != null) tagListener.Click(holder, tag);
         });
     }
 
