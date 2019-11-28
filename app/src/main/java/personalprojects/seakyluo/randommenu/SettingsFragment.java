@@ -37,11 +37,11 @@ public class SettingsFragment extends Fragment {
             Helper.Clear(getContext());
             Toast.makeText(getContext(), "Data Cleared!", Toast.LENGTH_SHORT).show();
         });
-        view.findViewById(R.id.fav_list_button).setOnClickListener(v -> {
+        view.findViewById(R.id.to_cook_list_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), ToCookActivity.class));
             getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
         });
-        view.findViewById(R.id.to_cook_list_button).setOnClickListener(v -> {
+        view.findViewById(R.id.fav_list_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), MyFavoritesActivity.class));
             getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
         });

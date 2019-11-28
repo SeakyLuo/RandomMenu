@@ -17,6 +17,7 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
     public SelectTagAdapter(TagClickedListener listener) { this.listener = listener; }
     private static int HighlightColor = Color.parseColor("#0078D7");
     private Tag pendingTag;
+    private ViewHolder lastTag;
 
     @NonNull
     @Override
@@ -30,18 +31,27 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
         ToggleTag tag = data.Get(position);
         ViewHolder viewHolder = (ViewHolder)holder;
         viewHolder.view.setOnClickListener(v -> {
-            HighlightTag(tag);
+            HighlightTag(viewHolder);
             listener.TagClicked(holder, tag);
         });
         if (tag.equals(pendingTag)){
+            lastTag = viewHolder;
             viewHolder.SetHighlight(true);
             pendingTag = null;
         }
     }
 
     public void HighlightTag(Tag tag){
-        if (IsLoaded()) viewHolders.ForEach(vh -> ((ViewHolder)vh).SetHighlight(vh.data.equals(tag)));
-        else pendingTag = tag;
+        ViewHolder viewHolder = (ViewHolder) viewHolders.Find(vh -> vh.data.equals(tag));
+        if (viewHolder == null){
+            pendingTag = tag;
+        }else{
+            HighlightTag(viewHolder);
+        }
+    }
+    private void HighlightTag(ViewHolder viewHolder){
+        if (lastTag != null) lastTag.SetHighlight(false);
+        (lastTag = viewHolder).SetHighlight(true);
     }
 
     public void SetData(AList<Tag> tags){

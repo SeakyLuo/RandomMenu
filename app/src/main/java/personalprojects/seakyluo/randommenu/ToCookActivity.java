@@ -5,21 +5,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import java.util.Set;
-
 import personalprojects.seakyluo.randommenu.Models.Settings;
 
 public class ToCookActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private FoodListAdapter adapter;
+    private SimpleFoodListAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_food);
+        setContentView(R.layout.activity_to_cook);
 
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         recyclerView = findViewById(R.id.food_list_recycler_view);
-        adapter = new FoodListAdapter();
+        adapter = new SimpleFoodListAdapter();
         adapter.setData(Settings.settings.ToCook);
         recyclerView.setAdapter(adapter);
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {

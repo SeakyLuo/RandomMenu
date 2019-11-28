@@ -24,8 +24,6 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         else viewHolders.Set(holder, position);
     }
 
-    public boolean IsLoaded() { return viewHolders.Count() == data.Count(); }
-
     public AList<CustomViewHolder> getViewHolders() { return viewHolders; }
 
     public void setActivity(Activity activity) { this.activity = activity; }

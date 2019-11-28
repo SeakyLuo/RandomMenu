@@ -26,9 +26,8 @@ public class FoodAdapter extends CustomAdapter<Food> {
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, final int position) {
         super.onBindViewHolder(holder, position);
-        ViewHolder viewHolder = (ViewHolder)holder;
-        viewHolder.view.setOnClickListener(v -> {
-            if (listener != null) listener.FoodClicked(viewHolder, data.Get(position));
+        ((ViewHolder)holder).view.setOnClickListener(v -> {
+            if (listener != null) listener.FoodClicked(holder, data.Get(position));
         });
     }
 
@@ -67,5 +66,5 @@ public class FoodAdapter extends CustomAdapter<Food> {
 }
 
 interface FoodClickedListener{
-    void FoodClicked(FoodAdapter.ViewHolder viewHolder, Food food);
+    void FoodClicked(CustomAdapter.CustomViewHolder viewHolder, Food food);
 }

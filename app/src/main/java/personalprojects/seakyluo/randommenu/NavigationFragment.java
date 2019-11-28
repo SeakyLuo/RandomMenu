@@ -26,7 +26,7 @@ public class NavigationFragment extends Fragment {
     private SelectTagAdapter selectTagAdapter;
     private FoodAdapter foodAdapter;
     private boolean IsLoaded = false;
-    private Tag pendingTag;
+    private Tag pendingTag, lastTag;
 
     @Nullable
     @Override
@@ -48,21 +48,20 @@ public class NavigationFragment extends Fragment {
 
         RecyclerView detailView = view.findViewById(R.id.detailView);
         foodAdapter = new FoodAdapter();
-        foodAdapter.SetOnFoodClickedListener(((viewHolder, food) -> {
+        foodAdapter.SetOnFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
             dialog.SetFoodEditedListener((before, after) -> SetData());
             dialog.showNow(getFragmentManager(), AskYesNoDialog.WARNING);
-        }));
+        });
         detailView.setAdapter(foodAdapter);
 
         IsLoaded = true;
         SetData();
         if (pendingTag == null){
-            selectTagAdapter.HighlightTag(Tag.AllCategoriesTag);
+            selectTag(Tag.AllCategoriesTag);
         }else{
             selectTag(pendingTag);
-            selectTagAdapter.HighlightTag(pendingTag);
             pendingTag = null;
         }
         return view;
@@ -76,12 +75,12 @@ public class NavigationFragment extends Fragment {
 
     public void SelectTag(Tag tag){
         pendingTag = tag;
-        if (!IsLoaded) return;
-        selectTagAdapter.HighlightTag(tag);
-        selectTag(tag);
+        if (IsLoaded) selectTag(tag);
     }
 
     private void selectTag(Tag tag){
+        lastTag = tag;
+        selectTagAdapter.HighlightTag(tag);
         if (tag.equals(Tag.AllCategoriesTag)){
             title_text_view.setText(Tag.Format(tag.Name, Settings.settings.Foods.Count()));
             foodAdapter.Reset();
@@ -94,7 +93,8 @@ public class NavigationFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) return;
-        SetData();
+        if (resultCode == RESULT_OK)
+            SetData();
+        SelectTag(lastTag);
     }
 }

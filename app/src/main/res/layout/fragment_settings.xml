@@ -58,6 +58,7 @@
                     android:showDividers="middle">
 
                     <android.support.constraint.ConstraintLayout
+                        android:id="@+id/my_favorites_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -65,26 +66,29 @@
                             android:id="@+id/fav_list_button"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
                             android:background="@android:color/transparent"
                             android:text="My Favorites"
                             android:textAlignment="viewStart"
                             android:textAllCaps="false"
+                            android:paddingStart="16dp"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/imageView"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <ImageView
+                            android:id="@+id/imageView"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="16dp"
+                            android:layout_height="0dp"
                             android:src="@drawable/ic_right"
+                            android:paddingEnd="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
                     </android.support.constraint.ConstraintLayout>
 
                     <android.support.constraint.ConstraintLayout
+                        android:id="@+id/to_cook_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -92,20 +96,22 @@
                             android:id="@+id/to_cook_list_button"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
+                            android:paddingStart="16dp"
                             android:background="@android:color/transparent"
                             android:text="To Cook"
                             android:textAlignment="viewStart"
                             android:textAllCaps="false"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/imageView2"/>
 
                         <ImageView
+                            android:id="@+id/imageView2"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="16dp"
+                            android:layout_height="0dp"
                             android:src="@drawable/ic_right"
+                            android:paddingEnd="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
