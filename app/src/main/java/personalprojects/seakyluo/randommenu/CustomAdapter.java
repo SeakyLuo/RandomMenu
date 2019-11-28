@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.Comparator;
 import java.util.List;
@@ -13,12 +14,19 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 
 public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
     AList<T> data = new AList<>();
+    AList<CustomViewHolder> viewHolders = new AList<>();
     Activity activity;
 
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
         holder.setData(holder.data = data.Get(position));
+        if (viewHolders.Count() >= position) viewHolders.Add(holder);
+        else viewHolders.Set(holder, position);
     }
+
+    public boolean IsLoaded() { return viewHolders.Count() == data.Count(); }
+
+    public AList<CustomViewHolder> getViewHolders() { return viewHolders; }
 
     public void setActivity(Activity activity) { this.activity = activity; }
 
@@ -45,7 +53,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         notifyItemRangeInserted(count, list.length);
     }
     public void addAll(int index, List<T> data){
-        this.data.Add(data, index);
+        this.data.AddAll(data, index);
         notifyItemRangeInserted(index, getItemCount());
     }
     public void add(T object){

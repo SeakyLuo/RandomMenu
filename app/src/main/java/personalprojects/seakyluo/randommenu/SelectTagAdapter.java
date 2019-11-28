@@ -14,35 +14,40 @@ import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
     private TagClickedListener listener;
-    private AList<ViewHolder> viewHolders = new AList<>();
     public SelectTagAdapter(TagClickedListener listener) { this.listener = listener; }
     private static int HighlightColor = Color.parseColor("#0078D7");
-    private boolean IsLoaded = false;
+    private Tag pendingTag;
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return viewHolders.Add(new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_select_tag, parent, false)));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_select_tag, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, final int position) {
         super.onBindViewHolder(holder, position);
+        ToggleTag tag = data.Get(position);
         ViewHolder viewHolder = (ViewHolder)holder;
         viewHolder.view.setOnClickListener(v -> {
-            viewHolders.Enumerate((i, vh) ->  vh.SetHighlight(i == position));
-            listener.TagClicked(holder, data.Get(position));
+            HighlightTag(tag);
+            listener.TagClicked(holder, tag);
         });
+        if (tag.equals(pendingTag)){
+            viewHolder.SetHighlight(true);
+            pendingTag = null;
+        }
     }
 
     public void HighlightTag(Tag tag){
-        viewHolders.ForEach(vh -> vh.SetHighlight(vh.data.equals(tag)));
+        if (IsLoaded()) viewHolders.ForEach(vh -> ((ViewHolder)vh).SetHighlight(vh.data.equals(tag)));
+        else pendingTag = tag;
     }
 
     public void SetData(AList<Tag> tags){
         data.Clear();
-        data.Add(new ToggleTag(Tag.AllCategoriesTag, true));
-        data.Add(new AList<>(tags).Convert(t -> new ToggleTag(t, false)));
+        data.Add(new ToggleTag(Tag.AllCategoriesTag, false));
+        data.AddAll(new AList<>(tags).Convert(t -> new ToggleTag(t, false)));
         notifyDataSetChanged();
     }
 
@@ -62,7 +67,7 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
         }
 
         void SetHighlight(boolean isHighlight){
-            if (isHighlight){
+            if (data.visible = isHighlight){
                 background.setBackgroundColor(HighlightColor);
                 tag_name.setTextColor(Color.WHITE);
             }else{

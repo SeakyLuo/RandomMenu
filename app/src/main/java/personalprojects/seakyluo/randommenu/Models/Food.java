@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 

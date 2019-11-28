@@ -18,7 +18,7 @@ import personalprojects.seakyluo.randommenu.Interfaces.ZipVoidLambda;
 public class AList<T> extends IList<T> {
     public AList(){}
     public AList(Collection<T> collection) { for (T element: collection) Add(element); }
-    public AList(AList<T> collection) { Add(collection); }
+    public AList(AList<T> collection) { AddAll(collection); }
     public AList(T element) { Add(element); }
 
     public int Count() { return list.size(); }
@@ -45,27 +45,27 @@ public class AList<T> extends IList<T> {
                 return false;
         return true;
     }
-    public boolean SameCollection(Collection<T> collection){
-        return SameCollection(new AList<>(collection));
-    }
+    public boolean SameCollection(Collection<T> collection){  return SameCollection(new AList<>(collection)); }
     public T Add(T element) { list.add(element); return element; }
     public T Add(T element, int index) {
         index = ModIndex(index);
         list.add(index, element);
         return element;
     }
-    public AList<T> Add(Collection<T> collection) { list.addAll(collection); return this; }
-    public AList<T> Add(AList<T> collection) { list.addAll(collection.list); return this; }
-    public AList<T> Add(Collection<T> collection, int index) {
+    public AList<T> With(T element) { Add(element); return this; }
+    public AList<T> With(T element, int index) { Add(element, index); return this; }
+    public AList<T> AddAll(Collection<T> collection) { list.addAll(collection); return this; }
+    public AList<T> AddAll(AList<T> collection) { list.addAll(collection.list); return this; }
+    public AList<T> AddAll(Collection<T> collection, int index) {
         index = ModIndex(index);
         list.addAll(index, collection);
         return this;
     }
-    public AList<T> Add(AList<T> collection, int index) { return Add(collection.list, index); }
+    public AList<T> AddAll(AList<T> collection, int index) { return AddAll(collection.list, index); }
     public boolean Remove(T element) { return list.remove(element); }
     public boolean Remove(BooleanLambda<T> lambda){ return list.removeIf(lambda::operate); }
-    public boolean Remove(Collection<T> collection){ return list.removeAll(collection); }
-    public boolean Remove(AList<T> collection) { return list.removeAll(collection.list); }
+    public boolean RemoveAll(Collection<T> collection){ return list.removeAll(collection); }
+    public boolean RemoveAll(AList<T> collection) { return list.removeAll(collection.list); }
     public T Pop() {
         return Pop(-1);
     }
@@ -89,7 +89,7 @@ public class AList<T> extends IList<T> {
     public AList<T> CopyFrom(AList<T> collection){ return CopyFrom(collection.list); }
     public AList<T> CopyFrom(Collection<T> collection){
         Clear();
-        Add(collection);
+        AddAll(collection);
         return this;
     }
     public int IndexOf(T element){ return list.indexOf(element); }

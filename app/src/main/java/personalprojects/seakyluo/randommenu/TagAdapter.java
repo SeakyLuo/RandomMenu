@@ -21,7 +21,7 @@ public class TagAdapter extends CustomAdapter<ToggleTag> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         ToggleTag tag = data.Get(position);
         ((ViewHolder)holder).SetOnCloseClickedListener(v -> {

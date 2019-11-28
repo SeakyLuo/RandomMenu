@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ public class NavigationFragment extends Fragment {
     private SelectTagAdapter selectTagAdapter;
     private FoodAdapter foodAdapter;
     private boolean IsLoaded = false;
-    private Tag selectedTag;
+    private Tag pendingTag;
 
     @Nullable
     @Override
@@ -42,7 +43,7 @@ public class NavigationFragment extends Fragment {
 
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        selectTagAdapter = new SelectTagAdapter(((viewHolder, tag) -> selectTag(tag)));
+        selectTagAdapter = new SelectTagAdapter((viewHolder, tag) -> selectTag(tag));
         masterView.setAdapter(selectTagAdapter);
 
         RecyclerView detailView = view.findViewById(R.id.detailView);
@@ -50,16 +51,19 @@ public class NavigationFragment extends Fragment {
         foodAdapter.SetOnFoodClickedListener(((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
-            dialog.SetFoodEditedListener(((before, after) -> SetData()));
+            dialog.SetFoodEditedListener((before, after) -> SetData());
             dialog.showNow(getFragmentManager(), AskYesNoDialog.WARNING);
         }));
         detailView.setAdapter(foodAdapter);
 
         IsLoaded = true;
         SetData();
-        if (selectedTag != null){
-            selectTag(selectedTag);
-            selectTagAdapter.HighlightTag(selectedTag);
+        if (pendingTag == null){
+            selectTagAdapter.HighlightTag(Tag.AllCategoriesTag);
+        }else{
+            selectTag(pendingTag);
+            selectTagAdapter.HighlightTag(pendingTag);
+            pendingTag = null;
         }
         return view;
     }
@@ -71,14 +75,13 @@ public class NavigationFragment extends Fragment {
     }
 
     public void SelectTag(Tag tag){
-        selectedTag = tag;
+        pendingTag = tag;
         if (!IsLoaded) return;
         selectTagAdapter.HighlightTag(tag);
         selectTag(tag);
     }
 
     private void selectTag(Tag tag){
-        selectedTag = tag;
         if (tag.equals(Tag.AllCategoriesTag)){
             title_text_view.setText(Tag.Format(tag.Name, Settings.settings.Foods.Count()));
             foodAdapter.Reset();

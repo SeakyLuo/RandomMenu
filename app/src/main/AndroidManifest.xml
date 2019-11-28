@@ -42,6 +42,12 @@
         <activity
             android:name=".FullScreenImageActivity"
             android:label="FullScreenImageActivity" />
+        <activity
+            android:name=".ToCookActivity"
+            android:label="ToCookActivity"/>
+        <activity
+            android:name=".MyFavoritesActivity"
+            android:label="MyFavoritesActivity"/>
     </application>
 
 </manifest>

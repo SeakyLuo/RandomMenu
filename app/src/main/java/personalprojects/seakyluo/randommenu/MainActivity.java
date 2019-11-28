@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.navigation_navigation:
                         if (navigationFragment == null) navigationFragment = new NavigationFragment();
-                        navigationFragment.SetData();
                         ShowFragment(navigationFragment, NavigationFragment.TAG, lastTag);
                         return true;
                     case R.id.navigation_settings:

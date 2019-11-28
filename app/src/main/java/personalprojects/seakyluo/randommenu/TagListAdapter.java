@@ -1,14 +1,10 @@
 package personalprojects.seakyluo.randommenu;
 
-import android.database.DataSetObserver;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.Models.AList;
@@ -16,14 +12,13 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class TagListAdapter extends CustomAdapter<ToggleTag> {
-    private AList<ViewHolder> viewHolders = new AList<>();
     private TagClickedListener listener;
     TagListAdapter(TagClickedListener listener) { this.listener = listener; }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return viewHolders.Add(new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_listed_tag, parent, false)));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_listed_tag, parent, false));
     }
 
 
@@ -32,7 +27,7 @@ public class TagListAdapter extends CustomAdapter<ToggleTag> {
     }
 
     public void SetTagVisible(Tag tag, boolean visible){
-        viewHolders.Get(data.IndexOf(t -> t.equals(tag))).SetCheckButtonVisibility(visible);
+        ((ViewHolder)viewHolders.Get(data.IndexOf(t -> t.equals(tag)))).SetCheckButtonVisibility(visible);
     }
 
     class ViewHolder extends CustomViewHolder {

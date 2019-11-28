@@ -2,9 +2,6 @@ package personalprojects.seakyluo.randommenu.Models;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 public class Settings {
     public static String FILENAME = "RandomMenuSettings.json";
     public static Settings settings;
@@ -28,7 +25,7 @@ public class Settings {
 
     public void RemoveFood(Food food){
         Foods.Remove(food);
-        Tags.Remove(Tags.Filter(food::HasTag).ForEach(Tag::Less).Filter(Tag::IsEmpty));
+        Tags.RemoveAll(Tags.Filter(food::HasTag).ForEach(Tag::Less).Filter(Tag::IsEmpty));
         SortTags();
     }
 

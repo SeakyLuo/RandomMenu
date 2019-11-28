@@ -13,7 +13,6 @@ import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Tag;
-import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class FoodAdapter extends CustomAdapter<Food> {
     private FoodClickedListener listener;
