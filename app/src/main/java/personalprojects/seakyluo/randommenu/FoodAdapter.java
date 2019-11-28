@@ -7,15 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class FoodAdapter extends CustomAdapter<Food> {
-    private FoodClickedListener listener, longClickListener;
+    private OnDataItemClickedListener<Food> listener, longClickListener;
     private AList<Food> all = new AList<>();
     @NonNull
     @Override
@@ -29,11 +28,11 @@ public class FoodAdapter extends CustomAdapter<Food> {
         ViewHolder viewHolder = (ViewHolder) holder;
         Food food = data.Get(position);
         viewHolder.view.setOnClickListener(v -> {
-            if (listener != null) listener.FoodClicked(holder, food);
+            if (listener != null) listener.Click(holder, food);
         });
         viewHolder.view.setOnLongClickListener(v -> {
             boolean hasListener = longClickListener != null;
-           if (hasListener) longClickListener.FoodClicked(holder, food);
+           if (hasListener) longClickListener.Click(holder, food);
            return hasListener;
         });
     }
@@ -53,8 +52,8 @@ public class FoodAdapter extends CustomAdapter<Food> {
         notifyDataSetChanged();
     }
 
-    public void SetOnFoodClickedListener(FoodClickedListener listener){ this.listener = listener; }
-    public void SetOnFoodLongClickListener(FoodClickedListener listener){ this.longClickListener = listener; }
+    public void SetOnFoodClickedListener(OnDataItemClickedListener<Food> listener){ this.listener = listener; }
+    public void SetOnFoodLongClickListener(OnDataItemClickedListener<Food> listener){ this.longClickListener = listener; }
 
     class ViewHolder extends CustomViewHolder {
         private ImageView food_image;
@@ -72,8 +71,4 @@ public class FoodAdapter extends CustomAdapter<Food> {
             food_image.setImageBitmap(Helper.GetFoodBitmap(data.ImagePath));
         }
     }
-}
-
-interface FoodClickedListener{
-    void FoodClicked(CustomAdapter.CustomViewHolder viewHolder, Food food);
 }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -19,7 +20,7 @@ public class MyFavoritesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_favorites);
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         recyclerView = findViewById(R.id.food_list_recycler_view);
-        myFavorites = findViewById(R.id.my_favorite_text_view);
+        myFavorites = findViewById(R.id.title_text_view);
         adapter = new FoodListAdapter(((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
@@ -33,6 +34,22 @@ public class MyFavoritesActivity extends AppCompatActivity {
         adapter.setData(Settings.settings.Favorites);
         adapter.setActivity(this);
         recyclerView.setAdapter(adapter);
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+//                int position = viewHolder.getAdapterPosition();
+//                adapter.data.Pop(position);
+//                adapter.notifyDataSetChanged();
+            }
+        }).attachToRecyclerView(recyclerView);
     }
 
     @Override

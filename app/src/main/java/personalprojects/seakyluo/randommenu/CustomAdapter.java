@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
     AList<T> data = new AList<>();
     AList<CustomViewHolder> viewHolders = new AList<>();
-    Activity activity;
+    AppCompatActivity activity;
 
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
@@ -26,7 +27,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
 
     public AList<CustomViewHolder> getViewHolders() { return viewHolders; }
 
-    public void setActivity(Activity activity) { this.activity = activity; }
+    public void setActivity(AppCompatActivity activity) { this.activity = activity; }
 
     public void setData(AList<T> data){
         this.data.CopyFrom(data);
@@ -99,7 +100,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         return data.Count();
     }
 
-    abstract class CustomViewHolder extends RecyclerView.ViewHolder{
+    public abstract class CustomViewHolder extends RecyclerView.ViewHolder{
         protected View view;
         protected T data;
         CustomViewHolder(@NonNull View view) {

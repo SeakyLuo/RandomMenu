@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class TagListAdapter extends CustomAdapter<ToggleTag> {
-    private TagClickedListener listener;
-    TagListAdapter(TagClickedListener listener) { this.listener = listener; }
+    private OnDataItemClickedListener<ToggleTag> listener;
+    TagListAdapter(OnDataItemClickedListener<ToggleTag> listener) { this.listener = listener; }
 
     @NonNull
     @Override
@@ -44,7 +44,7 @@ public class TagListAdapter extends CustomAdapter<ToggleTag> {
         private void OnClick(){
             data.visible = !data.visible;
             SetCheckButtonVisibility(data.visible);
-            listener.TagClicked(this, data);
+            listener.Click(this, data);
         }
 
         @Override
@@ -57,8 +57,4 @@ public class TagListAdapter extends CustomAdapter<ToggleTag> {
             check_button.setVisibility((data.visible = visible) ? View.VISIBLE : View.GONE);
         }
     }
-}
-
-interface TagClickedListener {
-    void TagClicked(CustomAdapter.CustomViewHolder viewHolder, ToggleTag tag);
 }

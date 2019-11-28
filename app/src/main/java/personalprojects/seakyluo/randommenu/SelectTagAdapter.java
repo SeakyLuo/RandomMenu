@@ -8,13 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
-    private TagClickedListener listener;
-    public SelectTagAdapter(TagClickedListener listener) { this.listener = listener; }
+    private OnDataItemClickedListener<ToggleTag> listener;
+    public SelectTagAdapter(OnDataItemClickedListener<ToggleTag> listener) { this.listener = listener; }
     private static int HighlightColor = Color.parseColor("#0078D7");
     private Tag pendingTag;
     private ViewHolder lastTag;
@@ -32,7 +33,7 @@ public class SelectTagAdapter extends CustomAdapter<ToggleTag> {
         ViewHolder viewHolder = (ViewHolder)holder;
         viewHolder.view.setOnClickListener(v -> {
             HighlightTag(viewHolder);
-            listener.TagClicked(holder, tag);
+            listener.Click(holder, tag);
         });
         if (tag.equals(pendingTag)){
             lastTag = viewHolder;
