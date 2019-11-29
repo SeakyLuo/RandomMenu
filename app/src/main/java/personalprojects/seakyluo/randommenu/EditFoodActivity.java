@@ -133,8 +133,9 @@ public class EditFoodActivity extends AppCompatActivity {
             }
         });
         food_image.setOnClickListener(v -> {
-            FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
+            if (intent_food == null ? !SetFoodImage : !intent_food.HasImage()) return;
             Intent intent = new Intent(this, FullScreenImageActivity.class);
+            intent.putExtra(FullScreenImageActivity.IMAGE, temp_camera_image_uri == null ? intent_food.ImagePath : temp_camera_image_uri.getPath());
             startActivity(intent);
         });
         delete_food_button.setVisibility(intent_food == null ? View.GONE : View.VISIBLE);
@@ -191,7 +192,7 @@ public class EditFoodActivity extends AppCompatActivity {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, temp_camera_image_uri);
             startActivityForResult(intent, CAMERA_CODE);
         } catch (IOException e) {
-
+            temp_camera_image_uri = null;
         }
     }
 
@@ -235,7 +236,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 break;
             case GALLERY_CODE:
                 try {
-                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), temp_camera_image_uri = data.getData());
                     food_image.setImageBitmap(image);
                     SetFoodImage = true;
                 } catch (IOException e) {
@@ -253,8 +254,8 @@ public class EditFoodActivity extends AppCompatActivity {
     @Override
     public void finish() {
         SetFoodImage = false;
+        temp_camera_image_uri = null;
         Helper.Save(this);
         super.finish();
-        overridePendingTransition(R.anim.push_up_in, R.anim.push_down_out);
     }
 }

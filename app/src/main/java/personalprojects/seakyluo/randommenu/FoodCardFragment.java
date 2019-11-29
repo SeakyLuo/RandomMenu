@@ -53,8 +53,9 @@ public class FoodCardFragment extends Fragment {
             if (tagClickedListener != null) tagClickedListener.Click(viewHolder, tag);
         });
         food_image.setOnClickListener(v -> {
-            FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
-            startActivity(new Intent(getContext(), FullScreenImageActivity.class));
+            Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
+            intent.putExtra(FullScreenImageActivity.IMAGE, CurrentFood.ImagePath);
+            startActivity(intent);
         });
         more_button.setOnClickListener(v -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
@@ -87,6 +88,7 @@ public class FoodCardFragment extends Fragment {
     }
 
     private void setFood(Food food){
+        CurrentFood = food;
         food_name.setText(food.Name);
         Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
         tagsFragment.SetData(food.GetTags(), false);

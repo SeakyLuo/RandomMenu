@@ -91,7 +91,6 @@ public class NavigationFragment extends Fragment {
         Intent intent = new Intent(getContext(), EditFoodActivity.class);
         if (food != null) intent.putExtra(EditFoodActivity.FOOD, food);
         startActivityForResult(intent, EditFoodActivity.FOOD_CODE);
-        getActivity().overridePendingTransition(R.anim.push_down_in, R.anim.push_up_out);
     }
 
     @Override

@@ -46,6 +46,7 @@
         android:id="@+id/food_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         android:nestedScrollingEnabled="true"
         android:orientation="vertical"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"

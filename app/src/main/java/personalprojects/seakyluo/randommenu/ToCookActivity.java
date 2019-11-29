@@ -5,15 +5,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 
 public class ToCookActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SimpleFoodListAdapter adapter;
+    private boolean updated = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,10 +29,12 @@ public class ToCookActivity extends AppCompatActivity {
             dialog.SetConfirmListener(text -> {
                 Settings.settings.ToCook.Add(text, 0);
                 adapter.add(0, text);
+                updated = true;
             });
             dialog.showNow(getSupportFragmentManager(), InputDialog.TAG);
         });
         recyclerView = findViewById(R.id.food_list_recycler_view);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new SimpleFoodListAdapter();
         adapter.setData(Settings.settings.ToCook);
         adapter.setActivity(this);
@@ -43,6 +48,8 @@ public class ToCookActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
+        if (updated) Helper.Save(this);
+        updated = false;
         super.finish();
         overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
     }
@@ -54,5 +61,6 @@ public class ToCookActivity extends AppCompatActivity {
         String food = ((Food) data.getParcelableExtra(EditFoodActivity.FOOD)).Name;
         Settings.settings.ToCook.Without(food);
         adapter.remove(food);
+        updated = true;
     }
 }

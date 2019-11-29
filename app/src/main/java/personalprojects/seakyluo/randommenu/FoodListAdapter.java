@@ -55,8 +55,9 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             adapter = new TagAdapter();
 
             food_image.setOnClickListener(v -> {
-                FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
-                activity.startActivity(new Intent(activity, FullScreenImageActivity.class));
+                Intent intent = new Intent(activity, FullScreenImageActivity.class);
+                intent.putExtra(FullScreenImageActivity.IMAGE, data.ImagePath);
+                activity.startActivity(intent);
             });
             recyclerView.setAdapter(adapter);
         }
