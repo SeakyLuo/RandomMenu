@@ -9,12 +9,15 @@ import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.Tag;
-import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
-public class TagAdapter extends CustomAdapter<ToggleTag> {
-    private OnDataItemClickedListener<ToggleTag> closeListener, tagListener;
-    public void SetTagCloseListener(OnDataItemClickedListener<ToggleTag> listener) { this.closeListener = listener; }
-    public void SetTagClickedListener(OnDataItemClickedListener<ToggleTag> listener) { this.tagListener = listener; }
+public class TagAdapter extends CustomAdapter<Tag> {
+    private boolean closeable = false;
+    public TagAdapter() {}
+    public void SetCloseable(boolean closeable){ this.closeable = closeable; }
+    public TagAdapter(boolean closeable) { this.closeable = closeable; }
+    private OnDataItemClickedListener<Tag> closeListener, tagListener;
+    public void SetTagCloseListener(OnDataItemClickedListener<Tag> listener) { this.closeListener = listener; }
+    public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { this.tagListener = listener; }
 
     @NonNull
     @Override
@@ -25,16 +28,16 @@ public class TagAdapter extends CustomAdapter<ToggleTag> {
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        ToggleTag tag = data.Get(position);
+        Tag tag = data.Get(position);
         ((ViewHolder)holder).SetOnCloseClickedListener(v -> {
-            remove(tag);
+            Remove(tag);
             if (closeListener != null) closeListener.Click(holder, tag);
         });
         holder.view.setOnClickListener(v -> {
             if (tagListener != null) tagListener.Click(holder, tag);
         });
     }
-
+    
     class ViewHolder extends CustomViewHolder {
         TextView tag_name;
         ImageButton close_button;
@@ -45,13 +48,9 @@ public class TagAdapter extends CustomAdapter<ToggleTag> {
         }
 
         @Override
-        void setData(ToggleTag data) {
+        void SetData(Tag data) {
             tag_name.setText(data.Name);
-            close_button.setVisibility(data.visible ? View.VISIBLE : View.GONE);
-        }
-
-        void SetCloseButtonVisibility(boolean visible){
-            close_button.setVisibility((data.visible = visible) ? View.VISIBLE : View.GONE);
+            close_button.setVisibility(closeable ? View.VISIBLE : View.GONE);
         }
 
         void SetOnCloseClickedListener(View.OnClickListener listener){

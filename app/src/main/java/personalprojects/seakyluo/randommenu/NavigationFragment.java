@@ -8,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
-import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -71,7 +69,7 @@ public class NavigationFragment extends Fragment {
 
     public void SetData(){
         if (!IsLoaded) return;
-        selectTagAdapter.SetData(Settings.settings.Tags);
+        selectTagAdapter.SetTags(Settings.settings.Tags);
         foodAdapter.SetData(Settings.settings.Foods);
     }
 

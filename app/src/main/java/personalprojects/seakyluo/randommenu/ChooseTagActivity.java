@@ -15,18 +15,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
-import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class ChooseTagActivity extends AppCompatActivity {
     public static final String TAG = "tag";
+    private RecyclerView selectedTags;
     private AutoCompleteTextView tag_box;
+    private TagAdapter tagAdapter;
     private TagListAdapter tagListAdapter;
-    private TagsFragment tagsFragment;
     private ArrayList<Tag> original_tags;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class ChooseTagActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String tag = suggestionTagListAdapter.getItem(position);
-                ChooseTag(tagListAdapter.getData().Find(t -> t.Name.equals(tag)));
+                ChooseTag(tagListAdapter.GetData().Find(t -> t.Name.equals(tag)));
                 tag_box.setText("");
             }
 
@@ -64,7 +63,7 @@ public class ChooseTagActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
-                suggestionTagListAdapter.addAll(tagListAdapter.getData().Filter(t -> !t.visible && t.Name.contains(s)).Convert(t -> t.Name).ToArrayList());
+                suggestionTagListAdapter.addAll(tagListAdapter.GetData().Without(tagAdapter.GetData()).Convert(t -> t.Name).ToArrayList());
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -77,7 +76,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.back_button).setOnClickListener(v -> {
-            if (tagsFragment.GetTags().SameCollection(original_tags)){
+            if (tagAdapter.GetData().SameCollection(original_tags)){
                 setResult(RESULT_CANCELED);
                 finish();
             }else{
@@ -96,33 +95,30 @@ public class ChooseTagActivity extends AppCompatActivity {
 
         findViewById(R.id.confirm_button).setOnClickListener(v -> SubmitTag());
 
-        tagListAdapter = new TagListAdapter((viewHolder, tag) -> ChooseTag(tag));
         original_tags = getIntent().getParcelableArrayListExtra(TAG);
-        HashSet<Tag> original_tag_set = new HashSet<>(original_tags);
-        Settings.settings.Tags.ForEach(tag -> tagListAdapter.add(new ToggleTag(tag, original_tag_set.contains(tag))));
+        tagListAdapter = new TagListAdapter(Settings.settings.Tags, original_tags);
+        tagListAdapter.SetTagClickedListener((viewHolder, tag) -> ChooseTag(tag));
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
         tag_recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         tag_recycler_view.setAdapter(tagListAdapter);
 
-        tagsFragment = (TagsFragment) getSupportFragmentManager().findFragmentById(R.id.tags_fragment);
-        tagsFragment.SetLinear(true);
-        tagsFragment.SetClose(true);
-        tagsFragment.SetTags(original_tags);
-        tagsFragment.SetTagCloseListener(((viewHolder, tag) -> {
-            ((TagAdapter.ViewHolder)viewHolder).SetCloseButtonVisibility(tag.Toggle());
-            tagListAdapter.set(tag, tagListAdapter.getData().IndexOf(tag));
-        }));
+        tagAdapter = new TagAdapter(true);
+        tagAdapter.SetData(original_tags);
+        tagAdapter.SetTagCloseListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
+        selectedTags = findViewById(R.id.selected_tags_recycler_view);
+        selectedTags.setAdapter(tagAdapter);
     }
 
-    private void ChooseTag(ToggleTag tag){
-        if (tagsFragment.GetData().Count() == Tag.MAX_TAGS){
+    private void ChooseTag(Tag tag){
+        if (tagAdapter.getItemCount() == Tag.MAX_TAGS){
             Toast.makeText(ChooseTagActivity.this, "Tags Limit!", Toast.LENGTH_SHORT).show();
         }else{
-            if (tagsFragment.Contains(tag)){
-                tagsFragment.Remove(tag);
+            if (tagAdapter.Contains(tag)){
+                tagAdapter.Remove(tag);
             }else{
-                tagsFragment.Add(new ToggleTag(tag, true));
+                tagAdapter.Add(tag, 0);
+                selectedTags.scrollToPosition(0);
             }
         }
     }
@@ -131,10 +127,13 @@ public class ChooseTagActivity extends AppCompatActivity {
         String tag_name = tag_box.getText().toString();
         if (tag_name.length() > 0){
             Tag tag = new Tag(tag_name);
-            if (!tagsFragment.Contains(tag)){
-                if (tagListAdapter.Contains(tag)) tagListAdapter.SetTagVisible(tag, true);
-                else tagListAdapter.add(new ToggleTag(tag, true));
-                tagsFragment.AddTag(tag);
+            if (!tagAdapter.Contains(tag)){
+                if (tagListAdapter.Contains(tag)) tagListAdapter.CheckTag(tag, true);
+                else{
+                    tagListAdapter.Add(tag);
+                    tagListAdapter.SetTagChecked(tag, true);
+                }
+                tagAdapter.Add(tag);
             }
             tag_box.setText("");
         }else{
@@ -144,7 +143,7 @@ public class ChooseTagActivity extends AppCompatActivity {
 
     private void FinishActivity(){
         Intent intent = new Intent();
-        AList<Tag> tags = tagsFragment.GetTags();
+        AList<Tag> tags = tagAdapter.GetData();
         intent.putExtra(TAG, tags.ToArrayList());
         if (tags.SameCollection(original_tags)) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);

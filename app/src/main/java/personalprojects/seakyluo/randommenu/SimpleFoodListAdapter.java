@@ -11,8 +11,9 @@ import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener
 import personalprojects.seakyluo.randommenu.Models.Settings;
 
 public class SimpleFoodListAdapter extends CustomAdapter<String> {
-    private OnDataItemClickedListener<String> listener;
+    private OnDataItemClickedListener<String> listener, deleteListener;
     public void SetOnDataItemClickedListener(OnDataItemClickedListener<String> listener) { this.listener = listener; }
+    public void SetOnDeleteClickedListener(OnDataItemClickedListener<String> listener) { this.deleteListener = listener; }
     @NonNull
     @Override
     public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -28,13 +29,7 @@ public class SimpleFoodListAdapter extends CustomAdapter<String> {
             if (listener != null) listener.Click(viewHolder, name);
         });
         viewHolder.delete_button.setOnClickListener(v -> {
-            AskYesNoDialog dialog = new AskYesNoDialog();
-            dialog.setMessage(String.format("Do you want to delete %s?", name));
-            dialog.setOnYesListener(dv -> {
-                Settings.settings.ToCook.Remove(name);
-                remove(name);
-            });
-            dialog.showNow(activity.getSupportFragmentManager(), AskYesNoDialog.WARNING);
+            if (listener != null) deleteListener.Click(viewHolder, name);
         });
     }
 
@@ -48,7 +43,7 @@ public class SimpleFoodListAdapter extends CustomAdapter<String> {
         }
 
         @Override
-        void setData(String data) {
+        void SetData(String data) {
             food_name.setText(data);
         }
     }

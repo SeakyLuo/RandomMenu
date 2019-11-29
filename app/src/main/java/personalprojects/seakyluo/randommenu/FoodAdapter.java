@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
@@ -40,9 +39,10 @@ public class FoodAdapter extends CustomAdapter<Food> {
         });
     }
 
+    @Override
     public void SetData(AList<Food> data){
         all.CopyFrom(data);
-        setData(data);
+        super.SetData(data);
     }
 
     public void Reset() {
@@ -69,7 +69,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
         }
 
         @Override
-        void setData(Food data) {
+        void SetData(Food data) {
             food_name.setText(data.Name);
             Helper.LoadImage(Glide.with(view), data.ImagePath, food_image);
         }

@@ -2,7 +2,6 @@ package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.widget.TextView;
@@ -25,14 +24,14 @@ public class MyFavoritesActivity extends AppCompatActivity {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
             dialog.SetFoodEditedListener((before, after) -> {
-                adapter.setData(Settings.settings.Favorites);
+                adapter.SetData(Settings.settings.Favorites);
                 dialog.SetFood(after);
             });
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
         }));
         myFavorites.setText(Tag.Format("My Favorites", Settings.settings.Favorites.Count()));
-        adapter.setData(Settings.settings.Favorites);
-        adapter.setActivity(this);
+        adapter.SetData(Settings.settings.Favorites);
+        adapter.SetActivity(this);
         recyclerView.setAdapter(adapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {

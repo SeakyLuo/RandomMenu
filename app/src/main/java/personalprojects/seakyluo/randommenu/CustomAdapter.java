@@ -1,12 +1,9 @@
 package personalprojects.seakyluo.randommenu;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,89 +13,84 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
     AList<T> data = new AList<>();
     AList<CustomViewHolder> viewHolders = new AList<>();
-    AppCompatActivity activity;
+    Activity activity;
+    public CustomAdapter() {}
+    public CustomAdapter(AList<T> data) { this.data = data; }
 
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
-        holder.setData(holder.data = data.Get(position));
+        holder.SetData(holder.data = data.Get(position));
         if (viewHolders.Count() >= position) viewHolders.Add(holder);
         else viewHolders.Set(holder, position);
     }
 
-    public AList<CustomViewHolder> getViewHolders() { return viewHolders; }
+    public AList<CustomViewHolder> GetViewHolders() { return viewHolders; }
 
-    public void setActivity(AppCompatActivity activity) { this.activity = activity; }
+    public void SetActivity(Activity activity) { this.activity = activity; }
 
-    public void setData(AList<T> data){
+    public void SetData(AList<T> data){
         this.data.CopyFrom(data);
         notifyDataSetChanged();
     }
-    public void setData(List<T> data){
+    public void SetData(List<T> data){
         this.data = new AList<>(data);
         notifyDataSetChanged();
     }
     private void addOne(T object){
         data.Add(object);
     }
-    private void addOne(int index, T object) { data.Add(object, index); }
-    public void add(List<T> list){
+    private void addOne(T object, int index) { data.Add(object, index); }
+    public void Add(List<T> list){
         int count = data.Count();
         for (int i = 0; i < list.size(); i++) addOne(list.get(i));
         notifyItemRangeInserted(count, list.size());
     }
-    public void add(AList<T> list){
+    public void Add(AList<T> list){
         int count = data.Count();
         for (int i = 0; i < list.Count(); i++) addOne(list.Get(i));
         notifyItemRangeInserted(count, list.Count());
     }
-    public void add(T[] list){
-        int count = data.Count();
-        for (int i = 0; i < list.length; i++) addOne(list[i]);
-        notifyItemRangeInserted(count, list.length);
-    }
-    public void add(int index, AList<T> list){
+    public void Add(AList<T> list, int index){
         data.AddAll(list, index);
         notifyItemRangeInserted(index, getItemCount());
     }
-    public void add(T object){
+    public void Add(T object){
         addOne(object);
         notifyItemInserted(data.Count() - 1);
     }
-    public void add(int index, T object){
-        addOne(index, object);
+    public void Add(T object, int index){
+        addOne(object, index);
         notifyItemInserted(index);
     }
-    public void remove(int index){
+    public void Pop(int index){
         data.Pop(index);
         notifyItemRemoved(index);
     }
-    public void remove(T object){
+    public void Remove(T object){
         int index = data.IndexOf(object);
-        if (index > -1){
-            data.Remove(object);
+        if (data.Remove(object)){
             notifyItemRemoved(index);
         }
     }
-    public void sort(Comparator<? super T> comparator) {
+    public void Sort(Comparator<? super T> comparator) {
         data.Sort(comparator);
         notifyDataSetChanged();
     }
-    public void set(T element, int index){
+    public void Set(T element, int index){
         data.Set(element, index);
         notifyItemChanged(index);
     }
-    public AList<T> getData(){ return data; }
-    public boolean hasData(){ return data.Count() > 0; }
-    public void clear(){
+    public AList<T> GetData(){ return data; }
+    public boolean IsEmpty(){ return data.Count() == 0; }
+    public boolean Contains(T element) { return data.Contains(element); }
+    public void Clear(){
         final int size = data.Count();
         data.Clear();
         notifyItemRangeRemoved(0, size);
     }
 
     @Override
-    public int getItemCount() {
-        return data.Count();
-    }
+    public int getItemCount() { return data.Count(); }
 
     public abstract class CustomViewHolder extends RecyclerView.ViewHolder{
         protected View view;
@@ -107,6 +99,6 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
             super(view);
             this.view = view;
         }
-        abstract void setData(T data);
+        abstract void SetData(T data);
     }
 }

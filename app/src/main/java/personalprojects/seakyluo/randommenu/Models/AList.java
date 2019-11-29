@@ -19,6 +19,7 @@ public class AList<T> extends IList<T> {
     public AList(){}
     public AList(Collection<T> collection) { for (T element: collection) Add(element); }
     public AList(AList<T> collection) { AddAll(collection); }
+    public AList(T[] collection) { for (T element: collection) Add(element); }
     public AList(T element) { Add(element); }
 
     public int Count() { return list.size(); }
@@ -84,6 +85,7 @@ public class AList<T> extends IList<T> {
         return collection;
     }
     public AList<T> Without(T element){ Remove(element); return this; }
+    public AList<T> Without(AList<T> collection) { RemoveAll(collection); return this; }
     public void Clear() { list.clear(); }
     public AList<T> Copy(){ return new AList<>(list); }
     public AList<T> CopyFrom(AList<T> collection){ return CopyFrom(collection.list); }

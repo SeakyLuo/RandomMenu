@@ -15,7 +15,6 @@ import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Tag;
-import personalprojects.seakyluo.randommenu.Models.ToggleTag;
 
 public class FoodListAdapter extends CustomAdapter<Food> {
     private OnDataItemClickedListener<Food> foodClickedListener;
@@ -52,7 +51,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             food_image = view.findViewById(R.id.food_image);
             food_name = view.findViewById(R.id.food_name);
             recyclerView = view.findViewById(R.id.tags_recycler_view);
-            adapter = new TagAdapter();
+            adapter = new TagAdapter(false);
 
             food_image.setOnClickListener(v -> {
                 Intent intent = new Intent(activity, FullScreenImageActivity.class);
@@ -63,10 +62,10 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         }
 
         @Override
-        void setData(Food data) {
+        void SetData(Food data) {
             Helper.LoadImage(Glide.with(view), data.ImagePath, food_image);
             food_name.setText(data.Name);
-            adapter.setData(data.GetTags().Convert(t -> new ToggleTag(t, false)));
+            adapter.SetData(data.GetTags());
         }
     }
 }

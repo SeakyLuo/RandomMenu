@@ -3,11 +3,9 @@ package personalprojects.seakyluo.randommenu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Food;
@@ -28,7 +26,7 @@ public class ToCookActivity extends AppCompatActivity {
             dialog.SetPlaceHolder("Food Name");
             dialog.SetConfirmListener(text -> {
                 Settings.settings.ToCook.Add(text, 0);
-                adapter.add(0, text);
+                adapter.Add(text, 0);
                 updated = true;
             });
             dialog.showNow(getSupportFragmentManager(), InputDialog.TAG);
@@ -36,12 +34,20 @@ public class ToCookActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.food_list_recycler_view);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new SimpleFoodListAdapter();
-        adapter.setData(Settings.settings.ToCook);
-        adapter.setActivity(this);
+        adapter.SetData(Settings.settings.ToCook);
         adapter.SetOnDataItemClickedListener((viewHolder, data) -> {
             Intent intent = new Intent(this, EditFoodActivity.class);
             intent.putExtra(EditFoodActivity.FOOD, new Food(data));
             startActivityForResult(intent, EditFoodActivity.FOOD_CODE);
+        });
+        adapter.SetOnDeleteClickedListener((viewHolder, data) -> {
+            AskYesNoDialog dialog = new AskYesNoDialog();
+            dialog.setMessage(String.format("Do you want to delete %s?", data));
+            dialog.setOnYesListener(dv -> {
+                Settings.settings.ToCook.Remove(data);
+                adapter.Remove(data);
+            });
+            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
         });
         recyclerView.setAdapter(adapter);
     }
@@ -60,7 +66,7 @@ public class ToCookActivity extends AppCompatActivity {
         if (resultCode != RESULT_OK) return;
         String food = ((Food) data.getParcelableExtra(EditFoodActivity.FOOD)).Name;
         Settings.settings.ToCook.Without(food);
-        adapter.remove(food);
+        adapter.Remove(food);
         updated = true;
     }
 }

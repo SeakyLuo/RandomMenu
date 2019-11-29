@@ -25,7 +25,6 @@ import com.bumptech.glide.Glide;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
@@ -58,14 +57,14 @@ public class EditFoodActivity extends AppCompatActivity {
         food_image = findViewById(R.id.food_image);
 
         tagsFragment = new TagsFragment();
-        tagsFragment.SetClose(true);
+        tagsFragment.SetCloseable(true);
         getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
 
         Food intent_food = getIntent().getParcelableExtra(FOOD);
         if (intent_food != null){
             edit_food_name.setText(intent_food.Name);
             if (intent_food.HasImage()) Helper.LoadImage(Glide.with(this), intent_food.ImagePath, food_image);
-            tagsFragment.SetData(intent_food.GetTags(), true);
+            tagsFragment.SetData(intent_food.GetTags());
             edit_note.setText(intent_food.Note);
         }
 
@@ -75,7 +74,7 @@ public class EditFoodActivity extends AppCompatActivity {
         });
         cancel_button.setOnClickListener(v -> {
             String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
-            AList<Tag> tags = tagsFragment.GetTags();
+            AList<Tag> tags = tagsFragment.GetData();
             boolean nameChanged = intent_food == null ? food_name.length() > 0 : !food_name.equals(intent_food.Name),
                     tagChanged = intent_food == null ? tags.Count() > 0 : !tags.SameCollection(intent_food.GetTags()),
                     noteChanged = intent_food == null ? note.length() > 0 : !note.equals(intent_food.Note);
@@ -103,7 +102,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Food Exists", Toast.LENGTH_SHORT).show();
                 return;
             }
-            AList<Tag> tags = tagsFragment.GetTags();
+            AList<Tag> tags = tagsFragment.GetData();
             if (tags.Count() == 0){
                 Toast.makeText(getApplicationContext(), "At least 1 tag!", Toast.LENGTH_SHORT).show();
                 return;
@@ -155,7 +154,7 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void LaunchChooseTagActivity(){
         Intent intent = new Intent(getApplicationContext(), ChooseTagActivity.class);
-        intent.putExtra(ChooseTagActivity.TAG, tagsFragment.GetTags().ToArrayList());
+        intent.putExtra(ChooseTagActivity.TAG, tagsFragment.GetData().ToArrayList());
         startActivityForResult(intent, CHOOSE_TAG_CODE);
         overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
     }
@@ -245,7 +244,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 break;
             case CHOOSE_TAG_CODE:
                 ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.TAG);
-                tagsFragment.SetTags(tags);
+                tagsFragment.SetData(tags);
                 add_tag_button.setVisibility(tags.size() == Tag.MAX_TAGS ? View.GONE : View.VISIBLE);
                 break;
         }

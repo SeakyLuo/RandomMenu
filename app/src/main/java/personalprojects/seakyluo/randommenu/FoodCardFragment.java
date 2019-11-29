@@ -91,7 +91,7 @@ public class FoodCardFragment extends Fragment {
         CurrentFood = food;
         food_name.setText(food.Name);
         Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
-        tagsFragment.SetData(food.GetTags(), false);
+        tagsFragment.SetData(food.GetTags());
     }
 
     public void LoadFood(Food food){ CurrentFood = food; }
