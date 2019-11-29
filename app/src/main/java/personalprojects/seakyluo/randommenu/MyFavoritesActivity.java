@@ -27,7 +27,7 @@ public class MyFavoritesActivity extends AppCompatActivity {
                 adapter.SetData(Settings.settings.Favorites);
                 dialog.SetFood(after);
             });
-            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
+            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         }));
         myFavorites.setText(Tag.Format("My Favorites", Settings.settings.Favorites.Count()));
         adapter.SetData(Settings.settings.Favorites);

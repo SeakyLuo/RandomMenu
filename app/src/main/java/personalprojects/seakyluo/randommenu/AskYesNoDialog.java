@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class AskYesNoDialog extends DialogFragment {
-    public static final String WARNING = "Warning";
+    public static final String TAG = "AskYesNoDialog";
 
     private TextView text_message;
     private Button yes;

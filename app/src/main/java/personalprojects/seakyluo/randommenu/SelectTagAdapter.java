@@ -13,8 +13,9 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class SelectTagAdapter extends CustomAdapter<Tag> {
-    private OnDataItemClickedListener<Tag> listener;
+    private OnDataItemClickedListener<Tag> listener, longClickListener;
     public SelectTagAdapter(OnDataItemClickedListener<Tag> listener) { this.listener = listener; }
+    public void SetLongClickListener(OnDataItemClickedListener<Tag> longClickListener) { this.longClickListener = longClickListener; }
     private static int HighlightColor = Color.parseColor("#0078D7");
     private Tag pendingTag;
     private ViewHolder lastTag;
@@ -39,6 +40,11 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
             viewHolder.SetHighlight(true);
             pendingTag = null;
         }
+        viewHolder.view.setOnLongClickListener(v -> {
+            boolean success = longClickListener != null;
+            if (success) longClickListener.Click(holder, tag);
+            return success;
+        });
     }
 
     public void HighlightTag(Tag tag){

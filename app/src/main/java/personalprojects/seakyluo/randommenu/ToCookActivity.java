@@ -23,7 +23,7 @@ public class ToCookActivity extends AppCompatActivity {
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         findViewById(R.id.tc_fab).setOnClickListener(v -> {
             InputDialog dialog = new InputDialog();
-            dialog.SetPlaceHolder("Food Name");
+            dialog.SetHint("Food Name");
             dialog.SetConfirmListener(text -> {
                 Settings.settings.ToCook.Add(text, 0);
                 adapter.Add(text, 0);
@@ -47,7 +47,7 @@ public class ToCookActivity extends AppCompatActivity {
                 Settings.settings.ToCook.Remove(data);
                 adapter.Remove(data);
             });
-            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
+            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         });
         recyclerView.setAdapter(adapter);
     }

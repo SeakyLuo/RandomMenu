@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    android:layout_height="match_parent">
     <android.support.v7.widget.Toolbar
         android:id="@+id/search_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:background="?android:attr/colorBackgroundFloating"
         android:elevation="2dp"
         app:contentInsetStart="0dp"
@@ -24,40 +24,91 @@
             <ImageButton
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="52dp"
                 android:background="@android:color/transparent"
                 android:paddingStart="16dp"
                 android:paddingEnd="8dp"
                 android:src="@drawable/ic_back"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tag_box"
+                app:layout_constraintBottom_toTopOf="@id/search_tabs"
+                app:layout_constraintEnd_toStartOf="@+id/search_bar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <AutoCompleteTextView
+            <EditText
                 android:id="@+id/search_bar"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:background="@null"
                 android:completionThreshold="2"
-                android:hint="Input Food Name"
-                android:imeOptions="actionNext"
-                android:inputType="text"
+                android:hint="Input Content"
+                android:imeOptions="actionSearch"
+                android:inputType="text|textPersonName"
+                android:scrollHorizontally="true"
                 android:maxLength="@integer/maxFoodNameLength"
                 android:maxLines="1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/search_tabs"
+                app:layout_constraintEnd_toStartOf="@id/clear_button"
                 app:layout_constraintStart_toEndOf="@id/back_button"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageButton
+                android:id="@+id/clear_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintBottom_toTopOf="@+id/search_tabs"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/search_bar"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_clear" />
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/search_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/search_bar"
+                app:tabIndicatorColor="@android:color/holo_red_light"
+                app:tabSelectedTextColor="@android:color/holo_red_light"
+                app:tabTextAppearance="@style/TextAppearance.AppCompat.Body2">
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/search_post_tab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All" />
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/search_user_tab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Food" />
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/search_groups_tab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tag" />
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/search_user_history"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Note" />
+            </android.support.design.widget.TabLayout>
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/search_result"
-        android:layout_width="match_parent"
+    <personalprojects.seakyluo.randommenu.TabViewPager
+        android:id="@+id/search_viewpager"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

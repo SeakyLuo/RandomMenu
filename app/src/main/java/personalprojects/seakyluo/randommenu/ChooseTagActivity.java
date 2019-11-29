@@ -81,7 +81,7 @@ public class ChooseTagActivity extends AppCompatActivity {
                 finish();
             }else{
                 AskYesNoDialog dialog = new AskYesNoDialog();
-                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
+                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 dialog.setMessage("You Have unsaved changes. \nDo you want to quit without saving?");
                 dialog.setOnYesListener(view -> {
                     setResult(RESULT_CANCELED);

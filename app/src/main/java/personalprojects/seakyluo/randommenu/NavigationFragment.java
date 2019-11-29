@@ -45,6 +45,31 @@ public class NavigationFragment extends Fragment {
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         selectTagAdapter = new SelectTagAdapter((viewHolder, tag) -> selectTag(tag));
+        selectTagAdapter.SetLongClickListener(((viewHolder, data) -> {
+            final PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_tag_menu, getContext(), viewHolder.view);
+            helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
+                switch (menuItem.getItemId()){
+                    case R.id.edit_tag_item:
+                        InputDialog inputDialog = new InputDialog();
+                        inputDialog.SetText(data.Name);
+                        inputDialog.SetConfirmListener(text -> {
+
+                        });
+                        inputDialog.showNow(getFragmentManager(), InputDialog.TAG);
+                        return true;
+                    case R.id.delete_tag_item:
+                        AskYesNoDialog askDialog = new AskYesNoDialog();
+                        askDialog.setMessage(String.format("Do you want delete tag \"%s\"?", data.Name));
+                        askDialog.setOnYesListener(v -> {
+
+                        });
+                        askDialog.showNow(getFragmentManager(), AskYesNoDialog.TAG);
+                        return true;
+                }
+                return false;
+            });
+            helper.show();
+        }));
         masterView.setAdapter(selectTagAdapter);
 
         RecyclerView detailView = view.findViewById(R.id.detailView);
@@ -53,7 +78,7 @@ public class NavigationFragment extends Fragment {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
             dialog.SetFoodEditedListener((before, after) -> SetData());
-            dialog.showNow(getFragmentManager(), AskYesNoDialog.WARNING);
+            dialog.showNow(getFragmentManager(), AskYesNoDialog.TAG);
         });
         foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> EditFood(food));
         detailView.setAdapter(foodAdapter);

@@ -80,7 +80,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     noteChanged = intent_food == null ? note.length() > 0 : !note.equals(intent_food.Note);
             if (nameChanged || tagChanged || noteChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
-                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
+                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 dialog.setMessage("You have unsaved changes.\nDo you want to save it as draft?");
                 dialog.setOnYesListener(view -> {
                     String image_path = SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : Helper.SaveImage(food_image, "draft.jpg");
@@ -140,7 +140,7 @@ public class EditFoodActivity extends AppCompatActivity {
         delete_food_button.setVisibility(intent_food == null ? View.GONE : View.VISIBLE);
         delete_food_button.setOnClickListener(v -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
-            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
+            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
             dialog.setMessage("Do you want to delete this food?");
             dialog.setOnYesListener(view -> {
                 if (intent_food.equals(Settings.settings.FoodDraft)) Settings.settings.FoodDraft = null;

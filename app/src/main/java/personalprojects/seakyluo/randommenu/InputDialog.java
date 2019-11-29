@@ -17,7 +17,7 @@ public class InputDialog extends DialogFragment {
     public static final String TAG = "InputDialog";
     private EditText input_text;
     private Button confirm, cancel;
-    private String placeHolder = "";
+    private String placeHolder = "", text = "";
     private InputConfirmListener confirmListener;
     private View.OnClickListener cancelListener;
     @Nullable
@@ -29,6 +29,8 @@ public class InputDialog extends DialogFragment {
         cancel = view.findViewById(R.id.cancel_button);
 
         input_text.setHint(placeHolder);
+        input_text.setText(text);
+        input_text.selectAll();
         input_text.requestFocus();
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -48,7 +50,14 @@ public class InputDialog extends DialogFragment {
         return view;
     }
 
-    public void SetPlaceHolder(String placeHolder) { this.placeHolder = placeHolder;  }
+    public void SetHint(String placeHolder) { this.placeHolder = placeHolder; if (input_text != null) input_text.setHint(text); }
+    public void SetText(String text) {
+        this.text = text;
+        if (input_text != null){
+            input_text.setText(text);
+            input_text.selectAll();
+        }
+    }
     public void SetConfirmListener(InputConfirmListener confirmListener) { this.confirmListener = confirmListener; }
     public void SetCancelListener(View.OnClickListener cancelListener) { this.cancelListener = cancelListener; }
 
