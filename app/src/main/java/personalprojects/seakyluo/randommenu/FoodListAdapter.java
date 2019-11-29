@@ -63,7 +63,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
 
         @Override
         void setData(Food data) {
-            Glide.with(view).load(data.ImagePath).into(food_image);
+            Helper.LoadImage(Glide.with(view), data.ImagePath, food_image);
             food_name.setText(data.Name);
             adapter.setData(data.GetTags().Convert(t -> new ToggleTag(t, false)));
         }

@@ -20,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public class EditFoodActivity extends AppCompatActivity {
         Food intent_food = getIntent().getParcelableExtra(FOOD);
         if (intent_food != null){
             edit_food_name.setText(intent_food.Name);
-            if (intent_food.HasImage()) food_image.setImageBitmap(Helper.GetFoodBitmap(intent_food));
+            if (intent_food.HasImage()) Helper.LoadImage(Glide.with(this), intent_food.ImagePath, food_image);
             tagsFragment.SetData(intent_food.GetTags(), true);
             edit_note.setText(intent_food.Note);
         }

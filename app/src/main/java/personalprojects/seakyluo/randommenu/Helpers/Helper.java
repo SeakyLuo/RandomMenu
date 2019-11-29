@@ -8,6 +8,10 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,17 +47,15 @@ public class Helper {
     }
 
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
-
-    public static Bitmap GetFoodBitmap(Food food){ return GetFoodBitmap(food.ImagePath); }
-    public static Bitmap GetFoodBitmap(String path){
-        if (IsNullOrEmpty(path)) return DefaultFoodImage;
-        Bitmap image;
-        if (foodImageCache.containsKey(path)) image = foodImageCache.get(path);
-        else {
-            image = BitmapFactory.decodeFile(path);
-            foodImageCache.put(path, image);
-        }
-        return image;
+    public static void LoadImage(RequestManager glide, String path, ImageView imageView){
+        glide.load(path).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+//        Bitmap image = foodImageCache.getOrDefault(path, null);
+//        if (image == null) {
+//            glide.load(path).into(imageView);
+////            foodImageCache.put(path, GetFoodBitmap(imageView));
+//        }else{
+//            imageView.setImageBitmap(image);
+//        }
     }
     public static Bitmap GetFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
     public static String SaveImage(ImageView imageView, String filename){

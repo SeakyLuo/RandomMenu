@@ -21,17 +21,23 @@ public class ToCookActivity extends AppCompatActivity {
 
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         findViewById(R.id.tc_fab).setOnClickListener(v -> {
-
+            InputDialog dialog = new InputDialog();
+            dialog.SetPlaceHolder("Food Name");
+            dialog.SetConfirmListener(text -> {
+                Settings.settings.ToCook.Add(text, 0);
+                adapter.add(0, text);
+            });
+            dialog.showNow(getSupportFragmentManager(), InputDialog.TAG);
         });
         recyclerView = findViewById(R.id.food_list_recycler_view);
         adapter = new SimpleFoodListAdapter();
         adapter.setData(Settings.settings.ToCook);
         adapter.setActivity(this);
-        adapter.SetOnDataItemClickedListener(((viewHolder, data) -> {
+        adapter.SetOnDataItemClickedListener((viewHolder, data) -> {
             Intent intent = new Intent(this, EditFoodActivity.class);
             intent.putExtra(EditFoodActivity.FOOD, new Food(data));
             startActivityForResult(intent, EditFoodActivity.FOOD_CODE);
-        }));
+        });
         recyclerView.setAdapter(adapter);
     }
 

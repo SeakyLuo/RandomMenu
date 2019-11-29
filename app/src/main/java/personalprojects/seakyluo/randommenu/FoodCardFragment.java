@@ -88,7 +88,7 @@ public class FoodCardFragment extends Fragment {
 
     private void setFood(Food food){
         food_name.setText(food.Name);
-        Glide.with(this).load(food.ImagePath).into(food_image);
+        Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
         tagsFragment.SetData(food.GetTags(), false);
     }
 

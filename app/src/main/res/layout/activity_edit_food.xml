@@ -100,7 +100,7 @@
                 android:ems="10"
                 android:hint="Food Name"
                 android:background="@null"
-                android:maxLength="50"
+                android:maxLength="@integer/maxFoodNameLength"
                 android:maxLines="1"
                 android:inputType="textPersonName"
                 android:importantForAutofill="no" />
