@@ -83,7 +83,7 @@ public class ChooseTagActivity extends AppCompatActivity {
             }else{
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.WARNING);
-                dialog.setMessage("You Have Unsaved Changes. \nDo you want to quit without saving?");
+                dialog.setMessage("You Have unsaved changes. \nDo you want to quit without saving?");
                 dialog.setOnYesListener(view -> {
                     setResult(RESULT_CANCELED);
                     finish();
@@ -105,7 +105,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         tag_recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         tag_recycler_view.setAdapter(tagListAdapter);
 
-        tagsFragment = new TagsFragment();
+        tagsFragment = (TagsFragment) getSupportFragmentManager().findFragmentById(R.id.tags_fragment);
         tagsFragment.SetLinear(true);
         tagsFragment.SetClose(true);
         tagsFragment.SetTags(original_tags);
@@ -113,7 +113,6 @@ public class ChooseTagActivity extends AppCompatActivity {
             ((TagAdapter.ViewHolder)viewHolder).SetCloseButtonVisibility(tag.Toggle());
             tagListAdapter.set(tag, tagListAdapter.getData().IndexOf(tag));
         }));
-        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
     }
 
     private void ChooseTag(ToggleTag tag){

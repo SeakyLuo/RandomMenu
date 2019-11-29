@@ -2,13 +2,14 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/ct_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:background="?android:attr/colorBackgroundFloating"
         android:elevation="2dp"
         app:contentInsetStart="0dp"
@@ -18,15 +19,16 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteY="12dp">
 
             <ImageButton
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="8dp"
+                android:layout_height="0dp"
                 android:background="@android:color/transparent"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
                 android:src="@drawable/ic_back"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/tag_box"
@@ -38,24 +40,24 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@null"
-                android:maxLength="10"
-                android:maxLines="1"
-                android:inputType="text"
+                android:completionThreshold="1"
                 android:hint="Input Tag"
                 android:imeOptions="actionNext"
-                android:completionThreshold="1"
-                app:layout_constraintStart_toEndOf="@id/back_button"
+                android:inputType="text"
+                android:maxLength="@integer/maxTagNameLength"
+                android:maxLines="1"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/confirm_button"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintStart_toEndOf="@id/back_button"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/confirm_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="16dp"
+                android:layout_height="0dp"
                 android:background="@android:color/transparent"
+                android:paddingStart="8dp"
+                android:paddingEnd="16dp"
                 android:src="@drawable/ic_confirm"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -64,8 +66,9 @@
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.Toolbar>
 
-    <FrameLayout
-        android:id="@+id/tags_frame"
+    <fragment
+        class="personalprojects.seakyluo.randommenu.TagsFragment"
+        android:id="@+id/tags_fragment"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginStart="4dp"
@@ -73,7 +76,8 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@id/tag_card_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ct_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/ct_toolbar"
+        tools:layout="@layout/fragment_tags" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/tag_card_view"
@@ -83,7 +87,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tags_frame">
+        app:layout_constraintTop_toBottomOf="@id/tags_fragment">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/listed_tag_recycler_view"

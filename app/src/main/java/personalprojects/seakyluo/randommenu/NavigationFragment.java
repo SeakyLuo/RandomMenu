@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.Models.Food;
@@ -23,6 +24,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class NavigationFragment extends Fragment {
     public static final String TAG = "NavigationFragment";
+    private ImageButton search_button;
     private TextView title_text_view;
     private SelectTagAdapter selectTagAdapter;
     private FoodAdapter foodAdapter;
@@ -36,6 +38,11 @@ public class NavigationFragment extends Fragment {
         title_text_view = view.findViewById(R.id.title_text_view);
         FloatingActionButton fab = view.findViewById(R.id.navi_fab);
         fab.setOnClickListener(v -> EditFood(null));
+
+        view.findViewById(R.id.search_button).setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), SearchActivity.class));
+            getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
+        });
 
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));

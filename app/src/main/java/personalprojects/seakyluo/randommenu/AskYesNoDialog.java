@@ -43,7 +43,10 @@ public class AskYesNoDialog extends DialogFragment {
         return view;
     }
 
-    public void setMessage(String message) { this.message = message; }
+    public void setMessage(String message) {
+        this.message = message;
+        if (text_message != null) text_message.setText(message);
+    }
     public void setYesText(String text) { yes.setText(text); }
     public void setNoText(String text) { no.setText(text); }
 }
