@@ -9,6 +9,7 @@ public class Settings {
     public AList<Tag> Tags = new AList<>();
     public AList<String> ToCook = new AList<>();
     public AList<Food> Favorites = new AList<>();
+    public AList<String> ToEat = new AList<>();
     public Food FoodDraft;
 
     public void AddFood(Food food, int index){
