@@ -19,7 +19,7 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 public class FoodListAdapter extends CustomAdapter<Food> {
     private OnDataItemClickedListener<Food> foodClickedListener;
     private OnDataItemClickedListener<Tag> tagClickedListener;
-    public FoodListAdapter(OnDataItemClickedListener<Food> foodClickedListener){ this.foodClickedListener = foodClickedListener; }
+    public void SetFoodClickedListener(OnDataItemClickedListener<Food> foodClickedListener) { this.foodClickedListener = foodClickedListener; }
     public void SetTagClickedListener(OnDataItemClickedListener<Tag> tagClickedListener) { this.tagClickedListener = tagClickedListener; }
 
     @NonNull

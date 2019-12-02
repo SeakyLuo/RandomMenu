@@ -13,6 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Comparator;
+import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -47,13 +51,33 @@ public class NavigationFragment extends Fragment {
         selectTagAdapter = new SelectTagAdapter((viewHolder, tag) -> selectTag(tag));
         selectTagAdapter.SetLongClickListener(((viewHolder, data) -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_tag_menu, getContext(), viewHolder.view);
+            if (data.IsAllCategoriesTag()){
+                helper.removeItem(R.id.edit_tag_item);
+                helper.removeItem(R.id.delete_tag_item);
+            }else{
+                helper.removeItem(R.id.sort_by_default);
+                helper.removeItem(R.id.sort_by_name_item);
+            }
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
                 switch (menuItem.getItemId()){
+                    case R.id.sort_by_default:
+                        selectTagAdapter.SetTags(Settings.settings.Tags.Sort(Tag::compareTo).Reverse());
+                        return true;
+                    case R.id.sort_by_name_item:
+                        selectTagAdapter.SetTags(Settings.settings.Tags.Sort((t1, t2) -> t1.Name.compareTo(t2.Name)));
+                        return true;
                     case R.id.edit_tag_item:
                         InputDialog inputDialog = new InputDialog();
                         inputDialog.SetText(data.Name);
                         inputDialog.SetConfirmListener(text -> {
-
+                            if (text.equals(data.Name)) return;
+                            if (Settings.settings.Tags.Find(t -> t.Name.equals(text)) == null){
+                                Tag tag = Settings.settings.Tags.Find(t -> t.Name.equals(data.Name));
+                                tag.Name = text;
+                                selectTagAdapter.Set(tag, selectTagAdapter.IndexOf(t -> t.Name.equals(data.Name)));
+                            }else{
+                                Toast.makeText(getContext(), "Tag Exists!", Toast.LENGTH_SHORT).show();
+                            }
                         });
                         inputDialog.showNow(getFragmentManager(), InputDialog.TAG);
                         return true;
@@ -61,7 +85,10 @@ public class NavigationFragment extends Fragment {
                         AskYesNoDialog askDialog = new AskYesNoDialog();
                         askDialog.setMessage(String.format("Do you want delete tag \"%s\"?", data.Name));
                         askDialog.setOnYesListener(v -> {
-
+                            if (data.equals(lastTag)) lastTag = Tag.AllCategoriesTag;
+                            selectTagAdapter.Remove(data);
+                            Settings.settings.Tags.Remove(data);
+                            Settings.settings.Foods.ForEach(food -> food.RemoveTag(data));
                         });
                         askDialog.showNow(getFragmentManager(), AskYesNoDialog.TAG);
                         return true;
@@ -106,9 +133,8 @@ public class NavigationFragment extends Fragment {
     }
 
     private void selectTag(Tag tag){
-        if (tag.equals(lastTag)) return;
         lastTag = tag;
-        if (tag.equals(Tag.AllCategoriesTag)){
+        if (tag.IsAllCategoriesTag()){
             title_text_view.setText(Tag.Format(Tag.AllCategories, Settings.settings.Foods.Count()));
             foodAdapter.Reset();
         }else{
@@ -128,8 +154,8 @@ public class NavigationFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK)
             SetData();
-        if (!lastTag.equals(Tag.AllCategoriesTag) && !Settings.settings.Tags.Contains(lastTag)) lastTag = Tag.AllCategoriesTag;
-        selectTag(lastTag);
-        selectTagAdapter.HighlightTag(lastTag);
+        if (!lastTag.IsAllCategoriesTag() && !Settings.settings.Tags.Contains(lastTag)) lastTag = Tag.AllCategoriesTag;
+//        selectTag(lastTag);
+//        selectTagAdapter.HighlightTag(lastTag);
     }
 }

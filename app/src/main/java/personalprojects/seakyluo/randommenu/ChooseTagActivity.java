@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +16,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -96,6 +98,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         findViewById(R.id.confirm_button).setOnClickListener(v -> SubmitTag());
 
         original_tags = getIntent().getParcelableArrayListExtra(TAG);
+        Log.d("fuck", Settings.settings.toString());
         tagListAdapter = new TagListAdapter(Settings.settings.Tags, original_tags);
         tagListAdapter.SetTagClickedListener((viewHolder, tag) -> ChooseTag(tag));
 

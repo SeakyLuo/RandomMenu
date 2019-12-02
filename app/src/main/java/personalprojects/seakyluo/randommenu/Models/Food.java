@@ -45,6 +45,8 @@ public class Food implements Parcelable {
 
     public AList<Tag> GetTags() { return Tags; }
 
+    public void RemoveTag(Tag tag) { Tags.Remove(tag); }
+
     @Override
     public boolean equals(@Nullable Object obj) {
         return obj instanceof Food && Name.equals(((Food)obj).Name);

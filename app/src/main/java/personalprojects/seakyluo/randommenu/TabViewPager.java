@@ -41,8 +41,7 @@ public class TabViewPager extends ViewPager {
 
     private void setMyScroller() {
         try {
-            Class<?> viewpager = ViewPager.class;
-            Field scroller = viewpager.getDeclaredField("mScroller");
+            Field scroller = ViewPager.class.getDeclaredField("mScroller");
             scroller.setAccessible(true);
             scroller.set(this, new MyScroller(getContext()));
         } catch (Exception e) {

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.UnaryOperator;
 
 import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
 import personalprojects.seakyluo.randommenu.Interfaces.ForLambda;
@@ -87,6 +88,7 @@ public class AList<T> extends IList<T> {
     public AList<T> Without(T element){ Remove(element); return this; }
     public AList<T> Without(AList<T> collection) { RemoveAll(collection); return this; }
     public void Clear() { list.clear(); }
+    public void Clear(int index) { while (list.size() > index) list.remove(index); }
     public AList<T> Copy(){ return new AList<>(list); }
     public AList<T> CopyFrom(AList<T> collection){ return CopyFrom(collection.list); }
     public AList<T> CopyFrom(Collection<T> collection){
@@ -134,7 +136,8 @@ public class AList<T> extends IList<T> {
         return collection;
     }
     public T Get(int index){ return list.get(ModIndex(index)); }
-    public void Set(T element, int index) { list.set(ModIndex(index), element); }
+    public T Set(T element, int index) { list.set(ModIndex(index), element); return element; }
+    public AList<T> Set(UnaryOperator<T> lambda) { list.replaceAll(lambda); return this; }
     public T Find(T target){
         for (T element: list)
             if (element.equals(target))
@@ -192,7 +195,7 @@ public class AList<T> extends IList<T> {
     public HashSet<T> ToHashSet() { return new HashSet<>(list); }
     public ArrayList<T> ToArrayList(){ return new ArrayList<T>(list); }
     public AList<T> Sort(Comparator<? super T> comparator) {
-        Collections.sort(list, comparator);
+        list.sort(comparator);
         return this;
     }
     public <A> HashMap<A, AList<T>> GroupBy(ObjectLambda<T, A> lambda){

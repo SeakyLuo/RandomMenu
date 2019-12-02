@@ -134,7 +134,8 @@ public class EditFoodActivity extends AppCompatActivity {
         food_image.setOnClickListener(v -> {
             if (intent_food == null ? !SetFoodImage : !intent_food.HasImage()) return;
             Intent intent = new Intent(this, FullScreenImageActivity.class);
-            intent.putExtra(FullScreenImageActivity.IMAGE, temp_camera_image_uri == null ? intent_food.ImagePath : temp_camera_image_uri.getPath());
+            if (SetFoodImage) FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
+            else intent.putExtra(FullScreenImageActivity.IMAGE, intent_food.ImagePath);
             startActivity(intent);
         });
         delete_food_button.setVisibility(intent_food == null ? View.GONE : View.VISIBLE);

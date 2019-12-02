@@ -1,6 +1,7 @@
 package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -10,45 +11,42 @@ import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class MyFavoritesActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
-    private TextView myFavorites;
-    private FoodListAdapter adapter;
+    private FoodListFragment fragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_favorites);
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
-        recyclerView = findViewById(R.id.food_list_recycler_view);
-        myFavorites = findViewById(R.id.title_text_view);
-        adapter = new FoodListAdapter(((viewHolder, food) -> {
+
+        TextView title = findViewById(R.id.title_text_view);
+        title.setText(Tag.Format("My Favorites", Settings.settings.Favorites.Count()));
+
+        fragment = (FoodListFragment) getSupportFragmentManager().findFragmentById(R.id.food_list_fragment);
+        fragment.SetData(Settings.settings.Favorites);
+        fragment.SetFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
             dialog.SetFoodEditedListener((before, after) -> {
-                adapter.SetData(Settings.settings.Favorites);
+                fragment.SetData(Settings.settings.Favorites);
                 dialog.SetFood(after);
             });
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
-        }));
-        myFavorites.setText(Tag.Format("My Favorites", Settings.settings.Favorites.Count()));
-        adapter.SetData(Settings.settings.Favorites);
-        adapter.SetActivity(this);
-        recyclerView.setAdapter(adapter);
-
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        });
+        fragment.AttachItemTouchHelper(new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
 //                int position = viewHolder.getAdapterPosition();
 //                adapter.data.Pop(position);
 //                adapter.notifyDataSetChanged();
             }
-        }).attachToRecyclerView(recyclerView);
+        }));
     }
 
     @Override

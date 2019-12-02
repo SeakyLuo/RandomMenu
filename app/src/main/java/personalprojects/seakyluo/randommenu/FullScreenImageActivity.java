@@ -23,6 +23,13 @@ public class FullScreenImageActivity extends AppCompatActivity {
         fullscreen_background.setOnClickListener(v -> finish());
         ImageView fullscreen_image = findViewById(R.id.fullscreen_image);
 
-        Helper.LoadImage(Glide.with(this), getIntent().getStringExtra(IMAGE), fullscreen_image);
+        if (image == null) Helper.LoadImage(Glide.with(this), getIntent().getStringExtra(IMAGE), fullscreen_image);
+        else fullscreen_image.setImageBitmap(image);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        image = null;
     }
 }

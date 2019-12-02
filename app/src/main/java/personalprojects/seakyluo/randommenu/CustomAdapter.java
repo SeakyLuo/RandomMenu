@@ -8,6 +8,7 @@ import android.view.View;
 import java.util.Comparator;
 import java.util.List;
 
+import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
 import personalprojects.seakyluo.randommenu.Models.AList;
 
 public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
@@ -28,12 +29,12 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
 
     public void SetActivity(Activity activity) { this.activity = activity; }
 
-    public void SetData(AList<T> data){
-        this.data.CopyFrom(data);
+    public void SetData(AList<T> list){
+        this.data.CopyFrom(list);
         notifyDataSetChanged();
     }
-    public void SetData(List<T> data){
-        this.data = new AList<>(data);
+    public void SetData(List<T> list){
+        this.data = new AList<>(list);
         notifyDataSetChanged();
     }
     private void addOne(T object){
@@ -80,6 +81,8 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         data.Set(element, index);
         notifyItemChanged(index);
     }
+    public int IndexOf(T element) { return data.IndexOf(element); }
+    public int IndexOf(BooleanLambda<T> lambda) { return data.IndexOf(lambda); }
     public AList<T> GetData(){ return data; }
     public boolean IsEmpty(){ return data.Count() == 0; }
     public boolean Contains(T element) { return data.Contains(element); }

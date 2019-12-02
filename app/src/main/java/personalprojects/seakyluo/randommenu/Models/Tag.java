@@ -31,6 +31,8 @@ public class Tag implements Comparable, Parcelable {
         return obj instanceof Tag && Name.equals(((Tag)obj).Name);
     }
 
+    public boolean IsAllCategoriesTag() { return equals(AllCategoriesTag); }
+
     @Override
     public int hashCode() {
         return Name.hashCode();

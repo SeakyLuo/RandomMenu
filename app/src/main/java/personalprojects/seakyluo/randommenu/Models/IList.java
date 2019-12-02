@@ -8,5 +8,5 @@ public abstract class IList<T> {
     public IList() {}
     public IList(Collection<T> collection) { list.addAll(collection); }
     public IList(T element) { list.add(element); }
-    public IList(IList collection) { list = collection.list; }
+    public IList(IList<T> collection) { list = collection.list; }
 }

@@ -47,15 +47,14 @@
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/food_list_recycler_view"
+    <fragment
+        class="personalprojects.seakyluo.randommenu.FoodListFragment"
+        android:id="@+id/food_list_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:nestedScrollingEnabled="true"
-        android:orientation="vertical"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mf_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/mf_toolbar"
+        tools:layout="@layout/fragment_linear_recycler_view"/>
 </android.support.constraint.ConstraintLayout>
