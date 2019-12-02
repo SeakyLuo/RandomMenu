@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 
 public class TabViewPager extends ViewPager {
     private boolean swipeable = true;
+    private MyScroller scroller;
 
     public TabViewPager(Context context) {
         super(context);
@@ -43,7 +44,7 @@ public class TabViewPager extends ViewPager {
         try {
             Field scroller = ViewPager.class.getDeclaredField("mScroller");
             scroller.setAccessible(true);
-            scroller.set(this, new MyScroller(getContext()));
+            scroller.set(this, this.scroller = new MyScroller(getContext()));
         } catch (Exception e) {
             e.printStackTrace();
         }

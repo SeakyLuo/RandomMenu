@@ -43,7 +43,7 @@ public class SearchActivity extends AppCompatActivity {
             });
         });
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        viewPager.setSwipeable(true);
+        viewPager.setSwipeable(false);
         viewPager.setAdapter(tabPagerAdapter);
         search_bar.requestFocus();
         search_bar.addTextChangedListener(new TextWatcher() {

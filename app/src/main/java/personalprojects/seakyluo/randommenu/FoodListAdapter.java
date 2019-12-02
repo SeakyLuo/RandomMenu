@@ -35,7 +35,9 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         viewHolder.view.setOnClickListener(v -> {
             if (foodClickedListener != null) foodClickedListener.Click(holder, data.Get(position));
         });
-        viewHolder.adapter.SetTagClickedListener((v, t) -> tagClickedListener.Click(v, t));
+        viewHolder.adapter.SetTagClickedListener((v, t) -> {
+            if (tagClickedListener != null) tagClickedListener.Click(v, t);
+        });
     }
 
 
@@ -44,14 +46,13 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         private ImageView food_image;
         private TextView food_name;
         private RecyclerView recyclerView;
-        private TagAdapter adapter;
+        private TagAdapter adapter = new TagAdapter(false);
 
         ViewHolder(View view) {
             super(view);
             food_image = view.findViewById(R.id.food_image);
             food_name = view.findViewById(R.id.food_name);
             recyclerView = view.findViewById(R.id.tags_recycler_view);
-            adapter = new TagAdapter(false);
 
             food_image.setOnClickListener(v -> {
                 Intent intent = new Intent(activity, FullScreenImageActivity.class);

@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class FoodListFragment extends Fragment {
     private RecyclerView recyclerView;
