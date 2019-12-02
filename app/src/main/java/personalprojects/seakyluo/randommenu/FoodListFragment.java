@@ -35,7 +35,7 @@ public class FoodListFragment extends Fragment {
     }
 
     public void SetData(AList<Food> data){ this.data.CopyFrom(data); if (adapter != null) adapter.SetData(data); }
-
+    public void Clear() { this.data.Clear(); if (adapter != null) adapter.Clear(); }
     public void SetFoodClickedListener(OnDataItemClickedListener<Food> listener){ this.listener = listener; if (adapter != null) adapter.SetFoodClickedListener(listener); }
 
     public void AttachItemTouchHelper(ItemTouchHelper helper){

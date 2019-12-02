@@ -42,6 +42,7 @@ public class Food implements Parcelable {
     public boolean HasImage() { return !Helper.IsNullOrEmpty(ImagePath); }
 
     public boolean HasTag(Tag tag) { return Tags.Contains(tag); }
+    public boolean HasTag(String name) { return Tags.Any(t -> t.Name.equals(name)); }
 
     public AList<Tag> GetTags() { return Tags; }
 

@@ -17,9 +17,18 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
         super(fm);
     }
 
+    public void AddFragment(Fragment fragment){
+        fragmentList.Add(fragment);
+        fragmentTitles.Add(fragment.getClass().getName() + fragmentList.Count());
+    }
+
     public void AddFragment(Fragment fragment, String title){
         fragmentList.Add(fragment);
         fragmentTitles.Add(title);
+    }
+
+    public void AddFragments(AList<Fragment> fragments){
+        fragments.ForEach(this::AddFragment);
     }
 
     public void AddFragments(AList<Fragment> fragments, AList<String> titles){
@@ -27,13 +36,11 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
         fragmentTitles.AddAll(titles);
     }
 
-    @Override
-    public Fragment getItem(int i) {
-        return fragmentList.Get(i);
-    }
+    public AList<Fragment> GetFragments() { return fragmentList; }
 
     @Override
-    public int getCount() {
-        return fragmentList.Count();
-    }
+    public Fragment getItem(int i) { return fragmentList.Get(i); }
+
+    @Override
+    public int getCount() { return fragmentList.Count(); }
 }

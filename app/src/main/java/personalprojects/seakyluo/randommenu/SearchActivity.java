@@ -9,12 +9,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
+import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.Models.Settings;
+
 public class SearchActivity extends AppCompatActivity {
     private EditText search_bar;
     private ImageButton clear_button;
-    private TabViewPager viewPager;
-    private TabLayout tabLayout;
-    private TabPagerAdapter tabPagerAdapter;
+    private FoodListFragment allFragment, foodFragment, tagFragment, noteFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,9 +25,26 @@ public class SearchActivity extends AppCompatActivity {
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         search_bar = findViewById(R.id.search_bar);
         clear_button = findViewById(R.id.clear_button);
-        tabLayout = findViewById(R.id.search_tabs);
-        viewPager = findViewById(R.id.search_viewpager);
 
+        TabLayout tabLayout = findViewById(R.id.search_tabs);
+        TabViewPager viewPager = findViewById(R.id.search_viewpager);
+        TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager());
+        tabPagerAdapter.AddFragment(allFragment = new FoodListFragment());
+        tabPagerAdapter.AddFragment(foodFragment = new FoodListFragment());
+        tabPagerAdapter.AddFragment(tagFragment = new FoodListFragment());
+        tabPagerAdapter.AddFragment(noteFragment = new FoodListFragment());
+        tabPagerAdapter.GetFragments().ForEach(f -> {
+            FoodListFragment fragment = (FoodListFragment) f;
+            fragment.SetFoodClickedListener((viewHolder, food) -> {
+                FoodCardDialog dialog = new FoodCardDialog();
+                dialog.SetFood(food);
+                dialog.SetFoodEditedListener((before, after) -> dialog.SetFood(after));
+                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
+            });
+        });
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        viewPager.setSwipeable(true);
+        viewPager.setAdapter(tabPagerAdapter);
         search_bar.requestFocus();
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -39,13 +59,26 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                clear_button.setVisibility((s.toString().isEmpty()) ? View.GONE : View.VISIBLE);
+                String keyword = s.toString().trim();
+                if (keyword.isEmpty()){
+                    tabPagerAdapter.GetFragments().ForEach(f -> ((FoodListFragment) f).Clear());
+                    clear_button.setVisibility(View.GONE);
+                }else{
+                    AList<Food> filtered = Settings.settings.Foods.Filter(f -> SearchFoodName(f, keyword) || SearchFoodTag(f, keyword) || SearchFoodNote(f, keyword) );
+                    allFragment.SetData(filtered);
+                    foodFragment.SetData(filtered.Filter(f -> SearchFoodName(f, keyword)));
+                    tagFragment.SetData(filtered.Filter(f -> SearchFoodTag(f, keyword)));
+                    noteFragment.SetData(filtered.Filter(f -> SearchFoodNote(f, keyword)));
+                    clear_button.setVisibility(View.VISIBLE);
+                }
             }
         });
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
+                int position = tab.getPosition();
+                viewPager.setCurrentItem(position, true);
+                tab.select();
             }
 
             @Override
@@ -58,22 +91,17 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
-        tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager());
-//        tabPagerAdapter.AddFragment(commentsFragment, "Comments");
-//        tabPagerAdapter.AddFragment(ratingsFragment, "Ratings");
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        viewPager.setSwipeable(true);
-        viewPager.setAdapter(tabPagerAdapter);
 
         clear_button.setVisibility(View.GONE);
-        clear_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search_bar.setText("");
-                clear_button.setVisibility(View.GONE);
-            }
+        clear_button.setOnClickListener(v -> {
+            search_bar.setText("");
+            clear_button.setVisibility(View.GONE);
         });
     }
+
+    private boolean SearchFoodName(Food food, String keyword) { return food.Name.contains(keyword);}
+    private boolean SearchFoodTag(Food food, String keyword) { return food.GetTags().Any(t -> t.Name.contains(keyword)); }
+    private boolean SearchFoodNote(Food food, String keyword) { return food.Note.contains(keyword); }
 
     @Override
     public void finish() {
