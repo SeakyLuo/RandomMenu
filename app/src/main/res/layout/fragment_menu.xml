@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -32,14 +33,12 @@
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.Toolbar>
 
-    <fragment
-        android:id="@+id/food_list_fragment"
-        class="personalprojects.seakyluo.randommenu.FoodListFragment"
+    <FrameLayout
+        android:id="@+id/food_list_frame"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/menu_toolbar"
-        tools:layout="@layout/fragment_linear_recycler_view" />
+        app:layout_constraintTop_toBottomOf="@id/menu_toolbar" />
 </android.support.constraint.ConstraintLayout>

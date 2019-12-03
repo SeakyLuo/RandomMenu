@@ -63,8 +63,9 @@ public class RandomFragment extends Fragment {
                 food_pool.AddAll(Menu).Shuffle();
                 Menu.Clear();
             });
-            FoodListFragment fragment = (FoodListFragment) getChildFragmentManager().findFragmentById(R.id.food_list_fragment);
+            FoodListFragment fragment = new FoodListFragment();
             fragment.SetData(food_pool);
+            getFragmentManager().beginTransaction().add(R.id.food_list_frame, fragment).commit();
             // Create popup window.
             PopupWindow popupWindow = new PopupWindow(popup, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             // Set popup window animation style.
