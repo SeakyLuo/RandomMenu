@@ -93,7 +93,7 @@ public class EditFoodActivity extends AppCompatActivity {
             }
         });
         confirm_button.setOnClickListener(v -> {
-            String food_name = edit_food_name.getText().toString();
+            String food_name = edit_food_name.getText().toString().trim();
             if (food_name.length() == 0){
                 Toast.makeText(getApplicationContext(), "Name Too Short!", Toast.LENGTH_SHORT).show();
                 return;
@@ -107,7 +107,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "At least 1 tag!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            String note = edit_note.getText().toString();
+            String note = edit_note.getText().toString().trim();
             Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : intent_food == null ? "" : intent_food.ImagePath, tags, note);
             if (intent_food == null) Settings.settings.AddFood(food);
             else if (intent_food.equals(Settings.settings.FoodDraft)){

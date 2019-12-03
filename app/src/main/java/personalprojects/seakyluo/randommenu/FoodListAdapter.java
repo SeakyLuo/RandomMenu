@@ -40,19 +40,16 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         });
     }
 
-
-
     class ViewHolder extends CustomViewHolder {
         private ImageView food_image;
         private TextView food_name;
-        private RecyclerView recyclerView;
-        private TagAdapter adapter = new TagAdapter(false);
+        private TagAdapter adapter = new TagAdapter();
 
         ViewHolder(View view) {
             super(view);
             food_image = view.findViewById(R.id.food_image);
             food_name = view.findViewById(R.id.food_name);
-            recyclerView = view.findViewById(R.id.tags_recycler_view);
+            RecyclerView recyclerView = view.findViewById(R.id.tags_recycler_view);
 
             food_image.setOnClickListener(v -> {
                 Intent intent = new Intent(activity, FullScreenImageActivity.class);

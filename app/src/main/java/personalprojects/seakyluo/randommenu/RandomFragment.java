@@ -7,6 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ImageButton;
+import android.widget.PopupWindow;
+import android.widget.StackView;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -21,6 +25,8 @@ public class RandomFragment extends Fragment {
     private FoodCardFragment foodCardFragment;
     private static Random random = new Random();
     private AList<Food> Menu = new AList<>();
+//    private StackView stackView;
+//    private CardStackAdapter adapter;
 
     @Nullable
     @Override
@@ -35,9 +41,42 @@ public class RandomFragment extends Fragment {
             NextFood();
         });
         view.findViewById(R.id.refresh_button).setOnClickListener(v -> {
-            food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
+            Reset();
             NextFood();
         });
+        ImageButton filterButton = view.findViewById(R.id.filter_button);
+        filterButton.setOnClickListener(v -> {
+            View popup = getLayoutInflater().inflate(R.layout.fragment_menu, null);
+            // Create popup window.
+            PopupWindow popupWindow = new PopupWindow(popup, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            // Set popup window animation style.
+            popupWindow.setAnimationStyle(R.anim.push_up_in);
+            popupWindow.setFocusable(true);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.update();
+            popupWindow.showAsDropDown(filterButton, 1, 1);
+        });
+        ImageButton menuButton = view.findViewById(R.id.menu_button);
+        menuButton.setOnClickListener(v -> {
+            View popup = getLayoutInflater().inflate(R.layout.fragment_menu, null);
+            popup.findViewById(R.id.clear_button).setOnClickListener(button -> {
+                food_pool.AddAll(Menu).Shuffle();
+                Menu.Clear();
+            });
+            FoodListFragment fragment = (FoodListFragment) getChildFragmentManager().findFragmentById(R.id.food_list_fragment);
+            fragment.SetData(food_pool);
+            // Create popup window.
+            PopupWindow popupWindow = new PopupWindow(popup, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            // Set popup window animation style.
+            popupWindow.setAnimationStyle(R.anim.push_up_in);
+            popupWindow.setFocusable(true);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.update();
+            popupWindow.showAsDropDown(menuButton, 1, 1);
+        });
+//        stackView = view.findViewById(R.id.card_stack_view);
+//        adapter = new CardStackAdapter(getContext(), getFragmentManager(), Settings.settings.Foods);
+//        stackView.setAdapter(adapter);
         getFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
         Reset();
         if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(RandomPop());
@@ -45,6 +84,13 @@ public class RandomFragment extends Fragment {
     }
 
     private Food NextFood(){
+//        if (adapter.data.IsEmpty()){
+//            Reset();
+//            Toast.makeText(getContext(), "Reaches End", Toast.LENGTH_SHORT).show();
+//        }
+//        if (adapter.data.IsEmpty()) return null;
+//        stackView.showNext();
+//        return adapter.data.Get(stackView.getTop());
         if (food_pool.IsEmpty()){
             Reset();
             Toast.makeText(getContext(), "Reaches End", Toast.LENGTH_SHORT).show();
@@ -56,7 +102,8 @@ public class RandomFragment extends Fragment {
         return food_pool.Pop(random.nextInt(food_pool.Count()));
     }
 
-    private void Reset(){
-        food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
+    private AList<Food> Reset(){
+//        return adapter.data.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
+        return food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
     }
 }

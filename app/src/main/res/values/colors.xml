@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="BlackGray">#242424</color>
     <color name="aluminum">#999999</color>
+    <color name="highlight">#0078D7</color>
+    <color name="whiteSmoke">#F5F5F5</color>
 </resources>

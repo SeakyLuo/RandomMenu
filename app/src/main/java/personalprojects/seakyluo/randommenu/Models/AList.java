@@ -237,4 +237,8 @@ public class AList<T> extends IList<T> {
         if (count > 0) index = index % count;
         return index < 0 ? index + count : index;
     }
+    public AList<T> Shuffle(){
+        Collections.shuffle(list);
+        return this;
+    }
 }

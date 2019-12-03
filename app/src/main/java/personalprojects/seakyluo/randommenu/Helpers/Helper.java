@@ -48,7 +48,8 @@ public class Helper {
 
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
     public static void LoadImage(RequestManager glide, String path, ImageView imageView){
-        glide.load(path).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+        if (IsNullOrEmpty(path)) imageView.setImageBitmap(DefaultFoodImage);
+        else glide.load(path).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
 //        Bitmap image = foodImageCache.getOrDefault(path, null);
 //        if (image == null) {
 //            glide.load(path).into(imageView);

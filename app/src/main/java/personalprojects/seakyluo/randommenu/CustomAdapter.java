@@ -16,7 +16,6 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     AList<CustomViewHolder> viewHolders = new AList<>();
     Activity activity;
     public CustomAdapter() {}
-    public CustomAdapter(AList<T> data) { this.data = data; }
 
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {

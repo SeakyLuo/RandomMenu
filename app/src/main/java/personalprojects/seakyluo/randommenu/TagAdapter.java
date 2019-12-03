@@ -13,8 +13,8 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 public class TagAdapter extends CustomAdapter<Tag> {
     private boolean closeable = false;
     public TagAdapter() {}
+    public TagAdapter(boolean closeable) { SetCloseable(closeable); }
     public void SetCloseable(boolean closeable){ this.closeable = closeable; }
-    public TagAdapter(boolean closeable) { this.closeable = closeable; }
     private OnDataItemClickedListener<Tag> closeListener, tagListener;
     public void SetTagCloseListener(OnDataItemClickedListener<Tag> listener) { this.closeListener = listener; }
     public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { this.tagListener = listener; }

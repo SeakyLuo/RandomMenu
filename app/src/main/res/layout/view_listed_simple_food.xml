@@ -30,6 +30,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/food_name"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_delete" />
+            app:srcCompat="@drawable/ic_close" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
