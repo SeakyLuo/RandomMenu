@@ -50,7 +50,7 @@ public class SettingsFragment extends Fragment {
             Toast.makeText(getContext(), "Data Adjusted!", Toast.LENGTH_SHORT).show();
         });
         view.findViewById(R.id.clear_data_button).setOnClickListener(v -> {
-            Helper.Clear(getContext());
+//            Helper.Clear(getContext());
             Toast.makeText(getContext(), "Data Cleared!", Toast.LENGTH_SHORT).show();
         });
         return view;

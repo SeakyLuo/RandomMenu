@@ -22,7 +22,7 @@ public class FoodCardDialog extends DialogFragment {
         getChildFragmentManager().beginTransaction().add(R.id.dialog_food_card_frame, foodCardFragment).commit();
         foodCardFragment.LoadFood(CurrentFood);
         foodCardFragment.SetTagClickedListener((viewHolder, tag) -> {
-            dismiss();
+//            dismiss();
         });
         return view;
     }

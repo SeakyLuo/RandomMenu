@@ -7,10 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
-import android.widget.StackView;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -25,6 +23,7 @@ public class RandomFragment extends Fragment {
     private FoodCardFragment foodCardFragment;
     private static Random random = new Random();
     private AList<Food> Menu = new AList<>();
+    private MenuDialog menuDialog = new MenuDialog();
 //    private StackView stackView;
 //    private CardStackAdapter adapter;
 
@@ -46,9 +45,12 @@ public class RandomFragment extends Fragment {
         });
         ImageButton filterButton = view.findViewById(R.id.filter_button);
         filterButton.setOnClickListener(v -> {
-            View popup = getLayoutInflater().inflate(R.layout.fragment_menu, null);
-            // Create popup window.
-            PopupWindow popupWindow = new PopupWindow(popup, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            MenuDialog dialog = new MenuDialog();
+            dialog.SetOnClearListener(button -> {
+                food_pool.AddAll(Menu).Shuffle();
+                Menu.Clear();
+            });
+            PopupWindow popupWindow = new PopupWindow(dialog.getView(), ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             // Set popup window animation style.
             popupWindow.setAnimationStyle(R.anim.push_up_in);
             popupWindow.setFocusable(true);
@@ -57,17 +59,13 @@ public class RandomFragment extends Fragment {
             popupWindow.showAsDropDown(filterButton, 1, 1);
         });
         ImageButton menuButton = view.findViewById(R.id.menu_button);
+        menuDialog.SetOnClearListener(button -> {
+            food_pool.AddAll(Menu).Shuffle();
+            Menu.Clear();
+        });
         menuButton.setOnClickListener(v -> {
-            View popup = getLayoutInflater().inflate(R.layout.fragment_menu, null);
-            popup.findViewById(R.id.clear_button).setOnClickListener(button -> {
-                food_pool.AddAll(Menu).Shuffle();
-                Menu.Clear();
-            });
-            FoodListFragment fragment = new FoodListFragment();
-            fragment.SetData(food_pool);
-            getFragmentManager().beginTransaction().add(R.id.food_list_frame, fragment).commit();
-            // Create popup window.
-            PopupWindow popupWindow = new PopupWindow(popup, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            menuDialog.SetData(Menu);
+            PopupWindow popupWindow = new PopupWindow(menuDialog.getView(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             // Set popup window animation style.
             popupWindow.setAnimationStyle(R.anim.push_up_in);
             popupWindow.setFocusable(true);
