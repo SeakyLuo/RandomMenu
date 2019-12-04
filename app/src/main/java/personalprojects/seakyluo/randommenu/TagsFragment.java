@@ -31,11 +31,15 @@ public class TagsFragment extends Fragment {
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.HORIZONTAL));
         return view;
     }
+    public AList<Tag> GetData() { return adapter.GetData(); }
+    public TagAdapter GetAdapter() { return adapter; }
+    public RecyclerView GetRecyclerView() { return recyclerView; }
+    public void Add(Tag tag, int index) { adapter.Add(tag, index); }
+    public void Remove(Tag tag) { adapter.Remove(tag); }
+    public boolean Contains(Tag tag) { return adapter.Contains(tag); }
     public void SetData(AList<Tag> data){ adapter.SetData(data); }
     public void SetData(List<Tag> data){ adapter.SetData(data); }
-    public AList<Tag> GetData() { return adapter.GetData(); }
     public void SetSpanCount(int spanCount) { this.spanCount = spanCount; }
-
     public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagClickedListener(listener); }
     public void SetTagCloseListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagCloseListener(listener); }
 }

@@ -24,10 +24,9 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class ChooseTagActivity extends AppCompatActivity {
     public static final String TAG = "tag";
-    private RecyclerView selectedTags;
     private AutoCompleteTextView tag_box;
-    private TagAdapter tagAdapter;
     private TagListAdapter tagListAdapter;
+    private TagsFragment tagsFragment;
     private ArrayList<Tag> original_tags;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +64,7 @@ public class ChooseTagActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
-                suggestionTagListAdapter.addAll(tagListAdapter.GetData().Without(tagAdapter.GetData()).Convert(t -> t.Name).ToArrayList());
+                suggestionTagListAdapter.addAll(tagListAdapter.GetData().Without(tagsFragment.GetData()).Convert(t -> t.Name).ToArrayList());
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -78,7 +77,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.back_button).setOnClickListener(v -> {
-            if (tagAdapter.GetData().SameCollection(original_tags)){
+            if (tagsFragment.GetData().SameCollection(original_tags)){
                 setResult(RESULT_CANCELED);
                 finish();
             }else{
@@ -106,22 +105,23 @@ public class ChooseTagActivity extends AppCompatActivity {
         tag_recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         tag_recycler_view.setAdapter(tagListAdapter);
 
-        tagAdapter = new TagAdapter(true);
-        tagAdapter.SetData(original_tags);
-        tagAdapter.SetTagCloseListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
-        selectedTags = findViewById(R.id.selected_tags_recycler_view);
-        selectedTags.setAdapter(tagAdapter);
+        tagsFragment = new TagsFragment();
+        tagsFragment.SetSpanCount(1);
+        tagsFragment.SetCloseable(true);
+        tagsFragment.SetData(original_tags);
+        tagsFragment.SetTagCloseListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
+        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
     }
 
     private void ChooseTag(Tag tag){
-        if (tagAdapter.getItemCount() == Tag.MAX_TAGS){
+        if (tagsFragment.GetAdapter().getItemCount() == Tag.MAX_TAGS){
             Toast.makeText(ChooseTagActivity.this, "Tags Limit!", Toast.LENGTH_SHORT).show();
         }else{
-            if (tagAdapter.Contains(tag)){
-                tagAdapter.Remove(tag);
+            if (tagsFragment.Contains(tag)){
+                tagsFragment.Remove(tag);
             }else{
-                tagAdapter.Add(tag, 0);
-                selectedTags.scrollToPosition(0);
+                tagsFragment.Add(tag, 0);
+                tagsFragment.GetRecyclerView().scrollToPosition(0);
             }
         }
     }
@@ -130,13 +130,10 @@ public class ChooseTagActivity extends AppCompatActivity {
         String tag_name = tag_box.getText().toString();
         if (tag_name.length() > 0){
             Tag tag = new Tag(tag_name);
-            if (!tagAdapter.Contains(tag)){
-                if (tagListAdapter.Contains(tag)) tagListAdapter.CheckTag(tag, true);
-                else{
-                    tagListAdapter.Add(tag);
-                    tagListAdapter.SetTagChecked(tag, true);
-                }
-                tagAdapter.Add(tag);
+            if (!tagsFragment.Contains(tag)){
+                if (tagListAdapter.Contains(tag))
+                    tagListAdapter.CheckTag(tag, true);
+                tagsFragment.Add(tag, 0);
             }
             tag_box.setText("");
         }else{
@@ -146,7 +143,7 @@ public class ChooseTagActivity extends AppCompatActivity {
 
     private void FinishActivity(){
         Intent intent = new Intent();
-        AList<Tag> tags = tagAdapter.GetData();
+        AList<Tag> tags = tagsFragment.GetData();
         intent.putExtra(TAG, tags.ToArrayList());
         if (tags.SameCollection(original_tags)) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);

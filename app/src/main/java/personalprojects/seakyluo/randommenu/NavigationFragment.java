@@ -155,7 +155,7 @@ public class NavigationFragment extends Fragment {
         if (resultCode == RESULT_OK)
             SetData();
         if (!lastTag.IsAllCategoriesTag() && !Settings.settings.Tags.Contains(lastTag)) lastTag = Tag.AllCategoriesTag;
-//        selectTag(lastTag);
-//        selectTagAdapter.HighlightTag(lastTag);
+        selectTag(lastTag);
+        selectTagAdapter.HighlightTag(lastTag);
     }
 }

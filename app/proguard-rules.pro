@@ -19,3 +19,4 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file Name.
 #-renamesourcefileattribute SourceFile
+-keep class androidx.appcompat.widget.** { *; }

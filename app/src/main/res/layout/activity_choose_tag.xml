@@ -77,13 +77,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ct_toolbar">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/selected_tags_recycler_view"
+        <FrameLayout
+            android:id="@+id/tags_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:nestedScrollingEnabled="true"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+            android:layout_height="wrap_content"/>
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.CardView
