@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.Random;
 
 import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Models.FilterDialog;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 
@@ -24,6 +25,7 @@ public class RandomFragment extends Fragment {
     private static Random random = new Random();
     private AList<Food> Menu = new AList<>();
     private MenuDialog menuDialog = new MenuDialog();
+    private FilterDialog filterDialog = new FilterDialog();
 //    private StackView stackView;
 //    private CardStackAdapter adapter;
 
@@ -32,9 +34,8 @@ public class RandomFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_random, container, false);
         view.findViewById(R.id.check_button).setOnClickListener(v -> {
-            Food food = NextFood();
-            if (food == null) return;
-            Menu.Add(food);
+            Menu.Add(food_pool.Get(0));
+            NextFood();
         });
         view.findViewById(R.id.cross_button).setOnClickListener(v -> {
             NextFood();
@@ -45,33 +46,31 @@ public class RandomFragment extends Fragment {
         });
         ImageButton filterButton = view.findViewById(R.id.filter_button);
         filterButton.setOnClickListener(v -> {
-            MenuDialog dialog = new MenuDialog();
-            dialog.SetOnClearListener(button -> {
-                food_pool.AddAll(Menu).Shuffle();
-                Menu.Clear();
-            });
-            PopupWindow popupWindow = new PopupWindow(dialog.getView(), ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            // Set popup window animation style.
-            popupWindow.setAnimationStyle(R.anim.push_up_in);
-            popupWindow.setFocusable(true);
-            popupWindow.setOutsideTouchable(true);
-            popupWindow.update();
-            popupWindow.showAsDropDown(filterButton, 1, 1);
+            filterDialog.showNow(getFragmentManager(), FilterDialog.TAG);
+//            PopupWindow popupWindow = new PopupWindow(dialog.getView(), ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            // Set popup window animation style.
+//            popupWindow.setAnimationStyle(R.anim.push_up_in);
+//            popupWindow.setFocusable(true);
+//            popupWindow.setOutsideTouchable(true);
+//            popupWindow.update();
+//            popupWindow.showAsDropDown(filterButton, 1, 1);
         });
         ImageButton menuButton = view.findViewById(R.id.menu_button);
         menuDialog.SetOnClearListener(button -> {
             food_pool.AddAll(Menu).Shuffle();
             Menu.Clear();
+            menuDialog.Clear();
         });
         menuButton.setOnClickListener(v -> {
             menuDialog.SetData(Menu);
-            PopupWindow popupWindow = new PopupWindow(menuDialog.getView(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            // Set popup window animation style.
-            popupWindow.setAnimationStyle(R.anim.push_up_in);
-            popupWindow.setFocusable(true);
-            popupWindow.setOutsideTouchable(true);
-            popupWindow.update();
-            popupWindow.showAsDropDown(menuButton, 1, 1);
+            menuDialog.showNow(getFragmentManager(), MenuDialog.TAG);
+//            PopupWindow popupWindow = new PopupWindow(menuDialog.getView(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            // Set popup window animation style.
+//            popupWindow.setAnimationStyle(R.anim.push_up_in);
+//            popupWindow.setFocusable(true);
+//            popupWindow.setOutsideTouchable(true);
+//            popupWindow.update();
+//            popupWindow.showAsDropDown(menuButton, 1, 1);
         });
 //        stackView = view.findViewById(R.id.card_stack_view);
 //        adapter = new CardStackAdapter(getContext(), getFragmentManager(), Settings.settings.Foods);

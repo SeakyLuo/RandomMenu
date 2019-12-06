@@ -97,7 +97,6 @@ public class ChooseTagActivity extends AppCompatActivity {
         findViewById(R.id.confirm_button).setOnClickListener(v -> SubmitTag());
 
         original_tags = getIntent().getParcelableArrayListExtra(TAG);
-        Log.d("fuck", Settings.settings.toString());
         tagListAdapter = new TagListAdapter(Settings.settings.Tags, original_tags);
         tagListAdapter.SetTagClickedListener((viewHolder, tag) -> ChooseTag(tag));
 

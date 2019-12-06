@@ -102,16 +102,16 @@ public class EditFoodActivity extends AppCompatActivity {
         confirm_button.setOnClickListener(v -> {
             String food_name = edit_food_name.getText().toString().trim();
             if (food_name.length() == 0){
-                Toast.makeText(getApplicationContext(), "Name Too Short!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Name Too Short!", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (Settings.settings.Foods.Any(f -> f.Name.equals(food_name)) && (intent_food == null || !intent_food.Name.equals(food_name))){
-                Toast.makeText(getApplicationContext(), "Food Exists", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Food Exists", Toast.LENGTH_SHORT).show();
                 return;
             }
             AList<Tag> tags = tagsFragment.GetData();
             if (tags.Count() == 0){
-                Toast.makeText(getApplicationContext(), "At least 1 tag!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "At least 1 tag!", Toast.LENGTH_SHORT).show();
                 return;
             }
             String note = edit_note.getText().toString().trim();
@@ -132,11 +132,10 @@ public class EditFoodActivity extends AppCompatActivity {
             finish();
         });
         camera_button.setOnClickListener(v -> {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
                 requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE }, WRITE_STORAGE);
-            }else{
+            else
                 ShowMenuFlyout();
-            }
         });
         food_image.setOnClickListener(v -> {
             if (intent_food == null ? !SetFoodImage : !intent_food.HasImage()) return;
@@ -220,7 +219,7 @@ public class EditFoodActivity extends AppCompatActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
             camera_image_uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider",
-                                                                File.createTempFile("tempCamera", ".jpg", Helper.ImageFolder));
+                                                                File.createTempFile("tempCamera", ".jpg", Helper.TempFolder));
             intent.putExtra(MediaStore.EXTRA_OUTPUT, camera_image_uri);
             startActivityForResult(intent, CAMERA_CODE);
         } catch (IOException e) {

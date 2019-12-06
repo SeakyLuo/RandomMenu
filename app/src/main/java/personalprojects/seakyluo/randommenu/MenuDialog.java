@@ -13,6 +13,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 
 public class MenuDialog extends DialogFragment {
+    public static final String TAG = "MenuDialog";
     private FoodListFragment fragment = new FoodListFragment();
     private Button clear_button;
     private View.OnClickListener clearListener;
@@ -22,11 +23,12 @@ public class MenuDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_menu, container, false);
         clear_button = view.findViewById(R.id.clear_button);
 
-        getFragmentManager().beginTransaction().add(R.id.food_list_frame, fragment).commit();
+        getChildFragmentManager().beginTransaction().add(R.id.food_list_frame, fragment).commit();
         clear_button.setOnClickListener(clearListener);
         return view;
     }
 
     public void SetOnClearListener(View.OnClickListener listener) { clearListener = listener; }
     public void SetData(AList<Food> data) { fragment.SetData(data); }
+    public void Clear() { fragment.Clear(); }
 }
