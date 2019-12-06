@@ -21,6 +21,14 @@
             android:orientation="horizontal"
             android:gravity="end">
 
+            <TextView
+                android:id="@+id/header_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingStart="8dp"
+                android:textSize="16sp" />
+
             <Button
                 style="?android:attr/buttonBarStyle"
                 android:id="@+id/shuffle_button"

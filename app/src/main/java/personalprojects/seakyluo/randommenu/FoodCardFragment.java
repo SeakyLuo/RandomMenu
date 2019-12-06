@@ -123,6 +123,7 @@ public class FoodCardFragment extends Fragment {
         setFood(food);
         return food;
     }
+    public Food GetFood() { return CurrentFood; }
 
     public void SetFoodEditedListener(FoodEditedListener listener) { this.foodEditedListener = listener; }
     public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { this.tagClickedListener = listener; }

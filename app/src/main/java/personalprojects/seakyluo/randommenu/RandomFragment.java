@@ -34,7 +34,7 @@ public class RandomFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_random, container, false);
         view.findViewById(R.id.check_button).setOnClickListener(v -> {
-            Menu.Add(food_pool.Get(0));
+            Menu.Add(foodCardFragment.GetFood(), 0);
             NextFood();
         });
         view.findViewById(R.id.cross_button).setOnClickListener(v -> {
@@ -62,6 +62,7 @@ public class RandomFragment extends Fragment {
             menuDialog.Clear();
         });
         menuButton.setOnClickListener(v -> {
+            menuDialog.SetHeaderText("Count: " + Menu.Count());
             menuDialog.SetData(Menu);
             menuDialog.showNow(getFragmentManager(), MenuDialog.TAG);
 //            PopupWindow popupWindow = new PopupWindow(menuDialog.getView(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
