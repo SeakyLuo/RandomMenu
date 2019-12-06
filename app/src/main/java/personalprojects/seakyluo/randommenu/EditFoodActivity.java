@@ -24,7 +24,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
@@ -36,7 +40,6 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 public class EditFoodActivity extends AppCompatActivity {
     public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, CHOOSE_TAG_CODE = 2, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
     public static final String FOOD = "Food", STATUS = "Status";
-    private FrameLayout tags_frame;
     private Button delete_food_button;
     private ImageButton cancel_button, confirm_button, camera_button, add_tag_button;
     private EditText edit_food_name, edit_note;
@@ -44,13 +47,13 @@ public class EditFoodActivity extends AppCompatActivity {
     private TagsFragment tagsFragment;
     private boolean SetFoodImage = false;
     private Food intent_food;
-    private Uri temp_camera_image_uri, temp_crop_image_uri;
+    private Uri camera_image_uri, crop_image_uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_food);
-        tags_frame = findViewById(R.id.tags_frame);
+        FrameLayout tags_frame = findViewById(R.id.tags_frame);
         cancel_button = findViewById(R.id.cancel_button);
         confirm_button = findViewById(R.id.confirm_button);
         camera_button = findViewById(R.id.camera_button);
@@ -87,7 +90,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 dialog.setMessage("You have unsaved changes.\nDo you want to save it as draft?");
                 dialog.setOnYesListener(view -> {
-                    String image_path = SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : Helper.SaveImage(food_image, "draft.jpg");
+                    String image_path = SetFoodImage ? Helper.SaveImage(food_image, Helper.TempFolder, Helper.NewImageFileName()) : "";
                     Settings.settings.FoodDraft = new Food(food_name, image_path, tags, note);
                     finish();
                 });
@@ -112,7 +115,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
             }
             String note = edit_note.getText().toString().trim();
-            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.NewImageFileName()) : intent_food == null ? "" : intent_food.ImagePath, tags, note);
+            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.ImageFolder, Helper.NewImageFileName()) : intent_food == null ? "" : intent_food.ImagePath, tags, note);
             if (intent_food == null) Settings.settings.AddFood(food);
             else if (intent_food.equals(Settings.settings.FoodDraft)){
                 Settings.settings.AddFood(food);
@@ -170,32 +173,18 @@ public class EditFoodActivity extends AppCompatActivity {
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.edit_image_item:
-                    try {
-                        Intent intent = new Intent("com.android.camera.action.CROP");
-                        temp_crop_image_uri = Uri.parse(Helper.SaveImage(food_image, "tempCrop.jpg"));
-                        // indicate image type and Uri
-                        intent.setDataAndType(temp_crop_image_uri, "image/*");
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, temp_crop_image_uri);
-                        startActivityForResult(intent, CROP_CODE);
-                        return true;
-                    }
-                    catch (ActivityNotFoundException e) {
-                        Toast.makeText(this, "Whoops - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
+                    return CropImage();
                 case R.id.open_camera_item:
-                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED)
                         requestPermissions(new String[]{ Manifest.permission.CAMERA }, CAMERA_CODE);
-                    }else{
+                    else
                         OpenCamera();
-                    }
                     return true;
                 case R.id.open_gallery_item:
-                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
                         requestPermissions(new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE }, GALLERY_CODE);
-                    }else{
+                    else
                         OpenGallery();
-                    }
                     return true;
             }
             return false;
@@ -203,15 +192,39 @@ public class EditFoodActivity extends AppCompatActivity {
         helper.show();
     }
 
+    private boolean CropImage(){
+        try {
+            Intent intent = new Intent("com.android.camera.action.CROP");
+            if (camera_image_uri == null){
+                intent.setDataAndType(Uri.parse(intent_food.ImagePath), "image/*");
+                crop_image_uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", Helper.TempFolder));
+            }else{
+                intent.setDataAndType(camera_image_uri, "image/*");
+                crop_image_uri = camera_image_uri;
+            }
+            // indicate image type and Uri
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, crop_image_uri);
+            startActivityForResult(intent, CROP_CODE);
+            return true;
+        }
+        catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "Whoops - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private void OpenCamera(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
-            temp_camera_image_uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider",
+            camera_image_uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider",
                                                                 File.createTempFile("tempCamera", ".jpg", Helper.ImageFolder));
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, temp_camera_image_uri);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, camera_image_uri);
             startActivityForResult(intent, CAMERA_CODE);
         } catch (IOException e) {
-            temp_camera_image_uri = null;
+            camera_image_uri = null;
         }
     }
 
@@ -246,7 +259,7 @@ public class EditFoodActivity extends AppCompatActivity {
         switch (requestCode){
             case CAMERA_CODE:
                 try {
-                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), temp_camera_image_uri);
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
                     food_image.setImageBitmap(image);
                     SetFoodImage = true;
                 } catch (IOException e) {
@@ -255,7 +268,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 break;
             case GALLERY_CODE:
                 try {
-                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), temp_camera_image_uri = data.getData());
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri = data.getData());
                     food_image.setImageBitmap(image);
                     SetFoodImage = true;
                 } catch (IOException e) {
@@ -269,7 +282,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 break;
             case CROP_CODE:
                 try {
-                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), temp_crop_image_uri);
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
                     food_image.setImageBitmap(image);
                     SetFoodImage = true;
                 } catch (IOException e) {
@@ -282,7 +295,7 @@ public class EditFoodActivity extends AppCompatActivity {
     @Override
     public void finish() {
         SetFoodImage = false;
-        temp_camera_image_uri = temp_crop_image_uri = null;
+        camera_image_uri = crop_image_uri = null;
         Helper.Save(this);
         super.finish();
     }

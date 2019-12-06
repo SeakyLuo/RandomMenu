@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -67,6 +68,7 @@ public class FoodCardFragment extends Fragment {
         more_button.setOnClickListener(v -> {
             ObjectAnimator.ofFloat(v, "rotation", 0, 180).start();
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
+            if (Helper.IsNullOrEmpty(CurrentFood.ImagePath)) helper.removeItem(R.id.save_food_item);
             helper.removeItem(CurrentFood.IsFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
             helper.setOnDismissListener(() -> ObjectAnimator.ofFloat(v, "rotation", 180, 360).start());
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
@@ -76,6 +78,10 @@ public class FoodCardFragment extends Fragment {
                         Intent intent = new Intent(getContext(), EditFoodActivity.class);
                         intent.putExtra(EditFoodActivity.FOOD, CurrentFood);
                         startActivityForResult(intent, EDIT_FOOD);
+                        return true;
+                    case R.id.save_food_item:
+                        Helper.SaveImage(Helper.GetFoodBitmap(CurrentFood.ImagePath), Helper.ImageFolder, Helper.NewImageFileName());
+                        Toast.makeText(getContext(), "Successful!", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.like_food_item:
                         CurrentFood.SetIsFavorite(true);

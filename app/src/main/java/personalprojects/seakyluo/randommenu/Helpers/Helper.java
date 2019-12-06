@@ -14,11 +14,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +31,7 @@ import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.R;
 
 public class Helper {
-    public static File ImageFolder;
+    public static File ImageFolder, TempFolder;
     public static Context context;
     public static Bitmap DefaultFoodImage;
     private static HashMap<String, Bitmap> foodImageCache = new HashMap<>();
@@ -37,7 +39,8 @@ public class Helper {
     public static void Init(Context context){
         Helper.context = context;
         DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
-        ImageFolder = CreateOrOpenFolder("Food");
+        ImageFolder = CreateOrOpenFolder("RandomMenuFood");
+        TempFolder = CreateOrOpenFolder("RandomMenuTemp");
         String settings = ReadJson(context, Settings.FILENAME);
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
     }
@@ -58,10 +61,13 @@ public class Helper {
 //            imageView.setImageBitmap(image);
 //        }
     }
+    public static Bitmap GetFoodBitmap(String path) { return BitmapFactory.decodeFile(path); }
     public static Bitmap GetFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
-    public static String SaveImage(ImageView imageView, String filename){
-        Bitmap image = GetFoodBitmap(imageView);
-        String image_path = GetImagePath(filename);
+    public static String SaveImage(ImageView imageView, File folder, String filename){
+        return SaveImage(GetFoodBitmap(imageView), folder, filename);
+    }
+    public static String SaveImage(Bitmap image, File folder, String filename){
+        String image_path = new File(folder, filename).getPath();
         try (FileOutputStream out = new FileOutputStream(image_path)) {
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
         } catch (IOException e) {
@@ -70,10 +76,25 @@ public class Helper {
         return image_path;
     }
     public static String NewImageFileName(){ return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg"; }
-
-
-    public static String GetImagePath(String image){
-        return new File(Environment.getExternalStorageDirectory(), image).getPath();
+    public static File TempCopy(String src, String prefix, String suffix){
+        try (InputStream in = new FileInputStream(src)) {
+            File file = File.createTempFile(prefix, suffix, TempFolder);
+            try (OutputStream out = new FileOutputStream(file)) {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static String GetImagePath(File folder, String image){
+        return new File(folder, image).getPath();
     }
 
     public static void Save(Context context){

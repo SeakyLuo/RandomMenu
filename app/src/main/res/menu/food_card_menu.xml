@@ -6,6 +6,10 @@
         android:title="Edit" />
 
     <item
+        android:id="@+id/save_food_item"
+        android:icon="@drawable/ic_save"
+        android:title="Save" />
+    <item
         android:id="@+id/like_food_item"
         android:icon="@drawable/ic_like"
         android:title="Like" />
