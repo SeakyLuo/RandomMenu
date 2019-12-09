@@ -26,20 +26,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:minWidth="600dp"
                 android:paddingStart="8dp"
-                android:textSize="16sp" />
-
-            <Button
-                style="?android:attr/buttonBarStyle"
-                android:id="@+id/shuffle_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:text="Shuffle"
-                android:textAllCaps="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:paddingEnd="4dp"
+                android:textSize="16sp"
+                android:gravity="center_vertical"/>
 
             <Button
                 style="?android:attr/buttonBarStyle"

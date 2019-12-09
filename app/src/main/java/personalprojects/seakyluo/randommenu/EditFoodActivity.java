@@ -10,9 +10,11 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,13 +40,12 @@ import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class EditFoodActivity extends AppCompatActivity {
-    public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, CHOOSE_TAG_CODE = 2, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
-    public static final String FOOD = "Food", STATUS = "Status";
-    private Button delete_food_button;
-    private ImageButton cancel_button, confirm_button, camera_button, add_tag_button;
+    public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
+    public static final String FOOD = "Food";
+    private ImageButton camera_button;
     private EditText edit_food_name, edit_note;
     private ImageView food_image;
-    private TagsFragment tagsFragment;
+    private ChooseTagFragment fragment;
     private boolean SetFoodImage = false;
     private Food intent_food;
     private Uri camera_image_uri, crop_image_uri;
@@ -53,35 +54,26 @@ public class EditFoodActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_food);
-        FrameLayout tags_frame = findViewById(R.id.tags_frame);
-        cancel_button = findViewById(R.id.cancel_button);
-        confirm_button = findViewById(R.id.confirm_button);
+        ImageButton cancel_button = findViewById(R.id.cancel_button);
+        ImageButton confirm_button = findViewById(R.id.confirm_button);
+        Button delete_food_button = findViewById(R.id.delete_food_button);
         camera_button = findViewById(R.id.camera_button);
-        add_tag_button = findViewById(R.id.add_tag_button);
-        delete_food_button = findViewById(R.id.delete_food_button);
         edit_food_name = findViewById(R.id.edit_food_name);
         edit_note = findViewById(R.id.edit_note);
         food_image = findViewById(R.id.food_image);
-
-        tagsFragment = new TagsFragment();
-        tagsFragment.SetCloseable(true);
-        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
+        fragment = (ChooseTagFragment) getSupportFragmentManager().findFragmentById(R.id.choose_tag_fragment);
 
         intent_food = getIntent().getParcelableExtra(FOOD);
         if (intent_food != null){
             edit_food_name.setText(intent_food.Name);
             if (intent_food.HasImage()) Helper.LoadImage(Glide.with(this), intent_food.ImagePath, food_image);
-            tagsFragment.SetData(intent_food.GetTags());
+            fragment.SetData(intent_food.GetTags());
             edit_note.setText(intent_food.Note);
         }
 
-        tags_frame.setOnClickListener(v -> {
-            if (tagsFragment.GetData().Count() < Tag.MAX_TAGS)
-                LaunchChooseTagActivity();
-        });
         cancel_button.setOnClickListener(v -> {
             String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
-            AList<Tag> tags = tagsFragment.GetData();
+            AList<Tag> tags = fragment.GetData();
             boolean nameChanged = intent_food == null ? food_name.length() > 0 : !food_name.equals(intent_food.Name),
                     tagChanged = intent_food == null ? tags.Count() > 0 : !tags.SameCollection(intent_food.GetTags()),
                     noteChanged = intent_food == null ? note.length() > 0 : !note.equals(intent_food.Note);
@@ -109,7 +101,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(this, "Food Exists", Toast.LENGTH_SHORT).show();
                 return;
             }
-            AList<Tag> tags = tagsFragment.GetData();
+            AList<Tag> tags = fragment.GetData();
             if (tags.Count() == 0){
                 Toast.makeText(this, "At least 1 tag!", Toast.LENGTH_SHORT).show();
                 return;
@@ -156,14 +148,6 @@ public class EditFoodActivity extends AppCompatActivity {
                 finish();
             });
         });
-        add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
-    }
-
-    private void LaunchChooseTagActivity(){
-        Intent intent = new Intent(getApplicationContext(), ChooseTagActivity.class);
-        intent.putExtra(ChooseTagActivity.TAG, tagsFragment.GetData().ToArrayList());
-        startActivityForResult(intent, CHOOSE_TAG_CODE);
-        overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
     }
 
     private void ShowMenuFlyout(){
@@ -273,11 +257,6 @@ public class EditFoodActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                break;
-            case CHOOSE_TAG_CODE:
-                ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.TAG);
-                tagsFragment.SetData(tags);
-                add_tag_button.setVisibility(tags.size() == Tag.MAX_TAGS ? View.GONE : View.VISIBLE);
                 break;
             case CROP_CODE:
                 try {
