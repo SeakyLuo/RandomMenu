@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
     <android.support.v7.widget.Toolbar
         android:id="@+id/menu_toolbar"
@@ -10,12 +12,25 @@
         android:layout_height="wrap_content"
         android:background="?android:attr/colorBackgroundFloating"
         android:minWidth="600dp"
-        app:contentInsetStart="0dp">
+        app:contentInsetStart="0dp"
+        android:elevation="2dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="end">
+
+            <Button
+                android:id="@+id/confirm_button"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:text="Confirm"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
             <Button
                 style="?android:attr/buttonBarStyle"
                 android:id="@+id/reset_button"
@@ -30,9 +45,15 @@
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
 
-    <include
-        layout="@layout/fragment_choose_tag"
+    <FrameLayout
+        android:id="@+id/prefer_tags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp" />
+
+    <FrameLayout
+        android:id="@+id/exclude_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -17,6 +16,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.FilterDialog;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class RandomFragment extends Fragment {
     public static final String TAG = "RandomFragment";
@@ -26,6 +26,7 @@ public class RandomFragment extends Fragment {
     private AList<Food> Menu = new AList<>();
     private MenuDialog menuDialog = new MenuDialog();
     private FilterDialog filterDialog = new FilterDialog();
+    private AList<Tag> preferred_tags = new AList<>(), excluded_tags = new AList<>();
 //    private StackView stackView;
 //    private CardStackAdapter adapter;
 
@@ -44,16 +45,17 @@ public class RandomFragment extends Fragment {
             Reset();
             NextFood();
         });
+        filterDialog.SetTagFilterListener((preferred, excluded) -> {
+            preferred_tags.CopyFrom(preferred);
+            excluded_tags.CopyFrom(excluded);
+        });
+        filterDialog.SetOnResetListener(v -> {
+            filterDialog.SetData(preferred_tags.Clear(), excluded_tags.Clear());
+        });
         ImageButton filterButton = view.findViewById(R.id.filter_button);
         filterButton.setOnClickListener(v -> {
+            filterDialog.SetData(preferred_tags, excluded_tags);
             filterDialog.showNow(getFragmentManager(), FilterDialog.TAG);
-//            PopupWindow popupWindow = new PopupWindow(dialog.getView(), ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            // Set popup window animation style.
-//            popupWindow.setAnimationStyle(R.anim.push_up_in);
-//            popupWindow.setFocusable(true);
-//            popupWindow.setOutsideTouchable(true);
-//            popupWindow.update();
-//            popupWindow.showAsDropDown(filterButton, 1, 1);
         });
         ImageButton menuButton = view.findViewById(R.id.menu_button);
         menuDialog.SetOnClearListener(button -> {
@@ -65,13 +67,6 @@ public class RandomFragment extends Fragment {
             menuDialog.SetHeaderText("Count: " + Menu.Count());
             menuDialog.SetData(Menu);
             menuDialog.showNow(getFragmentManager(), MenuDialog.TAG);
-//            PopupWindow popupWindow = new PopupWindow(menuDialog.getView(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            // Set popup window animation style.
-//            popupWindow.setAnimationStyle(R.anim.push_up_in);
-//            popupWindow.setFocusable(true);
-//            popupWindow.setOutsideTouchable(true);
-//            popupWindow.update();
-//            popupWindow.showAsDropDown(menuButton, 1, 1);
         });
 //        stackView = view.findViewById(R.id.card_stack_view);
 //        adapter = new CardStackAdapter(getContext(), getFragmentManager(), Settings.settings.Foods);
