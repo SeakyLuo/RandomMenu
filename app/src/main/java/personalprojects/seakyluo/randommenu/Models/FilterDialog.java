@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +27,7 @@ public class FilterDialog extends DialogFragment {
         confirm_button = view.findViewById(R.id.confirm_button);
         reset_button = view.findViewById(R.id.reset_button);
 
-        getChildFragmentManager().beginTransaction().add(R.id.prefer_tags, prefer).commit();
-        getChildFragmentManager().beginTransaction().add(R.id.exclude_tags, exclude).commit();
+        getChildFragmentManager().beginTransaction().add(R.id.prefer_tags, prefer).add(R.id.exclude_tags, exclude).commit();
         prefer.SetHeader("Prefer Tags");
         exclude.SetHeader("Exclude Tags");
         confirm_button.setOnClickListener(v -> {
