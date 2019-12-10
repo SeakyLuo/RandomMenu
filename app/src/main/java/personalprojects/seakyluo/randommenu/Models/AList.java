@@ -83,8 +83,8 @@ public class AList<T> extends IList<T> {
         return collection;
     }
     public AList<T> Without(T element){ Remove(element); return this; }
-    public AList<T> RemoveAll(AList<T> collection) { list.removeAll(collection.list); return this; }
-    public AList<T> RemoveAll(Collection<T> collection) { list.removeAll(collection); return this; }
+    public AList<T> RemoveAll(AList<T> collection) { if (collection != null) list.removeAll(collection.list); return this; }
+    public AList<T> RemoveAll(Collection<T> collection) { if (collection != null) list.removeAll(collection); return this; }
     public AList<T> Clear() { list.clear(); return this; }
     public AList<T> Clear(int index) { while (list.size() > index) list.remove(index); return this; }
     public AList<T> Copy(){ return new AList<>(list); }
