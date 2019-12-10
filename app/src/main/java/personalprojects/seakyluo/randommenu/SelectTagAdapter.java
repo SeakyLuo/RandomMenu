@@ -81,7 +81,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
 
         @Override
         void SetData(Tag data) {
-            tag_name.setText(data.Name);
+            tag_name.setText(data.IsAllCategoriesTag() ? context.getString(R.string.all_categories) : data.Name);
             SetHighlight(selected);
         }
 

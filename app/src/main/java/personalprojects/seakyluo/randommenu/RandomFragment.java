@@ -64,11 +64,11 @@ public class RandomFragment extends Fragment {
         menuDialog.SetOnClearListener(button -> {
             food_pool.AddAll(Menu).Shuffle();
             Menu.Clear();
-            menuDialog.SetHeaderText("Count: 0");
+            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), 0));
             menuDialog.Clear();
         });
         menuButton.setOnClickListener(v -> {
-            menuDialog.SetHeaderText("Count: " + Menu.Count());
+            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), Menu.Count()));
             menuDialog.SetData(Menu);
             menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });

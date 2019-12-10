@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">随机菜单</string>
+    <string name="note">笔记</string>
+    <string name="random">随机</string>
+    <string name="navigation">导航</string>
+    <string name="settings">设置</string>
+    <string name="my_favorites">我喜欢</string>
+    <string name="to_cook">想烧</string>
+    <string name="to_eat">想吃</string>
+    <string name="all_categories">全部分类</string>
+    <string name="tag_format">%s（%d）</string>
+    <string name="food_name">菜名</string>
+    <string name="tags">标签</string>
+    <string name="edit_image">编辑</string>
+    <string name="open_camera">相机</string>
+    <string name="open_gallery">图库</string>
+    <string name="edit">编辑</string>
+    <string name="like">喜欢</string>
+    <string name="save">保存</string>
+    <string name="undo_like">取消喜欢</string>
+    <string name="tag">标签</string>
+    <string name="all">全部</string>
+    <string name="food">菜肴</string>
+    <string name="input_content">输入内容</string>
+    <string name="clear">清除</string>
+    <string name="confirm">确认</string>
+    <string name="prefer_tags">喜欢标签</string>
+    <string name="exclude_tags">排除标签</string>
+    <string name="food_count">%d道菜</string>
+    <string name="reset">重置</string>
+    <string name="cancel">取消</string>
+</resources>

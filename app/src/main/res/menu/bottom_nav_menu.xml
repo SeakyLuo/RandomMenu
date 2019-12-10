@@ -4,16 +4,16 @@
     <item
         android:id="@+id/navigation_random"
         android:icon="@drawable/ic_random_toggle"
-        android:title="Random" />
+        android:title="@string/random" />
 
     <item
         android:id="@+id/navigation_navigation"
         android:icon="@drawable/ic_navigation_toggle"
-        android:title="Navigation" />
+        android:title="@string/navigation" />
 
     <item
         android:id="@+id/navigation_settings"
         android:icon="@drawable/ic_settings_toggle"
-        android:title="Settings" />
+        android:title="@string/settings" />
 
 </menu>

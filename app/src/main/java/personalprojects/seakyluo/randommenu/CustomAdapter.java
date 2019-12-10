@@ -1,6 +1,7 @@
 package personalprojects.seakyluo.randommenu;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,7 +15,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
     AList<T> data = new AList<>();
     AList<CustomViewHolder> viewHolders = new AList<>();
-    Activity activity;
+    Context context;
     public CustomAdapter() {}
 
     @Override
@@ -26,7 +27,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
 
     public AList<CustomViewHolder> GetViewHolders() { return viewHolders; }
 
-    public void SetActivity(Activity activity) { this.activity = activity; }
+    public void SetContext(Context context) { this.context = context; }
 
     public void SetData(AList<T> list){
         this.data.CopyFrom(list);

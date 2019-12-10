@@ -6,13 +6,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class ToCookActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
+    private TextView titleText;
     private SimpleFoodListAdapter adapter;
     private boolean updated = false;
     @Override
@@ -20,15 +23,17 @@ public class ToCookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_cook);
 
+        titleText = findViewById(R.id.title_text_view);
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         findViewById(R.id.tc_fab).setOnClickListener(v -> {
             InputDialog dialog = new InputDialog();
-            dialog.SetHint("Food Name");
+            dialog.SetHint(getString(R.string.food_name));
             dialog.SetConfirmListener(text -> {
                 if (Settings.settings.ToCook.Remove(text)) adapter.Remove(text);
                 Settings.settings.ToCook.Add(text, 0);
                 adapter.Add(text, 0);
                 updated = true;
+                SetTitle();
             });
             dialog.showNow(getSupportFragmentManager(), InputDialog.TAG);
         });
@@ -47,10 +52,17 @@ public class ToCookActivity extends AppCompatActivity {
             dialog.setOnYesListener(dv -> {
                 Settings.settings.ToCook.Remove(data);
                 adapter.Remove(data);
+                SetTitle();
             });
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         });
         recyclerView.setAdapter(adapter);
+        titleText = findViewById(R.id.title_text_view);
+        SetTitle();
+    }
+
+    public void SetTitle(){
+        titleText.setText(Tag.Format(this, R.string.to_cook, adapter.GetData().Count()));
     }
 
     @Override
@@ -66,8 +78,9 @@ public class ToCookActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         String food = ((Food) data.getParcelableExtra(EditFoodActivity.FOOD)).Name;
-        Settings.settings.ToCook.Without(food);
+        Settings.settings.ToCook.Remove(food);
         adapter.Remove(food);
         updated = true;
+        SetTitle();
     }
 }

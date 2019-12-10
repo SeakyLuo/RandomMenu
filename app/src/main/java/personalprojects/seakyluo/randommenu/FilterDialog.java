@@ -32,9 +32,9 @@ public class FilterDialog extends DialogFragment {
         reset_button = view.findViewById(R.id.reset_button);
 
         getChildFragmentManager().beginTransaction().add(R.id.prefer_tags, prefer).add(R.id.exclude_tags, exclude).commit();
-        prefer.SetHeader("Prefer Tags");
+        prefer.SetHeader(getString(R.string.prefer_tags));
         prefer.SetChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, exclude.GetData().ToArrayList()));
-        exclude.SetHeader("Exclude Tags");
+        exclude.SetHeader(getString(R.string.exclude_tags));
         exclude.SetChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, prefer.GetData().ToArrayList()));
         confirm_button.setOnClickListener(v -> tagFilterListener.Filter(prefer.GetData(), exclude.GetData()));
         reset_button.setOnClickListener(resetListener);

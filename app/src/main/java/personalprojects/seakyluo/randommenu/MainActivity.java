@@ -45,16 +45,15 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
 //        DbHelper.Init(getApplicationContext());
         Helper.Init(this);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {
             //Restore the fragment's instance
-            randomFragment = (RandomFragment)fragmentManager.getFragment(savedInstanceState, RandomFragment.TAG);
-            navigationFragment = (NavigationFragment)fragmentManager.getFragment(savedInstanceState, NavigationFragment.TAG);
-            settingsFragment = (SettingsFragment)fragmentManager.getFragment(savedInstanceState, SettingsFragment.TAG);
+            randomFragment = (RandomFragment) fragmentManager.getFragment(savedInstanceState, RandomFragment.TAG);
+            navigationFragment = (NavigationFragment) fragmentManager.getFragment(savedInstanceState, NavigationFragment.TAG);
+            settingsFragment = (SettingsFragment) fragmentManager.getFragment(savedInstanceState, SettingsFragment.TAG);
         }else{
             randomFragment = new RandomFragment();
             navigationFragment = new NavigationFragment();

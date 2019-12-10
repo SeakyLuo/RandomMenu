@@ -1,9 +1,13 @@
 package personalprojects.seakyluo.randommenu.Models;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import personalprojects.seakyluo.randommenu.R;
 
 public class Tag implements Comparable, Parcelable {
     public static final String TABLE_NAME = "Tag", COLUMN_NAME = "Name", COLUMN_COUNT = "count";
@@ -40,9 +44,15 @@ public class Tag implements Comparable, Parcelable {
 
     @NonNull
     @Override
-    public String toString() { return Format(Name, Counter); }
-    public static String Format(String name, int count){
-        return name + "(" + count + ")";
+    public String toString() { return Name + " " + Counter; }
+    public static String Format(Context context, String name, int count){
+        return String.format(context.getString(R.string.tag_format), name, count);
+    }
+    public static String Format(Context context, int resId, int count){
+        return Format(context, context.getString(resId), count);
+    }
+    public static String Format(Context context, Tag tag){
+        return Format(context, tag.Name, tag.Counter);
     }
 
     protected Tag(Parcel in) {

@@ -52,9 +52,9 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             RecyclerView recyclerView = view.findViewById(R.id.tags_recycler_view);
 
             food_image.setOnClickListener(v -> {
-                Intent intent = new Intent(activity, FullScreenImageActivity.class);
+                Intent intent = new Intent(context, FullScreenImageActivity.class);
                 intent.putExtra(FullScreenImageActivity.IMAGE, data.ImagePath);
-                activity.startActivity(intent);
+                context.startActivity(intent);
             });
             recyclerView.setAdapter(adapter);
         }

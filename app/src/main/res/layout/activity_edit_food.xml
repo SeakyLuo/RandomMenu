@@ -95,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:ems="10"
-                android:hint="Food Name"
+                android:hint="@string/food_name"
                 android:background="@null"
                 android:maxLength="@integer/maxFoodNameLength"
                 android:maxLines="1"
@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Note"
+            android:text="@string/note"
             android:textSize="16sp" />
 
         <android.support.v7.widget.CardView

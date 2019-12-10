@@ -49,6 +49,7 @@ public class NavigationFragment extends Fragment {
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         selectTagAdapter = new SelectTagAdapter((viewHolder, tag) -> selectTag(tag));
+        selectTagAdapter.SetContext(getContext());
         selectTagAdapter.SetLongClickListener(((viewHolder, data) -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_tag_menu, getContext(), viewHolder.view);
             if (data.IsAllCategoriesTag()){
@@ -79,7 +80,7 @@ public class NavigationFragment extends Fragment {
                                 Toast.makeText(getContext(), "Tag Exists!", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        inputDialog.showNow(getFragmentManager(), InputDialog.TAG);
+                        inputDialog.showNow(getChildFragmentManager(), InputDialog.TAG);
                         return true;
                     case R.id.delete_tag_item:
                         AskYesNoDialog askDialog = new AskYesNoDialog();
@@ -90,7 +91,7 @@ public class NavigationFragment extends Fragment {
                             Settings.settings.Tags.Remove(data);
                             Settings.settings.Foods.ForEach(food -> food.RemoveTag(data));
                         });
-                        askDialog.showNow(getFragmentManager(), AskYesNoDialog.TAG);
+                        askDialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
                         return true;
                 }
                 return false;
@@ -105,7 +106,7 @@ public class NavigationFragment extends Fragment {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
             dialog.SetFoodEditedListener((before, after) -> SetData());
-            dialog.showNow(getFragmentManager(), AskYesNoDialog.TAG);
+            dialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
         });
         foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> EditFood(food));
         detailView.setAdapter(foodAdapter);
@@ -135,10 +136,10 @@ public class NavigationFragment extends Fragment {
     private void selectTag(Tag tag){
         lastTag = tag;
         if (tag.IsAllCategoriesTag()){
-            title_text_view.setText(Tag.Format(Tag.AllCategories, Settings.settings.Foods.Count()));
+            title_text_view.setText(Tag.Format(getContext(), R.string.all_categories, Settings.settings.Foods.Count()));
             foodAdapter.Reset();
         }else{
-            title_text_view.setText(tag.toString());
+            title_text_view.setText(Tag.Format(getContext(), tag));
             foodAdapter.Filter(tag);
         }
     }

@@ -27,7 +27,7 @@ public class FoodListFragment extends Fragment {
         adapter = new FoodListAdapter();
         adapter.SetData(data);
         adapter.SetFoodClickedListener(listener);
-        adapter.SetActivity(getActivity());
+        adapter.SetContext(getActivity());
         recyclerView.setAdapter(adapter);
         return view;
     }

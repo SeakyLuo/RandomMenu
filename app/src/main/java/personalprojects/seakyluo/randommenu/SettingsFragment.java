@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.File;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,6 +54,13 @@ public class SettingsFragment extends Fragment {
         });
         view.findViewById(R.id.clear_data_button).setOnClickListener(v -> {
 //            Helper.Clear(getContext());
+//            HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.ImagePath).Filter(s -> !Helper.IsNullOrEmpty(s)).ToHashSet();
+//            for (File file: Helper.ImageFolder.listFiles()){
+//                if (!paths.contains(file.getPath()))
+//                    file.delete();
+//            }
+//            for (File file: Helper.TempFolder.listFiles())
+//                file.delete();
             Toast.makeText(getContext(), "Data Cleared!", Toast.LENGTH_SHORT).show();
         });
         return view;

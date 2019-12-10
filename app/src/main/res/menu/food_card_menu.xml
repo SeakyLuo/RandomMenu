@@ -3,20 +3,20 @@
     <item
         android:id="@+id/edit_food_item"
         android:icon="@drawable/ic_edit"
-        android:title="Edit" />
+        android:title="@string/edit" />
 
     <item
         android:id="@+id/save_food_item"
         android:icon="@drawable/ic_save"
-        android:title="Save" />
+        android:title="@string/save" />
     <item
         android:id="@+id/like_food_item"
         android:icon="@drawable/ic_like"
-        android:title="Like" />
+        android:title="@string/like" />
 
 
     <item
         android:id="@+id/dislike_food_item"
         android:icon="@drawable/ic_undo_like"
-        android:title="Undo Like" />
+        android:title="@string/undo_like" />
 </menu>

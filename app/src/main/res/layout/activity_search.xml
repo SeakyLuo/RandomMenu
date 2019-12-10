@@ -40,7 +40,7 @@
                 android:layout_height="0dp"
                 android:background="@null"
                 android:completionThreshold="2"
-                android:hint="Input Content"
+                android:hint="@string/input_content"
                 android:imeOptions="actionSearch"
                 android:inputType="text|textPersonName"
                 android:scrollHorizontally="true"
@@ -82,25 +82,25 @@
                     android:id="@+id/search_post_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All" />
+                    android:text="@string/all" />
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/search_user_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Food" />
+                    android:text="@string/food" />
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/search_groups_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tag" />
+                    android:text="@string/tag" />
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/search_user_history"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Note" />
+                    android:text="@string/note" />
             </android.support.design.widget.TabLayout>
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.Toolbar>

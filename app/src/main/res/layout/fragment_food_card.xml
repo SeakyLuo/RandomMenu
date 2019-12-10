@@ -73,8 +73,8 @@
         android:paddingHorizontal="8dp"
         android:background="@drawable/food_note_background"
         android:gravity="center"
-        android:text="Note"
-        android:textSize="32dp"
+        android:text="@string/note"
+        android:textSize="32sp"
         android:visibility="gone"
         android:textColor="#C8C8C8"/>
 
