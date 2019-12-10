@@ -1,11 +1,11 @@
 package personalprojects.seakyluo.randommenu;
 
+import android.app.LauncherActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +26,7 @@ public class ChooseTagFragment extends Fragment {
     private TextView header_text;
     private TagsFragment tagsFragment = new TagsFragment();
     private String header;
+    private OnLaunchActivityListener chooseTagListener;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class ChooseTagFragment extends Fragment {
         add_tag_button = view.findViewById(R.id.add_tag_button);
 
         tagsFragment.SetCloseable(true);
-        getFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
+        getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
         if (!Helper.IsNullOrEmpty(header)) header_text.setText(header);
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
         view.findViewById(R.id.tag_card_view).setOnClickListener(v -> {
@@ -48,19 +49,21 @@ public class ChooseTagFragment extends Fragment {
     public void SetData(AList<Tag> data) { tagsFragment.SetData(data); }
     public AList<Tag> GetData() { return tagsFragment.GetData(); }
     public void SetHeader(String text) { header = text; if (header_text != null) header_text.setText(text); }
+    public void SetChooseTagListener(OnLaunchActivityListener launchActivityListener) { chooseTagListener = launchActivityListener; }
 
     private void LaunchChooseTagActivity(){
         Intent intent = new Intent(getActivity(), ChooseTagActivity.class);
-        intent.putExtra(ChooseTagActivity.TAG, tagsFragment.GetData().ToArrayList());
+        intent.putExtra(ChooseTagActivity.SELECTED_TAGS, tagsFragment.GetData().ToArrayList());
+        if (chooseTagListener != null) chooseTagListener.Launch(intent);
         startActivityForResult(intent, CHOOSE_TAG_CODE);
-//        getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
+        getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.TAG);
+        ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.SELECTED_TAGS);
         SetData(tags);
         add_tag_button.setVisibility(tags.size() == Tag.MAX_TAGS ? View.GONE : View.VISIBLE);
     }

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
@@ -66,11 +67,7 @@ public class AList<T> extends IList<T> {
     public AList<T> AddAll(AList<T> collection, int index) { return AddAll(collection.list, index); }
     public boolean Remove(T element) { return list.remove(element); }
     public boolean Remove(BooleanLambda<T> lambda){ return list.removeIf(lambda::operate); }
-    public boolean RemoveAll(Collection<T> collection){ return list.removeAll(collection); }
-    public boolean RemoveAll(AList<T> collection) { return list.removeAll(collection.list); }
-    public T Pop() {
-        return Pop(-1);
-    }
+    public T Pop() { return Pop(-1); }
     public T Pop(int index){
         index = ModIndex(index);
         T element = list.get(index);
@@ -86,7 +83,8 @@ public class AList<T> extends IList<T> {
         return collection;
     }
     public AList<T> Without(T element){ Remove(element); return this; }
-    public AList<T> Without(AList<T> collection) { RemoveAll(collection); return this; }
+    public AList<T> RemoveAll(AList<T> collection) { list.removeAll(collection.list); return this; }
+    public AList<T> RemoveAll(Collection<T> collection) { list.removeAll(collection); return this; }
     public AList<T> Clear() { list.clear(); return this; }
     public AList<T> Clear(int index) { while (list.size() > index) list.remove(index); return this; }
     public AList<T> Copy(){ return new AList<>(list); }

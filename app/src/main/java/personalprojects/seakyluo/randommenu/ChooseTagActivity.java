@@ -7,7 +7,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,18 +15,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class ChooseTagActivity extends AppCompatActivity {
-    public static final String TAG = "tag";
+    public static final String SELECTED_TAGS = "selected", EXCLUDED_TAGS = "excluded";
     private AutoCompleteTextView tag_box;
     private TagListAdapter tagListAdapter;
     private TagsFragment tagsFragment;
-    private ArrayList<Tag> original_tags;
+    private ArrayList<Tag> selected_tags, excluded_tags;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +62,7 @@ public class ChooseTagActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
-                suggestionTagListAdapter.addAll(tagListAdapter.GetData().Without(tagsFragment.GetData()).Convert(t -> t.Name).ToArrayList());
+                suggestionTagListAdapter.addAll(tagListAdapter.GetData().RemoveAll(tagsFragment.GetData()).Convert(t -> t.Name).ToArrayList());
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -77,7 +75,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.back_button).setOnClickListener(v -> {
-            if (tagsFragment.GetData().SameCollection(original_tags)){
+            if (tagsFragment.GetData().SameCollection(selected_tags)){
                 setResult(RESULT_CANCELED);
                 finish();
             }else{
@@ -93,11 +91,12 @@ public class ChooseTagActivity extends AppCompatActivity {
                 });
             }
         });
-
         findViewById(R.id.confirm_button).setOnClickListener(v -> SubmitTag());
 
-        original_tags = getIntent().getParcelableArrayListExtra(TAG);
-        tagListAdapter = new TagListAdapter(Settings.settings.Tags, original_tags);
+        Intent intent = getIntent();
+        selected_tags = intent.getParcelableArrayListExtra(SELECTED_TAGS);
+        excluded_tags = intent.getParcelableArrayListExtra(EXCLUDED_TAGS);
+        tagListAdapter = new TagListAdapter(Settings.settings.Tags.RemoveAll(excluded_tags), selected_tags);
         tagListAdapter.SetTagClickedListener((viewHolder, tag) -> ChooseTag(tag));
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
@@ -107,7 +106,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         tagsFragment = new TagsFragment();
         tagsFragment.SetSpanCount(1);
         tagsFragment.SetCloseable(true);
-        tagsFragment.SetData(original_tags);
+        tagsFragment.SetData(selected_tags);
         tagsFragment.SetTagCloseListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
         getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
     }
@@ -143,8 +142,8 @@ public class ChooseTagActivity extends AppCompatActivity {
     private void FinishActivity(){
         Intent intent = new Intent();
         AList<Tag> tags = tagsFragment.GetData();
-        intent.putExtra(TAG, tags.ToArrayList());
-        if (tags.SameCollection(original_tags)) setResult(RESULT_CANCELED);
+        intent.putExtra(SELECTED_TAGS, tags.ToArrayList());
+        if (tags.SameCollection(selected_tags)) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);
         finish();
     }

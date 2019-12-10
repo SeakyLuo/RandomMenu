@@ -53,14 +53,14 @@ public class FoodCardFragment extends Fragment {
         tagsFragment.SetTagClickedListener((viewHolder, tag) -> {
             FragmentActivity currentActivity = getActivity();
             if (!(currentActivity instanceof MainActivity)) currentActivity.finish();
-            MainActivity activity = (MainActivity)getActivity();
+            MainActivity activity = (MainActivity) getActivity();
             activity.ShowFragment(NavigationFragment.TAG);
             NavigationFragment navigationFragment = (NavigationFragment) activity.GetCurrentFragment();
             navigationFragment.SelectTag(tag);
             if (tagClickedListener != null) tagClickedListener.Click(viewHolder, tag);
         });
         food_image.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
+            Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
             intent.putExtra(FullScreenImageActivity.IMAGE, CurrentFood.ImagePath);
             startActivity(intent);
         });

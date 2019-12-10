@@ -11,9 +11,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.Random;
+import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.FilterDialog;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
@@ -27,8 +27,6 @@ public class RandomFragment extends Fragment {
     private MenuDialog menuDialog = new MenuDialog();
     private FilterDialog filterDialog = new FilterDialog();
     private AList<Tag> preferred_tags = new AList<>(), excluded_tags = new AList<>();
-//    private StackView stackView;
-//    private CardStackAdapter adapter;
 
     @Nullable
     @Override
@@ -48,43 +46,39 @@ public class RandomFragment extends Fragment {
         filterDialog.SetTagFilterListener((preferred, excluded) -> {
             preferred_tags.CopyFrom(preferred);
             excluded_tags.CopyFrom(excluded);
+            filterDialog.dismiss();
+            Reset();
+            foodCardFragment.SetFood(NextFood());
         });
         filterDialog.SetOnResetListener(v -> {
             filterDialog.SetData(preferred_tags.Clear(), excluded_tags.Clear());
+            Reset();
+            foodCardFragment.SetFood(NextFood());
         });
         ImageButton filterButton = view.findViewById(R.id.filter_button);
         filterButton.setOnClickListener(v -> {
             filterDialog.SetData(preferred_tags, excluded_tags);
-            filterDialog.showNow(getFragmentManager(), FilterDialog.TAG);
+            filterDialog.showNow(getChildFragmentManager(), FilterDialog.TAG);
         });
         ImageButton menuButton = view.findViewById(R.id.menu_button);
         menuDialog.SetOnClearListener(button -> {
             food_pool.AddAll(Menu).Shuffle();
             Menu.Clear();
+            menuDialog.SetHeaderText("Count: 0");
             menuDialog.Clear();
         });
         menuButton.setOnClickListener(v -> {
             menuDialog.SetHeaderText("Count: " + Menu.Count());
             menuDialog.SetData(Menu);
-            menuDialog.showNow(getFragmentManager(), MenuDialog.TAG);
+            menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });
-//        stackView = view.findViewById(R.id.card_stack_view);
-//        adapter = new CardStackAdapter(getContext(), getFragmentManager(), Settings.settings.Foods);
-//        stackView.setAdapter(adapter);
-        getFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
+        getChildFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
         Reset();
         if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(RandomPop());
         return view;
     }
 
     private Food NextFood(){
-//        if (adapter.data.IsEmpty()){
-//            Reset();
-//            Toast.makeText(getContext(), "Reaches End", Toast.LENGTH_SHORT).show();
-//        }
-//        if (adapter.data.IsEmpty()) return null;
-//        stackView.showNext();
-//        return adapter.data.Get(stackView.getTop());
         if (food_pool.IsEmpty()){
             Reset();
             Toast.makeText(getContext(), "Reaches End", Toast.LENGTH_SHORT).show();
@@ -97,7 +91,9 @@ public class RandomFragment extends Fragment {
     }
 
     private AList<Food> Reset(){
-//        return adapter.data.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
-        return food_pool.CopyFrom(Settings.settings.Foods.Filter(f -> !Menu.Contains(f)));
+        AList<Food> source = Settings.settings.Foods.Filter(f -> !Menu.Contains(f));
+        if (!preferred_tags.IsEmpty()) source.Remove(f -> !preferred_tags.Any(f::HasTag));
+        if (!excluded_tags.IsEmpty()) source.Remove(f -> excluded_tags.Any(f::HasTag));
+        return food_pool.CopyFrom(source);
     }
 }
