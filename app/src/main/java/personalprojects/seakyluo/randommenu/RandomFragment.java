@@ -81,12 +81,12 @@ public class RandomFragment extends Fragment {
     private Food NextFood(){
         if (food_pool.IsEmpty()){
             Reset();
-            Toast.makeText(getContext(), "Reaches End", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.reshuffle), Toast.LENGTH_SHORT).show();
         }
         return food_pool.IsEmpty() ? null : foodCardFragment.SetFood(RandomPop());
     }
 
-    public Food RandomPop(){
+    private Food RandomPop(){
         return food_pool.Pop(random.nextInt(food_pool.Count()));
     }
 

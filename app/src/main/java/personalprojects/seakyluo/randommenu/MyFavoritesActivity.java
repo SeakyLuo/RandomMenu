@@ -19,7 +19,7 @@ public class MyFavoritesActivity extends AppCompatActivity {
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
 
         TextView title = findViewById(R.id.title_text_view);
-        title.setText(Tag.Format(this,R.string.my_favorites, Settings.settings.Favorites.Count()));
+        title.setText(Tag.Format(this, R.string.my_favorites, Settings.settings.Favorites.Count()));
 
         fragment = (FoodListFragment) getSupportFragmentManager().findFragmentById(R.id.food_list_fragment);
         fragment.SetData(Settings.settings.Favorites);

@@ -45,10 +45,6 @@ public class Helper {
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
     }
 
-    public static String Localize(String resource){
-        return "";
-    }
-
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
     public static void LoadImage(RequestManager glide, String path, ImageView imageView){
         if (IsNullOrEmpty(path)) imageView.setImageBitmap(DefaultFoodImage);

@@ -29,4 +29,13 @@
     <string name="food_count">Count: %d</string>
     <string name="reset">Reset</string>
     <string name="cancel">Cancel</string>
+    <string name="reshuffle">Reshuffle</string>
+    <string name="save_as_draft">You have unsaved changes.\\nDo you want to save it as draft?</string>
+    <string name="empty_food_name">Food name cannot be empty!</string>
+    <string name="food_exists">Food name already exists!</string>
+    <string name="at_least_one_tag">Food must have a at least 1 tag!</string>
+    <string name="delete_food">Do you want to delete this food?</string>
+    <string name="delete_tag">Do you want delete tag \"%s\"?</string>
+    <string name="ask_delete">Do you want to delete \"%s\"?</string>
+    <string name="tag_exists">Tag already exists!</string>
 </resources>

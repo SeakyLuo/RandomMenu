@@ -77,14 +77,14 @@ public class NavigationFragment extends Fragment {
                                 tag.Name = text;
                                 selectTagAdapter.Set(tag, selectTagAdapter.IndexOf(t -> t.Name.equals(data.Name)));
                             }else{
-                                Toast.makeText(getContext(), "Tag Exists!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getString(R.string.tag_exists), Toast.LENGTH_SHORT).show();
                             }
                         });
                         inputDialog.showNow(getChildFragmentManager(), InputDialog.TAG);
                         return true;
                     case R.id.delete_tag_item:
                         AskYesNoDialog askDialog = new AskYesNoDialog();
-                        askDialog.setMessage(String.format("Do you want delete tag \"%s\"?", data.Name));
+                        askDialog.setMessage(String.format(getString(R.string.delete_tag), data.Name));
                         askDialog.setOnYesListener(v -> {
                             if (data.equals(lastTag)) lastTag = Tag.AllCategoriesTag;
                             selectTagAdapter.Remove(data);

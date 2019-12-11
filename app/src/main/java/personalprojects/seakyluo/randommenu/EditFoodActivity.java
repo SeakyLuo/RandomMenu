@@ -80,7 +80,7 @@ public class EditFoodActivity extends AppCompatActivity {
             if (nameChanged || tagChanged || noteChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
-                dialog.setMessage("You have unsaved changes.\nDo you want to save it as draft?");
+                dialog.setMessage(getString(R.string.save_as_draft));
                 dialog.setOnYesListener(view -> {
                     String image_path = SetFoodImage ? Helper.SaveImage(food_image, Helper.TempFolder, Helper.NewImageFileName()) : "";
                     Settings.settings.FoodDraft = new Food(food_name, image_path, tags, note);
@@ -94,16 +94,16 @@ public class EditFoodActivity extends AppCompatActivity {
         confirm_button.setOnClickListener(v -> {
             String food_name = edit_food_name.getText().toString().trim();
             if (food_name.length() == 0){
-                Toast.makeText(this, "Name Too Short!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.empty_food_name), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (Settings.settings.Foods.Any(f -> f.Name.equals(food_name)) && (intent_food == null || !intent_food.Name.equals(food_name))){
-                Toast.makeText(this, "Food Exists", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.food_exists), Toast.LENGTH_SHORT).show();
                 return;
             }
             AList<Tag> tags = fragment.GetData();
             if (tags.Count() == 0){
-                Toast.makeText(this, "At least 1 tag!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.at_least_one_tag), Toast.LENGTH_SHORT).show();
                 return;
             }
             String note = edit_note.getText().toString().trim();
@@ -140,7 +140,7 @@ public class EditFoodActivity extends AppCompatActivity {
         delete_food_button.setOnClickListener(v -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
-            dialog.setMessage("Do you want to delete this food?");
+            dialog.setMessage(getString(R.string.delete_food));
             dialog.setOnYesListener(view -> {
                 if (intent_food.equals(Settings.settings.FoodDraft)) Settings.settings.FoodDraft = null;
                 else Settings.settings.RemoveFood(intent_food);

@@ -39,7 +39,7 @@ public class ToEatActivity extends AppCompatActivity {
         adapter.SetData(Settings.settings.ToEat);
         adapter.SetOnDeleteClickedListener((viewHolder, data) -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
-            dialog.setMessage(String.format("Do you want to delete %s?", data));
+            dialog.setMessage(String.format(getString(R.string.ask_delete), data));
             dialog.setOnYesListener(dv -> {
                 Settings.settings.ToEat.Remove(data);
                 adapter.Remove(data);
