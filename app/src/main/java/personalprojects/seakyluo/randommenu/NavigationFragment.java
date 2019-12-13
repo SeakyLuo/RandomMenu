@@ -43,7 +43,7 @@ public class NavigationFragment extends Fragment {
 
         view.findViewById(R.id.search_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), SearchActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
+            getActivity().overridePendingTransition(R.anim.push_right_in, 0);
         });
 
         RecyclerView masterView = view.findViewById(R.id.masterView);

@@ -14,7 +14,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends SwipeBackActivity {
     private EditText search_bar;
     private ImageButton clear_button;
     private FoodListFragment allFragment, foodFragment, tagFragment, noteFragment;
