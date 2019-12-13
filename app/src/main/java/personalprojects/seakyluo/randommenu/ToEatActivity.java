@@ -6,11 +6,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.jude.swipbackhelper.SwipeBackHelper;
+
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
-public class ToEatActivity extends AppCompatActivity {
+public class ToEatActivity extends SwipeBackActivity {
     private RecyclerView recyclerView;
     private TextView titleText;
     private SimpleFoodListAdapter adapter;
@@ -19,6 +21,7 @@ public class ToEatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_eat);
+        SwipeBackHelper.onCreate(this);
 
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         findViewById(R.id.te_fab).setOnClickListener(v -> {
@@ -61,6 +64,5 @@ public class ToEatActivity extends AppCompatActivity {
         if (updated) Helper.Save(this);
         updated = false;
         super.finish();
-        overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
     }
 }

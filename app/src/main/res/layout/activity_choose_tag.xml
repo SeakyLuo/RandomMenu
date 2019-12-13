@@ -42,7 +42,7 @@
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:completionThreshold="1"
-                android:hint="Input Tag"
+                android:hint="@string/input_tag"
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 android:maxLength="@integer/maxTagNameLength"

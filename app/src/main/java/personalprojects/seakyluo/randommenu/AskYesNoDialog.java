@@ -33,7 +33,6 @@ public class AskYesNoDialog extends DialogFragment {
         text_message.setText(message);
         yes.setOnClickListener(v -> {
             if (yesListener != null) yesListener.onClick(v);
-            // Dismiss Manually?
             dismiss();
         });
         no.setOnClickListener(v -> {

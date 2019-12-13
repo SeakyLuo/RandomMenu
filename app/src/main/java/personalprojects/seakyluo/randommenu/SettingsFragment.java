@@ -29,15 +29,15 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         view.findViewById(R.id.to_cook_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), ToCookActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
+            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
         view.findViewById(R.id.my_favorites_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), MyFavoritesActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
+            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
         view.findViewById(R.id.to_eat_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), ToEatActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
+            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
         view.findViewById(R.id.adjust_data_button).setOnClickListener(v -> {
 //            AList<Tag> tags = new AList<>();

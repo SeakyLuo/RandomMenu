@@ -7,10 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.widget.TextView;
 
+import com.jude.swipbackhelper.SwipeBackHelper;
+
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
-public class MyFavoritesActivity extends AppCompatActivity {
+public class MyFavoritesActivity extends SwipeBackActivity {
     private FoodListFragment fragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,5 @@ public class MyFavoritesActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
     }
 }

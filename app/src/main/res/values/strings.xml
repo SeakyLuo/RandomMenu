@@ -38,4 +38,10 @@
     <string name="delete_tag">Do you want delete tag \"%s\"?</string>
     <string name="ask_delete">Do you want to delete \"%s\"?</string>
     <string name="tag_exists">Tag already exists!</string>
+    <string name="input_tag">Input Tag</string>
+    <string name="tag_limit">You can only have up to 10 tags!</string>
+    <string name="save_image">Image saved!</string>
+    <string name="ask_save">Do you want to save your changes?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

@@ -20,7 +20,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
-public class ChooseTagActivity extends AppCompatActivity {
+public class ChooseTagActivity extends SwipeBackActivity {
     public static final String SELECTED_TAGS = "selected", EXCLUDED_TAGS = "excluded";
     private AutoCompleteTextView tag_box;
     private TagListAdapter tagListAdapter;
@@ -81,13 +81,13 @@ public class ChooseTagActivity extends AppCompatActivity {
             }else{
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
-                dialog.setMessage("You Have unsaved changes. \nDo you want to quit without saving?");
+                dialog.setMessage(getString(R.string.ask_save));
                 dialog.setOnYesListener(view -> {
-                    setResult(RESULT_CANCELED);
-                    finish();
+                    FinishActivity();
                 });
                 dialog.setOnNoListener(view -> {
-                    FinishActivity();
+                    setResult(RESULT_CANCELED);
+                    finish();
                 });
             }
         });
@@ -113,7 +113,7 @@ public class ChooseTagActivity extends AppCompatActivity {
 
     private void ChooseTag(Tag tag){
         if (tagsFragment.GetAdapter().getItemCount() == Tag.MAX_TAGS){
-            Toast.makeText(ChooseTagActivity.this, "Tags Limit!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ChooseTagActivity.this, getString(R.string.tag_limit), Toast.LENGTH_SHORT).show();
         }else{
             if (tagsFragment.Contains(tag)){
                 tagsFragment.Remove(tag);

@@ -8,12 +8,14 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.jude.swipbackhelper.SwipeBackHelper;
+
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
-public class ToCookActivity extends AppCompatActivity {
+public class ToCookActivity extends SwipeBackActivity {
     private RecyclerView recyclerView;
     private TextView titleText;
     private SimpleFoodListAdapter adapter;
@@ -70,7 +72,7 @@ public class ToCookActivity extends AppCompatActivity {
         if (updated) Helper.Save(this);
         updated = false;
         super.finish();
-        overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
+        overridePendingTransition(R.anim.push_right_in, 0);
     }
 
     @Override

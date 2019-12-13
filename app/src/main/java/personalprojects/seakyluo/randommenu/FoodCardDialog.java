@@ -8,9 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import personalprojects.seakyluo.randommenu.FoodCardFragment;
+import personalprojects.seakyluo.randommenu.Interfaces.FoodEditedListener;
 import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.R;
 
 public class FoodCardDialog extends DialogFragment {
     private FoodCardFragment foodCardFragment = new FoodCardFragment();

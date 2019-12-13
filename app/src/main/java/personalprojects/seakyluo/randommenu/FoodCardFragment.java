@@ -7,20 +7,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Interfaces.FoodEditedListener;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -81,7 +80,7 @@ public class FoodCardFragment extends Fragment {
                         return true;
                     case R.id.save_food_item:
                         Helper.SaveImage(Helper.GetFoodBitmap(CurrentFood.ImagePath), Helper.ImageFolder, Helper.NewImageFileName());
-                        Toast.makeText(getContext(), "Successful!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.save_image), Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.like_food_item:
                         CurrentFood.SetIsFavorite(true);
@@ -141,6 +140,3 @@ public class FoodCardFragment extends Fragment {
     }
 }
 
-interface FoodEditedListener{
-    void FoodEdited(Food before, Food after);
-}
