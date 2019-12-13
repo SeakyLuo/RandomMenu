@@ -75,10 +75,7 @@
         android:id="@+id/button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_margin="20dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -91,6 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
+            android:padding="5dp"
             app:srcCompat="@drawable/ic_check" />
 
         <ImageButton
@@ -99,6 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
+            android:padding="5dp"
             app:srcCompat="@drawable/ic_cross" />
 
         <ImageButton
@@ -107,6 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
+            android:padding="5dp"
             app:srcCompat="@drawable/ic_refresh" />
     </LinearLayout>
 

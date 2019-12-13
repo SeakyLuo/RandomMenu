@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,8 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 public class TagListAdapter extends CustomAdapter<Tag> {
     private AList<Tag> CheckTags = new AList<>();
     private OnDataItemClickedListener<Tag> listener;
-    public TagListAdapter(AList<Tag> data, Collection<Tag> checkTags){
+    public TagListAdapter(Context context, AList<Tag> data, Collection<Tag> checkTags){
+        this.context = context;
         SetData(data);
         CheckTags.CopyFrom(checkTags);
     }
@@ -64,7 +66,7 @@ public class TagListAdapter extends CustomAdapter<Tag> {
 
         @Override
         void SetData(Tag data) {
-            tag_name.setText(data.toString());
+            tag_name.setText(Tag.Format(context, data));
             SetCheckButtonVisibility(checked);
         }
 

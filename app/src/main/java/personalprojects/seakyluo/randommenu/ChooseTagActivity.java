@@ -96,7 +96,7 @@ public class ChooseTagActivity extends AppCompatActivity {
         Intent intent = getIntent();
         selected_tags = intent.getParcelableArrayListExtra(SELECTED_TAGS);
         excluded_tags = intent.getParcelableArrayListExtra(EXCLUDED_TAGS);
-        tagListAdapter = new TagListAdapter(Settings.settings.Tags.RemoveAll(excluded_tags), selected_tags);
+        tagListAdapter = new TagListAdapter(this, Settings.settings.Tags.RemoveAll(excluded_tags), selected_tags);
         tagListAdapter.SetTagClickedListener((viewHolder, tag) -> ChooseTag(tag));
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);

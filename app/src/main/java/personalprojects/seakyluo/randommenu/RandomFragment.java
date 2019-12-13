@@ -22,7 +22,6 @@ public class RandomFragment extends Fragment {
     public static final String TAG = "RandomFragment";
     private AList<Food> food_pool = new AList<>(), filtered = new AList<>();
     private FoodCardFragment foodCardFragment;
-    private static Random random = new Random();
     private AList<Food> Menu = new AList<>();
     private MenuDialog menuDialog = new MenuDialog();
     private FilterDialog filterDialog = new FilterDialog();
@@ -74,7 +73,7 @@ public class RandomFragment extends Fragment {
         });
         getChildFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
         Reset();
-        if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(RandomPop());
+        if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(food_pool.Pop(0));
         return view;
     }
 
@@ -83,17 +82,13 @@ public class RandomFragment extends Fragment {
             Reset();
             Toast.makeText(getContext(), getString(R.string.reshuffle), Toast.LENGTH_SHORT).show();
         }
-        return food_pool.IsEmpty() ? null : foodCardFragment.SetFood(RandomPop());
-    }
-
-    private Food RandomPop(){
-        return food_pool.Pop(random.nextInt(food_pool.Count()));
+        return food_pool.IsEmpty() ? null : foodCardFragment.SetFood(food_pool.Pop(0));
     }
 
     private AList<Food> Reset(){
         AList<Food> source = Settings.settings.Foods.Filter(f -> !Menu.Contains(f));
         if (!preferred_tags.IsEmpty()) source.Remove(f -> !preferred_tags.Any(f::HasTag));
         if (!excluded_tags.IsEmpty()) source.Remove(f -> excluded_tags.Any(f::HasTag));
-        return food_pool.CopyFrom(source);
+        return food_pool.CopyFrom(source.Shuffle());
     }
 }
