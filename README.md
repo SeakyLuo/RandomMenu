@@ -6,6 +6,8 @@ An Android app that records your cooking list.
 
 2. Don't appear in recent pop.
 
+3. Multiple images.
+
 # TO FIX
 1. Tag loses highlight when tag is either added or removed.
 

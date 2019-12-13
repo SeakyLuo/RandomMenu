@@ -43,6 +43,9 @@ public class Food implements Parcelable {
 
     public boolean HasTag(Tag tag) { return Tags.Contains(tag); }
     public boolean HasTag(String name) { return Tags.Any(t -> t.Name.equals(name)); }
+    public void RenameTag(String oldName, String newName){
+        Tags.Find(t -> t.Name.equals(oldName)).Name = newName;
+    }
 
     public AList<Tag> GetTags() { return Tags; }
 

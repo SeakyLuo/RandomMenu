@@ -44,4 +44,8 @@
     <string name="ask_save">Do you want to save your changes?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="sort">Sort</string>
+    <string name="sort_by_name">Sort By Name</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
 </resources>

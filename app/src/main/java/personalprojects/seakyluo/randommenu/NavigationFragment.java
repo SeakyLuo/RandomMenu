@@ -72,12 +72,13 @@ public class NavigationFragment extends Fragment {
                         inputDialog.SetText(data.Name);
                         inputDialog.SetConfirmListener(text -> {
                             if (text.equals(data.Name)) return;
-                            if (Settings.settings.Tags.Find(t -> t.Name.equals(text)) == null){
+                            if (Settings.settings.Tags.Any(t -> t.Name.equals(text))){
+                                Toast.makeText(getContext(), getString(R.string.tag_exists), Toast.LENGTH_SHORT).show();
+                            }else{
                                 Tag tag = Settings.settings.Tags.Find(t -> t.Name.equals(data.Name));
                                 tag.Name = text;
+                                Settings.settings.Foods.ForEach(f -> f.RenameTag(data.Name, text));
                                 selectTagAdapter.Set(tag, selectTagAdapter.IndexOf(t -> t.Name.equals(data.Name)));
-                            }else{
-                                Toast.makeText(getContext(), getString(R.string.tag_exists), Toast.LENGTH_SHORT).show();
                             }
                         });
                         inputDialog.showNow(getChildFragmentManager(), InputDialog.TAG);
