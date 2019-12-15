@@ -34,7 +34,7 @@
     <string name="empty_food_name">菜名不能为空！</string>
     <string name="food_exists">菜名已存在！</string>
     <string name="at_least_one_tag">菜肴至少要有一个标签！</string>
-    <string name="delete_food">你想要删除这道菜吗？</string>
+    <string name="delete_food">删除菜肴</string>
     <string name="delete_tag">你想要删除标签“%s”吗？</string>
     <string name="ask_delete">你想要删除%s吗？</string>
     <string name="tag_exists">标签已存在！</string>
@@ -48,4 +48,5 @@
     <string name="rename">重命名</string>
     <string name="sort">排序</string>
     <string name="sort_by_name">根据名称排序</string>
+    <string name="ask_delete_food">你想要删除这道菜吗？</string>
 </resources>

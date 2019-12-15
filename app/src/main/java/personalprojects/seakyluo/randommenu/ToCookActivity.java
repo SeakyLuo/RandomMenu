@@ -72,7 +72,6 @@ public class ToCookActivity extends SwipeBackActivity {
         if (updated) Helper.Save(this);
         updated = false;
         super.finish();
-        overridePendingTransition(R.anim.push_right_in, 0);
     }
 
     @Override

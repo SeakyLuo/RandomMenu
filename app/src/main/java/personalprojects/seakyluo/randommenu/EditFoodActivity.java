@@ -140,7 +140,7 @@ public class EditFoodActivity extends AppCompatActivity {
         delete_food_button.setOnClickListener(v -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
-            dialog.setMessage(getString(R.string.delete_food));
+            dialog.setMessage(getString(R.string.ask_delete_food));
             dialog.setOnYesListener(view -> {
                 if (intent_food.equals(Settings.settings.FoodDraft)) Settings.settings.FoodDraft = null;
                 else Settings.settings.RemoveFood(intent_food);
