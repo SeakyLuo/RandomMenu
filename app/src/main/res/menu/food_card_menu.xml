@@ -8,15 +8,19 @@
     <item
         android:id="@+id/save_food_item"
         android:icon="@drawable/ic_save"
-        android:title="@string/save" />
+        android:title="@string/save_image" />
     <item
         android:id="@+id/like_food_item"
         android:icon="@drawable/ic_like"
         android:title="@string/like" />
 
-
     <item
         android:id="@+id/dislike_food_item"
         android:icon="@drawable/ic_undo_like"
         android:title="@string/undo_like" />
+
+    <item
+        android:id="@+id/more_item"
+        android:icon="@drawable/ic_info"
+        android:title="@string/more" />
 </menu>

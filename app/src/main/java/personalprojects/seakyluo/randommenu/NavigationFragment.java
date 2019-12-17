@@ -135,11 +135,12 @@ public class NavigationFragment extends Fragment {
     }
 
     private void selectTag(Tag tag){
-        lastTag = Settings.settings.Tags.Find(tag);
-        if (lastTag.IsAllCategoriesTag()){
+        if (tag.IsAllCategoriesTag()){
+            lastTag = Tag.AllCategoriesTag;
             title_text_view.setText(Tag.Format(getContext(), R.string.all_categories, Settings.settings.Foods.Count()));
             foodAdapter.Reset();
         }else{
+            lastTag = Settings.settings.Tags.Find(tag);
             title_text_view.setText(Tag.Format(getContext(), lastTag));
             foodAdapter.Filter(lastTag);
         }
@@ -154,8 +155,7 @@ public class NavigationFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK)
-            SetData();
+        if (resultCode == RESULT_OK) SetData();
         if (!lastTag.IsAllCategoriesTag() && !Settings.settings.Tags.Contains(lastTag)) lastTag = Tag.AllCategoriesTag;
         selectTag(lastTag);
         selectTagAdapter.HighlightTag(lastTag);

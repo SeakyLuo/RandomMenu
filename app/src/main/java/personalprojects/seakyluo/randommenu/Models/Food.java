@@ -16,6 +16,7 @@ public class Food implements Parcelable {
     public String Note = "";
     private boolean IsFavorite = false;
     private Long DateAdded;
+    public int HideCount = 0;
 
     public Food(String name){
         Name = name;
@@ -46,7 +47,7 @@ public class Food implements Parcelable {
     public void RenameTag(String oldName, String newName){
         Tags.Find(t -> t.Name.equals(oldName)).Name = newName;
     }
-
+    public Long GetDateAdded() { return DateAdded; }
     public AList<Tag> GetTags() { return Tags; }
 
     public void RemoveTag(Tag tag) { Tags.Remove(tag); }
@@ -69,6 +70,7 @@ public class Food implements Parcelable {
         } else {
             DateAdded = in.readLong();
         }
+        HideCount = in.readInt();
     }
 
     public static final Creator<Food> CREATOR = new Creator<Food>() {
@@ -101,5 +103,6 @@ public class Food implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(DateAdded);
         }
+        dest.writeInt(HideCount);
     }
 }

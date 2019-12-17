@@ -40,7 +40,7 @@
     <string name="tag_exists">标签已存在！</string>
     <string name="input_tag">输入标签</string>
     <string name="tag_limit">标签达到上限！</string>
-    <string name="save_image">图片已保存！</string>
+    <string name="save_image">保存图片</string>
     <string name="ask_save">你想保存改变吗？</string>
     <string name="no">否</string>
     <string name="yes">是</string>
@@ -49,4 +49,8 @@
     <string name="sort">排序</string>
     <string name="sort_by_name">根据名称排序</string>
     <string name="ask_delete_food">你想要删除这道菜吗？</string>
+    <string name="more">更多</string>
+    <string name="save_image_msg">图片已保存！</string>
+    <string name="created_at">创建于：%s</string>
+    <string name="hide_recent">不在最近%d次随机结果中出现。</string>
 </resources>

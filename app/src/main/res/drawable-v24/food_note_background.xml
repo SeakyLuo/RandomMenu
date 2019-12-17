@@ -6,7 +6,7 @@
         android:color="#FFD800" />
 
     // the inside color
-    <solid android:color="@android:color/transparent"/>
+    <solid android:color="@android:color/white"/>
 
     <corners android:radius="8dp" />
 </shape>

@@ -1,5 +1,7 @@
 package personalprojects.seakyluo.randommenu;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +20,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Interfaces.FoodEditedListener;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
@@ -30,12 +35,14 @@ import static android.app.Activity.RESULT_OK;
 public class FoodCardFragment extends Fragment {
     private static final int EDIT_FOOD = 0;
     private TagsFragment tagsFragment;
-    private TextView food_name, food_note, food_note_placeholder;
+    private TextView food_name, food_note_front, food_note_back;
     private ImageView food_image;
     private ImageButton more_button;
     private Food CurrentFood;
     private FoodEditedListener foodEditedListener, foodLikedChangedListener;
     private OnDataItemClickedListener<Tag> tagClickedListener;
+    private AnimatorSet flip_in, flip_out;
+    private boolean isBack = false;
 
     @Nullable
     @Override
@@ -44,9 +51,11 @@ public class FoodCardFragment extends Fragment {
         getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
         food_name = view.findViewById(R.id.food_name);
         food_image = view.findViewById(R.id.food_image);
-        food_note = view.findViewById(R.id.food_note);
-        food_note_placeholder = view.findViewById(R.id.food_note_placeholder);
+        food_note_front = view.findViewById(R.id.food_note_front);
+        food_note_back = view.findViewById(R.id.food_note_back);
         more_button = view.findViewById(R.id.more_button);
+        flip_in = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.flip_in);
+        flip_out = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.flip_out);
 
         tagsFragment.SetSpanCount(1);
         tagsFragment.SetTagClickedListener((viewHolder, tag) -> {
@@ -63,11 +72,11 @@ public class FoodCardFragment extends Fragment {
             intent.putExtra(FullScreenImageActivity.IMAGE, CurrentFood.ImagePath);
             startActivity(intent);
         });
-        food_note.setMovementMethod(new ScrollingMovementMethod());
+        food_note_back.setMovementMethod(new ScrollingMovementMethod());
         more_button.setOnClickListener(v -> {
-            ObjectAnimator.ofFloat(v, "rotation", 0, 180).start();
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
             if (Helper.IsNullOrEmpty(CurrentFood.ImagePath)) helper.removeItem(R.id.save_food_item);
+            if (Helper.IsNullOrEmpty(CurrentFood.Note)) helper.removeItem(R.id.more_item);
             helper.removeItem(CurrentFood.IsFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
             helper.setOnDismissListener(() -> ObjectAnimator.ofFloat(v, "rotation", 180, 360).start());
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
@@ -80,7 +89,7 @@ public class FoodCardFragment extends Fragment {
                         return true;
                     case R.id.save_food_item:
                         Helper.SaveImage(Helper.GetFoodBitmap(CurrentFood.ImagePath), Helper.ImageFolder, Helper.NewImageFileName());
-                        Toast.makeText(getContext(), getString(R.string.save_image), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.save_image_msg), Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.like_food_item:
                         CurrentFood.SetIsFavorite(true);
@@ -92,25 +101,49 @@ public class FoodCardFragment extends Fragment {
                         Settings.settings.SetFavorite(CurrentFood, false);
                         foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
+                    case R.id.more_item:
+                        Flip();
+                        return true;
                 }
                 return false;
             });
+            ObjectAnimator.ofFloat(v, "rotation", 0, 180).start();
             helper.show();
         });
+        food_note_front.setOnClickListener(v -> { if (!Helper.IsNullOrEmpty(CurrentFood.Note)) Flip(); });
+        food_note_back.setOnClickListener(v -> { if (!Helper.IsNullOrEmpty(CurrentFood.Note)) Flip(); });
         if (CurrentFood != null) setFood(CurrentFood);
         return view;
+    }
+
+    private void Flip(){
+        if (isBack = !isBack) {
+            flip_in.setTarget(food_note_back);
+            flip_out.setTarget(food_note_front);
+            flip_in.start();
+            flip_out.start();
+        }else{
+            flip_in.setTarget(food_note_front);
+            flip_out.setTarget(food_note_back);
+            flip_in.start();
+            flip_out.start();
+        }
     }
 
     private void setFood(Food food){
         CurrentFood = food;
         food_name.setText(food.Name);
-        food_note.setText(food.Note);
+        food_note_back.setText(food.Note);
+        Calendar date = Calendar.getInstance();
+        date.setTimeInMillis(food.GetDateAdded());
+        String food_info = String.format(getString(R.string.created_at), new SimpleDateFormat("yyyy-MM-dd").format(date.getTime())) + "\n";
+        if (food.HideCount > 0) food_info += String.format(getString(R.string.hide_recent), food.HideCount);
         if (Helper.IsNullOrEmpty(food.Note)){
-            food_note.setVisibility(View.GONE);
-            food_note_placeholder.setVisibility(View.VISIBLE);
+            food_note_front.setText(food_info);
+            food_note_back.setText(food.Note);
         }else{
-            food_note.setVisibility(View.VISIBLE);
-            food_note_placeholder.setVisibility(View.GONE);
+            food_note_front.setText(food.Note);
+            food_note_back.setText(food_info);
         }
         Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
         tagsFragment.SetData(food.GetTags());
