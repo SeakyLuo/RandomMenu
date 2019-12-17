@@ -53,4 +53,6 @@
     <string name="save_image_msg">Image has been saved!</string>
     <string name="created_at">Created At: %s</string>
     <string name="hide_recent">Don\'t appear in recent %d shuffles.</string>
+    <string name="hide_item">Don\'t appear recently</string>
+    <string name="show_item">Allow appear.</string>
 </resources>

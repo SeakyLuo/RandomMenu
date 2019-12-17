@@ -53,4 +53,6 @@
     <string name="save_image_msg">图片已保存！</string>
     <string name="created_at">创建于：%s</string>
     <string name="hide_recent">不在最近%d次随机结果中出现。</string>
+    <string name="hide_item">最近不出现</string>
+    <string name="show_item">允许随机</string>
 </resources>

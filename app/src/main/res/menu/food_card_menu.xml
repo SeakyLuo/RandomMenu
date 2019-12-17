@@ -20,6 +20,16 @@
         android:title="@string/undo_like" />
 
     <item
+        android:id="@+id/show_food_item"
+        android:icon="@drawable/ic_show"
+        android:title="@string/show_item" />
+
+    <item
+        android:id="@+id/hide_food_item"
+        android:icon="@drawable/ic_hide"
+        android:title="@string/hide_item" />
+
+    <item
         android:id="@+id/more_item"
         android:icon="@drawable/ic_info"
         android:title="@string/more" />

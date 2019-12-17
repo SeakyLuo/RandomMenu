@@ -77,6 +77,8 @@ public class FoodCardFragment extends Fragment {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
             if (Helper.IsNullOrEmpty(CurrentFood.ImagePath)) helper.removeItem(R.id.save_food_item);
             if (Helper.IsNullOrEmpty(CurrentFood.Note)) helper.removeItem(R.id.more_item);
+            if (CurrentFood.HideCount == 0) helper.removeItem(R.id.show_food_item);
+            else helper.removeItem(R.id.hide_food_item);
             helper.removeItem(CurrentFood.IsFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
             helper.setOnDismissListener(() -> ObjectAnimator.ofFloat(v, "rotation", 180, 360).start());
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
@@ -100,6 +102,18 @@ public class FoodCardFragment extends Fragment {
                         CurrentFood.SetIsFavorite(false);
                         Settings.settings.SetFavorite(CurrentFood, false);
                         foodLikedChangedListener.FoodEdited(before, CurrentFood);
+                        return true;
+                    case R.id.show_food_item:
+                        CurrentFood.HideCount = 0;
+                        SetFoodNote(CurrentFood);
+                        Settings.settings.Foods.Find(CurrentFood).HideCount = CurrentFood.HideCount;
+                        Helper.Save(getContext());
+                        return true;
+                    case R.id.hide_food_item:
+                        CurrentFood.HideCount += 3;
+                        SetFoodNote(CurrentFood);
+                        Settings.settings.Foods.Find(CurrentFood).HideCount = CurrentFood.HideCount;
+                        Helper.Save(getContext());
                         return true;
                     case R.id.more_item:
                         Flip();
@@ -134,6 +148,12 @@ public class FoodCardFragment extends Fragment {
         CurrentFood = food;
         food_name.setText(food.Name);
         food_note_back.setText(food.Note);
+        SetFoodNote(food);
+        Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
+        tagsFragment.SetData(food.GetTags());
+    }
+
+    public void SetFoodNote(Food food){
         Calendar date = Calendar.getInstance();
         date.setTimeInMillis(food.GetDateAdded());
         String food_info = String.format(getString(R.string.created_at), new SimpleDateFormat("yyyy-MM-dd").format(date.getTime())) + "\n";
@@ -145,8 +165,6 @@ public class FoodCardFragment extends Fragment {
             food_note_front.setText(food.Note);
             food_note_back.setText(food_info);
         }
-        Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
-        tagsFragment.SetData(food.GetTags());
     }
 
     public void LoadFood(Food food){ CurrentFood = food; }
