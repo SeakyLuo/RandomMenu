@@ -135,13 +135,13 @@ public class NavigationFragment extends Fragment {
     }
 
     private void selectTag(Tag tag){
-        lastTag = tag;
-        if (tag.IsAllCategoriesTag()){
+        lastTag = Settings.settings.Tags.Find(tag);
+        if (lastTag.IsAllCategoriesTag()){
             title_text_view.setText(Tag.Format(getContext(), R.string.all_categories, Settings.settings.Foods.Count()));
             foodAdapter.Reset();
         }else{
-            title_text_view.setText(Tag.Format(getContext(), tag));
-            foodAdapter.Filter(tag);
+            title_text_view.setText(Tag.Format(getContext(), lastTag));
+            foodAdapter.Filter(lastTag);
         }
     }
 
