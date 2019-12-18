@@ -16,7 +16,6 @@ import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class ToCookActivity extends SwipeBackActivity {
-    private RecyclerView recyclerView;
     private TextView titleText;
     private SimpleFoodListAdapter adapter;
     private boolean updated = false;
@@ -39,7 +38,7 @@ public class ToCookActivity extends SwipeBackActivity {
             });
             dialog.showNow(getSupportFragmentManager(), InputDialog.TAG);
         });
-        recyclerView = findViewById(R.id.food_list_recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.food_list_recycler_view);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new SimpleFoodListAdapter();
         adapter.SetData(Settings.settings.ToCook);

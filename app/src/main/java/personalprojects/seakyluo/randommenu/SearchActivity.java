@@ -2,6 +2,8 @@ package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +17,7 @@ import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 
 public class SearchActivity extends SwipeBackActivity {
+    private static final String ALL = "All", FOOD = "Food", TAG = "Tag", NOTE = "Note";
     private EditText search_bar;
     private ImageButton clear_button;
     private FoodListFragment allFragment, foodFragment, tagFragment, noteFragment;
@@ -28,11 +31,23 @@ public class SearchActivity extends SwipeBackActivity {
 
         TabLayout tabLayout = findViewById(R.id.search_tabs);
         TabViewPager viewPager = findViewById(R.id.search_viewpager);
-        TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager());
-        tabPagerAdapter.AddFragment(allFragment = new FoodListFragment());
-        tabPagerAdapter.AddFragment(foodFragment = new FoodListFragment());
-        tabPagerAdapter.AddFragment(tagFragment = new FoodListFragment());
-        tabPagerAdapter.AddFragment(noteFragment = new FoodListFragment());
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(fragmentManager);
+        if (savedInstanceState == null){
+            allFragment = new FoodListFragment();
+            foodFragment = new FoodListFragment();
+            tagFragment = new FoodListFragment();
+            noteFragment = new FoodListFragment();
+        }else{
+            allFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, ALL);
+            foodFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, FOOD);
+            tagFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, TAG);
+            noteFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, NOTE);
+        }
+        tabPagerAdapter.AddFragment(allFragment);
+        tabPagerAdapter.AddFragment(foodFragment);
+        tabPagerAdapter.AddFragment(tagFragment);
+        tabPagerAdapter.AddFragment(noteFragment);
         tabPagerAdapter.GetFragments().ForEach(f -> {
             FoodListFragment fragment = (FoodListFragment) f;
             fragment.SetFoodClickedListener((viewHolder, food) -> {
@@ -107,5 +122,15 @@ public class SearchActivity extends SwipeBackActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        try { fragmentManager.putFragment(outState, ALL, allFragment); }catch (IllegalStateException | NullPointerException ignored){}
+        try { fragmentManager.putFragment(outState, FOOD, foodFragment); }catch (IllegalStateException | NullPointerException ignored){}
+        try { fragmentManager.putFragment(outState, TAG, tagFragment); }catch (IllegalStateException | NullPointerException ignored){}
+        try { fragmentManager.putFragment(outState, NOTE, noteFragment); }catch (IllegalStateException | NullPointerException ignored){}
     }
 }
