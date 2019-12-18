@@ -33,6 +33,7 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 import static android.app.Activity.RESULT_OK;
 
 public class FoodCardFragment extends Fragment {
+    public static final String TAG = "FoodCardFragment";
     private static final int EDIT_FOOD = 0;
     private TagsFragment tagsFragment;
     private TextView food_name, food_note_front, food_note_back;
@@ -48,7 +49,11 @@ public class FoodCardFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_food_card, container, false);
-        getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
+        if (savedInstanceState == null){
+            getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
+        }else{
+            tagsFragment = (TagsFragment) getChildFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
+        }
         food_name = view.findViewById(R.id.food_name);
         food_image = view.findViewById(R.id.food_image);
         food_note_front = view.findViewById(R.id.food_note_front);
@@ -96,12 +101,12 @@ public class FoodCardFragment extends Fragment {
                     case R.id.like_food_item:
                         CurrentFood.SetIsFavorite(true);
                         Settings.settings.SetFavorite(CurrentFood, true);
-                        foodLikedChangedListener.FoodEdited(before, CurrentFood);
+                        if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
                     case R.id.dislike_food_item:
                         CurrentFood.SetIsFavorite(false);
                         Settings.settings.SetFavorite(CurrentFood, false);
-                        foodLikedChangedListener.FoodEdited(before, CurrentFood);
+                        if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
                     case R.id.show_food_item:
                         CurrentFood.HideCount = 0;
@@ -188,6 +193,12 @@ public class FoodCardFragment extends Fragment {
         setFood(newFood);
         if (foodEditedListener != null) foodEditedListener.FoodEdited(CurrentFood, newFood);
         CurrentFood = newFood;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getChildFragmentManager().putFragment(outState, TagsFragment.TAG, tagsFragment);
     }
 }
 

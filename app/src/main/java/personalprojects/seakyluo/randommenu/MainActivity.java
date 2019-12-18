@@ -48,17 +48,17 @@ public class MainActivity extends AppCompatActivity {
 //        DbHelper.Init(getApplicationContext());
         Helper.Init(this);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        if (savedInstanceState != null) {
-            //Restore the fragment's instance
-            randomFragment = (RandomFragment) fragmentManager.getFragment(savedInstanceState, RandomFragment.TAG);
-            navigationFragment = (NavigationFragment) fragmentManager.getFragment(savedInstanceState, NavigationFragment.TAG);
-            settingsFragment = (SettingsFragment) fragmentManager.getFragment(savedInstanceState, SettingsFragment.TAG);
-        }else{
+        if (savedInstanceState == null) {
             randomFragment = new RandomFragment();
             navigationFragment = new NavigationFragment();
             settingsFragment = new SettingsFragment();
             bottomNavigationView.setSelectedItemId(R.id.navigation_random);
+        }else{
+            //Restore the fragment's instance
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            randomFragment = (RandomFragment) fragmentManager.getFragment(savedInstanceState, RandomFragment.TAG);
+            navigationFragment = (NavigationFragment) fragmentManager.getFragment(savedInstanceState, NavigationFragment.TAG);
+            settingsFragment = (SettingsFragment) fragmentManager.getFragment(savedInstanceState, SettingsFragment.TAG);
         }
     }
 
@@ -78,22 +78,19 @@ public class MainActivity extends AppCompatActivity {
         try { fragmentManager.putFragment(outState, SettingsFragment.TAG, settingsFragment); }catch (IllegalStateException | NullPointerException ignored){}
     }
 
-    protected void ShowFragment(Fragment fragment, String tag, String lastTag) {
+    protected void ShowFragment(Fragment fragment, String tag, String lastTag){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        if (lastTag != null) {
+        if (lastTag != null){
             Fragment lastFragment = fragmentManager.findFragmentByTag(lastTag);
-            if (lastFragment != null) {
-                transaction.hide(lastFragment);
-            }
+            if (lastFragment != null) transaction.hide(lastFragment);
         }
         this.lastTag = tag;
 
-        if (fragment.isAdded()) {
+        if (fragment.isAdded()){
             transaction.show(fragment);
-        }
-        else {
+        }else{
             transaction.add(R.id.content_view, fragment, tag);
         }
         transaction.commit();

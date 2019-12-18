@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class RandomFragment extends Fragment {
         view.findViewById(R.id.refresh_button).setOnClickListener(v -> {
             Reset();
             NextFood();
+            Toast.makeText(getContext(), getString(R.string.food_pool_reset), Toast.LENGTH_SHORT).show();
         });
         filterDialog.SetTagFilterListener((preferred, excluded) -> {
             preferred_tags.CopyFrom(preferred);
@@ -71,7 +73,11 @@ public class RandomFragment extends Fragment {
             menuDialog.SetData(Menu);
             menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });
-        getChildFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
+        if (savedInstanceState == null){
+            getChildFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
+        }else{
+            foodCardFragment = (FoodCardFragment) getChildFragmentManager().getFragment(savedInstanceState, FoodCardFragment.TAG);
+        }
         Reset();
         if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(food_pool.Pop(0));
         return view;
@@ -90,5 +96,11 @@ public class RandomFragment extends Fragment {
         if (!preferred_tags.IsEmpty()) source.Remove(f -> !preferred_tags.Any(f::HasTag));
         if (!excluded_tags.IsEmpty()) source.Remove(f -> excluded_tags.Any(f::HasTag));
         return food_pool.CopyFrom(source.Shuffle());
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getChildFragmentManager().putFragment(outState, FoodCardFragment.TAG, foodCardFragment);
     }
 }

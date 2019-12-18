@@ -17,6 +17,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class TagsFragment extends Fragment {
+    public static final String TAG = "TagsFragment";
     private RecyclerView recyclerView;
     private TagAdapter adapter = new TagAdapter();
     private int spanCount = 2;

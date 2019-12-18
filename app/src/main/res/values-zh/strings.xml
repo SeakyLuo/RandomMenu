@@ -55,4 +55,5 @@
     <string name="hide_recent">不在最近%d次随机结果中出现。</string>
     <string name="hide_item">最近不出现</string>
     <string name="show_item">允许随机</string>
+    <string name="food_pool_reset">已重置！</string>
 </resources>
