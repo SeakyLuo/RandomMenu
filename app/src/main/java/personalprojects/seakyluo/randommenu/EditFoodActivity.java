@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -61,7 +62,8 @@ public class EditFoodActivity extends AppCompatActivity {
         edit_food_name = findViewById(R.id.edit_food_name);
         edit_note = findViewById(R.id.edit_note);
         food_image = findViewById(R.id.food_image);
-        fragment = (ChooseTagFragment) getSupportFragmentManager().findFragmentById(R.id.choose_tag_fragment);
+        fragment = savedInstanceState == null ? (ChooseTagFragment) getSupportFragmentManager().findFragmentById(R.id.choose_tag_fragment) :
+                                                 (ChooseTagFragment) getSupportFragmentManager().getFragment(savedInstanceState, ChooseTagFragment.TAG);
 
         intent_food = getIntent().getParcelableExtra(FOOD);
         if (intent_food != null){
@@ -268,6 +270,12 @@ public class EditFoodActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, ChooseTagFragment.TAG, fragment);
     }
 
     @Override

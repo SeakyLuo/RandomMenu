@@ -49,11 +49,10 @@ public class FoodCardFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_food_card, container, false);
-        if (savedInstanceState == null){
+        if (savedInstanceState == null)
             getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
-        }else{
+        else
             tagsFragment = (TagsFragment) getChildFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
-        }
         food_name = view.findViewById(R.id.food_name);
         food_image = view.findViewById(R.id.food_image);
         food_note_front = view.findViewById(R.id.food_note_front);

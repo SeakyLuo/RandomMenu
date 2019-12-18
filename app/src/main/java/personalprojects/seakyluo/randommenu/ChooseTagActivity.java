@@ -103,12 +103,14 @@ public class ChooseTagActivity extends SwipeBackActivity {
         tag_recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         tag_recycler_view.setAdapter(tagListAdapter);
 
-        tagsFragment = new TagsFragment();
+        if (savedInstanceState == null)
+            getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
+        else
+            tagsFragment = (TagsFragment) getSupportFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
         tagsFragment.SetSpanCount(1);
         tagsFragment.SetCloseable(true);
         tagsFragment.SetData(selected_tags);
         tagsFragment.SetTagCloseListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
-        getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
     }
 
     private void ChooseTag(Tag tag){
@@ -152,5 +154,11 @@ public class ChooseTagActivity extends SwipeBackActivity {
     public void finish(){
         super.finish();
         overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, TagsFragment.TAG, tagsFragment);
     }
 }

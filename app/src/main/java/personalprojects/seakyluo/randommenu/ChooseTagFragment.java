@@ -21,6 +21,7 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 import static android.app.Activity.RESULT_OK;
 
 public class ChooseTagFragment extends Fragment {
+    public static final String TAG = "ChooseTagFragment";
     public static final int CHOOSE_TAG_CODE = 100;
     private ImageButton add_tag_button;
     private TextView header_text;

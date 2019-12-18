@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MenuItem;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
@@ -24,28 +25,35 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
-                    case R.id.navigation_random:
+        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            switch (menuItem.getItemId()){
+                case R.id.navigation_random:
+                    if (randomFragment == null){
+                        randomFragment = (RandomFragment) fragmentManager.getFragment(savedInstanceState, RandomFragment.TAG);
                         if (randomFragment == null) randomFragment = new RandomFragment();
-                        ShowFragment(randomFragment, RandomFragment.TAG, lastTag);
-                        return true;
-                    case R.id.navigation_navigation:
+                    }
+                    ShowFragment(randomFragment, RandomFragment.TAG);
+                    return true;
+                case R.id.navigation_navigation:
+                    if (navigationFragment == null){
+                        navigationFragment = (NavigationFragment) fragmentManager.getFragment(savedInstanceState, NavigationFragment.TAG);
                         if (navigationFragment == null) navigationFragment = new NavigationFragment();
-                        ShowFragment(navigationFragment, NavigationFragment.TAG, lastTag);
-                        return true;
-                    case R.id.navigation_settings:
+                    }
+                    ShowFragment(navigationFragment, NavigationFragment.TAG);
+                    return true;
+                case R.id.navigation_settings:
+                    if (settingsFragment == null){
+                        settingsFragment = (SettingsFragment) fragmentManager.getFragment(savedInstanceState, SettingsFragment.TAG);
                         if (settingsFragment == null) settingsFragment = new SettingsFragment();
-                        ShowFragment(settingsFragment, SettingsFragment.TAG, lastTag);
-                        return true;
-                }
-                return false;
+                    }
+                    ShowFragment(settingsFragment, SettingsFragment.TAG);
+                    return true;
             }
+            return false;
         });
-//        DbHelper.Init(getApplicationContext());
         Helper.Init(this);
 
         if (savedInstanceState == null) {
@@ -54,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
             settingsFragment = new SettingsFragment();
             bottomNavigationView.setSelectedItemId(R.id.navigation_random);
         }else{
-            //Restore the fragment's instance
-            FragmentManager fragmentManager = getSupportFragmentManager();
             randomFragment = (RandomFragment) fragmentManager.getFragment(savedInstanceState, RandomFragment.TAG);
             navigationFragment = (NavigationFragment) fragmentManager.getFragment(savedInstanceState, NavigationFragment.TAG);
             settingsFragment = (SettingsFragment) fragmentManager.getFragment(savedInstanceState, SettingsFragment.TAG);
@@ -78,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         try { fragmentManager.putFragment(outState, SettingsFragment.TAG, settingsFragment); }catch (IllegalStateException | NullPointerException ignored){}
     }
 
-    protected void ShowFragment(Fragment fragment, String tag, String lastTag){
+    protected void ShowFragment(Fragment fragment, String tag){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
@@ -86,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             Fragment lastFragment = fragmentManager.findFragmentByTag(lastTag);
             if (lastFragment != null) transaction.hide(lastFragment);
         }
-        this.lastTag = tag;
+        lastTag = tag;
 
         if (fragment.isAdded()){
             transaction.show(fragment);
