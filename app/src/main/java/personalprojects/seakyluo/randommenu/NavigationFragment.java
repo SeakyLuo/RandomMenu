@@ -107,6 +107,7 @@ public class NavigationFragment extends Fragment {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
             dialog.SetFoodEditedListener((before, after) -> SetData());
+            dialog.SetFoodLikedListener(((before, after) -> foodAdapter.SetFoodLiked(after)));
             dialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
         });
         foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> EditFood(food));

@@ -28,4 +28,5 @@ public class FoodCardDialog extends DialogFragment {
 
     public void SetFood(Food food){ CurrentFood = food; }
     public void SetFoodEditedListener(FoodEditedListener listener) { foodCardFragment.SetFoodEditedListener(listener); }
+    public void SetFoodLikedListener(FoodEditedListener listener) { foodCardFragment.SetFoodLikedChangedListener(listener); }
 }

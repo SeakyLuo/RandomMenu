@@ -19,8 +19,10 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 public class FoodListAdapter extends CustomAdapter<Food> {
     private OnDataItemClickedListener<Food> foodClickedListener;
     private OnDataItemClickedListener<Tag> tagClickedListener;
+    private boolean showLikeImage = true;
     public void SetFoodClickedListener(OnDataItemClickedListener<Food> foodClickedListener) { this.foodClickedListener = foodClickedListener; }
     public void SetTagClickedListener(OnDataItemClickedListener<Tag> tagClickedListener) { this.tagClickedListener = tagClickedListener; }
+    public void SetShowLikeImage(boolean showLikeImage) { this.showLikeImage = showLikeImage; }
 
     @NonNull
     @Override
@@ -41,7 +43,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
     }
 
     class ViewHolder extends CustomViewHolder {
-        private ImageView food_image;
+        private ImageView food_image, liked_image;
         private TextView food_name;
         private TagAdapter adapter = new TagAdapter();
 
@@ -49,6 +51,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             super(view);
             food_image = view.findViewById(R.id.food_image);
             food_name = view.findViewById(R.id.food_name);
+            liked_image = view.findViewById(R.id.liked_image);
             RecyclerView recyclerView = view.findViewById(R.id.tags_recycler_view);
 
             food_image.setOnClickListener(v -> {
@@ -63,6 +66,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         void SetData(Food data) {
             Helper.LoadImage(Glide.with(view), data.ImagePath, food_image);
             food_name.setText(data.Name);
+            liked_image.setVisibility(showLikeImage && data.IsFavorite() ? View.VISIBLE : View.GONE);
             adapter.SetData(data.GetTags());
         }
     }

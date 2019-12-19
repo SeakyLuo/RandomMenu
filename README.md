@@ -6,8 +6,6 @@ An Android app that records your cooking list.
 
 2. Card stack.
 
-3. Show like.
-
 # TO FIX
 1. Tag loses highlight when tag is either added or removed.
 

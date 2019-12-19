@@ -37,7 +37,7 @@ public class FoodCardFragment extends Fragment {
     private static final int EDIT_FOOD = 0;
     private TagsFragment tagsFragment;
     private TextView food_name, food_note_front, food_note_back;
-    private ImageView food_image;
+    private ImageView food_image, liked_image;
     private ImageButton more_button;
     private Food CurrentFood;
     private FoodEditedListener foodEditedListener, foodLikedChangedListener;
@@ -55,6 +55,7 @@ public class FoodCardFragment extends Fragment {
             tagsFragment = (TagsFragment) getChildFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
         food_name = view.findViewById(R.id.food_name);
         food_image = view.findViewById(R.id.food_image);
+        liked_image = view.findViewById(R.id.liked_image);
         food_note_front = view.findViewById(R.id.food_note_front);
         food_note_back = view.findViewById(R.id.food_note_back);
         more_button = view.findViewById(R.id.more_button);
@@ -98,12 +99,12 @@ public class FoodCardFragment extends Fragment {
                         Toast.makeText(getContext(), getString(R.string.save_image_msg), Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.like_food_item:
-                        CurrentFood.SetIsFavorite(true);
+                        SetFoodFavorite(CurrentFood.SetIsFavorite(true));
                         Settings.settings.SetFavorite(CurrentFood, true);
                         if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
                     case R.id.dislike_food_item:
-                        CurrentFood.SetIsFavorite(false);
+                        SetFoodFavorite(CurrentFood.SetIsFavorite(false));
                         Settings.settings.SetFavorite(CurrentFood, false);
                         if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
@@ -154,8 +155,11 @@ public class FoodCardFragment extends Fragment {
         food_note_back.setText(food.Note);
         SetFoodNote(food);
         Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
+        SetFoodFavorite(food.IsFavorite());
         tagsFragment.SetData(food.GetTags());
     }
+
+    public void SetFoodFavorite(boolean favorite) { liked_image.setVisibility(favorite ? View.VISIBLE : View.GONE); }
 
     public void SetFoodNote(Food food){
         Calendar date = Calendar.getInstance();

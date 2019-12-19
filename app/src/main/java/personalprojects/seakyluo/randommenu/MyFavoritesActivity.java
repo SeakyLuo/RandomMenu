@@ -25,6 +25,7 @@ public class MyFavoritesActivity extends SwipeBackActivity {
 
         fragment = (FoodListFragment) getSupportFragmentManager().findFragmentById(R.id.food_list_fragment);
         fragment.SetData(Settings.settings.Favorites);
+        fragment.SetShowLikeImage(false);
         fragment.SetFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);

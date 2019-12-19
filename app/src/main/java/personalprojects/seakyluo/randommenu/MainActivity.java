@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Models.Settings;
 
 public class MainActivity extends AppCompatActivity {
     private RandomFragment randomFragment;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Helper.Save(this);
         //Save the fragment's instance
         FragmentManager fragmentManager = getSupportFragmentManager();
         try { fragmentManager.putFragment(outState, RandomFragment.TAG, randomFragment); }catch (IllegalStateException | NullPointerException ignored){}

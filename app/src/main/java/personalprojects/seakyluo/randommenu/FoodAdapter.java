@@ -10,13 +10,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Interfaces.FoodEditedListener;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class FoodAdapter extends CustomAdapter<Food> {
-    private OnDataItemClickedListener<Food> listener, longClickListener;
+    private OnDataItemClickedListener<Food> foodClickedListener, longClickListener;
     private AList<Food> all = new AList<>();
     @NonNull
     @Override
@@ -30,7 +31,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
         ViewHolder viewHolder = (ViewHolder) holder;
         Food food = data.Get(position);
         viewHolder.view.setOnClickListener(v -> {
-            if (listener != null) listener.Click(holder, food);
+            if (foodClickedListener != null) foodClickedListener.Click(holder, food);
         });
         viewHolder.view.setOnLongClickListener(v -> {
             boolean hasListener = longClickListener != null;
@@ -38,6 +39,8 @@ public class FoodAdapter extends CustomAdapter<Food> {
            return hasListener;
         });
     }
+
+    public void SetFoodLiked(Food food) { ((ViewHolder)viewHolders.Find(vh -> vh.data.equals(food))).SetLiked(food.IsFavorite()); }
 
     @Override
     public void SetData(AList<Food> data){
@@ -55,23 +58,27 @@ public class FoodAdapter extends CustomAdapter<Food> {
         notifyDataSetChanged();
     }
 
-    public void SetOnFoodClickedListener(OnDataItemClickedListener<Food> listener){ this.listener = listener; }
-    public void SetOnFoodLongClickListener(OnDataItemClickedListener<Food> listener){ this.longClickListener = listener; }
+    public void SetOnFoodClickedListener(OnDataItemClickedListener<Food> listener){ foodClickedListener = listener; }
+    public void SetOnFoodLongClickListener(OnDataItemClickedListener<Food> listener){ longClickListener = listener; }
 
     class ViewHolder extends CustomViewHolder {
         private ImageView food_image;
         private TextView food_name;
-        private boolean dataSet = false;
+        private View liked;
         ViewHolder(View view) {
             super(view);
             food_name = view.findViewById(R.id.food_name);
             food_image = view.findViewById(R.id.food_image);
+            liked = view.findViewById(R.id.liked_image);
         }
 
         @Override
         void SetData(Food data) {
             food_name.setText(data.Name);
             Helper.LoadImage(Glide.with(view), data.ImagePath, food_image);
+            SetLiked(data.IsFavorite());
         }
+
+        void SetLiked(boolean isFavorite) { liked.setVisibility(isFavorite ? View.VISIBLE : View.GONE); }
     }
 }

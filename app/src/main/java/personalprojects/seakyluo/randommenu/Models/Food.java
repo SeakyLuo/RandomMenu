@@ -37,7 +37,7 @@ public class Food implements Parcelable {
         return food;
     }
 
-    public void SetIsFavorite(boolean isFavorite){ IsFavorite = isFavorite; }
+    public boolean SetIsFavorite(boolean isFavorite){ return IsFavorite = isFavorite; }
     public boolean IsFavorite() { return IsFavorite; }
 
     public boolean HasImage() { return !Helper.IsNullOrEmpty(ImagePath); }

@@ -16,7 +16,7 @@ import personalprojects.seakyluo.randommenu.Models.Food;
 
 public class FoodListFragment extends Fragment {
     private RecyclerView recyclerView;
-    private FoodListAdapter adapter;
+    private FoodListAdapter adapter = new FoodListAdapter();
     private AList<Food> data = new AList<>();
     private OnDataItemClickedListener<Food> listener;
     @Nullable
@@ -24,7 +24,6 @@ public class FoodListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linear_recycler_view, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
-        adapter = new FoodListAdapter();
         adapter.SetData(data);
         adapter.SetFoodClickedListener(listener);
         adapter.SetContext(getActivity());
@@ -32,9 +31,10 @@ public class FoodListFragment extends Fragment {
         return view;
     }
 
-    public void SetData(AList<Food> data){ this.data.CopyFrom(data); if (adapter != null) adapter.SetData(data); }
-    public void Clear() { this.data.Clear(); if (adapter != null) adapter.Clear(); }
-    public void SetFoodClickedListener(OnDataItemClickedListener<Food> listener){ this.listener = listener; if (adapter != null) adapter.SetFoodClickedListener(listener); }
+    public void SetData(AList<Food> data){ this.data.CopyFrom(data); adapter.SetData(data); }
+    public void Clear() { this.data.Clear();  adapter.Clear(); }
+    public void SetFoodClickedListener(OnDataItemClickedListener<Food> listener){ adapter.SetFoodClickedListener(listener); }
+    public void SetShowLikeImage(boolean showLikeImage) { adapter.SetShowLikeImage(showLikeImage); }
 
     public void AttachItemTouchHelper(ItemTouchHelper helper){
         helper.attachToRecyclerView(recyclerView);

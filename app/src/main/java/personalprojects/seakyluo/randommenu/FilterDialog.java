@@ -5,17 +5,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import personalprojects.seakyluo.randommenu.ChooseTagFragment;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
-import personalprojects.seakyluo.randommenu.Models.TagFilterListener;
-import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.Interfaces.TagFilterListener;
 
 public class FilterDialog extends DialogFragment {
     public static final String TAG = "FilterDialog";

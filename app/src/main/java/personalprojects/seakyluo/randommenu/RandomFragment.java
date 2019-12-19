@@ -73,11 +73,10 @@ public class RandomFragment extends Fragment {
             menuDialog.SetData(Menu);
             menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });
-        if (savedInstanceState == null){
+        if (savedInstanceState == null)
             getChildFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
-        }else{
+        else
             foodCardFragment = (FoodCardFragment) getChildFragmentManager().getFragment(savedInstanceState, FoodCardFragment.TAG);
-        }
         Reset();
         if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(food_pool.Pop(0));
         return view;
