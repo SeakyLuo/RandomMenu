@@ -62,6 +62,11 @@ public class FoodCardFragment extends Fragment {
         flip_in = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.flip_in);
         flip_out = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.flip_out);
 
+        int distance = 8000;
+        float scale = getResources().getDisplayMetrics().density * distance;
+        food_note_front.setCameraDistance(scale);
+        food_note_back.setCameraDistance(scale);
+
         tagsFragment.SetSpanCount(1);
         tagsFragment.SetTagClickedListener((viewHolder, tag) -> {
             FragmentActivity currentActivity = getActivity();

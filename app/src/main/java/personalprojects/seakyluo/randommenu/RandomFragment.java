@@ -1,18 +1,18 @@
 package personalprojects.seakyluo.randommenu;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
-import java.util.Random;
-import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
@@ -21,28 +21,31 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class RandomFragment extends Fragment {
     public static final String TAG = "RandomFragment";
-    private AList<Food> food_pool = new AList<>(), filtered = new AList<>();
+    private AList<Food> food_pool = new AList<>();
     private FoodCardFragment foodCardFragment;
     private AList<Food> Menu = new AList<>();
     private MenuDialog menuDialog = new MenuDialog();
     private FilterDialog filterDialog = new FilterDialog();
     private AList<Tag> preferred_tags = new AList<>(), excluded_tags = new AList<>();
+    private View food_card;
+    private Animation good_food, bad_food;
+    private Animator flip_in, flip_out;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_random, container, false);
+        food_card = view.findViewById(R.id.food_card_view);
+        SetAnimations();
         view.findViewById(R.id.check_button).setOnClickListener(v -> {
-            Menu.Add(foodCardFragment.GetFood(), 0);
-            NextFood();
+            food_card.startAnimation(good_food);
         });
         view.findViewById(R.id.cross_button).setOnClickListener(v -> {
-            NextFood();
+            food_card.startAnimation(bad_food);
         });
         view.findViewById(R.id.refresh_button).setOnClickListener(v -> {
-            Reset();
-            NextFood();
-            Toast.makeText(getContext(), getString(R.string.food_pool_reset), Toast.LENGTH_SHORT).show();
+            flip_in.setTarget(food_card);
+            flip_in.start();
         });
         filterDialog.SetTagFilterListener((preferred, excluded) -> {
             preferred_tags.CopyFrom(preferred);
@@ -101,5 +104,91 @@ public class RandomFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         getChildFragmentManager().putFragment(outState, FoodCardFragment.TAG, foodCardFragment);
+    }
+
+    private void SetAnimations(){
+        good_food = AnimationUtils.loadAnimation(getContext(), R.anim.good_food);
+        good_food.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Menu.Add(foodCardFragment.GetFood(), 0);
+                NextFood();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        bad_food = AnimationUtils.loadAnimation(getContext(), R.anim.bad_food);
+        bad_food.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                NextFood();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        food_card.setCameraDistance(getResources().getDisplayMetrics().density * 8000);
+        flip_in = AnimatorInflater.loadAnimator(getContext(), R.animator.card_flip_in);
+        flip_in.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Reset();
+                NextFood();
+                flip_out.setTarget(food_card);
+                flip_out.start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        flip_out = AnimatorInflater.loadAnimator(getContext(), R.animator.card_flip_out);
+        flip_out.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Toast.makeText(getContext(), getString(R.string.food_pool_reset), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
 }
