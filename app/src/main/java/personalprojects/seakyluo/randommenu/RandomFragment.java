@@ -97,7 +97,9 @@ public class RandomFragment extends Fragment {
         AList<Food> source = Settings.settings.Foods.ForEach(f -> f.HideCount = Math.max(f.HideCount - 1, 0)).Filter(f -> !Menu.Contains(f) && f.HideCount == 0);
         if (!preferred_tags.IsEmpty()) source.Remove(f -> !preferred_tags.Any(f::HasTag));
         if (!excluded_tags.IsEmpty()) source.Remove(f -> excluded_tags.Any(f::HasTag));
-        return food_pool.CopyFrom(source.Shuffle());
+        do source.Shuffle();
+        while (!food_pool.IsEmpty() && food_pool.Get(0).equals(source.Get(0)));
+        return food_pool.CopyFrom(source);
     }
 
     @Override
