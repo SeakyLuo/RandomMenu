@@ -22,17 +22,17 @@ public class Food implements Parcelable {
         Name = name;
     }
 
-    public Food(String name, String path, AList<Tag> tags, String note){
+    public Food(String name, String path, AList<Tag> tags, String note, boolean isFavorite){
         Name = name;
         ImagePath = path;
         Tags = tags;
         Note = note;
+        IsFavorite = isFavorite;
         DateAdded = Calendar.getInstance().getTimeInMillis();
     }
 
     public Food Copy(){
-        Food food = new Food(Name, ImagePath, Tags, Note);
-        food.IsFavorite = IsFavorite;
+        Food food = new Food(Name, ImagePath, Tags, Note, IsFavorite);
         food.DateAdded = DateAdded;
         return food;
     }

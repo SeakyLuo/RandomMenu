@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -46,6 +47,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private ImageButton camera_button;
     private EditText edit_food_name, edit_note;
     private ImageView food_image;
+    private Switch like_toggle;
     private ChooseTagFragment fragment;
     private boolean SetFoodImage = false;
     private Food intent_food;
@@ -62,6 +64,7 @@ public class EditFoodActivity extends AppCompatActivity {
         edit_food_name = findViewById(R.id.edit_food_name);
         edit_note = findViewById(R.id.edit_note);
         food_image = findViewById(R.id.food_image);
+        like_toggle = findViewById(R.id.like_toggle);
         fragment = savedInstanceState == null ? (ChooseTagFragment) getSupportFragmentManager().findFragmentById(R.id.choose_tag_fragment) :
                                                  (ChooseTagFragment) getSupportFragmentManager().getFragment(savedInstanceState, ChooseTagFragment.TAG);
 
@@ -71,6 +74,7 @@ public class EditFoodActivity extends AppCompatActivity {
             if (intent_food.HasImage()) Helper.LoadImage(Glide.with(this), intent_food.ImagePath, food_image);
             fragment.SetData(intent_food.GetTags());
             edit_note.setText(intent_food.Note);
+            like_toggle.setChecked(intent_food.IsFavorite());
         }
 
         cancel_button.setOnClickListener(v -> {
@@ -85,7 +89,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 dialog.setMessage(getString(R.string.save_as_draft));
                 dialog.setOnYesListener(view -> {
                     String image_path = SetFoodImage ? Helper.SaveImage(food_image, Helper.TempFolder, Helper.NewImageFileName()) : "";
-                    Settings.settings.FoodDraft = new Food(food_name, image_path, tags, note);
+                    Settings.settings.FoodDraft = new Food(food_name, image_path, tags, note, like_toggle.isChecked());
                     finish();
                 });
                 dialog.setOnNoListener(view -> finish());
@@ -109,7 +113,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
             }
             String note = edit_note.getText().toString().trim();
-            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.ImageFolder, Helper.NewImageFileName()) : intent_food == null ? "" : intent_food.ImagePath, tags, note);
+            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.ImageFolder, Helper.NewImageFileName()) : intent_food == null ? "" : intent_food.ImagePath, tags, note, like_toggle.isChecked());
             if (intent_food == null) Settings.settings.AddFood(food);
             else if (intent_food.equals(Settings.settings.FoodDraft)){
                 Settings.settings.AddFood(food);

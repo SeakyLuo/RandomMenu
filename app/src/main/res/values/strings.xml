@@ -56,4 +56,5 @@
     <string name="hide_item">Don\'t appear recently</string>
     <string name="show_item">Allow appear.</string>
     <string name="food_pool_reset">Reset!</string>
+    <string name="like_food">Like food</string>
 </resources>
