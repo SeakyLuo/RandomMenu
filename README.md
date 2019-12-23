@@ -4,17 +4,11 @@ An Android app that records your cooking list.
 # TODO
 1. Multiple images.
 
-2. Card stack.
-
 3. Card swipe control.
 
 4. Improve card animation.
 
 5. Image zoom in/out
-
-6. Share image.
-
-7. cancel swipe。
 
 # TO FIX
 1. Tag loses highlight when tag is either added or removed.

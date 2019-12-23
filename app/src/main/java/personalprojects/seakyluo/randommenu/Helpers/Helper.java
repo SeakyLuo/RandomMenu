@@ -3,9 +3,11 @@ package personalprojects.seakyluo.randommenu.Helpers;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -35,9 +37,15 @@ public class Helper {
     public static File ImageFolder, TempFolder;
     public static Context context;
     public static Bitmap DefaultFoodImage;
-    private static HashMap<String, Bitmap> foodImageCache = new HashMap<>();
+//    private static HashMap<String, Bitmap> foodImageCache = new HashMap<>();
     private static Random random = new Random();
 
+    public static Bitmap Screenshot(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
+    }
     public static int RandRange(int start, int end) { return random.nextInt((end - start)) + start; }
     public static void Init(Context context){
         Helper.context = context;

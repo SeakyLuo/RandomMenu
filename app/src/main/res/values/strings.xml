@@ -60,4 +60,6 @@
     <string name="remove_from_list">Do you want to remove “%s\" from your list?</string>
     <string name="undo">Undo</string>
     <string name="item_removed">\"%s\" is removed.</string>
+    <string name="share">Share</string>
+    <string name="share_item">Share \"%s\" to</string>
 </resources>

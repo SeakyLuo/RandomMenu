@@ -4,6 +4,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -95,13 +96,22 @@ public class FoodCardFragment extends Fragment {
                 Food before = CurrentFood.Copy();
                 switch (menuItem.getItemId()){
                     case R.id.edit_food_item:
-                        Intent intent = new Intent(getContext(), EditFoodActivity.class);
-                        intent.putExtra(EditFoodActivity.FOOD, CurrentFood);
-                        startActivityForResult(intent, EDIT_FOOD);
+                        Intent editFoodIntent = new Intent(getContext(), EditFoodActivity.class);
+                        editFoodIntent.putExtra(EditFoodActivity.FOOD, CurrentFood);
+                        startActivityForResult(editFoodIntent, EDIT_FOOD);
                         return true;
                     case R.id.save_food_item:
                         Helper.SaveImage(Helper.GetFoodBitmap(CurrentFood.ImagePath), Helper.ImageFolder, Helper.NewImageFileName());
                         Toast.makeText(getContext(), getString(R.string.save_image_msg), Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.share_item:
+                        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        String shareText = String.format(getString(R.string.share_item), before.Name);
+                        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(before.ImagePath));
+                        shareIntent.setType("image/*");
+                        startActivity(Intent.createChooser(shareIntent, shareText));
                         return true;
                     case R.id.like_food_item:
                         SetFoodFavorite(CurrentFood.SetIsFavorite(true));
@@ -155,9 +165,7 @@ public class FoodCardFragment extends Fragment {
     }
 
     public void Refresh() {
-        CurrentFood = Settings.settings.Foods.Find(CurrentFood);
-//        setFood(CurrentFood = Settings.settings.Foods.Find(CurrentFood));
-        setFood(CurrentFood);
+        setFood(CurrentFood = Settings.settings.Foods.Find(CurrentFood));
     }
 
     private void setFood(Food food){

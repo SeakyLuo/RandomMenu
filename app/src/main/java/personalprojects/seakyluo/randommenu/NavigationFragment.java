@@ -41,7 +41,7 @@ public class NavigationFragment extends Fragment {
         title_text_view = view.findViewById(R.id.title_text_view);
         FloatingActionButton fab = view.findViewById(R.id.navi_fab);
         fab.setOnClickListener(v -> EditFood(null));
-        Log.d("fuck", "Saved: " + (savedInstanceState != null));
+
         view.findViewById(R.id.search_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), SearchActivity.class));
             getActivity().overridePendingTransition(R.anim.push_right_in, 0);

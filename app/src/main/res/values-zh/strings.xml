@@ -60,4 +60,6 @@
     <string name="remove_from_list">你想将“%s”移除列表吗？</string>
     <string name="undo">撤销</string>
     <string name="item_removed">“%s”已移除。</string>
+    <string name="share">分享</string>
+    <string name="share_item">将“%s”分享到</string>
 </resources>
