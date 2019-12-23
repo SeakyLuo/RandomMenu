@@ -51,6 +51,8 @@ public class SettingsFragment extends Fragment {
 
 //            Settings.settings.Favorites.ForEach(f -> f.SetIsFavorite(true));
 //            Settings.settings.Foods.ForEach(f -> f.SetIsFavorite(Settings.settings.Favorites.Contains(f)));
+//            Settings.settings.Foods.ForEach(f -> f.Images = new AList<>(f.ImagePath));
+//            Settings.settings.Favorites.ForEach(f -> f.Images = new AList<>(f.ImagePath));
             Helper.Save(getContext());
             Toast.makeText(getContext(), "Data Adjusted!", Toast.LENGTH_SHORT).show();
         });

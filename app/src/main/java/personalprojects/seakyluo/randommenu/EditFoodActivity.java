@@ -52,6 +52,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private boolean SetFoodImage = false;
     private Food intent_food;
     private Uri camera_image_uri, crop_image_uri;
+    private AList<String> images = new AList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +109,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(this, getString(R.string.at_least_one_tag), Toast.LENGTH_SHORT).show();
                 return;
             }
-            String note = edit_note.getText().toString().trim();
+            String note = getNote();
             Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.ImageFolder, Helper.NewImageFileName()) : intent_food == null ? "" : intent_food.ImagePath, tags, note, like_toggle.isChecked());
             if (intent_food == null) Settings.settings.AddFood(food);
             else if (intent_food.equals(Settings.settings.FoodDraft)){
@@ -214,13 +215,8 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void OpenGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, GALLERY_CODE);
-//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//        Intent intent = new Intent();
-//        intent.setType("image/*");
-//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//        startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.select_image)), GALLERY_CODE);
     }
 
     private void setFood(Food food){
@@ -267,7 +263,14 @@ public class EditFoodActivity extends AppCompatActivity {
                 break;
             case GALLERY_CODE:
                 try {
-                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri = data.getData());
+                    if (data.getClipData() != null) {
+                        int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
+                        for(int i = 0; i < count; i++) images.Add(data.getClipData().getItemAt(i).getUri().getPath());
+                        camera_image_uri = data.getClipData().getItemAt(0).getUri();
+                    }else if(data.getData() != null) {
+                        camera_image_uri = data.getData();
+                    }
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
                     food_image.setImageBitmap(image);
                     SetFoodImage = true;
                 } catch (IOException e) {
@@ -290,7 +293,7 @@ public class EditFoodActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, ChooseTagFragment.TAG, fragment);
-        outState.putParcelable(FOOD, new Food(getFoodName()));
+        outState.putParcelable(FOOD, new Food(getFoodName(), "", fragment.GetData(), getNote(), like_toggle.isChecked()));
     }
     private String getFoodName() { return edit_food_name.getText().toString().trim(); }
     private String getNote() { return edit_note.getText().toString().trim(); }

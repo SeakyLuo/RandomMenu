@@ -12,7 +12,7 @@ import personalprojects.seakyluo.randommenu.Helpers.Helper;
 public class Food implements Parcelable {
     public String Name;
     public String ImagePath = "";
-    private AList<String> Images = new AList<>();
+    public AList<String> Images = new AList<>();
     private AList<Tag> Tags = new AList<>();
     public String Note = "";
     private boolean IsFavorite = false;
@@ -26,15 +26,7 @@ public class Food implements Parcelable {
     public Food(String name, String path, AList<Tag> tags, String note, boolean isFavorite){
         Name = name;
         ImagePath = path;
-        Tags = tags;
-        Note = note;
-        IsFavorite = isFavorite;
-        DateAdded = Calendar.getInstance().getTimeInMillis();
-    }
-
-    public Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite){
-        Name = name;
-        Images = images;
+        Images.Add(path);
         Tags = tags;
         Note = note;
         IsFavorite = isFavorite;
@@ -43,7 +35,7 @@ public class Food implements Parcelable {
 
     public Food Copy(){
         Food food = new Food(Name, ImagePath, Tags, Note, IsFavorite);
-        food.Images = Images.Copy();
+        food.Images = new AList<>(Images);
         food.DateAdded = DateAdded;
         return food;
     }
@@ -71,6 +63,9 @@ public class Food implements Parcelable {
     protected Food(Parcel in) {
         Name = in.readString();
         ImagePath = in.readString();
+        ArrayList<String> images = new ArrayList<>();
+        in.readStringList(images);
+        Images = new AList<>(images);
         ArrayList<Tag> tags = new ArrayList<>();
         in.readTypedList(tags, Tag.CREATOR);
         Tags = new AList<>(tags);
@@ -105,6 +100,7 @@ public class Food implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(Name);
         dest.writeString(ImagePath);
+        dest.writeStringList(Images.ToArrayList());
         dest.writeTypedList(Tags.ToArrayList());
         dest.writeString(Note);
         dest.writeByte((byte) (IsFavorite ? 1 : 0));

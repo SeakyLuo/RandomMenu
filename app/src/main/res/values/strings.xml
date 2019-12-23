@@ -62,4 +62,5 @@
     <string name="item_removed">\"%s\" is removed.</string>
     <string name="share">Share</string>
     <string name="share_item">Share \"%s\" to</string>
+    <string name="select_image">Select Image</string>
 </resources>
