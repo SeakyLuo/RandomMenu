@@ -12,6 +12,7 @@ import personalprojects.seakyluo.randommenu.Helpers.Helper;
 public class Food implements Parcelable {
     public String Name;
     public String ImagePath = "";
+    private AList<String> Images = new AList<>();
     private AList<Tag> Tags = new AList<>();
     public String Note = "";
     private boolean IsFavorite = false;
@@ -31,8 +32,18 @@ public class Food implements Parcelable {
         DateAdded = Calendar.getInstance().getTimeInMillis();
     }
 
+    public Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite){
+        Name = name;
+        Images = images;
+        Tags = tags;
+        Note = note;
+        IsFavorite = isFavorite;
+        DateAdded = Calendar.getInstance().getTimeInMillis();
+    }
+
     public Food Copy(){
         Food food = new Food(Name, ImagePath, Tags, Note, IsFavorite);
+        food.Images = Images.Copy();
         food.DateAdded = DateAdded;
         return food;
     }

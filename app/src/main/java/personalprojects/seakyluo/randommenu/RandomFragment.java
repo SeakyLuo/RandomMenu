@@ -21,10 +21,10 @@ import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class RandomFragment extends Fragment {
-    public static final String TAG = "RandomFragment";
+    public static final String TAG = "RandomFragment", TAG_MENU = "menu", TAG_PREFERRED_TAGS = "preferred_tags", TAG_EXCLUDED_TAGS = "excluded_tags";
     private AList<Food> food_pool = new AList<>();
     private FoodCardFragment foodCardFragment;
-    private AList<Food> Menu = new AList<>();
+    private AList<Food> menu = new AList<>();
     private MenuDialog menuDialog = new MenuDialog();
     private FilterDialog filterDialog = new FilterDialog();
     private AList<Tag> preferred_tags = new AList<>(), excluded_tags = new AList<>();
@@ -67,25 +67,29 @@ public class RandomFragment extends Fragment {
         });
         ImageButton menuButton = view.findViewById(R.id.menu_button);
         menuDialog.SetFoodRemovedListener((viewHolder, data) -> {
-            Menu.Remove(data);
-            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), Menu.Count()));
+            menu.Remove(data);
+            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.Count()));
             food_pool.Add(data, Helper.RandRange(0, food_pool.Count()));
         });
         menuDialog.SetOnClearListener(button -> {
-            food_pool.AddAll(Menu).Shuffle();
-            Menu.Clear();
+            food_pool.AddAll(menu).Shuffle();
+            menu.Clear();
             menuDialog.SetHeaderText(String.format(getString(R.string.food_count), 0));
             menuDialog.Clear();
         });
         menuButton.setOnClickListener(v -> {
-            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), Menu.Count()));
-            menuDialog.SetData(Menu);
+            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.Count()));
+            menuDialog.SetData(menu);
             menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });
         if (savedInstanceState == null)
             getChildFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
-        else
+        else{
             foodCardFragment = (FoodCardFragment) getChildFragmentManager().getFragment(savedInstanceState, FoodCardFragment.TAG);
+            menu.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_MENU));
+            preferred_tags.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_PREFERRED_TAGS));
+            excluded_tags.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_EXCLUDED_TAGS));
+        }
         Reset();
         if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(food_pool.Pop(0));
         return view;
@@ -100,7 +104,7 @@ public class RandomFragment extends Fragment {
     }
 
     private AList<Food> Reset(){
-        AList<Food> source = Settings.settings.Foods.ForEach(f -> f.HideCount = Math.max(f.HideCount - 1, 0)).Filter(f -> !Menu.Contains(f) && f.HideCount == 0);
+        AList<Food> source = Settings.settings.Foods.ForEach(f -> f.HideCount = Math.max(f.HideCount - 1, 0)).Filter(f -> !menu.Contains(f) && f.HideCount == 0);
         if (!preferred_tags.IsEmpty()) source.Remove(f -> !preferred_tags.Any(f::HasTag));
         if (!excluded_tags.IsEmpty()) source.Remove(f -> excluded_tags.Any(f::HasTag));
         do source.Shuffle();
@@ -114,6 +118,9 @@ public class RandomFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         getChildFragmentManager().putFragment(outState, FoodCardFragment.TAG, foodCardFragment);
+        outState.putParcelableArrayList(TAG_MENU, menu.ToArrayList());
+        outState.putParcelableArrayList(TAG_PREFERRED_TAGS, preferred_tags.ToArrayList());
+        outState.putParcelableArrayList(TAG_EXCLUDED_TAGS, excluded_tags.ToArrayList());
     }
 
     private void SetAnimations(){
@@ -126,7 +133,7 @@ public class RandomFragment extends Fragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Menu.Add(foodCardFragment.GetFood(), 0);
+                menu.Add(foodCardFragment.GetFood(), 0);
                 NextFood();
             }
 

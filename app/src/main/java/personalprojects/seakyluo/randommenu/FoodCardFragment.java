@@ -34,7 +34,7 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 import static android.app.Activity.RESULT_OK;
 
 public class FoodCardFragment extends Fragment {
-    public static final String TAG = "FoodCardFragment";
+    public static final String TAG = "FoodCardFragment", FOOD = "Food";
     private static final int EDIT_FOOD = 0;
     private TagsFragment tagsFragment;
     private TextView food_name, food_note_front, food_note_back;
@@ -50,10 +50,6 @@ public class FoodCardFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_food_card, container, false);
-        if (savedInstanceState == null)
-            getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
-        else
-            tagsFragment = (TagsFragment) getChildFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
         food_name = view.findViewById(R.id.food_name);
         food_image = view.findViewById(R.id.food_image);
         liked_image = view.findViewById(R.id.liked_image);
@@ -62,6 +58,12 @@ public class FoodCardFragment extends Fragment {
         more_button = view.findViewById(R.id.more_button);
         flip_in = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.flip_in);
         flip_out = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.flip_out);
+        if (savedInstanceState == null)
+            getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
+        else{
+            tagsFragment = (TagsFragment) getChildFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
+            setFood(savedInstanceState.getParcelable(FOOD));
+        }
 
         int distance = 8000;
         float scale = getResources().getDisplayMetrics().density * distance;
@@ -106,12 +108,10 @@ public class FoodCardFragment extends Fragment {
                         return true;
                     case R.id.share_item:
                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-                        String shareText = String.format(getString(R.string.share_item), before.Name);
                         shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
                         shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(before.ImagePath));
                         shareIntent.setType("image/*");
-                        startActivity(Intent.createChooser(shareIntent, shareText));
+                        startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;
                     case R.id.like_food_item:
                         SetFoodFavorite(CurrentFood.SetIsFavorite(true));
@@ -221,6 +221,7 @@ public class FoodCardFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         getChildFragmentManager().putFragment(outState, TagsFragment.TAG, tagsFragment);
+        outState.putParcelable(FOOD, CurrentFood);
     }
 }
 

@@ -28,7 +28,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         Tag tag = data.Get(position);
         ViewHolder viewHolder = (ViewHolder)holder;
@@ -41,9 +41,8 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
             if (success) longClickListener.Click(holder, tag);
             return success;
         });
-        if (tag.equals(pendingTag)){
-            lastTag = viewHolder;
-            viewHolder.SetHighlight(true);
+        if (tag.equals(pendingTag) || (lastTag != null && lastTag.data.equals(tag))){
+            (lastTag = viewHolder).SetHighlight(true);
             pendingTag = null;
         }
     }
@@ -51,7 +50,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
     public Tag GetSelectedTag() { return lastTag == null ? null : lastTag.data; }
 
     public void HighlightTag(Tag tag){
-        if (tag == null) return;
+        if (tag == null || (lastTag != null && tag.equals(lastTag.data))) return;
         ViewHolder viewHolder = (ViewHolder) viewHolders.Find(vh -> vh.data.equals(tag));
         if (viewHolder == null) pendingTag = tag;
         else HighlightTag(viewHolder);
@@ -72,7 +71,6 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
     class ViewHolder extends CustomViewHolder {
         TextView tag_name;
         ConstraintLayout background;
-        boolean selected = false;
         ViewHolder(View view) {
             super(view);
             tag_name = view.findViewById(R.id.tag_name);
@@ -82,11 +80,11 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
         @Override
         void SetData(Tag data) {
             tag_name.setText(data.IsAllCategoriesTag() ? context.getString(R.string.all_categories) : data.Name);
-            SetHighlight(selected);
+            SetHighlight(false);
         }
 
         void SetHighlight(boolean isHighlight){
-            if (selected = isHighlight){
+            if (isHighlight){
                 background.setBackgroundColor(HighlightColor);
                 tag_name.setTextColor(Color.WHITE);
             }else{

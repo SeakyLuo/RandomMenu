@@ -158,8 +158,8 @@ public class NavigationFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) SetData();
-        if (!lastTag.IsAllCategoriesTag() && !Settings.settings.Tags.Contains(lastTag)) lastTag = Tag.AllCategoriesTag;
+        if (!lastTag.IsAllCategoriesTag() && !Settings.settings.Tags.Contains(lastTag))
+            selectTagAdapter.HighlightTag(lastTag = Tag.AllCategoriesTag);
         selectTag(lastTag);
-        selectTagAdapter.HighlightTag(lastTag);
     }
 }

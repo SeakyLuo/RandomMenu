@@ -65,16 +65,12 @@ public class EditFoodActivity extends AppCompatActivity {
         edit_note = findViewById(R.id.edit_note);
         food_image = findViewById(R.id.food_image);
         like_toggle = findViewById(R.id.like_toggle);
-        fragment = savedInstanceState == null ? (ChooseTagFragment) getSupportFragmentManager().findFragmentById(R.id.choose_tag_fragment) :
-                                                 (ChooseTagFragment) getSupportFragmentManager().getFragment(savedInstanceState, ChooseTagFragment.TAG);
-
-        intent_food = getIntent().getParcelableExtra(FOOD);
-        if (intent_food != null){
-            edit_food_name.setText(intent_food.Name);
-            if (intent_food.HasImage()) Helper.LoadImage(Glide.with(this), intent_food.ImagePath, food_image);
-            fragment.SetData(intent_food.GetTags());
-            edit_note.setText(intent_food.Note);
-            like_toggle.setChecked(intent_food.IsFavorite());
+        if (savedInstanceState == null){
+            fragment = (ChooseTagFragment) getSupportFragmentManager().findFragmentById(R.id.choose_tag_fragment);
+            setFood(intent_food = getIntent().getParcelableExtra(FOOD));
+        }else{
+            fragment = (ChooseTagFragment) getSupportFragmentManager().getFragment(savedInstanceState, ChooseTagFragment.TAG);
+            setFood(savedInstanceState.getParcelable(FOOD));
         }
 
         cancel_button.setOnClickListener(v -> {
@@ -98,7 +94,7 @@ public class EditFoodActivity extends AppCompatActivity {
             }
         });
         confirm_button.setOnClickListener(v -> {
-            String food_name = edit_food_name.getText().toString().trim();
+            String food_name = getFoodName();
             if (food_name.length() == 0){
                 Toast.makeText(this, getString(R.string.empty_food_name), Toast.LENGTH_SHORT).show();
                 return;
@@ -118,8 +114,7 @@ public class EditFoodActivity extends AppCompatActivity {
             else if (intent_food.equals(Settings.settings.FoodDraft)){
                 Settings.settings.AddFood(food);
                 Settings.settings.FoodDraft = null;
-            }
-            else{
+            }else{
                 if (intent_food.HasImage() && !intent_food.ImagePath.equals(food.ImagePath))
                     new File(intent_food.ImagePath).delete();
                 Settings.settings.UpdateFood(intent_food, food);
@@ -220,6 +215,21 @@ public class EditFoodActivity extends AppCompatActivity {
     private void OpenGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, GALLERY_CODE);
+//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//        Intent intent = new Intent();
+//        intent.setType("image/*");
+//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+//        startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
+    }
+
+    private void setFood(Food food){
+        if (food == null) return;
+        edit_food_name.setText(food.Name);
+        if (food.HasImage()) Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
+        fragment.SetData(food.GetTags());
+        edit_note.setText(food.Note);
+        like_toggle.setChecked(food.IsFavorite());
     }
 
     @Override
@@ -280,7 +290,10 @@ public class EditFoodActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, ChooseTagFragment.TAG, fragment);
+        outState.putParcelable(FOOD, new Food(getFoodName()));
     }
+    private String getFoodName() { return edit_food_name.getText().toString().trim(); }
+    private String getNote() { return edit_note.getText().toString().trim(); }
 
     @Override
     public void finish() {

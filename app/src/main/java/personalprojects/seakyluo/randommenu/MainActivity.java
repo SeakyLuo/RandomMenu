@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ShowFragment(String tag){
-        if (tag.equals(lastTag)) return;
         switch (tag){
             case RandomFragment.TAG:
                 bottomNavigationView.setSelectedItemId(R.id.navigation_random);

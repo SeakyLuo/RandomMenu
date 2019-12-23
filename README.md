@@ -11,6 +11,6 @@ An Android app that records your cooking list.
 5. Image zoom in/out
 
 # TO FIX
-1. Tag loses highlight when tag is either added or removed.
-
 2. Better swipe tab pager.
+
+3. Share bug.
