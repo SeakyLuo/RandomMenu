@@ -154,6 +154,12 @@ public class FoodCardFragment extends Fragment {
         }
     }
 
+    public void Refresh() {
+        CurrentFood = Settings.settings.Foods.Find(CurrentFood);
+//        setFood(CurrentFood = Settings.settings.Foods.Find(CurrentFood));
+        setFood(CurrentFood);
+    }
+
     private void setFood(Food food){
         CurrentFood = food;
         food_name.setText(food.Name);

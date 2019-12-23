@@ -17,7 +17,7 @@
     <string name="edit">编辑</string>
     <string name="like">喜欢</string>
     <string name="save">保存</string>
-    <string name="undo_like">取消喜欢</string>
+    <string name="undo_like">撤销喜欢</string>
     <string name="tag">标签</string>
     <string name="all">全部</string>
     <string name="food">菜肴</string>
@@ -36,7 +36,7 @@
     <string name="at_least_one_tag">菜肴至少要有一个标签！</string>
     <string name="delete_food">删除菜肴</string>
     <string name="delete_tag">你想要删除标签“%s”吗？</string>
-    <string name="ask_delete">你想要删除%s吗？</string>
+    <string name="ask_delete">你想要删除“%s”吗？</string>
     <string name="tag_exists">标签已存在！</string>
     <string name="input_tag">输入标签</string>
     <string name="tag_limit">标签达到上限！</string>
@@ -56,5 +56,8 @@
     <string name="hide_item">最近不出现</string>
     <string name="show_item">允许随机</string>
     <string name="food_pool_reset">已重置！</string>
-    <string name="like_food">喜欢菜肴</string>
+    <string name="like_food">喜欢该菜肴</string>
+    <string name="remove_from_list">你想将“%s”移除列表吗？</string>
+    <string name="undo">撤销</string>
+    <string name="item_removed">“%s”已移除。</string>
 </resources>

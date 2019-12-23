@@ -174,12 +174,22 @@ public class AList<T> extends IList<T> {
         for (int i = 0; i < count / 2; i++) Swap(i, count - 1 - i);
         return this;
     }
-    public void Swap(int item1, int item2){
+    public AList<T> Swap(int item1, int item2){
         item1 = ModIndex(item1);
         item2 = ModIndex(item2);
         T temp = list.get(item1);
         list.set(item1, list.get(item2));
         list.set(item2, temp);
+        return this;
+    }
+    public AList<T> Swap(T item1, T item2){ return Swap(IndexOf(item1), IndexOf(item2)); }
+    public AList<T> Move(int from, int to){
+        from = ModIndex(from);
+        to = ModIndex(to);
+        T item = list.get(from);
+        list.remove(from);
+        list.add(to, item);
+        return this;
     }
     public AList<T> SetDifference(AList<T> collection){ return SetDifference(collection.ToHashSet()); }
     public AList<T> SetDifference(Collection<T> collection){ return SetDifference((new AList<>(collection)).ToHashSet()); }

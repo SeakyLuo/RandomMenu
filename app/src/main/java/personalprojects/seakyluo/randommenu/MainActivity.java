@@ -16,9 +16,9 @@ import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 
 public class MainActivity extends AppCompatActivity {
-    private RandomFragment randomFragment;
-    private NavigationFragment navigationFragment;
-    private SettingsFragment settingsFragment;
+    public RandomFragment randomFragment;
+    public NavigationFragment navigationFragment;
+    public SettingsFragment settingsFragment;
     private String lastTag;
     private BottomNavigationView bottomNavigationView;
 

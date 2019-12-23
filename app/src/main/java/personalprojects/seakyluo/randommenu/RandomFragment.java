@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -65,6 +66,11 @@ public class RandomFragment extends Fragment {
             filterDialog.showNow(getChildFragmentManager(), FilterDialog.TAG);
         });
         ImageButton menuButton = view.findViewById(R.id.menu_button);
+        menuDialog.SetFoodRemovedListener((viewHolder, data) -> {
+            Menu.Remove(data);
+            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), Menu.Count()));
+            food_pool.Add(data, Helper.RandRange(0, food_pool.Count()));
+        });
         menuDialog.SetOnClearListener(button -> {
             food_pool.AddAll(Menu).Shuffle();
             Menu.Clear();
@@ -101,6 +107,8 @@ public class RandomFragment extends Fragment {
         while (!food_pool.IsEmpty() && food_pool.Get(0).equals(source.Get(0)));
         return food_pool.CopyFrom(source);
     }
+
+    public void Refresh() { foodCardFragment.Refresh(); }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {

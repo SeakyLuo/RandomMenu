@@ -21,6 +21,8 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
+import static android.app.Activity.RESULT_OK;
+
 public class SettingsFragment extends Fragment {
     public static final String TAG = "SettingsFragment";
     @Nullable
@@ -32,7 +34,7 @@ public class SettingsFragment extends Fragment {
             getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
         view.findViewById(R.id.my_favorites_button).setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), MyFavoritesActivity.class));
+            startActivityForResult(new Intent(getContext(), MyFavoritesActivity.class), MyFavoritesActivity.REQUEST_CODE);
             getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
         view.findViewById(R.id.to_eat_button).setOnClickListener(v -> {
@@ -64,5 +66,12 @@ public class SettingsFragment extends Fragment {
             Toast.makeText(getContext(), "Data Cleared!", Toast.LENGTH_SHORT).show();
         });
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MyFavoritesActivity.REQUEST_CODE && resultCode == RESULT_OK)
+            ((MainActivity)getActivity()).randomFragment.Refresh();
     }
 }

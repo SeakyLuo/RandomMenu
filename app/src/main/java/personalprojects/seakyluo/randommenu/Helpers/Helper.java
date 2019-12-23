@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -35,7 +36,9 @@ public class Helper {
     public static Context context;
     public static Bitmap DefaultFoodImage;
     private static HashMap<String, Bitmap> foodImageCache = new HashMap<>();
+    private static Random random = new Random();
 
+    public static int RandRange(int start, int end) { return random.nextInt((end - start)) + start; }
     public static void Init(Context context){
         Helper.context = context;
         DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
