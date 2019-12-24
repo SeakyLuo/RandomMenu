@@ -2,16 +2,13 @@ package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -79,11 +76,11 @@ public class SearchActivity extends SwipeBackActivity {
                     tabPagerAdapter.GetFragments().ForEach(f -> ((FoodListFragment) f).Clear());
                     clear_button.setVisibility(View.GONE);
                 }else{
-                    AList<Food> filtered = Settings.settings.Foods.Filter(f -> SearchFoodName(f, keyword) || SearchFoodTag(f, keyword) || SearchFoodNote(f, keyword) );
+                    AList<Food> filtered = Settings.settings.Foods.Find(f -> SearchFoodName(f, keyword) || SearchFoodTag(f, keyword) || SearchFoodNote(f, keyword) );
                     allFragment.SetData(filtered);
-                    foodFragment.SetData(filtered.Filter(f -> SearchFoodName(f, keyword)));
-                    tagFragment.SetData(filtered.Filter(f -> SearchFoodTag(f, keyword)));
-                    noteFragment.SetData(filtered.Filter(f -> SearchFoodNote(f, keyword)));
+                    foodFragment.SetData(filtered.Find(f -> SearchFoodName(f, keyword)));
+                    tagFragment.SetData(filtered.Find(f -> SearchFoodTag(f, keyword)));
+                    noteFragment.SetData(filtered.Find(f -> SearchFoodNote(f, keyword)));
                     clear_button.setVisibility(View.VISIBLE);
                 }
             }

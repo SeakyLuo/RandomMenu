@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Interfaces.FoodEditedListener;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
@@ -40,7 +39,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
         });
     }
 
-    public void SetFoodLiked(Food food) { ((ViewHolder)viewHolders.Find(vh -> vh.data.equals(food))).SetLiked(food.IsFavorite()); }
+    public void SetFoodLiked(Food food) { ((ViewHolder)viewHolders.First(vh -> vh.data.equals(food))).SetLiked(food.IsFavorite()); }
 
     @Override
     public void SetData(AList<Food> data){
@@ -54,7 +53,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
     }
 
     public void Filter(Tag tag){
-        data.CopyFrom(all.Filter(f -> f.HasTag(tag)));
+        data.CopyFrom(all.Find(f -> f.HasTag(tag)));
         notifyDataSetChanged();
     }
 

@@ -43,7 +43,7 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class EditFoodActivity extends AppCompatActivity {
     public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
-    public static final String FOOD = "Food";
+    public static final String FOOD = "Food", DELETE = "Delete";
     private ImageButton camera_button;
     private EditText edit_food_name, edit_note;
     private ImageView food_image;
@@ -138,7 +138,7 @@ public class EditFoodActivity extends AppCompatActivity {
             else intent.putExtra(FullScreenImageActivity.IMAGE, intent_food.ImagePath);
             startActivity(intent);
         });
-        delete_food_button.setVisibility(intent_food == null ? View.GONE : View.VISIBLE);
+        delete_food_button.setVisibility(getIntent().getBooleanExtra(DELETE, false) ? View.VISIBLE : View.GONE);
         delete_food_button.setOnClickListener(v -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);

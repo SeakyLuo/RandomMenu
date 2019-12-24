@@ -100,6 +100,7 @@ public class FoodCardFragment extends Fragment {
                     case R.id.edit_food_item:
                         Intent editFoodIntent = new Intent(getContext(), EditFoodActivity.class);
                         editFoodIntent.putExtra(EditFoodActivity.FOOD, CurrentFood);
+                        editFoodIntent.putExtra(EditFoodActivity.DELETE, true);
                         startActivityForResult(editFoodIntent, EDIT_FOOD);
                         return true;
                     case R.id.save_food_item:
@@ -126,13 +127,13 @@ public class FoodCardFragment extends Fragment {
                     case R.id.show_food_item:
                         CurrentFood.HideCount = 0;
                         SetFoodNote(CurrentFood);
-                        Settings.settings.Foods.Find(CurrentFood).HideCount = CurrentFood.HideCount;
+                        Settings.settings.Foods.First(CurrentFood).HideCount = CurrentFood.HideCount;
                         Helper.Save(getContext());
                         return true;
                     case R.id.hide_food_item:
                         CurrentFood.HideCount += 3;
                         SetFoodNote(CurrentFood);
-                        Settings.settings.Foods.Find(CurrentFood).HideCount = CurrentFood.HideCount;
+                        Settings.settings.Foods.First(CurrentFood).HideCount = CurrentFood.HideCount;
                         Helper.Save(getContext());
                         return true;
                     case R.id.more_item:
@@ -165,7 +166,7 @@ public class FoodCardFragment extends Fragment {
     }
 
     public void Refresh() {
-        setFood(CurrentFood = Settings.settings.Foods.Find(CurrentFood));
+        setFood(CurrentFood = Settings.settings.Foods.First(CurrentFood));
     }
 
     private void setFood(Food food){

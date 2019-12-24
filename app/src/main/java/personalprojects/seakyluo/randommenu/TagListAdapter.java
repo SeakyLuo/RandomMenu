@@ -36,7 +36,7 @@ public class TagListAdapter extends CustomAdapter<Tag> {
         else CheckTags.Remove(tag);
     }
     public void CheckTag(Tag tag, boolean checked){
-        ((ViewHolder)viewHolders.Find(vh -> vh.data.equals(tag))).SetCheckButtonVisibility(checked);
+        ((ViewHolder)viewHolders.First(vh -> vh.data.equals(tag))).SetCheckButtonVisibility(checked);
     }
 
     @Override

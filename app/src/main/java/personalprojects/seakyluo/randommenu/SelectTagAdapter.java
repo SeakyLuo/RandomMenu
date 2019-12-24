@@ -3,7 +3,6 @@ package personalprojects.seakyluo.randommenu;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
 
     public void HighlightTag(Tag tag){
         if (tag == null || (lastTag != null && tag.equals(lastTag.data))) return;
-        ViewHolder viewHolder = (ViewHolder) viewHolders.Find(vh -> vh.data.equals(tag));
+        ViewHolder viewHolder = (ViewHolder) viewHolders.First(vh -> vh.data.equals(tag));
         if (viewHolder == null) pendingTag = tag;
         else HighlightTag(viewHolder);
     }

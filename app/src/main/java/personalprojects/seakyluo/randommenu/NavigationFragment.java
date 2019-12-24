@@ -6,19 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Comparator;
-import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -76,7 +70,7 @@ public class NavigationFragment extends Fragment {
                             if (Settings.settings.Tags.Any(t -> t.Name.equals(text))){
                                 Toast.makeText(getContext(), getString(R.string.tag_exists), Toast.LENGTH_SHORT).show();
                             }else{
-                                Tag tag = Settings.settings.Tags.Find(t -> t.Name.equals(data.Name));
+                                Tag tag = Settings.settings.Tags.First(t -> t.Name.equals(data.Name));
                                 tag.Name = text;
                                 Settings.settings.Foods.ForEach(f -> f.RenameTag(data.Name, text));
                                 selectTagAdapter.Set(tag, selectTagAdapter.IndexOf(t -> t.Name.equals(data.Name)));
@@ -142,7 +136,7 @@ public class NavigationFragment extends Fragment {
             title_text_view.setText(Tag.Format(getContext(), R.string.all_categories, Settings.settings.Foods.Count()));
             foodAdapter.Reset();
         }else{
-            lastTag = Settings.settings.Tags.Find(tag);
+            lastTag = Settings.settings.Tags.First(tag);
             title_text_view.setText(Tag.Format(getContext(), lastTag));
             foodAdapter.Filter(lastTag);
         }
@@ -150,7 +144,10 @@ public class NavigationFragment extends Fragment {
 
     private void EditFood(Food food){
         Intent intent = new Intent(getContext(), EditFoodActivity.class);
-        if (food != null) intent.putExtra(EditFoodActivity.FOOD, food);
+        if (food != null){
+            intent.putExtra(EditFoodActivity.FOOD, food);
+            intent.putExtra(EditFoodActivity.DELETE, true);
+        }
         startActivityForResult(intent, EditFoodActivity.FOOD_CODE);
     }
 

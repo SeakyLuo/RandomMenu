@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.function.UnaryOperator;
 
 import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
@@ -136,21 +135,21 @@ public class AList<T> extends IList<T> {
     public T Get(int index){ return list.get(ModIndex(index)); }
     public T Set(T element, int index) { list.set(ModIndex(index), element); return element; }
     public AList<T> Set(UnaryOperator<T> lambda) { list.replaceAll(lambda); return this; }
-    public T Find(T target){
+    public T First() { return list.get(0); }
+    public T First(T target){
         for (T element: list)
             if (element.equals(target))
                 return element;
         return null;
     }
-    public T Find(BooleanLambda<T> lambda){
+    public T First(BooleanLambda<T> lambda){
         for (T element: list)
             if (lambda.operate(element))
                 return element;
         return null;
     }
-    public T FindLast(BooleanLambda<T> lambda){
-        return Reverse().Find(lambda);
-    }
+    public T Last() { return list.get(Count() - 1); }
+    public T Last(BooleanLambda<T> lambda){ return Reverse().First(lambda); }
     public AList<T> For(ForLambda lambda) {
         for (int i = 0; i < Count(); i++) lambda.operate(i);
         return this;
@@ -164,7 +163,7 @@ public class AList<T> extends IList<T> {
         for (T element: list) collection.Add(lambda.operate(element));
         return collection;
     }
-    public AList<T> Filter(BooleanLambda<T> lambda){
+    public AList<T> Find(BooleanLambda<T> lambda){
         AList<T> collection = new AList<>();
         for (T element: list) if (lambda.operate(element)) collection.Add(element);
         return collection;
@@ -225,9 +224,7 @@ public class AList<T> extends IList<T> {
     public <A> ZipList<T, A> Zip(Collection<A> zip){
         return new ZipList(this, zip);
     }
-    public <A> ZipList<T, A> Zip(IList<A> zip){
-        return new ZipList(this, zip);
-    }
+    public <A> ZipList Zip(IList<A> zip){ return new ZipList(this, zip); }
     public AList<T> Enumerate(ZipVoidLambda<Integer, T> lambda) {
         for (int i = 0; i < Count(); i++)
             lambda.operate(i, Get(i));

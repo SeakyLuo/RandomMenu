@@ -26,7 +26,7 @@ public class Settings {
 
     public void RemoveFood(Food food){
         Foods.Remove(food);
-        Tags.RemoveAll(Tags.Filter(food::HasTag).ForEach(Tag::Less).Filter(Tag::IsEmpty));
+        Tags.RemoveAll(Tags.Find(food::HasTag).ForEach(Tag::Less).Find(Tag::IsEmpty));
         SortTags();
     }
 
@@ -49,7 +49,7 @@ public class Settings {
     }
 
     public void SetFavorite(Food food, boolean favorite){
-        Food target = Foods.Find(food);
+        Food target = Foods.First(food);
         target.SetIsFavorite(favorite);
         if (favorite) Favorites.Add(target, 0);
         else Favorites.Remove(target);

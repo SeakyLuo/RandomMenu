@@ -2,7 +2,6 @@ package personalprojects.seakyluo.randommenu;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -39,7 +38,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String tag = suggestionTagListAdapter.getItem(position);
-                ChooseTag(tagListAdapter.GetData().Find(t -> t.Name.equals(tag)));
+                ChooseTag(tagListAdapter.GetData().First(t -> t.Name.equals(tag)));
                 tag_box.setText("");
             }
 

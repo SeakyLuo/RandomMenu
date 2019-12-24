@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -24,24 +25,22 @@ public class FullScreenImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
 
-        ConstraintLayout fullscreen_background = findViewById(R.id.fullscreen_background);
-        fullscreen_background.setOnClickListener(v -> finish());
+//        RelativeLayout background = findViewById(R.id.fullscreen_background);
+//        background.setOnClickListener(v -> finish());
         ImageView fullscreen_image = findViewById(R.id.fullscreen_image);
 
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {
             @Override
             public void onScaleEnd(ScaleGestureDetector detector) {
-                Log.d("fuck", "onScaleEnd");
+
             }
             @Override
             public boolean onScaleBegin(ScaleGestureDetector detector) {
-                Log.d("fuck", "onScaleBegin");
                 return true;
             }
             @Override
             public boolean onScale(ScaleGestureDetector detector) {
-                Log.d("fuck", "onScale");
-                mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor * detector.getScaleFactor(), 10.0f));
+                mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor * detector.getScaleFactor(), 10.0f));
                 fullscreen_image.setScaleX(mScaleFactor);
                 fullscreen_image.setScaleY(mScaleFactor);
                 return true;
@@ -54,7 +53,6 @@ public class FullScreenImageActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        Log.d("fuck", "onTouchEvent");
         return mScaleGestureDetector.onTouchEvent(motionEvent);
     }
 

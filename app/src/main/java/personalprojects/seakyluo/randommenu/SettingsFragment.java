@@ -58,7 +58,7 @@ public class SettingsFragment extends Fragment {
         });
         view.findViewById(R.id.clear_data_button).setOnClickListener(v -> {
 //            Helper.Clear(getContext());
-//            HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.ImagePath).Filter(s -> !Helper.IsNullOrEmpty(s)).ToHashSet();
+//            HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.ImagePath).Find(s -> !Helper.IsNullOrEmpty(s)).ToHashSet();
 //            for (File file: Helper.ImageFolder.listFiles()){
 //                if (!paths.contains(file.getPath()))
 //                    file.delete();
