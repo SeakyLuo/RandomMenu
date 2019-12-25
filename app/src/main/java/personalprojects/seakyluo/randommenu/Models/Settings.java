@@ -7,9 +7,10 @@ public class Settings {
     public static Settings settings;
     public AList<Food> Foods = new AList<>();
     public AList<Tag> Tags = new AList<>();
-    public AList<String> ToCook = new AList<>();
     public AList<Food> Favorites = new AList<>();
+    public AList<String> ToCook = new AList<>();
     public AList<String> ToEat = new AList<>();
+    public AList<String> DislikeFood = new AList<>();
     public Food FoodDraft;
 
     public void AddFood(Food food, int index){

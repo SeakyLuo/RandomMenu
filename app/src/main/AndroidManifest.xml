@@ -42,6 +42,7 @@
         <activity android:name=".MyFavoritesActivity" android:label="MyFavoritesActivity"/>
         <activity  android:name=".SearchActivity" android:label="SearchActivity" />
         <activity android:name=".ToEatActivity" android:label="ToEatActivity" />
+        <activity android:name=".DislikeActivity" android:label="DislikeActivity" />
     </application>
 
 </manifest>

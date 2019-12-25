@@ -2,11 +2,11 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/whiteSmoke">
     <android.support.v7.widget.Toolbar
-        android:id="@+id/tc_toolbar"
+        android:id="@+id/sf_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/colorBackgroundFloating"
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginStart="16dp"
-                android:text="@string/to_cook"
+                android:text="title"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/back_button"
@@ -53,10 +53,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tc_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/sf_toolbar" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/tc_fab"
+        android:id="@+id/sf_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
