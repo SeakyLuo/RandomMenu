@@ -24,18 +24,7 @@ public class DislikeActivity extends SwipeBackActivity {
 
         titleText = findViewById(R.id.title_text_view);
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
-        findViewById(R.id.sf_fab).setOnClickListener(v -> {
-            InputDialog dialog = new InputDialog();
-            dialog.SetHint(getString(R.string.food_name));
-            dialog.SetConfirmListener(text -> {
-                if (Settings.settings.DislikeFood.Remove(text)) adapter.Remove(text);
-                Settings.settings.DislikeFood.Add(text, 0);
-                adapter.Add(text, 0);
-                updated = true;
-                SetTitle();
-            });
-            dialog.showNow(getSupportFragmentManager(), InputDialog.TAG);
-        });
+
         RecyclerView recyclerView = findViewById(R.id.food_list_recycler_view);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new SimpleFoodListAdapter();
@@ -51,6 +40,19 @@ public class DislikeActivity extends SwipeBackActivity {
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         });
         recyclerView.setAdapter(adapter);
+        findViewById(R.id.sf_fab).setOnClickListener(v -> {
+            InputDialog dialog = new InputDialog();
+            dialog.SetHint(getString(R.string.food_name));
+            dialog.SetConfirmListener(text -> {
+                if (Settings.settings.DislikeFood.Remove(text)) adapter.Remove(text);
+                Settings.settings.DislikeFood.Add(text, 0);
+                adapter.Add(text, 0);
+                recyclerView.scrollToPosition(0);
+                updated = true;
+                SetTitle();
+            });
+            dialog.showNow(getSupportFragmentManager(), InputDialog.TAG);
+        });
         SetTitle();
     }
 

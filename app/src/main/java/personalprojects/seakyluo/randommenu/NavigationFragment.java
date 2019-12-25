@@ -40,7 +40,6 @@ public class NavigationFragment extends Fragment {
             startActivity(new Intent(getContext(), SearchActivity.class));
             getActivity().overridePendingTransition(R.anim.push_right_in, 0);
         });
-
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         selectTagAdapter = new SelectTagAdapter((viewHolder, tag) -> selectTag(tag));
@@ -107,6 +106,8 @@ public class NavigationFragment extends Fragment {
         });
         foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> EditFood(food));
         detailView.setAdapter(foodAdapter);
+
+        view.findViewById(R.id.navigation_toolbar).setOnClickListener(v -> detailView.scrollToPosition(0));
 
         IsLoaded = true;
         SetData();

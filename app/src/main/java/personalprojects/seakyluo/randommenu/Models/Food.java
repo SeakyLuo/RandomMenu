@@ -33,6 +33,15 @@ public class Food implements Parcelable {
         DateAdded = Calendar.getInstance().getTimeInMillis();
     }
 
+    public Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite){
+        Name = name;
+        Images = images;
+        Tags = tags;
+        Note = note;
+        IsFavorite = isFavorite;
+        DateAdded = Calendar.getInstance().getTimeInMillis();
+    }
+
     public Food Copy(){
         Food food = new Food(Name, ImagePath, Tags, Note, IsFavorite);
         food.Images = new AList<>(Images);
@@ -43,13 +52,10 @@ public class Food implements Parcelable {
     public boolean SetIsFavorite(boolean isFavorite){ return IsFavorite = isFavorite; }
     public boolean IsFavorite() { return IsFavorite; }
 
-    public boolean HasImage() { return !Helper.IsNullOrEmpty(ImagePath); }
-
+    public boolean HasImage() { return Images.Count() > 0; }
     public boolean HasTag(Tag tag) { return Tags.Contains(tag); }
     public boolean HasTag(String name) { return Tags.Any(t -> t.Name.equals(name)); }
-    public void RenameTag(String oldName, String newName){
-        Tags.First(t -> t.Name.equals(oldName)).Name = newName;
-    }
+    public void RenameTag(String oldName, String newName){ Tags.First(t -> t.Name.equals(oldName)).Name = newName; }
     public Long GetDateAdded() { return DateAdded; }
     public AList<Tag> GetTags() { return Tags; }
 

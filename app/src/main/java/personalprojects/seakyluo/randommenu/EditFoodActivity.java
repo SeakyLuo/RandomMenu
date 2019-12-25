@@ -191,8 +191,7 @@ public class EditFoodActivity extends AppCompatActivity {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, crop_image_uri);
             startActivityForResult(intent, CROP_CODE);
             return true;
-        }
-        catch (ActivityNotFoundException e) {
+        } catch (ActivityNotFoundException e) {
             Toast.makeText(this, "Whoops - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show();
             return false;
         } catch (IOException e) {
@@ -222,7 +221,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private void setFood(Food food){
         if (food == null) return;
         edit_food_name.setText(food.Name);
-        if (food.HasImage()) Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
+        if (food.HasImage()) Helper.LoadImage(Glide.with(this), images.CopyFrom(food.Images).Get(0), food_image);
         fragment.SetData(food.GetTags());
         edit_note.setText(food.Note);
         like_toggle.setChecked(food.IsFavorite());
@@ -250,10 +249,11 @@ public class EditFoodActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        Bitmap image = null;
+        Bitmap image;
         switch (requestCode){
             case CAMERA_CODE:
                 try {
+                    images.Add(camera_image_uri.getPath());
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
                     food_image.setImageBitmap(image);
                     SetFoodImage = true;
@@ -264,7 +264,7 @@ public class EditFoodActivity extends AppCompatActivity {
             case GALLERY_CODE:
                 try {
                     if (data.getClipData() != null) {
-                        int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
+                        int count = data.getClipData().getItemCount();
                         for(int i = 0; i < count; i++) images.Add(data.getClipData().getItemAt(i).getUri().getPath());
                         camera_image_uri = data.getClipData().getItemAt(0).getUri();
                     }else if(data.getData() != null) {
@@ -293,7 +293,7 @@ public class EditFoodActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, ChooseTagFragment.TAG, fragment);
-        outState.putParcelable(FOOD, new Food(getFoodName(), "", fragment.GetData(), getNote(), like_toggle.isChecked()));
+        outState.putParcelable(FOOD, new Food(getFoodName(), images, fragment.GetData(), getNote(), like_toggle.isChecked()));
     }
     private String getFoodName() { return edit_food_name.getText().toString().trim(); }
     private String getNote() { return edit_note.getText().toString().trim(); }
