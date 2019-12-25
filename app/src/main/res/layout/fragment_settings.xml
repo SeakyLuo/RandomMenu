@@ -78,7 +78,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_right"
-                            android:paddingVertical="8dp"
+                            android:paddingVertical="@dimen/settings_item_padding_vertical"
                             android:paddingEnd="8dp" />
                     </LinearLayout>
 
@@ -100,7 +100,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_right"
-                            android:paddingVertical="8dp"
+                            android:paddingVertical="@dimen/settings_item_padding_vertical"
                             android:paddingEnd="8dp" />
                     </LinearLayout>
 
@@ -122,7 +122,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_right"
-                            android:paddingVertical="8dp"
+                            android:paddingVertical="@dimen/settings_item_padding_vertical"
                             android:paddingEnd="8dp" />
                     </LinearLayout>
                     <LinearLayout
@@ -132,7 +132,7 @@
                         <Button
                             android:id="@+id/dislike_food_button"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:paddingStart="16dp"
                             android:background="@android:color/transparent"
                             android:text="@string/dislike_food"
@@ -144,7 +144,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_right"
-                            android:paddingVertical="8dp"
+                            android:paddingVertical="@dimen/settings_item_padding_vertical"
                             android:paddingEnd="8dp" />
                     </LinearLayout>
                 </LinearLayout>
