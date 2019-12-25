@@ -13,7 +13,7 @@ import personalprojects.seakyluo.randommenu.Models.Settings;
 public class SimpleFoodListAdapter extends CustomAdapter<String> {
     private OnDataItemClickedListener<String> listener, deleteListener;
     public void SetOnDataItemClickedListener(OnDataItemClickedListener<String> listener) { this.listener = listener; }
-    public void SetOnDeleteClickedListener(OnDataItemClickedListener<String> listener) { this.deleteListener = listener; }
+    public void SetOnDeletedClickedListener(OnDataItemClickedListener<String> listener) { this.deleteListener = listener; }
     @NonNull
     @Override
     public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

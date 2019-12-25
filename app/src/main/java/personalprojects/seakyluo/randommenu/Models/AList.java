@@ -115,7 +115,7 @@ public class AList<T> extends IList<T> {
         return -1;
     }
     public AList<T> Before(int index){ return Sub(0, index); }
-    public AList<T> After(int index) { return Sub(index + 1, Count()); }
+    public AList<T> After(int index) { return Sub(index, Count()); }
     public AList<T> Sub(int start, int end){
         AList<T> collection = new AList<>();
         start = ModIndex(start);
@@ -239,6 +239,7 @@ public class AList<T> extends IList<T> {
     }
     private int ModIndex(int index){
         int count = Count();
+        if (count == index) return index;
         if (count > 0) index = index % count;
         return index < 0 ? index + count : index;
     }

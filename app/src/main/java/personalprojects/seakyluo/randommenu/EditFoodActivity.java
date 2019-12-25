@@ -10,16 +10,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -28,12 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
@@ -50,7 +41,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private Switch like_toggle;
     private ChooseTagFragment fragment;
     private boolean SetFoodImage = false;
-    private Food intent_food;
+    private Food currentFood;
     private Uri camera_image_uri, crop_image_uri;
     private AList<String> images = new AList<>();
 
@@ -68,7 +59,7 @@ public class EditFoodActivity extends AppCompatActivity {
         like_toggle = findViewById(R.id.like_toggle);
         if (savedInstanceState == null){
             fragment = (ChooseTagFragment) getSupportFragmentManager().findFragmentById(R.id.choose_tag_fragment);
-            setFood(intent_food = getIntent().getParcelableExtra(FOOD));
+            setFood(currentFood = getIntent().getParcelableExtra(FOOD));
         }else{
             fragment = (ChooseTagFragment) getSupportFragmentManager().getFragment(savedInstanceState, ChooseTagFragment.TAG);
             setFood(savedInstanceState.getParcelable(FOOD));
@@ -77,9 +68,9 @@ public class EditFoodActivity extends AppCompatActivity {
         cancel_button.setOnClickListener(v -> {
             String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
             AList<Tag> tags = fragment.GetData();
-            boolean nameChanged = intent_food == null ? food_name.length() > 0 : !food_name.equals(intent_food.Name),
-                    tagChanged = intent_food == null ? tags.Count() > 0 : !tags.SameCollection(intent_food.GetTags()),
-                    noteChanged = intent_food == null ? note.length() > 0 : !note.equals(intent_food.Note);
+            boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
+                    tagChanged = currentFood == null ? tags.Count() > 0 : !tags.SameCollection(currentFood.GetTags()),
+                    noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note);
             if (nameChanged || tagChanged || noteChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
@@ -100,25 +91,26 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(this, getString(R.string.empty_food_name), Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (Settings.settings.Foods.Any(f -> f.Name.equals(food_name)) && (intent_food == null || !intent_food.Name.equals(food_name))){
+            if (Settings.settings.Foods.Any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
                 Toast.makeText(this, getString(R.string.food_exists), Toast.LENGTH_SHORT).show();
                 return;
             }
             AList<Tag> tags = fragment.GetData();
-            if (tags.Count() == 0){
+            if (tags.IsEmpty()){
                 Toast.makeText(this, getString(R.string.at_least_one_tag), Toast.LENGTH_SHORT).show();
                 return;
             }
             String note = getNote();
-            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.ImageFolder, Helper.NewImageFileName()) : intent_food == null ? "" : intent_food.ImagePath, tags, note, like_toggle.isChecked());
-            if (intent_food == null) Settings.settings.AddFood(food);
-            else if (intent_food.equals(Settings.settings.FoodDraft)){
+            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.ImageFolder, Helper.NewImageFileName()) : currentFood == null ? "" : currentFood.GetCover(), tags, note, like_toggle.isChecked());
+            if (currentFood == null) Settings.settings.AddFood(food);
+            else if (currentFood.equals(Settings.settings.FoodDraft)){
                 Settings.settings.AddFood(food);
                 Settings.settings.FoodDraft = null;
             }else{
-                if (intent_food.HasImage() && !intent_food.ImagePath.equals(food.ImagePath))
-                    new File(intent_food.ImagePath).delete();
-                Settings.settings.UpdateFood(intent_food, food);
+                // Clear Useless Images
+//                if (currentFood.HasImage() && !currentFood.ImagePath.equals(food.ImagePath))
+//                    new File(currentFood.Images.Get(0)).delete();
+                Settings.settings.UpdateFood(currentFood, food);
             }
             Intent intent = new Intent();
             intent.putExtra(FOOD, food);
@@ -132,10 +124,10 @@ public class EditFoodActivity extends AppCompatActivity {
                 ShowMenuFlyout();
         });
         food_image.setOnClickListener(v -> {
-            if (intent_food == null ? !SetFoodImage : !intent_food.HasImage()) return;
+            if (currentFood == null ? !SetFoodImage : !currentFood.HasImage()) return;
             Intent intent = new Intent(this, FullScreenImageActivity.class);
             if (SetFoodImage) FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
-            else intent.putExtra(FullScreenImageActivity.IMAGE, intent_food.ImagePath);
+            else intent.putExtra(FullScreenImageActivity.IMAGE, currentFood.Images.Get(0));
             startActivity(intent);
         });
         delete_food_button.setVisibility(getIntent().getBooleanExtra(DELETE, false) ? View.VISIBLE : View.GONE);
@@ -144,8 +136,8 @@ public class EditFoodActivity extends AppCompatActivity {
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
             dialog.setMessage(getString(R.string.ask_delete_food));
             dialog.setOnYesListener(view -> {
-                if (intent_food.equals(Settings.settings.FoodDraft)) Settings.settings.FoodDraft = null;
-                else Settings.settings.RemoveFood(intent_food);
+                if (currentFood.equals(Settings.settings.FoodDraft)) Settings.settings.FoodDraft = null;
+                else Settings.settings.RemoveFood(currentFood);
                 setResult(RESULT_OK);
                 finish();
             });
@@ -154,7 +146,7 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void ShowMenuFlyout(){
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
-        if (intent_food == null ? !SetFoodImage : Helper.IsNullOrEmpty(intent_food.ImagePath)) helper.removeItem(R.id.edit_image_item);
+        if (currentFood == null ? !SetFoodImage : !currentFood.HasImage()) helper.removeItem(R.id.edit_image_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.edit_image_item:
@@ -181,7 +173,7 @@ public class EditFoodActivity extends AppCompatActivity {
         try {
             Intent intent = new Intent("com.android.camera.action.CROP");
             if (camera_image_uri == null){
-                intent.setDataAndType(Uri.parse(intent_food.ImagePath), "image/*");
+                intent.setDataAndType(Uri.parse(currentFood.Images.Get(0)), "image/*");
                 crop_image_uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", Helper.TempFolder));
             }else{
                 intent.setDataAndType(camera_image_uri, "image/*");

@@ -35,8 +35,7 @@ public class FoodListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linear_recycler_view, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
-        adapter.SetData(data);
-        adapter.SetContext(getActivity());
+        adapter.SetContext(getContext());
         recyclerView.setAdapter(adapter);
         if (foodRemovedListener != null) AddSwipeControl();
         return view;

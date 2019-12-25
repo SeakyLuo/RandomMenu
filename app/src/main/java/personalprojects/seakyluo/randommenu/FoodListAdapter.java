@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -20,6 +22,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
     private OnDataItemClickedListener<Food> foodClickedListener;
     private OnDataItemClickedListener<Tag> tagClickedListener;
     private boolean showLikeImage = true;
+//    public FoodListAdapter(Context context) { this.context = context; }
     public void SetFoodClickedListener(OnDataItemClickedListener<Food> foodClickedListener) { this.foodClickedListener = foodClickedListener; }
     public void SetTagClickedListener(OnDataItemClickedListener<Tag> tagClickedListener) { this.tagClickedListener = tagClickedListener; }
     public void SetShowLikeImage(boolean showLikeImage) { this.showLikeImage = showLikeImage; }
@@ -55,16 +58,20 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             RecyclerView recyclerView = view.findViewById(R.id.tags_recycler_view);
 
             food_image.setOnClickListener(v -> {
-                Intent intent = new Intent(context, FullScreenImageActivity.class);
-                intent.putExtra(FullScreenImageActivity.IMAGE, data.ImagePath);
-                context.startActivity(intent);
+                if (data.HasImage()){
+                    Intent intent = new Intent(context, FullScreenImageActivity.class);
+                    intent.putExtra(FullScreenImageActivity.IMAGE, data.Images.ToArrayList());
+                    context.startActivity(intent);
+                }else{
+                    Toast.makeText(context, R.string.no_food_image, Toast.LENGTH_SHORT).show();
+                }
             });
             recyclerView.setAdapter(adapter);
         }
 
         @Override
         void SetData(Food data) {
-            Helper.LoadImage(Glide.with(view), data.ImagePath, food_image);
+            Helper.LoadImage(Glide.with(view), data.GetCover(), food_image);
             food_name.setText(data.Name);
             liked_image.setVisibility(showLikeImage && data.IsFavorite() ? View.VISIBLE : View.GONE);
             adapter.SetData(data.GetTags());

@@ -27,7 +27,7 @@ public class ToEatActivity extends SwipeBackActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new SimpleFoodListAdapter();
         adapter.SetData(Settings.settings.ToEat);
-        adapter.SetOnDeleteClickedListener((viewHolder, data) -> {
+        adapter.SetOnDeletedClickedListener((viewHolder, data) -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.setMessage(String.format(getString(R.string.ask_delete), data));
             dialog.setOnYesListener(dv -> {
@@ -45,7 +45,7 @@ public class ToEatActivity extends SwipeBackActivity {
                 if (Settings.settings.ToEat.Remove(text)) adapter.Remove(text);
                 Settings.settings.ToEat.Add(text, 0);
                 adapter.Add(text, 0);
-                recyclerView.scrollToPosition(0);
+                recyclerView.smoothScrollToPosition(0);
                 updated = true;
                 SetTitle();
             });

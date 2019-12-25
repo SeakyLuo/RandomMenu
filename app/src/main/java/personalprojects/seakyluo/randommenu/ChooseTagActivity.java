@@ -109,7 +109,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         tagsFragment.SetSpanCount(1);
         tagsFragment.SetCloseable(true);
         tagsFragment.SetData(selected_tags);
-        tagsFragment.SetTagCloseListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
+        tagsFragment.SetTagClosedListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
     }
 
     private void ChooseTag(Tag tag){
@@ -120,7 +120,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
                 tagsFragment.Remove(tag);
             }else{
                 tagsFragment.Add(tag, 0);
-                tagsFragment.GetRecyclerView().scrollToPosition(0);
+                tagsFragment.GetRecyclerView().smoothScrollToPosition(0);
             }
         }
     }

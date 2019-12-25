@@ -64,4 +64,6 @@
     <string name="share_item">Share \"%s\" to</string>
     <string name="select_image">Select Image</string>
     <string name="dislike_food">Dislike food</string>
+    <string name="history">History</string>
+    <string name="no_food_image">No food image.</string>
 </resources>

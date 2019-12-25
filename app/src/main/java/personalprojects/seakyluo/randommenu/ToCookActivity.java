@@ -32,7 +32,7 @@ public class ToCookActivity extends SwipeBackActivity {
             intent.putExtra(EditFoodActivity.FOOD, new Food(data));
             startActivityForResult(intent, EditFoodActivity.FOOD_CODE);
         });
-        adapter.SetOnDeleteClickedListener((viewHolder, data) -> {
+        adapter.SetOnDeletedClickedListener((viewHolder, data) -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.setMessage(String.format(getString(R.string.ask_delete), data));
             dialog.setOnYesListener(dv -> {
@@ -50,7 +50,7 @@ public class ToCookActivity extends SwipeBackActivity {
                 if (Settings.settings.ToCook.Remove(text)) adapter.Remove(text);
                 Settings.settings.ToCook.Add(text, 0);
                 adapter.Add(text, 0);
-                recyclerView.scrollToPosition(0);
+                recyclerView.smoothScrollToPosition(0);
                 updated = true;
                 SetTitle();
             });

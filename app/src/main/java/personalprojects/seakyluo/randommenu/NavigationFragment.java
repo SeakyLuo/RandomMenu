@@ -106,8 +106,7 @@ public class NavigationFragment extends Fragment {
         });
         foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> EditFood(food));
         detailView.setAdapter(foodAdapter);
-
-        view.findViewById(R.id.navigation_toolbar).setOnClickListener(v -> detailView.scrollToPosition(0));
+        view.findViewById(R.id.navigation_toolbar).setOnClickListener(v -> detailView.smoothScrollToPosition(0));
 
         IsLoaded = true;
         SetData();

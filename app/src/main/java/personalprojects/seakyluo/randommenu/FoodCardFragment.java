@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,14 +82,18 @@ public class FoodCardFragment extends Fragment {
             if (tagClickedListener != null) tagClickedListener.Click(viewHolder, tag);
         });
         food_image.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
-            intent.putExtra(FullScreenImageActivity.IMAGE, CurrentFood.ImagePath);
-            startActivity(intent);
+            if (CurrentFood.HasImage()){
+                Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
+                intent.putExtra(FullScreenImageActivity.IMAGE, CurrentFood.Images.ToArrayList());
+                startActivity(intent);
+            }else{
+                Toast.makeText(getContext(), R.string.no_food_image, Toast.LENGTH_SHORT).show();
+            }
         });
         food_note_back.setMovementMethod(new ScrollingMovementMethod());
         more_button.setOnClickListener(v -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
-            if (Helper.IsNullOrEmpty(CurrentFood.ImagePath)) helper.removeItem(R.id.save_food_item);
+            if (CurrentFood.HasImage()) helper.removeItem(R.id.save_food_item);
             if (Helper.IsNullOrEmpty(CurrentFood.Note)) helper.removeItem(R.id.more_item);
             if (CurrentFood.HideCount == 0) helper.removeItem(R.id.show_food_item);
             else helper.removeItem(R.id.hide_food_item);
@@ -104,13 +109,13 @@ public class FoodCardFragment extends Fragment {
                         startActivityForResult(editFoodIntent, EDIT_FOOD);
                         return true;
                     case R.id.save_food_item:
-                        Helper.SaveImage(Helper.GetFoodBitmap(CurrentFood.ImagePath), Helper.ImageFolder, Helper.NewImageFileName());
+                        Helper.SaveImage(Helper.GetFoodBitmap(CurrentFood.Images.Get(0)), Helper.ImageFolder, Helper.NewImageFileName());
                         Toast.makeText(getContext(), getString(R.string.save_image_msg), Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.share_item:
                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                         shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(before.ImagePath));
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(before.Images.Get(0)));
                         shareIntent.setType("image/*");
                         startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;
@@ -174,7 +179,7 @@ public class FoodCardFragment extends Fragment {
         food_name.setText(food.Name);
         food_note_back.setText(food.Note);
         SetFoodNote(food);
-        Helper.LoadImage(Glide.with(this), food.ImagePath, food_image);
+        Helper.LoadImage(Glide.with(this), food.GetCover(), food_image);
         SetFoodFavorite(food.IsFavorite());
         tagsFragment.SetData(food.GetTags());
     }

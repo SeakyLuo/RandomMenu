@@ -11,7 +11,6 @@ import personalprojects.seakyluo.randommenu.Helpers.Helper;
 
 public class Food implements Parcelable {
     public String Name;
-    public String ImagePath = "";
     public AList<String> Images = new AList<>();
     private AList<Tag> Tags = new AList<>();
     public String Note = "";
@@ -25,8 +24,7 @@ public class Food implements Parcelable {
 
     public Food(String name, String path, AList<Tag> tags, String note, boolean isFavorite){
         Name = name;
-        ImagePath = path;
-        Images.Add(path);
+        if (!Helper.IsNullOrEmpty(path)) Images.Add(path);
         Tags = tags;
         Note = note;
         IsFavorite = isFavorite;
@@ -43,8 +41,7 @@ public class Food implements Parcelable {
     }
 
     public Food Copy(){
-        Food food = new Food(Name, ImagePath, Tags, Note, IsFavorite);
-        food.Images = new AList<>(Images);
+        Food food = new Food(Name, Images, Tags, Note, IsFavorite);
         food.DateAdded = DateAdded;
         return food;
     }
@@ -58,6 +55,7 @@ public class Food implements Parcelable {
     public void RenameTag(String oldName, String newName){ Tags.First(t -> t.Name.equals(oldName)).Name = newName; }
     public Long GetDateAdded() { return DateAdded; }
     public AList<Tag> GetTags() { return Tags; }
+    public String GetCover() { return Images.Count() == 0 ? "" : Images.Get(0); }
 
     public void RemoveTag(Tag tag) { Tags.Remove(tag); }
 
@@ -68,7 +66,6 @@ public class Food implements Parcelable {
 
     protected Food(Parcel in) {
         Name = in.readString();
-        ImagePath = in.readString();
         ArrayList<String> images = new ArrayList<>();
         in.readStringList(images);
         Images = new AList<>(images);
@@ -105,7 +102,6 @@ public class Food implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(Name);
-        dest.writeString(ImagePath);
         dest.writeStringList(Images.ToArrayList());
         dest.writeTypedList(Tags.ToArrayList());
         dest.writeString(Note);

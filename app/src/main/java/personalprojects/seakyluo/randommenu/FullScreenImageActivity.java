@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,6 +14,7 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Models.AList;
 
 public class FullScreenImageActivity extends AppCompatActivity {
     public static final String IMAGE = "IMAGE";
@@ -47,7 +49,11 @@ public class FullScreenImageActivity extends AppCompatActivity {
             }
         });
 
-        if (image == null) Helper.LoadImage(Glide.with(this), getIntent().getStringExtra(IMAGE), fullscreen_image);
+//        ViewPager viewPager = findViewById(R.id.imageViewPager);
+//        ImageAdapter adapter = new ImageAdapter(this, new AList<>(getIntent().getStringExtra(IMAGE)));
+//        viewPager.setAdapter(adapter); // Here we are passing and setting the adapter for the images
+
+        if (image == null) Helper.LoadImage(Glide.with(this), getIntent().getStringArrayListExtra(IMAGE).get(0), fullscreen_image);
         else fullscreen_image.setImageBitmap(image);
     }
 

@@ -13,10 +13,11 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 
 public class ImageAdapter extends PagerAdapter {
     private Context context;
-    private AList<String> images = new AList<>();
+    private AList<String> images;
 
-    public ImageAdapter(Context context) {
+    public ImageAdapter(Context context, AList<String> images) {
         this.context = context;
+        this.images = images;
     }
 
     @Override

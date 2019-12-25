@@ -11,6 +11,7 @@ public class Settings {
     public AList<String> ToCook = new AList<>();
     public AList<String> ToEat = new AList<>();
     public AList<String> DislikeFood = new AList<>();
+    public AList<String> SearchHistory = new AList<>();
     public Food FoodDraft;
 
     public void AddFood(Food food, int index){

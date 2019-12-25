@@ -64,4 +64,6 @@
     <string name="share_item">将“%s”分享到</string>
     <string name="select_image">选择图片</string>
     <string name="dislike_food">忌口</string>
+    <string name="history">历史</string>
+    <string name="no_food_image">没有菜肴图片。</string>
 </resources>

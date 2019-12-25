@@ -42,5 +42,5 @@ public class TagsFragment extends Fragment {
     public void SetData(List<Tag> data){ adapter.SetData(data); }
     public void SetSpanCount(int spanCount) { this.spanCount = spanCount; }
     public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagClickedListener(listener); }
-    public void SetTagCloseListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagCloseListener(listener); }
+    public void SetTagClosedListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagCloseListener(listener); }
 }

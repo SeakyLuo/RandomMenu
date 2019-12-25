@@ -74,7 +74,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
         @Override
         void SetData(Food data) {
             food_name.setText(data.Name);
-            Helper.LoadImage(Glide.with(view), data.ImagePath, food_image);
+            Helper.LoadImage(Glide.with(view), data.GetCover(), food_image);
             SetLiked(data.IsFavorite());
         }
 

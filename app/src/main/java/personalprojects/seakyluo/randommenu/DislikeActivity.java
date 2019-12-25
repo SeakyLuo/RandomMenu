@@ -1,7 +1,6 @@
 package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -29,7 +28,7 @@ public class DislikeActivity extends SwipeBackActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new SimpleFoodListAdapter();
         adapter.SetData(Settings.settings.DislikeFood);
-        adapter.SetOnDeleteClickedListener((viewHolder, data) -> {
+        adapter.SetOnDeletedClickedListener((viewHolder, data) -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.setMessage(String.format(getString(R.string.ask_delete), data));
             dialog.setOnYesListener(dv -> {
@@ -47,7 +46,7 @@ public class DislikeActivity extends SwipeBackActivity {
                 if (Settings.settings.DislikeFood.Remove(text)) adapter.Remove(text);
                 Settings.settings.DislikeFood.Add(text, 0);
                 adapter.Add(text, 0);
-                recyclerView.scrollToPosition(0);
+                recyclerView.smoothScrollToPosition(0);
                 updated = true;
                 SetTitle();
             });
