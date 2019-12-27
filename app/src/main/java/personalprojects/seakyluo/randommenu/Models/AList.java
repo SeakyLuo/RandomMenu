@@ -91,8 +91,8 @@ public class AList<T> extends IList<T> {
     public AList<T> Copy(){ return new AList<>(list); }
     public AList<T> CopyFrom(AList<T> collection){ return CopyFrom(collection.list); }
     public AList<T> CopyFrom(Collection<T> collection){
-        Clear();
-        AddAll(collection);
+        list.clear();
+        list.addAll(collection);
         return this;
     }
     public int IndexOf(T element){ return list.indexOf(element); }

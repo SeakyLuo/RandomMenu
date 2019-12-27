@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu;
 import android.content.Context;
 import android.media.Image;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ public class ImageAdapter extends PagerAdapter {
     private AList<String> images;
     private ImageView.ScaleType scaleType;
     private View.OnClickListener clickListener;
+//    private ViewGroup container;
 
     public ImageAdapter(Context context, AList<String> images, ImageView.ScaleType scaleType) {
         this(images, scaleType);
@@ -49,9 +51,17 @@ public class ImageAdapter extends PagerAdapter {
     }
     public void SetData(AList<String> images){
         this.images.CopyFrom(images);
+//        if (container != null){
+//            int count = container.getChildCount();
+//            for (int i = 0; i < count; i++)
+//                Helper.LoadImage(Glide.with(context), images.Get(i), (ImageView) container.getChildAt(i));
+//        }
         notifyDataSetChanged();
     }
     public void setOnImageClickedListener(View.OnClickListener listener) { clickListener = listener; }
+
+    @Override
+    public int getItemPosition(Object object) { return POSITION_NONE; }
 
     @Override
     public int getCount() { return images.Count(); }
@@ -62,6 +72,7 @@ public class ImageAdapter extends PagerAdapter {
     }
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+//        this.container = container;
         ImageView imageView;
         if (scaleType == ImageView.ScaleType.CENTER_INSIDE)
             imageView = new ScalableImageView(context);
@@ -70,7 +81,7 @@ public class ImageAdapter extends PagerAdapter {
         imageView.setScaleType(scaleType);
         imageView.setOnClickListener(clickListener);
         Helper.LoadImage(Glide.with(context), images.Get(position), imageView);
-        container.addView(imageView, 0);
+        container.addView(imageView);
         return imageView;
     }
     @Override
