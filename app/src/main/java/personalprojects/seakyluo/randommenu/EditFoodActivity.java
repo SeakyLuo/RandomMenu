@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,8 +78,9 @@ public class EditFoodActivity extends AppCompatActivity {
             boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
                     imageChanged = currentFood == null ? images.Count() > 0 : !images.SameCollection(currentFood.Images),
                     tagChanged = currentFood == null ? tags.Count() > 0 : !tags.SameCollection(currentFood.GetTags()),
-                    noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note);
-            if (nameChanged || imageChanged || tagChanged || noteChanged){
+                    noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note),
+                    likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.IsFavorite();
+            if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
                 dialog.setMessage(getString(R.string.save_as_draft));
@@ -210,7 +212,7 @@ public class EditFoodActivity extends AppCompatActivity {
         if (food == null) return;
         edit_food_name.setText(food.Name);
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
-        imageViewerFragment.setImages(food.Images);
+        imageViewerFragment.setImages(images.CopyFrom(food.Images));
         chooseTagFragment.SetData(food.GetTags());
         edit_note.setText(food.Note);
         like_toggle.setChecked(food.IsFavorite());
@@ -241,6 +243,7 @@ public class EditFoodActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
+        food_image.setVisibility(View.GONE);
         Bitmap image;
         switch (requestCode){
             case CAMERA_CODE:
