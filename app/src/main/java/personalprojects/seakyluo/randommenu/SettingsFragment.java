@@ -1,6 +1,7 @@
 package personalprojects.seakyluo.randommenu;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,9 +13,14 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
@@ -47,36 +53,35 @@ public class SettingsFragment extends Fragment {
             getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
         view.findViewById(R.id.clear_cache_button).setOnClickListener(v -> {
-
+            HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
+            for (File file: Helper.ImageFolder.listFiles()){
+                if (!paths.contains(file.getPath()))
+                    file.delete();
+            }
+            for (File file: Helper.TempFolder.listFiles())
+                file.delete();
+            Helper.Save(getContext());
+            Toast.makeText(getContext(), R.string.clear_cache_msg, Toast.LENGTH_SHORT).show();
         });
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
-
-        });
-        view.findViewById(R.id.adjust_data_button).setOnClickListener(v -> {
-//            AList<Tag> tags = new AList<>();
-//            Settings.settings.Foods.ForEach(f -> tags.AddAll(f.GetTags()));
-//            Settings.settings.Tags.Clear();
-//            for (Map.Entry<Tag, Integer> pair: tags.ToHashMap().entrySet())
-//                Settings.settings.Tags.Add(new Tag(pair.getKey().Name, pair.getValue()));
-//            Settings.settings.SortTags();
-
-//            Settings.settings.Favorites.ForEach(f -> f.SetIsFavorite(true));
-//            Settings.settings.Foods.ForEach(f -> f.SetIsFavorite(Settings.settings.Favorites.Contains(f)));
-//            Settings.settings.Foods.ForEach(f -> f.Images = new AList<>(f.ImagePath));
-//            Settings.settings.Favorites.ForEach(f -> f.Images = new AList<>(f.ImagePath));
-//            Settings.settings.Foods.ForEach(f -> f.Images.Remove(Helper::IsNullOrEmpty));
-            Helper.Save(getContext());
-            Toast.makeText(getContext(), "Data Adjusted!", Toast.LENGTH_SHORT).show();
-        });
-        view.findViewById(R.id.clear_data_button).setOnClickListener(v -> {
 //            Helper.Clear(getContext());
-//            HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.ImagePath).Find(s -> !Helper.IsNullOrEmpty(s)).ToHashSet();
-//            for (File file: Helper.ImageFolder.listFiles()){
-//                if (!paths.contains(file.getPath()))
-//                    file.delete();
+//            try {
+//                String filename = Helper.Timestamp() + ".zip";
+//                ZipOutputStream out = new ZipOutputStream(new FileOutputStream(filename));
+//                out.putNextEntry(new ZipEntry(Helper.ImageFolder.getPath()));
+//                out.closeEntry();
+//                out.putNextEntry(new ZipEntry(Settings.FILENAME));
+//                out.closeEntry();
+//                out.close();
+//
+//                Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+//                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(filename));
+//                startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
+//                Toast.makeText(getContext(), R.string.export_data_msg, Toast.LENGTH_SHORT).show();
+//            } catch (IOException e) {
+//                e.printStackTrace();
 //            }
-//            for (File file: Helper.TempFolder.listFiles())
-//                file.delete();
         });
         return view;
     }

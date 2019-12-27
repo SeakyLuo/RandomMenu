@@ -18,7 +18,7 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class TagsFragment extends Fragment {
     public static final String TAG = "TagsFragment";
-    private RecyclerView recyclerView;
+    public RecyclerView recyclerView;
     private TagAdapter adapter = new TagAdapter();
     private int spanCount = 2;
     public void SetCloseable(boolean closeable){ adapter.SetCloseable(closeable); }
@@ -26,7 +26,7 @@ public class TagsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tags, container, false);
+        View view = inflater.inflate(R.layout.recycler_view, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.HORIZONTAL));
@@ -34,7 +34,6 @@ public class TagsFragment extends Fragment {
     }
     public AList<Tag> GetData() { return adapter.GetData(); }
     public TagAdapter GetAdapter() { return adapter; }
-    public RecyclerView GetRecyclerView() { return recyclerView; }
     public void Add(Tag tag, int index) { adapter.Add(tag, index); }
     public void Remove(Tag tag) { adapter.Remove(tag); }
     public boolean Contains(Tag tag) { return adapter.Contains(tag); }

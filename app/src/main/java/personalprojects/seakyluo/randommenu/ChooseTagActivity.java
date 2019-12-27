@@ -25,6 +25,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
     private TagListAdapter tagListAdapter;
     private TagsFragment tagsFragment;
     private ArrayList<Tag> selected_tags, excluded_tags;
+    private ArrayAdapter<String> suggestionTagListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +33,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
 
         tag_box = findViewById(R.id.tag_box);
         tag_box.requestFocus();
-        final ArrayAdapter<String> suggestionTagListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
+        suggestionTagListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
         tag_box.setAdapter(suggestionTagListAdapter);
         tag_box.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -120,7 +121,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
                 tagsFragment.Remove(tag);
             }else{
                 tagsFragment.Add(tag, 0);
-                tagsFragment.GetRecyclerView().smoothScrollToPosition(0);
+                tagsFragment.recyclerView.smoothScrollToPosition(0);
             }
         }
     }
@@ -147,12 +148,6 @@ public class ChooseTagActivity extends SwipeBackActivity {
         if (tags.SameCollection(selected_tags)) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);
         finish();
-    }
-
-    @Override
-    public void finish(){
-        super.finish();
-        overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
     }
 
     @Override

@@ -151,10 +151,6 @@ public class SearchActivity extends SwipeBackActivity {
     @Override
     public void finish() {
         Helper.Save(this);
-        if(getCurrentFocus() != null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
         super.finish();
     }
 

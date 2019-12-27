@@ -178,20 +178,6 @@
                         android:background="@android:color/transparent"
                         android:text="@string/export_data"
                         android:textAllCaps="false" />
-                    <Button
-                        android:id="@+id/adjust_data_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:text="Adjust Data"
-                        android:textAllCaps="false" />
-                    <Button
-                        android:id="@+id/clear_data_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:text="Clear Data"
-                        android:textAllCaps="false" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

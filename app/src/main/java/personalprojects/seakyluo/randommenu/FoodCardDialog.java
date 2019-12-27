@@ -20,9 +20,7 @@ public class FoodCardDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_food_card, container,false);
         getChildFragmentManager().beginTransaction().add(R.id.dialog_food_card_frame, foodCardFragment).commit();
         foodCardFragment.LoadFood(CurrentFood);
-        foodCardFragment.SetTagClickedListener((viewHolder, tag) -> {
-//            dismiss();
-        });
+//        foodCardFragment.SetTagClickedListener((viewHolder, tag) -> dismiss());
         return view;
     }
 

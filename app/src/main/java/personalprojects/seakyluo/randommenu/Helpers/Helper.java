@@ -34,7 +34,7 @@ import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.R;
 
 public class Helper {
-    public static File ImageFolder, TempFolder;
+    public static File SaveImageFolder, ImageFolder, TempFolder;
     public static Context context;
     public static Bitmap DefaultFoodImage;
 //    private static HashMap<String, Bitmap> foodImageCache = new HashMap<>();
@@ -50,6 +50,7 @@ public class Helper {
     public static void Init(Context context){
         Helper.context = context;
         DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
+        SaveImageFolder = CreateOrOpenFolder("RandomMenuSavedImages");
         ImageFolder = CreateOrOpenFolder("RandomMenuFood");
         TempFolder = CreateOrOpenFolder("RandomMenuTemp");
         String settings = ReadJson(context, Settings.FILENAME);
@@ -82,8 +83,9 @@ public class Helper {
         }
         return image_path;
     }
-    public static String NewImageFileName(){ return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg"; }
-    public static String NewImageFileName(int suffix){ return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + suffix + ".jpg"; }
+    public static String Timestamp() { return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); }
+    public static String NewImageFileName(){ return Timestamp() + ".jpg"; }
+    public static String NewImageFileName(int suffix){ return Timestamp() + "_" + suffix + ".jpg"; }
     public static File TempCopy(String src, String prefix, String suffix){
         try (InputStream in = new FileInputStream(src)) {
             File file = File.createTempFile(prefix, suffix, TempFolder);
@@ -110,8 +112,7 @@ public class Helper {
     }
 
     public static String ReadJson(Context context, String filename) {
-        String ret = "";
-
+        String string = "";
         try {
             InputStream inputStream = context.openFileInput(filename);
 
@@ -126,7 +127,7 @@ public class Helper {
                 }
 
                 inputStream.close();
-                ret = stringBuilder.toString();
+                string = stringBuilder.toString();
             }
         }
         catch (FileNotFoundException e) {
@@ -135,7 +136,7 @@ public class Helper {
         catch (IOException e) {
             Log.e("Helper", "Can not read file: " + e.toString());
         }
-        return ret;
+        return string;
     }
     public static void SaveJson(Context context, String filename, String json){
         try {

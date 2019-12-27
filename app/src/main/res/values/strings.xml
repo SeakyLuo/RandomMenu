@@ -69,4 +69,6 @@
     <string name="clear_cache">Clear Cache</string>
     <string name="export_data">Export Data</string>
     <string name="placeholder">Placeholder</string>
+    <string name="clear_cache_msg">Cache cleared!</string>
+    <string name="export_data_msg">Data exported!</string>
 </resources>

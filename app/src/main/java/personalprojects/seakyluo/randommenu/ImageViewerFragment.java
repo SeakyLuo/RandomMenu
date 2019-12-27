@@ -54,6 +54,7 @@ public class ImageViewerFragment extends Fragment {
 
     public void setImages(AList<String> images) { adapter.SetData(images); }
     public int getCurrent() { return current; }
+    public String getCurrentImage() { return images.Get(current); }
     public String setCurrentImage(String image) { return adapter.Set(image, current); }
     public int removeCurrentImage() {
         int index = current;

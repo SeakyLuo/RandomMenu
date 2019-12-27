@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -18,23 +17,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/tag_toolbar">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteY="12dp">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:paddingStart="16dp"
                 android:paddingEnd="8dp"
-                android:src="@drawable/ic_back"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tag_box"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:src="@drawable/ic_back" />
 
             <AutoCompleteTextView
                 android:id="@+id/tag_box"
@@ -47,24 +42,17 @@
                 android:inputType="text"
                 android:maxLength="@integer/maxTagNameLength"
                 android:maxLines="1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/confirm_button"
-                app:layout_constraintStart_toEndOf="@id/back_button"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_weight="1" />
 
             <ImageButton
                 android:id="@+id/confirm_button"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:paddingStart="8dp"
                 android:paddingEnd="16dp"
-                android:src="@drawable/ic_confirm"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tag_box"
-                app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+                android:src="@drawable/ic_confirm" />
+        </LinearLayout>
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.Toolbar
@@ -80,7 +68,7 @@
         <FrameLayout
             android:id="@+id/tags_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="40dp"  />
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.CardView

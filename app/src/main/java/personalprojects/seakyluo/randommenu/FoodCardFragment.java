@@ -87,7 +87,7 @@ public class FoodCardFragment extends Fragment {
         food_note_back.setMovementMethod(new ScrollingMovementMethod());
         more_button.setOnClickListener(v -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
-            if (CurrentFood.HasImage()) helper.removeItems(R.id.save_food_item);
+            if (!CurrentFood.HasImage()) helper.removeItems(R.id.save_food_item, R.id.share_item);
             if (Helper.IsNullOrEmpty(CurrentFood.Note)) helper.removeItems(R.id.more_item);
             if (CurrentFood.HideCount == 0) helper.removeItems(R.id.show_food_item);
             else helper.removeItems(R.id.hide_food_item);
@@ -103,13 +103,13 @@ public class FoodCardFragment extends Fragment {
                         startActivityForResult(editFoodIntent, EDIT_FOOD);
                         return true;
                     case R.id.save_food_item:
-                        Helper.SaveImage(Helper.GetFoodBitmap(CurrentFood.Images.Get(0)), Helper.ImageFolder, Helper.NewImageFileName());
+                        Helper.SaveImage(Helper.GetFoodBitmap(imageViewerFragment.getCurrentImage()), Helper.SaveImageFolder, Helper.NewImageFileName());
                         Toast.makeText(getContext(), getString(R.string.save_image_msg), Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.share_item:
                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                         shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(before.Images.Get(0)));
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(imageViewerFragment.getCurrentImage()));
                         shareIntent.setType("image/*");
                         startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;

@@ -44,6 +44,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private Food currentFood;
     private Uri camera_image_uri, crop_image_uri;
     private AList<String> images = new AList<>();
+    private boolean isDraft = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +62,14 @@ public class EditFoodActivity extends AppCompatActivity {
         if (savedInstanceState == null){
             chooseTagFragment = (ChooseTagFragment) fragmentManager.findFragmentById(R.id.choose_tag_fragment);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.findFragmentById(R.id.imageviewer_fragment);
-            setFood(currentFood = getIntent().getParcelableExtra(FOOD));
+            currentFood = getIntent().getParcelableExtra(FOOD);
         }else{
             chooseTagFragment = (ChooseTagFragment) fragmentManager.getFragment(savedInstanceState, ChooseTagFragment.TAG);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
-            setFood(savedInstanceState.getParcelable(FOOD));
+            currentFood = savedInstanceState.getParcelable(FOOD);
         }
+        isDraft = Settings.settings.FoodDraft != null && Settings.settings.FoodDraft.equals(currentFood);
+        setFood(currentFood);
 
         cancel_button.setOnClickListener(v -> {
             String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
@@ -107,13 +110,10 @@ public class EditFoodActivity extends AppCompatActivity {
             String note = getNote();
             Food food = new Food(food_name, images, tags, note, like_toggle.isChecked());
             if (currentFood == null) Settings.settings.AddFood(food);
-            else if (currentFood.equals(Settings.settings.FoodDraft)){
+            else if (isDraft){
                 Settings.settings.AddFood(food);
                 Settings.settings.FoodDraft = null;
             }else{
-                // Clear Useless Images
-//                if (currentFood.HasImage() && !currentFood.ImagePath.equals(food.ImagePath))
-//                    new File(currentFood.Images.Get(0)).delete();
                 Settings.settings.UpdateFood(currentFood, food);
             }
             Intent intent = new Intent();
@@ -133,7 +133,7 @@ public class EditFoodActivity extends AppCompatActivity {
             dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
             dialog.setMessage(getString(R.string.ask_delete_food));
             dialog.setOnYesListener(view -> {
-                if (currentFood.equals(Settings.settings.FoodDraft)) Settings.settings.FoodDraft = null;
+                if (isDraft) Settings.settings.FoodDraft = null;
                 else Settings.settings.RemoveFood(currentFood);
                 setResult(RESULT_OK);
                 finish();

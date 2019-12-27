@@ -67,7 +67,7 @@ public class AList<T> extends IList<T> {
     }
     public AList<T> AddAll(AList<T> collection, int index) { return AddAll(collection.list, index); }
     public boolean Remove(T element) { return list.remove(element); }
-    public boolean Remove(BooleanLambda<T> lambda){ return list.removeIf(lambda::operate); }
+    public AList<T> Remove(BooleanLambda<T> lambda){ list.removeIf(lambda::operate); return this; }
     public T Pop() { return Pop(-1); }
     public T Pop(int index){
         index = ModIndex(index);
