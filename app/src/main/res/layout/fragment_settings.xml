@@ -146,28 +146,6 @@
                             android:paddingVertical="@dimen/settings_item_padding_vertical"
                             android:paddingEnd="@dimen/settings_item_padding_end" />
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <Button
-                            android:id="@+id/clear_cache_button"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:paddingStart="@dimen/settings_item_padding_start"
-                            android:background="@android:color/transparent"
-                            android:text="@string/clear_cache"
-                            android:textAlignment="viewStart"
-                            android:textAllCaps="false"
-                            android:layout_weight="1" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_right"
-                            android:paddingVertical="@dimen/settings_item_padding_vertical"
-                            android:paddingEnd="@dimen/settings_item_padding_end" />
-                    </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -186,6 +164,20 @@
                     android:divider="?attr/dividerHorizontal"
                     android:orientation="vertical"
                     android:showDividers="middle">
+                    <Button
+                        android:id="@+id/clear_cache_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:text="@string/clear_cache"
+                        android:textAllCaps="false" />
+                    <Button
+                        android:id="@+id/export_data_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:text="@string/export_data"
+                        android:textAllCaps="false" />
                     <Button
                         android:id="@+id/adjust_data_button"
                         android:layout_width="match_parent"
