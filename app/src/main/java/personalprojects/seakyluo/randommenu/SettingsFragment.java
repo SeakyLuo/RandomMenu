@@ -46,6 +46,9 @@ public class SettingsFragment extends Fragment {
             startActivity(new Intent(getContext(), DislikeActivity.class));
             getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
+        view.findViewById(R.id.clear_cache_button).setOnClickListener(v -> {
+
+        });
         view.findViewById(R.id.adjust_data_button).setOnClickListener(v -> {
 //            AList<Tag> tags = new AList<>();
 //            Settings.settings.Foods.ForEach(f -> tags.AddAll(f.GetTags()));

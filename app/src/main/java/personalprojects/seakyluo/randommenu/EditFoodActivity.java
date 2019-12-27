@@ -6,16 +6,16 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,7 +42,8 @@ public class EditFoodActivity extends AppCompatActivity {
     private EditText edit_food_name, edit_note;
     private ImageView food_image;
     private Switch like_toggle;
-    private ChooseTagFragment fragment;
+    private ChooseTagFragment chooseTagFragment;
+    private ImageViewerFragment imageViewerFragment;
     private Food currentFood;
     private Uri camera_image_uri, crop_image_uri;
     private AList<String> images = new AList<>();
@@ -59,24 +60,27 @@ public class EditFoodActivity extends AppCompatActivity {
         edit_note = findViewById(R.id.edit_note);
         food_image = findViewById(R.id.food_image);
         like_toggle = findViewById(R.id.like_toggle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
         if (savedInstanceState == null){
-            fragment = (ChooseTagFragment) getSupportFragmentManager().findFragmentById(R.id.choose_tag_fragment);
+            chooseTagFragment = (ChooseTagFragment) fragmentManager.findFragmentById(R.id.choose_tag_fragment);
+            imageViewerFragment = (ImageViewerFragment) fragmentManager.findFragmentById(R.id.imageviewer_fragment);
             setFood(currentFood = getIntent().getParcelableExtra(FOOD));
         }else{
-            fragment = (ChooseTagFragment) getSupportFragmentManager().getFragment(savedInstanceState, ChooseTagFragment.TAG);
+            chooseTagFragment = (ChooseTagFragment) fragmentManager.getFragment(savedInstanceState, ChooseTagFragment.TAG);
+            imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
             setFood(savedInstanceState.getParcelable(FOOD));
         }
 
         cancel_button.setOnClickListener(v -> {
             String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
-            AList<Tag> tags = fragment.GetData();
+            AList<Tag> tags = chooseTagFragment.GetData();
             boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
                     imageChanged = currentFood == null ? images.Count() > 0 : !images.SameCollection(currentFood.Images),
                     tagChanged = currentFood == null ? tags.Count() > 0 : !tags.SameCollection(currentFood.GetTags()),
                     noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note);
             if (nameChanged || imageChanged || tagChanged || noteChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
-                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
+                dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
                 dialog.setMessage(getString(R.string.save_as_draft));
                 dialog.setOnYesListener(view -> {
                     Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked());
@@ -97,7 +101,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(this, getString(R.string.food_exists), Toast.LENGTH_SHORT).show();
                 return;
             }
-            AList<Tag> tags = fragment.GetData();
+            AList<Tag> tags = chooseTagFragment.GetData();
             if (tags.IsEmpty()){
                 Toast.makeText(this, getString(R.string.at_least_one_tag), Toast.LENGTH_SHORT).show();
                 return;
@@ -125,16 +129,10 @@ public class EditFoodActivity extends AppCompatActivity {
             else
                 ShowMenuFlyout();
         });
-        food_image.setOnClickListener(v -> {
-            if (images.IsEmpty()) return;
-            Intent intent = new Intent(this, FullScreenImageActivity.class);
-            intent.putExtra(FullScreenImageActivity.IMAGE, images.ToArrayList());
-            startActivity(intent);
-        });
         delete_food_button.setVisibility(getIntent().getBooleanExtra(DELETE, false) ? View.VISIBLE : View.GONE);
         delete_food_button.setOnClickListener(v -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
-            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
+            dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
             dialog.setMessage(getString(R.string.ask_delete_food));
             dialog.setOnYesListener(view -> {
                 if (currentFood.equals(Settings.settings.FoodDraft)) Settings.settings.FoodDraft = null;
@@ -150,8 +148,6 @@ public class EditFoodActivity extends AppCompatActivity {
         if (images.IsEmpty()) helper.removeItem(R.id.edit_image_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
-                case R.id.edit_image_item:
-                    return CropImage();
                 case R.id.open_camera_item:
                     if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED)
                         requestPermissions(new String[]{ Manifest.permission.CAMERA }, CAMERA_CODE);
@@ -164,6 +160,10 @@ public class EditFoodActivity extends AppCompatActivity {
                     else
                         OpenGallery();
                     return true;
+                case R.id.edit_image_item:
+                    return CropImage();
+                case R.id.remove_image_item:
+                    return true;
             }
             return false;
         });
@@ -174,7 +174,7 @@ public class EditFoodActivity extends AppCompatActivity {
         try {
             Intent intent = new Intent("com.android.camera.action.CROP");
             if (camera_image_uri == null){
-                intent.setDataAndType(Uri.parse(currentFood.Images.Get(0)), "image/*");
+                intent.setDataAndType(Uri.parse(CurrentImage()), "image/*");
                 crop_image_uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", Helper.TempFolder));
             }else{
                 intent.setDataAndType(camera_image_uri, "image/*");
@@ -209,8 +209,9 @@ public class EditFoodActivity extends AppCompatActivity {
     private void setFood(Food food){
         if (food == null) return;
         edit_food_name.setText(food.Name);
-        if (food.HasImage()) Helper.LoadImage(Glide.with(this), images.CopyFrom(food.Images).Get(0), food_image);
-        fragment.SetData(food.GetTags());
+        food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
+        imageViewerFragment.setImages(food.Images);
+        chooseTagFragment.SetData(food.GetTags());
         edit_note.setText(food.Note);
         like_toggle.setChecked(food.IsFavorite());
     }
@@ -233,6 +234,9 @@ public class EditFoodActivity extends AppCompatActivity {
         }
     }
 
+    private String CurrentImage() { return images.Get(imageViewerFragment.getCurrent()); }
+    private void AddImage(String image) { images.Add(imageViewerFragment.adapter.Add(image), 0) ; }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -242,15 +246,13 @@ public class EditFoodActivity extends AppCompatActivity {
             case CAMERA_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
-                    images.Add(Helper.SaveImage(image, Helper.ImageFolder, camera_image_uri.getPath()), 0);
-                    food_image.setImageBitmap(image);
+                    AddImage(Helper.SaveImage(image, Helper.ImageFolder, camera_image_uri.getPath()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             case GALLERY_CODE:
                 try {
-                    Uri uri;
                     if (data.getClipData() != null) {
                         ClipData clipData = data.getClipData();
                         int count = clipData.getItemCount();
@@ -259,14 +261,10 @@ public class EditFoodActivity extends AppCompatActivity {
                             paths.Add(Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), clipData.getItemAt(i).getUri()),
                                                        Helper.ImageFolder,
                                                        Helper.NewImageFileName(i)));
-                        images.AddAll(paths, 0);
-                        uri = clipData.getItemAt(0).getUri();
+                        images.AddAll(imageViewerFragment.adapter.Add(paths), 0);
                     }else{
-                        uri = data.getData();
-                        images.Add(data.getData().getPath(), 0);
+                        AddImage(data.getData().getPath());
                     }
-                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                    food_image.setImageBitmap(image);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -274,8 +272,7 @@ public class EditFoodActivity extends AppCompatActivity {
             case CROP_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
-                    Helper.SaveImage(image, Helper.ImageFolder, Helper.NewImageFileName());
-                    food_image.setImageBitmap(image);
+                    imageViewerFragment.setCurrentImage(Helper.SaveImage(image, Helper.ImageFolder, Helper.NewImageFileName()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -286,8 +283,10 @@ public class EditFoodActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, ChooseTagFragment.TAG, fragment);
-        outState.putParcelable(FOOD, new Food(getFoodName(), images, fragment.GetData(), getNote(), like_toggle.isChecked()));
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.putFragment(outState, ChooseTagFragment.TAG, chooseTagFragment);
+        fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
+        outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.GetData(), getNote(), like_toggle.isChecked()));
     }
     private String getFoodName() { return edit_food_name.getText().toString().trim(); }
     private String getNote() { return edit_note.getText().toString().trim(); }

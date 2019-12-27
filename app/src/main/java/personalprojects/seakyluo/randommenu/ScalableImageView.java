@@ -7,10 +7,11 @@ import android.view.ScaleGestureDetector;
 
 public class ScalableImageView extends android.support.v7.widget.AppCompatImageView {
     private float mScaleFactor = 1.0f;
-    private ScaleGestureDetector mScaleGestureDetector;
+    private ScaleGestureDetector scaler;
+    private boolean pinching = false;
     public ScalableImageView(Context context) {
         super(context);
-        mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
+        scaler = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
             @Override
             public void onScaleEnd(ScaleGestureDetector detector) {
 
@@ -31,8 +32,19 @@ public class ScalableImageView extends android.support.v7.widget.AppCompatImageV
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-//        if (event.getAction() == MotionEvent.ACTION_POINTER_DOWN) return performClick();
-        return mScaleGestureDetector.onTouchEvent(event);
+        Log.d("fuck", "MotionEvent: " + event.getAction());
+        switch (event.getAction()){
+            case MotionEvent.ACTION_MOVE:
+                pinching = true;
+                break;
+            case MotionEvent.ACTION_UP:
+                if (!pinching)
+                    return performClick();
+            default:
+                pinching = false;
+                break;
+        }
+        return scaler.onTouchEvent(event);
     }
 
     @Override

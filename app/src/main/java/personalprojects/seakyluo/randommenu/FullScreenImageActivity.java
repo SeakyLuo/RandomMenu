@@ -1,35 +1,54 @@
 package personalprojects.seakyluo.randommenu;
 
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
+import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
 
 public class FullScreenImageActivity extends AppCompatActivity {
-    public static final String IMAGE = "IMAGE";
+    public static final String IMAGE = "Image", INDEX = "Index";
     private AList<String> images;
+    private TextView swipeCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
-
-//        RelativeLayout background = findViewById(R.id.fullscreen_background);
-//        background.setOnClickListener(v -> finish());
+        swipeCounter = findViewById(R.id.swipeCounter);
+        Intent intent = getIntent();
 
         ViewPager viewPager = findViewById(R.id.imageViewPager);
-        ImageAdapter adapter = new ImageAdapter(this, images = new AList<>(getIntent().getStringArrayListExtra(IMAGE)), ImageView.ScaleType.CENTER_INSIDE);
+        viewPager.setOnClickListener(v -> finish());
+        ImageAdapter adapter = new ImageAdapter(this, images = new AList<>(intent.getStringArrayListExtra(IMAGE)), ImageView.ScaleType.CENTER_INSIDE);
+        adapter.setOnImageClickedListener(v -> finish());
+        swipeCounter.setVisibility(images.Count() == 1 ? View.GONE : View.VISIBLE);
+        setCounter(1);
         viewPager.setAdapter(adapter); // Here we are passing and setting the adapter for the images
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                setCounter(i + 1);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+        viewPager.setCurrentItem(intent.getIntExtra(INDEX, 0));
+    }
+
+    private void setCounter(int current){
+        swipeCounter.setText(current + "/" + images.Count());
     }
 }

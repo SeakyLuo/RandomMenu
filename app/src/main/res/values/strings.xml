@@ -66,4 +66,5 @@
     <string name="dislike_food">Dislike food</string>
     <string name="history">History</string>
     <string name="no_food_image">No food image.</string>
+    <string name="clear_cache">Clear Cache</string>
 </resources>

@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ public class FoodCardFragment extends Fragment {
     public static final String TAG = "FoodCardFragment", FOOD = "Food";
     private static final int EDIT_FOOD = 0;
     private TagsFragment tagsFragment;
+    private ImageViewerFragment imageViewerFragment;
     private TextView food_name, food_note_front, food_note_back;
     private ImageView food_image, liked_image;
     private ImageButton more_button;
@@ -59,10 +61,14 @@ public class FoodCardFragment extends Fragment {
         more_button = view.findViewById(R.id.more_button);
         flip_in = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.flip_in);
         flip_out = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.flip_out);
+        FragmentManager fragmentManager = getChildFragmentManager();
         if (savedInstanceState == null)
-            getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
+            fragmentManager.beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).
+                                               add(R.id.imageviewer_frame, imageViewerFragment = new ImageViewerFragment()).
+                                               commit();
         else{
-            tagsFragment = (TagsFragment) getChildFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
+            tagsFragment = (TagsFragment) fragmentManager.getFragment(savedInstanceState, TagsFragment.TAG);
+            imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
             setFood(savedInstanceState.getParcelable(FOOD));
         }
 
@@ -80,15 +86,6 @@ public class FoodCardFragment extends Fragment {
             NavigationFragment navigationFragment = (NavigationFragment) activity.GetCurrentFragment();
             navigationFragment.SelectTag(tag);
             if (tagClickedListener != null) tagClickedListener.Click(viewHolder, tag);
-        });
-        food_image.setOnClickListener(v -> {
-            if (CurrentFood.HasImage()){
-                Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
-                intent.putExtra(FullScreenImageActivity.IMAGE, CurrentFood.Images.ToArrayList());
-                startActivity(intent);
-            }else{
-                Toast.makeText(getContext(), R.string.no_food_image, Toast.LENGTH_SHORT).show();
-            }
         });
         food_note_back.setMovementMethod(new ScrollingMovementMethod());
         more_button.setOnClickListener(v -> {
@@ -179,7 +176,8 @@ public class FoodCardFragment extends Fragment {
         food_name.setText(food.Name);
         food_note_back.setText(food.Note);
         SetFoodNote(food);
-        Helper.LoadImage(Glide.with(this), food.GetCover(), food_image);
+        food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
+        imageViewerFragment.setImages(food.Images);
         SetFoodFavorite(food.IsFavorite());
         tagsFragment.SetData(food.GetTags());
     }
