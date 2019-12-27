@@ -86,7 +86,6 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
 
         void SetHighlight(boolean isHighlight){
             if (isHighlight){
-                Log.d("fuck", data.Name);
                 background.setBackgroundColor(HighlightColor);
                 tag_name.setTextColor(Color.WHITE);
             }else{

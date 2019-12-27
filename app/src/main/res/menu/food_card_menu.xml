@@ -12,7 +12,7 @@
     <item
         android:id="@+id/share_item"
         android:icon="@drawable/ic_share"
-        android:title="@string/share" />
+        android:title="@string/share_image" />
     <item
         android:id="@+id/like_food_item"
         android:icon="@drawable/ic_like"

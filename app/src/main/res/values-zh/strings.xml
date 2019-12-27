@@ -71,4 +71,5 @@
     <string name="placeholder">占位符</string>
     <string name="clear_cache_msg">缓存已清除！</string>
     <string name="export_data_msg">数据已导出！</string>
+    <string name="share_image">分享图片</string>
 </resources>

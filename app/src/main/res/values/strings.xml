@@ -71,4 +71,5 @@
     <string name="placeholder">Placeholder</string>
     <string name="clear_cache_msg">Cache cleared!</string>
     <string name="export_data_msg">Data exported!</string>
+    <string name="share_image">Share image</string>
 </resources>

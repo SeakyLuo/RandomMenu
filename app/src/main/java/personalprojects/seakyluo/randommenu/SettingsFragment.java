@@ -60,10 +60,10 @@ public class SettingsFragment extends Fragment {
             }
             for (File file: Helper.TempFolder.listFiles())
                 file.delete();
-            Helper.Save(getContext());
             Toast.makeText(getContext(), R.string.clear_cache_msg, Toast.LENGTH_SHORT).show();
         });
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
+            Helper.Save(getContext());
 //            Helper.Clear(getContext());
 //            try {
 //                String filename = Helper.Timestamp() + ".zip";

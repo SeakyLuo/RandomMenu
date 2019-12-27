@@ -56,7 +56,7 @@ public class Helper {
         String settings = ReadJson(context, Settings.FILENAME);
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
     }
-
+    public static String GetFilename(String path) { return new File(path).getName(); }
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
     public static void LoadImage(RequestManager glide, String path, ImageView imageView){
         if (IsNullOrEmpty(path)) imageView.setImageBitmap(DefaultFoodImage);
