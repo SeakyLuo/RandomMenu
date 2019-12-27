@@ -224,7 +224,9 @@ public class FoodCardFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        getChildFragmentManager().putFragment(outState, TagsFragment.TAG, tagsFragment);
+        FragmentManager fragmentManager = getChildFragmentManager();
+        fragmentManager.putFragment(outState, TagsFragment.TAG, tagsFragment);
+        fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
         outState.putParcelable(FOOD, CurrentFood);
     }
 }
