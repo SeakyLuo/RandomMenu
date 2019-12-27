@@ -11,31 +11,15 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 
 public class TabPagerAdapter extends FragmentStatePagerAdapter {
     private final AList<Fragment> fragmentList = new AList<>();
-    private final AList<String> fragmentTitles = new AList<>();
 
     public TabPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    public void AddFragment(Fragment fragment){
-        fragmentList.Add(fragment);
-        fragmentTitles.Add(fragment.getClass().getName() + fragmentList.Count());
-    }
-
-    public void AddFragment(Fragment fragment, String title){
-        fragmentList.Add(fragment);
-        fragmentTitles.Add(title);
-    }
-
+    public void AddFragment(Fragment fragment){ fragmentList.Add(fragment); }
     public void AddFragments(AList<Fragment> fragments){
         fragments.ForEach(this::AddFragment);
     }
-
-    public void AddFragments(AList<Fragment> fragments, AList<String> titles){
-        fragmentList.AddAll(fragments);
-        fragmentTitles.AddAll(titles);
-    }
-
     public AList<Fragment> GetFragments() { return fragmentList; }
 
     @Override

@@ -2,15 +2,11 @@
 An Android app that records your cooking list.
 
 # TODO
-1. Multiple images.
+1. Card swipe control.
 
-3. Card swipe control.
-
-4. Improve card animation.
-
-5. Image zoom in/out
+2. Improve card animation.
 
 # TO FIX
-2. Better swipe tab pager.
+1. Improve image zoom in/out
 
-3. Share bug.
+2. Share bug.

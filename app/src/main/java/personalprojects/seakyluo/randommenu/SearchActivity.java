@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.jude.swipbackhelper.SwipeBackHelper;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
@@ -34,34 +38,20 @@ public class SearchActivity extends SwipeBackActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        SwipeBackHelper.getCurrentPage(this).setSwipeEdgePercent(0.2f);
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         search_bar = findViewById(R.id.search_bar);
         clear_button = findViewById(R.id.clear_button);
 
         tabLayout = findViewById(R.id.search_tabs);
-        TabViewPager viewPager = findViewById(R.id.search_viewpager);
+        ViewPager viewPager = findViewById(R.id.search_viewpager);
         FragmentManager fragmentManager = getSupportFragmentManager();
         tabPagerAdapter = new TabPagerAdapter(fragmentManager);
-        if (savedInstanceState == null){
-            historyFragment = new StringListFragment();
-            allFragment = new FoodListFragment();
-            foodFragment = new FoodListFragment();
-            tagFragment = new FoodListFragment();
-            noteFragment = new FoodListFragment();
-        }else{
-            historyFragment = (StringListFragment) fragmentManager.getFragment(savedInstanceState, HISTORY);
-            allFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, ALL);
-            foodFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, FOOD);
-            tagFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, TAG);
-            noteFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, NOTE);
-        }
+        AddFragments(fragmentManager, savedInstanceState);
         historyFragment.SetData(Settings.settings.SearchHistory);
-        tabPagerAdapter.AddFragment(historyFragment);
-        tabPagerAdapter.AddFragment(allFragment);
-        tabPagerAdapter.AddFragment(foodFragment);
-        tabPagerAdapter.AddFragment(tagFragment);
-        tabPagerAdapter.AddFragment(noteFragment);
         historyFragment.SetClickedListener((viewHolder, data) -> {
+            search_bar.setText(data);
+            search_bar.setSelection(data.length());
             Search(data);
             tabLayout.getTabAt(1).select();
         });
@@ -79,7 +69,6 @@ public class SearchActivity extends SwipeBackActivity {
             });
         });
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        viewPager.setSwipeable(false);
         viewPager.setAdapter(tabPagerAdapter);
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -129,6 +118,10 @@ public class SearchActivity extends SwipeBackActivity {
 
             }
         });
+        findViewById(R.id.search_button).setOnClickListener(v -> {
+            if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
+            historyFragment.Add(getKeyword(search_bar.getText()));
+        });
 
         clear_button.setVisibility(View.GONE);
         clear_button.setOnClickListener(v -> {
@@ -169,10 +162,35 @@ public class SearchActivity extends SwipeBackActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        try { fragmentManager.putFragment(outState, HISTORY, historyFragment); }catch (IllegalStateException | NullPointerException ignored){}
-        try { fragmentManager.putFragment(outState, ALL, allFragment); }catch (IllegalStateException | NullPointerException ignored){}
-        try { fragmentManager.putFragment(outState, FOOD, foodFragment); }catch (IllegalStateException | NullPointerException ignored){}
-        try { fragmentManager.putFragment(outState, TAG, tagFragment); }catch (IllegalStateException | NullPointerException ignored){}
-        try { fragmentManager.putFragment(outState, NOTE, noteFragment); }catch (IllegalStateException | NullPointerException ignored){}
+        try { fragmentManager.putFragment(outState, HISTORY, historyFragment); } catch (IllegalStateException | NullPointerException ignored){}
+        try { fragmentManager.putFragment(outState, ALL, allFragment); } catch (IllegalStateException | NullPointerException ignored){}
+        try { fragmentManager.putFragment(outState, FOOD, foodFragment); } catch (IllegalStateException | NullPointerException ignored){}
+        try { fragmentManager.putFragment(outState, TAG, tagFragment); } catch (IllegalStateException | NullPointerException ignored){}
+        try { fragmentManager.putFragment(outState, NOTE, noteFragment); } catch (IllegalStateException | NullPointerException ignored){}
+    }
+
+    private void AddFragments(FragmentManager fragmentManager, Bundle savedInstanceState){
+        if (savedInstanceState == null){
+            historyFragment = new StringListFragment();
+            allFragment = new FoodListFragment();
+            foodFragment = new FoodListFragment();
+            tagFragment = new FoodListFragment();
+            noteFragment = new FoodListFragment();
+        }else{
+            historyFragment = (StringListFragment) fragmentManager.getFragment(savedInstanceState, HISTORY);
+            allFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, ALL);
+            foodFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, FOOD);
+            tagFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, TAG);
+            noteFragment = (FoodListFragment) fragmentManager.getFragment(savedInstanceState, NOTE);
+            if (allFragment == null) allFragment = new FoodListFragment();
+            if (foodFragment == null) foodFragment = new FoodListFragment();
+            if (tagFragment == null) tagFragment = new FoodListFragment();
+            if (noteFragment == null) noteFragment = new FoodListFragment();
+        }
+        tabPagerAdapter.AddFragment(historyFragment);
+        tabPagerAdapter.AddFragment(allFragment);
+        tabPagerAdapter.AddFragment(foodFragment);
+        tabPagerAdapter.AddFragment(tagFragment);
+        tabPagerAdapter.AddFragment(noteFragment);
     }
 }

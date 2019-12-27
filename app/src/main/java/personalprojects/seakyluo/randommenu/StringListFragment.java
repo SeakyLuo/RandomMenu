@@ -29,5 +29,5 @@ public class StringListFragment extends Fragment {
     public void SetClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDataItemClickedListener(listener); }
     public void SetOnDeletedClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDeletedClickedListener(listener); }
     public void Remove(String item) { adapter.Remove(item); }
-    public void Add(String item) { adapter.Add(item, 0); }
+    public void Add(String item) { Remove(item); adapter.Add(item, 0); }
 }

@@ -22,7 +22,7 @@ public class AList<T> extends IList<T> {
     public AList(){}
     public AList(Collection<T> collection) { for (T element: collection) Add(element); }
     public AList(AList<T> collection) { AddAll(collection); }
-    public AList(T[] collection) { for (T element: collection) Add(element); }
+    public AList(T... collection) { for (T element: collection) Add(element); }
     public AList(T element) { Add(element); }
 
     public int Count() { return list.size(); }
