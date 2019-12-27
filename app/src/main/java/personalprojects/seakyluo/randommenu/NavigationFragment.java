@@ -47,11 +47,11 @@ public class NavigationFragment extends Fragment {
         selectTagAdapter.SetLongClickListener(((viewHolder, data) -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_tag_menu, getContext(), viewHolder.view);
             if (data.IsAllCategoriesTag()){
-                helper.removeItem(R.id.edit_tag_item);
-                helper.removeItem(R.id.delete_tag_item);
+                helper.removeItems(R.id.edit_tag_item);
+                helper.removeItems(R.id.delete_tag_item);
             }else{
-                helper.removeItem(R.id.sort_by_default);
-                helper.removeItem(R.id.sort_by_name_item);
+                helper.removeItems(R.id.sort_by_default);
+                helper.removeItems(R.id.sort_by_name_item);
             }
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
                 switch (menuItem.getItemId()){

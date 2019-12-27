@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +19,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -90,11 +87,11 @@ public class FoodCardFragment extends Fragment {
         food_note_back.setMovementMethod(new ScrollingMovementMethod());
         more_button.setOnClickListener(v -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
-            if (CurrentFood.HasImage()) helper.removeItem(R.id.save_food_item);
-            if (Helper.IsNullOrEmpty(CurrentFood.Note)) helper.removeItem(R.id.more_item);
-            if (CurrentFood.HideCount == 0) helper.removeItem(R.id.show_food_item);
-            else helper.removeItem(R.id.hide_food_item);
-            helper.removeItem(CurrentFood.IsFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
+            if (CurrentFood.HasImage()) helper.removeItems(R.id.save_food_item);
+            if (Helper.IsNullOrEmpty(CurrentFood.Note)) helper.removeItems(R.id.more_item);
+            if (CurrentFood.HideCount == 0) helper.removeItems(R.id.show_food_item);
+            else helper.removeItems(R.id.hide_food_item);
+            helper.removeItems(CurrentFood.IsFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
             helper.setOnDismissListener(() -> ObjectAnimator.ofFloat(v, "rotation", 180, 360).start());
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
                 Food before = CurrentFood.Copy();

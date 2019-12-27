@@ -39,10 +39,10 @@ public class ImageAdapter extends PagerAdapter {
         notifyDataSetChanged();
         return images;
     }
-    public boolean Remove(String image) {
-        boolean result = images.Remove(image);
+    public String Remove(int index) {
+        String image = images.Pop(index);
         notifyDataSetChanged();
-        return result;
+        return image;
     }
     public String Set(String image, int index){
         images.Set(image, index);

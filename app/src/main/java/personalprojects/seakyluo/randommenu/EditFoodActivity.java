@@ -11,12 +11,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,8 +22,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.IOException;
@@ -147,7 +143,7 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void ShowMenuFlyout(){
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
-        if (images.IsEmpty()) helper.removeItem(R.id.edit_image_item);
+        if (images.IsEmpty()) helper.removeItems(R.id.edit_image_item, R.id.remove_image_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.open_camera_item:
@@ -165,6 +161,8 @@ public class EditFoodActivity extends AppCompatActivity {
                 case R.id.edit_image_item:
                     return CropImage();
                 case R.id.remove_image_item:
+                    images.Pop(imageViewerFragment.removeCurrentImage());
+                    if (images.IsEmpty()) food_image.setVisibility(View.VISIBLE);
                     return true;
             }
             return false;
@@ -175,14 +173,8 @@ public class EditFoodActivity extends AppCompatActivity {
     private boolean CropImage(){
         try {
             Intent intent = new Intent("com.android.camera.action.CROP");
-            if (camera_image_uri == null){
-                intent.setDataAndType(Uri.parse(CurrentImage()), "image/*");
-                crop_image_uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", Helper.TempFolder));
-            }else{
-                intent.setDataAndType(camera_image_uri, "image/*");
-                crop_image_uri = camera_image_uri;
-            }
-            // indicate image type and Uri
+            intent.setDataAndType(Uri.parse(CurrentImage()), "image/*");
+            crop_image_uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", Helper.TempFolder));
             intent.putExtra(MediaStore.EXTRA_OUTPUT, crop_image_uri);
             startActivityForResult(intent, CROP_CODE);
             return true;
@@ -266,7 +258,9 @@ public class EditFoodActivity extends AppCompatActivity {
                                                        Helper.NewImageFileName(i)));
                         images.AddAll(imageViewerFragment.adapter.Add(paths), 0);
                     }else{
-                        AddImage(data.getData().getPath());
+                        AddImage(Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData()),
+                                                  Helper.ImageFolder,
+                                                  Helper.NewImageFileName()));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -275,7 +269,7 @@ public class EditFoodActivity extends AppCompatActivity {
             case CROP_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
-                    imageViewerFragment.setCurrentImage(Helper.SaveImage(image, Helper.ImageFolder, Helper.NewImageFileName()));
+                    images.Set(imageViewerFragment.setCurrentImage(Helper.SaveImage(image, Helper.ImageFolder, Helper.NewImageFileName())), imageViewerFragment.getCurrent());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -296,7 +290,6 @@ public class EditFoodActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        camera_image_uri = crop_image_uri = null;
         Helper.Save(this);
         super.finish();
     }

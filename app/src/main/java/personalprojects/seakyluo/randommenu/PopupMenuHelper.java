@@ -36,13 +36,12 @@ public class PopupMenuHelper {
         item.setIcon(drawable);
     }
 
-    public void hideItem(int itemid){
-        menuBuilder.findItem(itemid).setVisible(false);
+    public void hideItems(int... itemIds){
+        for (int itemId: itemIds)  menuBuilder.findItem(itemId).setVisible(false);
     }
 
-
-    public void removeItem(int itemid){
-        menuBuilder.removeItem(itemid);
+    public void removeItems(int... itemIds){
+        for (int itemId: itemIds) menuBuilder.removeItem(itemId);
     }
 
     public void setShowIcon(boolean showIcon) {
