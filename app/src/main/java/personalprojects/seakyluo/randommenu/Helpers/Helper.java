@@ -83,6 +83,7 @@ public class Helper {
         return image_path;
     }
     public static String NewImageFileName(){ return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg"; }
+    public static String NewImageFileName(int suffix){ return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + suffix + ".jpg"; }
     public static File TempCopy(String src, String prefix, String suffix){
         try (InputStream in = new FileInputStream(src)) {
             File file = File.createTempFile(prefix, suffix, TempFolder);

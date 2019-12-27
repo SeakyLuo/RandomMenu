@@ -1,6 +1,8 @@
 package personalprojects.seakyluo.randommenu.Models;
 
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -247,4 +249,8 @@ public class AList<T> extends IList<T> {
         Collections.shuffle(list);
         return this;
     }
+
+    @NonNull
+    @Override
+    public String toString() { return list.toString(); }
 }

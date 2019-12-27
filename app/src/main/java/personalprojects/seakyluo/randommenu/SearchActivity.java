@@ -81,9 +81,6 @@ public class SearchActivity extends SwipeBackActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         viewPager.setSwipeable(false);
         viewPager.setAdapter(tabPagerAdapter);
-        search_bar.requestFocus();
-//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

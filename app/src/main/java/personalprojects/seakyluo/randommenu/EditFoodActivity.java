@@ -2,9 +2,11 @@ package personalprojects.seakyluo.randommenu;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,7 +43,6 @@ public class EditFoodActivity extends AppCompatActivity {
     private ImageView food_image;
     private Switch like_toggle;
     private ChooseTagFragment fragment;
-    private boolean SetFoodImage = false;
     private Food currentFood;
     private Uri camera_image_uri, crop_image_uri;
     private AList<String> images = new AList<>();
@@ -69,15 +71,15 @@ public class EditFoodActivity extends AppCompatActivity {
             String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
             AList<Tag> tags = fragment.GetData();
             boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
+                    imageChanged = currentFood == null ? images.Count() > 0 : !images.SameCollection(currentFood.Images),
                     tagChanged = currentFood == null ? tags.Count() > 0 : !tags.SameCollection(currentFood.GetTags()),
                     noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note);
-            if (nameChanged || tagChanged || noteChanged){
+            if (nameChanged || imageChanged || tagChanged || noteChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 dialog.setMessage(getString(R.string.save_as_draft));
                 dialog.setOnYesListener(view -> {
-                    String image_path = SetFoodImage ? Helper.SaveImage(food_image, Helper.TempFolder, Helper.NewImageFileName()) : "";
-                    Settings.settings.FoodDraft = new Food(food_name, image_path, tags, note, like_toggle.isChecked());
+                    Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked());
                     finish();
                 });
                 dialog.setOnNoListener(view -> finish());
@@ -101,7 +103,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
             }
             String note = getNote();
-            Food food = new Food(food_name, SetFoodImage ? Helper.SaveImage(food_image, Helper.ImageFolder, Helper.NewImageFileName()) : currentFood == null ? "" : currentFood.GetCover(), tags, note, like_toggle.isChecked());
+            Food food = new Food(food_name, images, tags, note, like_toggle.isChecked());
             if (currentFood == null) Settings.settings.AddFood(food);
             else if (currentFood.equals(Settings.settings.FoodDraft)){
                 Settings.settings.AddFood(food);
@@ -124,10 +126,9 @@ public class EditFoodActivity extends AppCompatActivity {
                 ShowMenuFlyout();
         });
         food_image.setOnClickListener(v -> {
-            if (currentFood == null ? !SetFoodImage : !currentFood.HasImage()) return;
+            if (images.IsEmpty()) return;
             Intent intent = new Intent(this, FullScreenImageActivity.class);
-            if (SetFoodImage) FullScreenImageActivity.image = Helper.GetFoodBitmap(food_image);
-            else intent.putExtra(FullScreenImageActivity.IMAGE, currentFood.Images.Get(0));
+            intent.putExtra(FullScreenImageActivity.IMAGE, images.ToArrayList());
             startActivity(intent);
         });
         delete_food_button.setVisibility(getIntent().getBooleanExtra(DELETE, false) ? View.VISIBLE : View.GONE);
@@ -146,7 +147,7 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void ShowMenuFlyout(){
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
-        if (currentFood == null ? !SetFoodImage : !currentFood.HasImage()) helper.removeItem(R.id.edit_image_item);
+        if (images.IsEmpty()) helper.removeItem(R.id.edit_image_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.edit_image_item:
@@ -194,14 +195,9 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void OpenCamera(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        try {
-            camera_image_uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider",
-                                                                File.createTempFile("tempCamera", ".jpg", Helper.TempFolder));
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, camera_image_uri);
-            startActivityForResult(intent, CAMERA_CODE);
-        } catch (IOException e) {
-            camera_image_uri = null;
-        }
+        camera_image_uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", new File(Helper.NewImageFileName()));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, camera_image_uri);
+        startActivityForResult(intent, CAMERA_CODE);
     }
 
     private void OpenGallery(){
@@ -245,26 +241,32 @@ public class EditFoodActivity extends AppCompatActivity {
         switch (requestCode){
             case CAMERA_CODE:
                 try {
-                    images.Add(camera_image_uri.getPath());
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
+                    images.Add(Helper.SaveImage(image, Helper.ImageFolder, camera_image_uri.getPath()), 0);
                     food_image.setImageBitmap(image);
-                    SetFoodImage = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             case GALLERY_CODE:
                 try {
+                    Uri uri;
                     if (data.getClipData() != null) {
-                        int count = data.getClipData().getItemCount();
-                        for(int i = 0; i < count; i++) images.Add(data.getClipData().getItemAt(i).getUri().getPath());
-                        camera_image_uri = data.getClipData().getItemAt(0).getUri();
-                    }else if(data.getData() != null) {
-                        camera_image_uri = data.getData();
+                        ClipData clipData = data.getClipData();
+                        int count = clipData.getItemCount();
+                        AList<String> paths = new AList<>();
+                        for (int i = 0; i < count; i++)
+                            paths.Add(Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), clipData.getItemAt(i).getUri()),
+                                                       Helper.ImageFolder,
+                                                       Helper.NewImageFileName(i)));
+                        images.AddAll(paths, 0);
+                        uri = clipData.getItemAt(0).getUri();
+                    }else{
+                        uri = data.getData();
+                        images.Add(data.getData().getPath(), 0);
                     }
-                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                     food_image.setImageBitmap(image);
-                    SetFoodImage = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -272,8 +274,8 @@ public class EditFoodActivity extends AppCompatActivity {
             case CROP_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
+                    Helper.SaveImage(image, Helper.ImageFolder, Helper.NewImageFileName());
                     food_image.setImageBitmap(image);
-                    SetFoodImage = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -292,7 +294,6 @@ public class EditFoodActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        SetFoodImage = false;
         camera_image_uri = crop_image_uri = null;
         Helper.Save(this);
         super.finish();

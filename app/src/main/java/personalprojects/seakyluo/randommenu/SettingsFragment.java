@@ -18,6 +18,7 @@ import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
@@ -70,7 +71,6 @@ public class SettingsFragment extends Fragment {
 //            }
 //            for (File file: Helper.TempFolder.listFiles())
 //                file.delete();
-            Toast.makeText(getContext(), "Data Cleared!", Toast.LENGTH_SHORT).show();
         });
         return view;
     }

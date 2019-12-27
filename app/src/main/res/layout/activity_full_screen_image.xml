@@ -7,16 +7,8 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-<!--    <android.support.v4.view.ViewPager-->
-<!--        android:id="@+id/imageViewPager"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent" />-->
-
-    <ImageView
-        android:id="@+id/fullscreen_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:scaleType="centerInside"
-        app:srcCompat="@drawable/food_image_place_holder" />
+    <android.support.v4.view.ViewPager
+        android:id="@+id/imageViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout >

@@ -18,9 +18,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 
 public class FullScreenImageActivity extends AppCompatActivity {
     public static final String IMAGE = "IMAGE";
-    public static Bitmap image;
-    private float mScaleFactor = 1.0f;
-    private ScaleGestureDetector mScaleGestureDetector;
+    private AList<String> images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,42 +27,9 @@ public class FullScreenImageActivity extends AppCompatActivity {
 
 //        RelativeLayout background = findViewById(R.id.fullscreen_background);
 //        background.setOnClickListener(v -> finish());
-        ImageView fullscreen_image = findViewById(R.id.fullscreen_image);
 
-        mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {
-            @Override
-            public void onScaleEnd(ScaleGestureDetector detector) {
-
-            }
-            @Override
-            public boolean onScaleBegin(ScaleGestureDetector detector) {
-                return true;
-            }
-            @Override
-            public boolean onScale(ScaleGestureDetector detector) {
-                mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor * detector.getScaleFactor(), 10.0f));
-                fullscreen_image.setScaleX(mScaleFactor);
-                fullscreen_image.setScaleY(mScaleFactor);
-                return true;
-            }
-        });
-
-//        ViewPager viewPager = findViewById(R.id.imageViewPager);
-//        ImageAdapter adapter = new ImageAdapter(this, new AList<>(getIntent().getStringExtra(IMAGE)));
-//        viewPager.setAdapter(adapter); // Here we are passing and setting the adapter for the images
-
-        if (image == null) Helper.LoadImage(Glide.with(this), getIntent().getStringArrayListExtra(IMAGE).get(0), fullscreen_image);
-        else fullscreen_image.setImageBitmap(image);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent motionEvent) {
-        return mScaleGestureDetector.onTouchEvent(motionEvent);
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        image = null;
+        ViewPager viewPager = findViewById(R.id.imageViewPager);
+        ImageAdapter adapter = new ImageAdapter(this, images = new AList<>(getIntent().getStringArrayListExtra(IMAGE)), ImageView.ScaleType.CENTER_INSIDE);
+        viewPager.setAdapter(adapter); // Here we are passing and setting the adapter for the images
     }
 }
