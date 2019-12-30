@@ -7,6 +7,6 @@ An Android app that records your cooking list.
 2. Improve card animation.
 
 # TO FIX
-1. Improve image zoom in/out
+1. Improve image zoom in/out.
 
-2. Share bug.
+2. Share should not save image.

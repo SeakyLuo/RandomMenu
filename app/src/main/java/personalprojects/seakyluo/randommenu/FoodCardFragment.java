@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.FileProvider;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -111,14 +114,7 @@ public class FoodCardFragment extends Fragment {
                     case R.id.share_item:
                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                         shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        try {
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(MediaStore.Images.Media.insertImage(getContext().getContentResolver(),
-                                                                                                                    imageViewerFragment.getCurrentImage(),
-                                                                                                                    Helper.GetFilename(imageViewerFragment.getCurrentImage()),
-                                                                                                                    getString(R.string.share_image))));
-                        } catch (FileNotFoundException e) {
-                            return false;
-                        }
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.GetFileUri(getContext(), imageViewerFragment.getCurrentImage()));
                         shareIntent.setType("image/*");
                         startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;

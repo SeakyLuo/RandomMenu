@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -157,6 +159,10 @@ public class Helper {
             // Do something else on failure
         }
         return folder;
+    }
+
+    public static Uri GetFileUri(Context context, String path){
+        return FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(path));
     }
 
     public static void Clear(Context context){

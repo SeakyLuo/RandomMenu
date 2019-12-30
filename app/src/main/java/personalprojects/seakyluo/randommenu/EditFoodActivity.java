@@ -189,7 +189,7 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void OpenCamera(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camera_image_uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", new File(Helper.NewImageFileName()));
+        camera_image_uri = Helper.GetFileUri(this, Helper.NewImageFileName());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, camera_image_uri);
         startActivityForResult(intent, CAMERA_CODE);
     }
