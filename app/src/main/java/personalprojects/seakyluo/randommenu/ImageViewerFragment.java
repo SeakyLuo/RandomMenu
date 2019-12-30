@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,13 +31,10 @@ public class ImageViewerFragment extends Fragment {
         next_image_button = view.findViewById(R.id.next_image_button);
         viewPager = view.findViewById(R.id.imageViewPager);
 
-        prev_image_button.setOnClickListener(v -> {
-            viewPager.setCurrentItem(current - 1, true);
-        });
-        next_image_button.setOnClickListener(v -> {
-            viewPager.setCurrentItem(current + 1, true);
-        });
-        next_image_button.setVisibility(adapter.getCount() == 1 ? View.INVISIBLE : View.VISIBLE);
+        prev_image_button.setOnClickListener(v -> viewPager.setCurrentItem(current - 1, true));
+        next_image_button.setOnClickListener(v -> viewPager.setCurrentItem(current + 1, true));
+        setButtonVisibility(current);
+        adapter.setOnDataChangedListener(images -> setButtonVisibility(current));
         adapter.setContext(getContext());
         adapter.setOnImageClickedListener(v -> {
             Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
@@ -53,9 +51,7 @@ public class ImageViewerFragment extends Fragment {
 
             @Override
             public void onPageSelected(int i) {
-                current = i;
-                prev_image_button.setVisibility(i == 0 ? View.INVISIBLE : View.VISIBLE);
-                next_image_button.setVisibility(i == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
+                setButtonVisibility(current = i);
             }
 
             @Override
@@ -66,12 +62,18 @@ public class ImageViewerFragment extends Fragment {
         return view;
     }
 
-    public void setImages(AList<String> images) { adapter.SetData(images); }
+    public void setButtonVisibility(int current){
+        prev_image_button.setVisibility(current == 0 ? View.INVISIBLE : View.VISIBLE);
+        next_image_button.setVisibility(current == images.Count() - 1 ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    public void setImages(AList<String> images) { images.CopyFrom(adapter.SetData(images)); }
     public int getCurrent() { return current; }
     public String getCurrentImage() { return images.Get(current); }
-    public String setCurrentImage(String image) { return adapter.Set(image, current); }
+    public String setCurrentImage(String image) { return images.Set(adapter.Set(image, current), current); }
     public int removeCurrentImage() {
         int index = current;
+        images.Pop(current);
         adapter.Remove(current--);
         return index;
     }

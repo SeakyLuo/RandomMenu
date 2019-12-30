@@ -18,6 +18,7 @@ public class ImageAdapter extends PagerAdapter {
     private AList<String> images;
     private ImageView.ScaleType scaleType;
     private View.OnClickListener clickListener;
+    private OnDataChangedListener<AList<String>> dataChangedListener;
 //    private ViewGroup container;
 
     public ImageAdapter(Context context, AList<String> images, ImageView.ScaleType scaleType) {
@@ -29,6 +30,7 @@ public class ImageAdapter extends PagerAdapter {
         this.scaleType = scaleType;
     }
     public void setContext(Context context) { this.context = context; }
+    public void setOnDataChangedListener(OnDataChangedListener<AList<String>> listener) { dataChangedListener = listener; }
     public String Add(String image) {
         images.Add(image, 0);
         notifyDataSetChanged();
@@ -49,7 +51,7 @@ public class ImageAdapter extends PagerAdapter {
         notifyDataSetChanged();
         return image;
     }
-    public void SetData(AList<String> images){
+    public AList<String> SetData(AList<String> images){
         this.images.CopyFrom(images);
 //        if (container != null){
 //            int count = container.getChildCount();
@@ -57,8 +59,16 @@ public class ImageAdapter extends PagerAdapter {
 //                Helper.LoadImage(Glide.with(context), images.Get(i), (ImageView) container.getChildAt(i));
 //        }
         notifyDataSetChanged();
+        return this.images;
     }
     public void setOnImageClickedListener(View.OnClickListener listener) { clickListener = listener; }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        if (dataChangedListener != null)
+            dataChangedListener.OnChange(images);
+    }
 
     @Override
     public int getItemPosition(Object object) { return POSITION_NONE; }
@@ -88,4 +98,8 @@ public class ImageAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((ImageView) object);
     }
+}
+
+interface OnDataChangedListener<T>{
+    void OnChange(T newData);
 }
