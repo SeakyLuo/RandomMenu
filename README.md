@@ -8,5 +8,3 @@ An Android app that records your cooking list.
 
 # TO FIX
 1. Improve image zoom in/out.
-
-2. Share should not save image.

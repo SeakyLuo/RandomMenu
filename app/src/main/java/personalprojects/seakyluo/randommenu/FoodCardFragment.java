@@ -71,7 +71,7 @@ public class FoodCardFragment extends Fragment {
         else{
             tagsFragment = (TagsFragment) fragmentManager.getFragment(savedInstanceState, TagsFragment.TAG);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
-            setFood(savedInstanceState.getParcelable(FOOD));
+            CurrentFood = savedInstanceState.getParcelable(FOOD);
         }
 
         int distance = 8000;
