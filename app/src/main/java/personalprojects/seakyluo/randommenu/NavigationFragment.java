@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
@@ -73,6 +74,7 @@ public class NavigationFragment extends Fragment {
                                 tag.Name = text;
                                 Settings.settings.Foods.ForEach(f -> f.RenameTag(data.Name, text));
                                 selectTagAdapter.Set(tag, selectTagAdapter.IndexOf(t -> t.Name.equals(data.Name)));
+                                Helper.Save(getContext());
                             }
                         });
                         inputDialog.showNow(getChildFragmentManager(), InputDialog.TAG);
@@ -85,6 +87,7 @@ public class NavigationFragment extends Fragment {
                             selectTagAdapter.Remove(data);
                             Settings.settings.Tags.Remove(data);
                             Settings.settings.Foods.ForEach(food -> food.RemoveTag(data));
+                            Helper.Save(getContext());
                         });
                         askDialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
                         return true;

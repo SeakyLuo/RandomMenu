@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -170,5 +173,41 @@ public class Helper {
         Save(context);
         for (File file: ImageFolder.listFiles())
             file.delete();
+    }
+    public static ZipOutputStream CreateZipOutputStream(String filename){
+        FileOutputStream dest = null;
+        try {
+            dest = new FileOutputStream(filename);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new ZipOutputStream(new BufferedOutputStream(dest));
+    }
+    public static void AddZipFolder(ZipOutputStream out, File folder){
+        for (File file: folder.listFiles()){
+            Helper.AddZipFile(out, file, folder.getName() + File.separator + file.getName());
+        }
+    }
+    public static void AddZipFile(ZipOutputStream out, File file){
+        AddZipFile(out, file, file.getName());
+    }
+    public static void AddZipFile(ZipOutputStream out, File file, String path){
+        byte[] data = new byte[1024];
+        FileInputStream in;
+        try {
+            in = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            return;
+        }
+        try {
+            out.putNextEntry(new ZipEntry(path));
+            int len;
+            while ((len = in.read(data)) > 0)
+                out.write(data, 0, len);
+            out.closeEntry();
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -235,7 +235,6 @@ public class EditFoodActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        food_image.setVisibility(View.GONE);
         Bitmap image;
         switch (requestCode){
             case CAMERA_CODE:
@@ -274,7 +273,10 @@ public class EditFoodActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 break;
+            default:
+                return;
         }
+        food_image.setVisibility(View.GONE);
     }
 
     @Override
