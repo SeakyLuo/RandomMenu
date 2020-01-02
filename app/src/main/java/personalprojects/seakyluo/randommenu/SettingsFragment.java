@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -58,20 +59,20 @@ public class SettingsFragment extends Fragment {
             LoadingDialog dialog = new LoadingDialog();
             dialog.setOnViewCreatedListener(d -> {
                 dialog.setMessage(R.string.clearing_cache);
-//                HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
-//                for (File file: Helper.ImageFolder.listFiles()){
-//                    if (!paths.contains(file.getPath()))
-//                        file.delete();
-//                }
-//                for (File file: Helper.TempFolder.listFiles())
-//                    file.delete();
-//                dialog.dismiss();
+                HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
+                for (File file: Helper.ImageFolder.listFiles()){
+                    if (!paths.contains(file.getPath()))
+                        file.delete();
+                }
+                for (File file: Helper.TempFolder.listFiles())
+                    file.delete();
+                dialog.dismiss();
                 Toast.makeText(getContext(), R.string.clear_cache_msg, Toast.LENGTH_SHORT).show();
             });
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
-            String filename = Helper.Timestamp() + ".zip";
+            String filename = Environment.getExternalStorageDirectory().getPath() + File.separator +  Helper.Timestamp() + ".zip";
             ZipOutputStream out = Helper.CreateZipOutputStream(filename);
             Helper.AddZipFolder(out, Helper.ImageFolder);
             Helper.AddZipFile(out, new File(Settings.FILENAME));

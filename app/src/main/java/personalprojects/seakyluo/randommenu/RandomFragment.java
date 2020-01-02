@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -37,17 +40,18 @@ public class RandomFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_random, container, false);
         food_card = view.findViewById(R.id.food_card_view);
+        if (savedInstanceState == null)
+            getChildFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
+        else{
+            foodCardFragment = (FoodCardFragment) getChildFragmentManager().getFragment(savedInstanceState, FoodCardFragment.TAG);
+            menu.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_MENU));
+            preferred_tags.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_PREFERRED_TAGS));
+            excluded_tags.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_EXCLUDED_TAGS));
+        }
         SetAnimations();
-        view.findViewById(R.id.check_button).setOnClickListener(v -> {
-            food_card.startAnimation(good_food);
-        });
-        view.findViewById(R.id.cross_button).setOnClickListener(v -> {
-            food_card.startAnimation(bad_food);
-        });
-        view.findViewById(R.id.refresh_button).setOnClickListener(v -> {
-            flip_in.setTarget(food_card);
-            flip_in.start();
-        });
+        view.findViewById(R.id.check_button).setOnClickListener(v -> GoodFood());
+        view.findViewById(R.id.cross_button).setOnClickListener(v -> BadFood());
+        view.findViewById(R.id.refresh_button).setOnClickListener(v -> ResetFood());
         filterDialog.SetTagFilterListener((preferred, excluded) -> {
             preferred_tags.CopyFrom(preferred);
             excluded_tags.CopyFrom(excluded);
@@ -82,18 +86,14 @@ public class RandomFragment extends Fragment {
             menuDialog.SetData(menu);
             menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });
-        if (savedInstanceState == null)
-            getChildFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
-        else{
-            foodCardFragment = (FoodCardFragment) getChildFragmentManager().getFragment(savedInstanceState, FoodCardFragment.TAG);
-            menu.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_MENU));
-            preferred_tags.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_PREFERRED_TAGS));
-            excluded_tags.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_EXCLUDED_TAGS));
-        }
         Reset();
         if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(food_pool.Pop(0));
         return view;
     }
+
+    private void GoodFood() { food_card.startAnimation(good_food); }
+    private void BadFood() { food_card.startAnimation(bad_food); }
+    private void ResetFood() { flip_in.setTarget(food_card); flip_in.start(); }
 
     private Food NextFood(){
         if (food_pool.IsEmpty()){
@@ -207,5 +207,37 @@ public class RandomFragment extends Fragment {
 
             }
         });
+        GestureDetector detector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener(){
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                int x_threshold = 100, y_threshold = 100;
+                float diffX = e1.getX() - e2.getX(), diffY = e1.getY() - e2.getY(), distX = Math.abs(diffX), distY = Math.abs(diffY);
+                if (distX > distY && distX > x_threshold){
+                    if (diffX > 0) {
+                        // Left swipe
+                    }else{
+                        // Right swipe
+                        ResetFood();
+                    }
+                }else if (distY > distX && distY > y_threshold){
+                    if (diffY > 0) {
+                        // up swipe
+                        GoodFood();
+                    }else{
+                        // down swipe
+                        BadFood();
+                    }
+                }else{
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+        });
+        food_card.setOnTouchListener((v, event) -> detector.onTouchEvent(event));
     }
 }

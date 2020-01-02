@@ -91,23 +91,6 @@ public class Helper {
     public static String Timestamp() { return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); }
     public static String NewImageFileName(){ return Timestamp() + ".jpg"; }
     public static String NewImageFileName(int suffix){ return Timestamp() + "_" + suffix + ".jpg"; }
-    public static File TempCopy(String src, String prefix, String suffix){
-        try (InputStream in = new FileInputStream(src)) {
-            File file = File.createTempFile(prefix, suffix, TempFolder);
-            try (OutputStream out = new FileOutputStream(file)) {
-                // Transfer bytes from in to out
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            }
-            return file;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
     public static String GetImagePath(File folder, String image){
         return new File(folder, image).getPath();
     }

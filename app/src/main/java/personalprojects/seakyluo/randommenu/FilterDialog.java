@@ -16,7 +16,6 @@ import personalprojects.seakyluo.randommenu.Interfaces.TagFilterListener;
 
 public class FilterDialog extends DialogFragment {
     public static final String TAG = "FilterDialog";
-    private Button confirm_button, reset_button;
     private ChooseTagFragment prefer = new ChooseTagFragment(), exclude = new ChooseTagFragment();
     private View.OnClickListener resetListener;
     private TagFilterListener tagFilterListener;
@@ -25,8 +24,8 @@ public class FilterDialog extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_filter, container, false);
-        confirm_button = view.findViewById(R.id.confirm_button);
-        reset_button = view.findViewById(R.id.reset_button);
+        Button confirm_button = view.findViewById(R.id.confirm_button);
+        Button reset_button = view.findViewById(R.id.reset_button);
 
         getChildFragmentManager().beginTransaction().add(R.id.prefer_tags, prefer).add(R.id.exclude_tags, exclude).commit();
         prefer.SetHeader(getString(R.string.prefer_tags));
