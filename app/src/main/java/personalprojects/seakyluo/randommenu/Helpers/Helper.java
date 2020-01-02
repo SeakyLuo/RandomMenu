@@ -39,7 +39,8 @@ import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.R;
 
 public class Helper {
-    public static File SaveImageFolder, ImageFolder, TempFolder;
+    public static final String ROOT_FOLDER = "RandomMenu";
+    public static File Root, SaveImageFolder, ImageFolder, TempFolder, ExportedDataFolder;
     public static Context context;
     public static Bitmap DefaultFoodImage;
 //    private static HashMap<String, Bitmap> foodImageCache = new HashMap<>();
@@ -55,9 +56,11 @@ public class Helper {
     public static void Init(Context context){
         Helper.context = context;
         DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
+        Root = CreateOrOpenFolder(ROOT_FOLDER);
         SaveImageFolder = CreateOrOpenFolder("RandomMenuSavedImages");
         ImageFolder = CreateOrOpenFolder("RandomMenuFood");
         TempFolder = CreateOrOpenFolder("RandomMenuTemp");
+        ExportedDataFolder = CreateOrOpenFolder("RandomMenuExportedData");
         String settings = ReadJson(context, Settings.FILENAME);
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
     }
@@ -137,16 +140,28 @@ public class Helper {
         }
     }
     public static File CreateOrOpenFolder(String folderName){
-        File folder = new File(Environment.getExternalStorageDirectory() + File.separator + folderName);
-        boolean success = folder.exists() || folder.mkdirs();
-        if (success) {
-            // Do something on success
-        } else {
-            // Do something else on failure
-        }
-        return folder;
+        File folder = new File(Environment.getExternalStorageDirectory() + File.separator +
+                                (folderName.equals(ROOT_FOLDER) ? ROOT_FOLDER + File.separator : "") + folderName);
+        return folder.exists() || folder.mkdir() ? folder : null;
     }
-
+    public static void Copy(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        try {
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
     public static Uri GetFileUri(Context context, String path){
         return FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(path));
     }
@@ -154,8 +169,6 @@ public class Helper {
     public static void Clear(Context context){
         Settings.settings = new Settings();
         Save(context);
-        for (File file: ImageFolder.listFiles())
-            file.delete();
     }
     public static ZipOutputStream CreateZipOutputStream(String filename){
         FileOutputStream dest = null;

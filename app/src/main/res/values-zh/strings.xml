@@ -73,4 +73,5 @@
     <string name="export_data_msg">数据已导出！</string>
     <string name="share_image">分享图片</string>
     <string name="clearing_cache">正在清除缓存……</string>
+    <string name="exporting_data">正在导出数据……</string>
 </resources>

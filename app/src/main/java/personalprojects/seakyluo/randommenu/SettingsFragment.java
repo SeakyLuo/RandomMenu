@@ -59,34 +59,50 @@ public class SettingsFragment extends Fragment {
             LoadingDialog dialog = new LoadingDialog();
             dialog.setOnViewCreatedListener(d -> {
                 dialog.setMessage(R.string.clearing_cache);
-                HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
-                for (File file: Helper.ImageFolder.listFiles()){
-                    if (!paths.contains(file.getPath()))
+                new Thread(() -> {
+                    HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
+                    for (File file: Helper.ImageFolder.listFiles()){
+                        if (!paths.contains(file.getPath()))
+                            file.delete();
+                    }
+                    for (File file: Helper.TempFolder.listFiles())
                         file.delete();
-                }
-                for (File file: Helper.TempFolder.listFiles())
-                    file.delete();
-                dialog.dismiss();
-                Toast.makeText(getContext(), R.string.clear_cache_msg, Toast.LENGTH_SHORT).show();
+                    for (File file: Helper.ExportedDataFolder.listFiles())
+                        file.delete();
+                    dialog.dismiss();
+                    getActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), R.string.clear_cache_msg, Toast.LENGTH_SHORT).show();
+                    });
+                }).start();
             });
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
-            String filename = Environment.getExternalStorageDirectory().getPath() + File.separator +  Helper.Timestamp() + ".zip";
-            ZipOutputStream out = Helper.CreateZipOutputStream(filename);
-            Helper.AddZipFolder(out, Helper.ImageFolder);
-            Helper.AddZipFile(out, new File(Settings.FILENAME));
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String filename = Helper.ExportedDataFolder.getPath() + File.separator + Helper.Timestamp() + ".zip";
+            LoadingDialog dialog = new LoadingDialog();
+            dialog.setOnViewCreatedListener(d -> {
+                dialog.setMessage(getString(R.string.exporting_data));
+                new Thread(() -> {
+                    ZipOutputStream out = Helper.CreateZipOutputStream(filename);
+                    Helper.AddZipFolder(out, Helper.ImageFolder);
+                    Helper.AddZipFile(out, new File(Settings.FILENAME));
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    getActivity().runOnUiThread(() -> {
+                        dialog.dismiss();
+                        Toast.makeText(getContext(), R.string.export_data_msg, Toast.LENGTH_SHORT).show();
 
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(filename));
-            startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
-            Toast.makeText(getContext(), R.string.export_data_msg, Toast.LENGTH_SHORT).show();
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(filename));
+                        startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
+                    });
+                }).start();
+            });
+            dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
         return view;
     }
