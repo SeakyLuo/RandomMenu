@@ -45,6 +45,7 @@ public class Helper {
     public static Context context;
     public static Bitmap DefaultFoodImage;
 //    private static HashMap<String, Bitmap> foodImageCache = new HashMap<>();
+    private static String imageFolderPath;
     private static Random random = new Random();
 
     public static Bitmap Screenshot(View view) {
@@ -59,6 +60,7 @@ public class Helper {
         DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
         Root = CreateOrOpenFolder(ROOT_FOLDER);
         ImageFolder = CreateOrOpenFolder("RandomMenuFood");
+        imageFolderPath = ImageFolder.getPath();
         SaveImageFolder = CreateOrOpenFolder("RandomMenuSavedImages");
         TempFolder = CreateOrOpenFolder("RandomMenuTemp");
         ExportedDataFolder = CreateOrOpenFolder("RandomMenuExportedData");
@@ -69,7 +71,7 @@ public class Helper {
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
     public static void LoadImage(RequestManager glide, String path, ImageView imageView){
         if (IsNullOrEmpty(path)) imageView.setImageBitmap(DefaultFoodImage);
-        else glide.load(path).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+        else glide.load(getPath("RandomMenu/RandomMenuFood/", path)).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
 //        Bitmap image = foodImageCache.getOrDefault(path, null);
 //        if (image == null) {
 //            glide.load(path).into(imageView);
