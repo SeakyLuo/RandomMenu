@@ -57,8 +57,8 @@ public class Helper {
         Helper.context = context;
         DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
         Root = CreateOrOpenFolder(ROOT_FOLDER);
-        SaveImageFolder = CreateOrOpenFolder("RandomMenuSavedImages");
         ImageFolder = CreateOrOpenFolder("RandomMenuFood");
+        SaveImageFolder = CreateOrOpenFolder("RandomMenuSavedImages");
         TempFolder = CreateOrOpenFolder("RandomMenuTemp");
         ExportedDataFolder = CreateOrOpenFolder("RandomMenuExportedData");
         String settings = ReadJson(context, Settings.FILENAME);
@@ -101,6 +101,11 @@ public class Helper {
     public static void Save(Context context){
         SaveJson(context, Settings.FILENAME, Settings.settings.ToJson());
     }
+    public static String getPath(String... paths) {
+        StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory().getPath());
+        for (String path: paths) sb.append(File.separator).append(path);
+        return sb.toString();
+    }
 
     public static String ReadJson(Context context, String filename) {
         String string = "";
@@ -122,10 +127,10 @@ public class Helper {
             }
         }
         catch (FileNotFoundException e) {
-            Log.e("Helper", "File not found: " + e.toString());
+            Log.e("fuck", "File not found: " + e.toString());
         }
         catch (IOException e) {
-            Log.e("Helper", "Can not read file: " + e.toString());
+            Log.e("fuck", "Can not read file: " + e.toString());
         }
         return string;
     }
@@ -136,12 +141,11 @@ public class Helper {
             outputStreamWriter.close();
         }
         catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+            Log.e("fuck", "File write failed: " + e.toString());
         }
     }
     public static File CreateOrOpenFolder(String folderName){
-        File folder = new File(Environment.getExternalStorageDirectory() + File.separator +
-                                (folderName.equals(ROOT_FOLDER) ? ROOT_FOLDER + File.separator : "") + folderName);
+        File folder = folderName.equals(ROOT_FOLDER) ? new File(getPath(ROOT_FOLDER)) : new File(getPath(ROOT_FOLDER, folderName));
         return folder.exists() || folder.mkdir() ? folder : null;
     }
     public static void Copy(File src, File dst) throws IOException {
@@ -170,24 +174,29 @@ public class Helper {
         Settings.settings = new Settings();
         Save(context);
     }
-    public static ZipOutputStream CreateZipOutputStream(String filename){
+    public static boolean Zip(String filename, File... files){
         FileOutputStream dest = null;
         try {
             dest = new FileOutputStream(filename);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            return false;
         }
-        return new ZipOutputStream(new BufferedOutputStream(dest));
-    }
-    public static void AddZipFolder(ZipOutputStream out, File folder){
-        for (File file: folder.listFiles()){
-            Helper.AddZipFile(out, file, folder.getName() + File.separator + file.getName());
+        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
+        for (File item: files){
+            if (item.isDirectory())
+                for (File file: item.listFiles())
+                    AddZipFile(out, file, item.getName() + File.separator + file.getName());
+            else
+                AddZipFile(out, item, item.getName());
         }
+        try {
+            out.close();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
-    public static void AddZipFile(ZipOutputStream out, File file){
-        AddZipFile(out, file, file.getName());
-    }
-    public static void AddZipFile(ZipOutputStream out, File file, String path){
+    private static void AddZipFile(ZipOutputStream out, File file, String path){
         byte[] data = new byte[1024];
         FileInputStream in;
         try {

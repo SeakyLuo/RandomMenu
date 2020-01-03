@@ -78,31 +78,29 @@ public class SettingsFragment extends Fragment {
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
-            String filename = Helper.ExportedDataFolder.getPath() + File.separator + Helper.Timestamp() + ".zip";
+            String filename = Helper.Timestamp() + ".zip", path = Helper.ExportedDataFolder.getPath() + File.separator + filename;
             LoadingDialog dialog = new LoadingDialog();
             dialog.setOnViewCreatedListener(d -> {
                 dialog.setMessage(getString(R.string.exporting_data));
                 new Thread(() -> {
-                    ZipOutputStream out = Helper.CreateZipOutputStream(filename);
-                    Helper.AddZipFolder(out, Helper.ImageFolder);
-                    Helper.AddZipFile(out, new File(Settings.FILENAME));
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    getActivity().runOnUiThread(() -> {
-                        dialog.dismiss();
-                        Toast.makeText(getContext(), R.string.export_data_msg, Toast.LENGTH_SHORT).show();
+                    if (Helper.Zip(path, Helper.ImageFolder, new File(Settings.FILENAME))){
+                        getActivity().runOnUiThread(() -> {
+                            dialog.dismiss();
+                            Toast.makeText(getContext(), R.string.export_data_msg, Toast.LENGTH_SHORT).show();
 
-                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(filename));
-                        startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
-                    });
+                            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
+                            startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
+                        });
+                    }
                 }).start();
             });
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
+        });
+        view.findViewById(R.id.save_data_button).setOnClickListener(v -> {
+            Helper.Save(getContext());
+            Toast.makeText(getContext(), R.string.data_saved, Toast.LENGTH_SHORT).show();
         });
         return view;
     }

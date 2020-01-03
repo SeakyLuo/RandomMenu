@@ -74,4 +74,6 @@
     <string name="share_image">分享图片</string>
     <string name="clearing_cache">正在清除缓存……</string>
     <string name="exporting_data">正在导出数据……</string>
+    <string name="save_data">保存数据</string>
+    <string name="data_saved">数据已保存！</string>
 </resources>

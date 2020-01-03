@@ -74,4 +74,6 @@
     <string name="share_image">Share image</string>
     <string name="clearing_cache">Clearing cache...</string>
     <string name="exporting_data">Exporting data...</string>
+    <string name="save_data">Save data</string>
+    <string name="data_saved">Data saved!</string>
 </resources>

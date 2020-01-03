@@ -178,6 +178,13 @@
                         android:background="@android:color/transparent"
                         android:text="@string/export_data"
                         android:textAllCaps="false" />
+                    <Button
+                        android:id="@+id/save_data_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:text="@string/save_data"
+                        android:textAllCaps="false" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

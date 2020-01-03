@@ -243,6 +243,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     AddImage(Helper.SaveImage(image, Helper.ImageFolder, camera_image_uri.getPath()));
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return;
                 }
                 break;
             case GALLERY_CODE:
@@ -263,6 +264,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return;
                 }
                 break;
             case CROP_CODE:
@@ -271,6 +273,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     images.Set(imageViewerFragment.setCurrentImage(Helper.SaveImage(image, Helper.ImageFolder, Helper.NewImageFileName())), imageViewerFragment.getCurrent());
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return;
                 }
                 break;
             default:
