@@ -18,8 +18,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 public class ImageViewerFragment extends Fragment {
     public static final String TAG = "ImageViewerFragment";
     private int current = 0;
-    private AList<String> images = new AList<>();
-    public ImageAdapter adapter = new ImageAdapter(images, ImageView.ScaleType.CENTER_CROP);
+    public ImageAdapter adapter = new ImageAdapter(ImageView.ScaleType.CENTER_CROP);
     private ViewPager viewPager;
     private ImageButton prev_image_button, next_image_button;
 
@@ -38,7 +37,7 @@ public class ImageViewerFragment extends Fragment {
         adapter.setContext(getContext());
         adapter.setOnImageClickedListener(v -> {
             Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
-            intent.putExtra(FullScreenImageActivity.IMAGE, images.ToArrayList());
+            intent.putExtra(FullScreenImageActivity.IMAGE, adapter.GetData().ToArrayList());
             intent.putExtra(FullScreenImageActivity.INDEX, current);
             startActivity(intent);
         });
@@ -64,17 +63,12 @@ public class ImageViewerFragment extends Fragment {
 
     public void setButtonVisibility(int current){
         prev_image_button.setVisibility(current == 0 ? View.INVISIBLE : View.VISIBLE);
-        next_image_button.setVisibility(current == images.Count() - 1 ? View.INVISIBLE : View.VISIBLE);
+        next_image_button.setVisibility(current == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
     }
 
     public void setImages(AList<String> images) { images.CopyFrom(adapter.SetData(images)); }
     public int getCurrent() { return current; }
-    public String getCurrentImage() { return images.Get(current); }
-    public String setCurrentImage(String image) { return images.Set(adapter.Set(image, current), current); }
-    public int removeCurrentImage() {
-        int index = current;
-        images.Pop(current);
-        adapter.Remove(current--);
-        return index;
-    }
+    public String getCurrentImage() { return adapter.Get(current); }
+    public String setCurrentImage(String image) { return adapter.Set(image, current); }
+    public int removeCurrentImage() { return adapter.Remove(current--); }
 }

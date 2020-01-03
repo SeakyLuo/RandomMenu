@@ -6,5 +6,9 @@ An Android app that records your cooking list.
 
 2. Update food as well as search?
 
+3. Share image to this app.
+
 # TO FIX
 1. Improve image zoom in/out.
+
+2. ImageViewer deletion.

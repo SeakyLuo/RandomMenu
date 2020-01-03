@@ -22,11 +22,12 @@ public class ImageAdapter extends PagerAdapter {
 //    private ViewGroup container;
 
     public ImageAdapter(Context context, AList<String> images, ImageView.ScaleType scaleType) {
-        this(images, scaleType);
         this.context = context;
-    }
-    public ImageAdapter(AList<String> images, ImageView.ScaleType scaleType){
         this.images = images;
+        this.scaleType = scaleType;
+    }
+    public ImageAdapter(ImageView.ScaleType scaleType){
+        this.images = new AList<>();
         this.scaleType = scaleType;
     }
     public void setContext(Context context) { this.context = context; }
@@ -41,10 +42,10 @@ public class ImageAdapter extends PagerAdapter {
         notifyDataSetChanged();
         return images;
     }
-    public String Remove(int index) {
-        String image = images.Pop(index);
+    public int Remove(int index) {
+        images.Pop(index);
         notifyDataSetChanged();
-        return image;
+        return index;
     }
     public String Set(String image, int index){
         images.Set(image, index);
@@ -61,6 +62,8 @@ public class ImageAdapter extends PagerAdapter {
         notifyDataSetChanged();
         return this.images;
     }
+    public AList<String> GetData() { return images; }
+    public String Get(int index) { return images.Get(index); }
     public void setOnImageClickedListener(View.OnClickListener listener) { clickListener = listener; }
 
     @Override

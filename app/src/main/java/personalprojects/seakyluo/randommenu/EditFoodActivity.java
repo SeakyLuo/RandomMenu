@@ -256,7 +256,7 @@ public class EditFoodActivity extends AppCompatActivity {
                         for (int i = 0; i < count; i++)
                             paths.Add(Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), clipData.getItemAt(i).getUri()),
                                                        Helper.ImageFolder,
-                                                       Helper.NewImageFileName(i)));
+                                                       Helper.NewImageFileName(i)), 0);
                         images.AddAll(imageViewerFragment.adapter.Add(paths), 0);
                     }else{
                         AddImage(Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData()),

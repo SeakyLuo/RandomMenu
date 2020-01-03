@@ -66,8 +66,8 @@ public class SettingsFragment extends Fragment {
                             file.delete();
                     for (File file: Helper.TempFolder.listFiles())
                         file.delete();
-                    for (File file: Helper.ExportedDataFolder.listFiles())
-                        file.delete();
+//                    for (File file: Helper.ExportedDataFolder.listFiles())
+//                        file.delete();
                     dialog.dismiss();
                     getActivity().runOnUiThread(() -> {
                         Toast.makeText(getContext(), R.string.clear_cache_msg, Toast.LENGTH_SHORT).show();
