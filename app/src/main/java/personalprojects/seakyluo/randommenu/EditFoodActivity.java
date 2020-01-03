@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -110,7 +111,7 @@ public class EditFoodActivity extends AppCompatActivity {
             String note = getNote();
             Food food = new Food(food_name, images, tags, note, like_toggle.isChecked());
             if (currentFood == null) Settings.settings.AddFood(food);
-            else if (isDraft){
+            else if (isDraft && !Settings.settings.Foods.Any(f -> f.Name.equals(food_name))){
                 Settings.settings.AddFood(food);
                 Settings.settings.FoodDraft = null;
             }else{
@@ -228,8 +229,8 @@ public class EditFoodActivity extends AppCompatActivity {
         }
     }
 
-    private String CurrentImage() { return images.Get(imageViewerFragment.getCurrent()); }
-    private void AddImage(String image) { images.Add(imageViewerFragment.adapter.Add(image), 0) ; }
+    private String CurrentImage() { return Helper.GetImagePath(images.Get(imageViewerFragment.getCurrent())); }
+    private void AddImage(String image) { images.Add(imageViewerFragment.adapter.Add(image), 0); }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

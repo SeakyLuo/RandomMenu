@@ -71,7 +71,7 @@ public class Helper {
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
     public static void LoadImage(RequestManager glide, String path, ImageView imageView){
         if (IsNullOrEmpty(path)) imageView.setImageBitmap(DefaultFoodImage);
-        else glide.load(getPath("RandomMenu/RandomMenuFood/", path)).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+        else glide.load(GetImagePath(path)).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
 //        Bitmap image = foodImageCache.getOrDefault(path, null);
 //        if (image == null) {
 //            glide.load(path).into(imageView);
@@ -86,20 +86,17 @@ public class Helper {
         return SaveImage(GetFoodBitmap(imageView), folder, filename);
     }
     public static String SaveImage(Bitmap image, File folder, String filename){
-        String image_path = new File(folder, filename).getPath();
-        try (FileOutputStream out = new FileOutputStream(image_path)) {
+        try (FileOutputStream out = new FileOutputStream(new File(folder, filename))) {
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
         } catch (IOException e) {
-            image_path = "";
+            e.printStackTrace();
         }
-        return image_path;
+        return filename;
     }
     public static String Timestamp() { return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); }
     public static String NewImageFileName(){ return Timestamp() + ".jpg"; }
     public static String NewImageFileName(int suffix){ return Timestamp() + "_" + suffix + ".jpg"; }
-    public static String GetImagePath(File folder, String image){
-        return new File(folder, image).getPath();
-    }
+    public static String GetImagePath(String path){ return getPath("RandomMenu/RandomMenuFood/", path); }
 
     public static void Save(){
         SaveJson(getPath(ROOT_FOLDER, Settings.FILENAME), Settings.settings.ToJson());

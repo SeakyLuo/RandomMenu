@@ -61,10 +61,9 @@ public class SettingsFragment extends Fragment {
                 dialog.setMessage(R.string.clearing_cache);
                 new Thread(() -> {
                     HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
-                    for (File file: Helper.ImageFolder.listFiles()){
+                    for (File file: Helper.ImageFolder.listFiles())
                         if (!paths.contains(file.getName()))
                             file.delete();
-                    }
                     for (File file: Helper.TempFolder.listFiles())
                         file.delete();
                     for (File file: Helper.ExportedDataFolder.listFiles())
