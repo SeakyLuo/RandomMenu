@@ -62,7 +62,7 @@ public class SettingsFragment extends Fragment {
                 new Thread(() -> {
                     HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
                     for (File file: Helper.ImageFolder.listFiles()){
-                        if (!paths.contains(file.getPath()))
+                        if (!paths.contains(file.getName()))
                             file.delete();
                     }
                     for (File file: Helper.TempFolder.listFiles())
