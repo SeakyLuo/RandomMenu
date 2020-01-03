@@ -99,7 +99,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 Toast.makeText(this, getString(R.string.empty_food_name), Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (Settings.settings.Foods.Any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
+            if (!isDraft && Settings.settings.Foods.Any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
                 Toast.makeText(this, getString(R.string.food_exists), Toast.LENGTH_SHORT).show();
                 return;
             }
