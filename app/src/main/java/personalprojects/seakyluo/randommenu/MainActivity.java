@@ -72,13 +72,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Helper.Save(this);
+        Helper.Save();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Helper.Save(this);
+        Helper.Save();
         //Save the fragment's instance
         FragmentManager fragmentManager = getSupportFragmentManager();
         try { fragmentManager.putFragment(outState, RandomFragment.TAG, randomFragment); }catch (IllegalStateException | NullPointerException ignored){}

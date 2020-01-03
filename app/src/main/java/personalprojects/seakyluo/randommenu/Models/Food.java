@@ -22,30 +22,19 @@ public class Food implements Parcelable {
         Name = name;
     }
 
-    public Food(String name, String path, AList<Tag> tags, String note, boolean isFavorite){
-        Name = name;
-        if (!Helper.IsNullOrEmpty(path)) Images.Add(path);
-        Tags = tags;
-        Note = note;
-        IsFavorite = isFavorite;
-        DateAdded = Calendar.getInstance().getTimeInMillis();
-    }
-
     public Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite){
+        this(name, images, tags, note, isFavorite, Calendar.getInstance().getTimeInMillis());
+    }
+    private Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite, Long dateAdded){
         Name = name;
         Images = images;
         Tags = tags;
         Note = note;
         IsFavorite = isFavorite;
-        DateAdded = Calendar.getInstance().getTimeInMillis();
+        DateAdded = dateAdded;
     }
 
-    public Food Copy(){
-        Food food = new Food(Name, Images, Tags, Note, IsFavorite);
-        food.DateAdded = DateAdded;
-        return food;
-    }
-
+    public Food Copy(){ return new Food(Name, Images.Copy(), Tags.Copy(), Note, IsFavorite, DateAdded); }
     public boolean SetIsFavorite(boolean isFavorite){ return IsFavorite = isFavorite; }
     public boolean IsFavorite() { return IsFavorite; }
 
@@ -56,7 +45,6 @@ public class Food implements Parcelable {
     public Long GetDateAdded() { return DateAdded; }
     public AList<Tag> GetTags() { return Tags; }
     public String GetCover() { return Images.Count() == 0 ? "" : Images.Get(0); }
-
     public void RemoveTag(Tag tag) { Tags.Remove(tag); }
 
     @Override

@@ -60,7 +60,7 @@ public class ToEatActivity extends SwipeBackActivity {
 
     @Override
     public void finish() {
-        if (updated) Helper.Save(this);
+        if (updated) Helper.Save();
         updated = false;
         super.finish();
     }

@@ -61,7 +61,7 @@ public class DislikeActivity extends SwipeBackActivity {
 
     @Override
     public void finish() {
-        if (updated) Helper.Save(this);
+        if (updated) Helper.Save();
         updated = false;
         super.finish();
     }

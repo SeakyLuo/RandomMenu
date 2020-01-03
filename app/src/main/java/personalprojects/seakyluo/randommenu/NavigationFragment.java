@@ -74,7 +74,7 @@ public class NavigationFragment extends Fragment {
                                 tag.Name = text;
                                 Settings.settings.Foods.ForEach(f -> f.RenameTag(data.Name, text));
                                 selectTagAdapter.Set(tag, selectTagAdapter.IndexOf(t -> t.Name.equals(data.Name)));
-                                Helper.Save(getContext());
+                                Helper.Save();
                             }
                         });
                         inputDialog.showNow(getChildFragmentManager(), InputDialog.TAG);
@@ -87,7 +87,7 @@ public class NavigationFragment extends Fragment {
                             selectTagAdapter.Remove(data);
                             Settings.settings.Tags.Remove(data);
                             Settings.settings.Foods.ForEach(food -> food.RemoveTag(data));
-                            Helper.Save(getContext());
+                            Helper.Save();
                         });
                         askDialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
                         return true;

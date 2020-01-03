@@ -150,7 +150,7 @@ public class SearchActivity extends SwipeBackActivity {
 
     @Override
     public void finish() {
-        Helper.Save(this);
+        Helper.Save();
         super.finish();
     }
 

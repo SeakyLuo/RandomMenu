@@ -295,7 +295,7 @@ public class EditFoodActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        Helper.Save(this);
+        Helper.Save();
         super.finish();
     }
 }

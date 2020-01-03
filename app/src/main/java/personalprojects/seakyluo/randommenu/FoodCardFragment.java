@@ -135,13 +135,13 @@ public class FoodCardFragment extends Fragment {
                         CurrentFood.HideCount = 0;
                         SetFoodNote(CurrentFood);
                         Settings.settings.Foods.First(CurrentFood).HideCount = CurrentFood.HideCount;
-                        Helper.Save(getContext());
+                        Helper.Save();
                         return true;
                     case R.id.hide_food_item:
                         CurrentFood.HideCount += 3;
                         SetFoodNote(CurrentFood);
                         Settings.settings.Foods.First(CurrentFood).HideCount = CurrentFood.HideCount;
-                        Helper.Save(getContext());
+                        Helper.Save();
                         return true;
                     case R.id.more_item:
                         Flip();

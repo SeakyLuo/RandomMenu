@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -61,7 +62,7 @@ public class Helper {
         SaveImageFolder = CreateOrOpenFolder("RandomMenuSavedImages");
         TempFolder = CreateOrOpenFolder("RandomMenuTemp");
         ExportedDataFolder = CreateOrOpenFolder("RandomMenuExportedData");
-        String settings = ReadJson(context, Settings.FILENAME);
+        String settings = ReadJson(getPath(ROOT_FOLDER, Settings.FILENAME));
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
     }
     public static String GetFilename(String path) { return new File(path).getName(); }
@@ -98,8 +99,8 @@ public class Helper {
         return new File(folder, image).getPath();
     }
 
-    public static void Save(Context context){
-        SaveJson(context, Settings.FILENAME, Settings.settings.ToJson());
+    public static void Save(){
+        SaveJson(getPath(ROOT_FOLDER, Settings.FILENAME), Settings.settings.ToJson());
     }
     public static String getPath(String... paths) {
         StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory().getPath());
@@ -107,40 +108,29 @@ public class Helper {
         return sb.toString();
     }
 
-    public static String ReadJson(Context context, String filename) {
+    public static String ReadJson(String filename) {
         String string = "";
         try {
-            InputStream inputStream = context.openFileInput(filename);
-
-            if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ((receiveString = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(receiveString).append('\n');
-                }
-
-                inputStream.close();
-                string = stringBuilder.toString();
-            }
-        }
-        catch (FileNotFoundException e) {
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null)
+                builder.append(line).append('\n');
+            reader.close();
+            return builder.toString();
+        } catch (FileNotFoundException e) {
             Log.e("fuck", "File not found: " + e.toString());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             Log.e("fuck", "Can not read file: " + e.toString());
         }
         return string;
     }
-    public static void SaveJson(Context context, String filename, String json){
+    public static void SaveJson(String filename, String json){
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
-            outputStreamWriter.write(json);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
+            FileOutputStream out = new FileOutputStream(filename);
+            out.write(json.getBytes());
+            out.close();
+        } catch (IOException e) {
             Log.e("fuck", "File write failed: " + e.toString());
         }
     }
@@ -149,30 +139,24 @@ public class Helper {
         return folder.exists() || folder.mkdir() ? folder : null;
     }
     public static void Copy(File src, File dst) throws IOException {
-        InputStream in = new FileInputStream(src);
-        try {
-            OutputStream out = new FileOutputStream(dst);
-            try {
+        try (InputStream in = new FileInputStream(src)) {
+            try (OutputStream out = new FileOutputStream(dst)) {
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
                 while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
                 }
-            } finally {
-                out.close();
             }
-        } finally {
-            in.close();
         }
     }
     public static Uri GetFileUri(Context context, String path){
         return FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(path));
     }
 
-    public static void Clear(Context context){
+    public static void Clear(){
         Settings.settings = new Settings();
-        Save(context);
+        Save();
     }
     public static boolean Zip(String filename, File... files){
         FileOutputStream dest = null;

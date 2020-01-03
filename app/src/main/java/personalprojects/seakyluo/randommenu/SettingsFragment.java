@@ -99,7 +99,7 @@ public class SettingsFragment extends Fragment {
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
         view.findViewById(R.id.save_data_button).setOnClickListener(v -> {
-            Helper.Save(getContext());
+            Helper.Save();
             Toast.makeText(getContext(), R.string.data_saved, Toast.LENGTH_SHORT).show();
         });
         return view;
