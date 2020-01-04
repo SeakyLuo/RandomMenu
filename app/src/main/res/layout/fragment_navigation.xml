@@ -57,31 +57,34 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/masterView"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="100"
             android:orientation="vertical"
             android:nestedScrollingEnabled="true"
+            android:minWidth="80dp"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.05"
             android:background="@android:color/darker_gray"
             android:layout_marginEnd="2dp"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/detailView"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="30"
-            android:nestedScrollingEnabled="true"
-            android:padding="4dp"
-            app:layoutManager="android.support.v7.widget.GridLayoutManager"
-            app:spanCount="2"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/detailView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="true"
+                android:padding="4dp"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                app:spanCount="2"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
