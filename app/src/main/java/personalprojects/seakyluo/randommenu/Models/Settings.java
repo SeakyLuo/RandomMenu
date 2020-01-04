@@ -35,7 +35,9 @@ public class Settings {
     public void SortTags(){ Tags.Sort(Tag::compareTo).Reverse(); }
 
     public void UpdateFood(Food before, Food after){
-        Foods.Set(after, Foods.IndexOf(before));
+        int index = Foods.IndexOf(before);
+        if (index == -1) return;
+        Foods.Set(after, index);
         AList<Tag> a = after.GetTags(), b = before.GetTags(),
                    add = a.SetDifference(b), remove = b.SetDifference(a);
         Tags.ForEach(t -> {

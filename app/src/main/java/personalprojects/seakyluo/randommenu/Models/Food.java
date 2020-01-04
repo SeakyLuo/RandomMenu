@@ -15,7 +15,7 @@ public class Food implements Parcelable {
     private AList<Tag> Tags = new AList<>();
     public String Note = "";
     private boolean IsFavorite = false;
-    private Long DateAdded;
+    private Long DateAdded = 0L;
     public int HideCount = 0;
 
     public Food(String name){
@@ -46,6 +46,7 @@ public class Food implements Parcelable {
     public AList<Tag> GetTags() { return Tags; }
     public String GetCover() { return Images.Count() == 0 ? "" : Images.Get(0); }
     public void RemoveTag(Tag tag) { Tags.Remove(tag); }
+    public static boolean IsIncomplete(Food food) { return food == null || food.DateAdded == 0; }
 
     @Override
     public boolean equals(@Nullable Object obj) {

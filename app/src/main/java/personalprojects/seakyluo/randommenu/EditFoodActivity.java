@@ -110,7 +110,7 @@ public class EditFoodActivity extends AppCompatActivity {
             }
             String note = getNote();
             Food food = new Food(food_name, images, tags, note, like_toggle.isChecked());
-            if (currentFood == null) Settings.settings.AddFood(food);
+            if (Food.IsIncomplete(currentFood)) Settings.settings.AddFood(food);
             else if (isDraft && !Settings.settings.Foods.Any(f -> f.Name.equals(food_name))){
                 Settings.settings.AddFood(food);
                 Settings.settings.FoodDraft = null;
