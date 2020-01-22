@@ -76,4 +76,6 @@
     <string name="exporting_data">Exporting data...</string>
     <string name="save_data">Save data</string>
     <string name="data_saved">Data saved!</string>
+    <string name="draft_deleted">Draft deleted!</string>
+    <string name="delete_draft">Delete Draft</string>
 </resources>
