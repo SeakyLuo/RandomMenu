@@ -29,7 +29,7 @@ public class SimpleFoodListAdapter extends CustomAdapter<String> {
             if (listener != null) listener.Click(viewHolder, name);
         });
         viewHolder.delete_button.setOnClickListener(v -> {
-            if (listener != null) deleteListener.Click(viewHolder, name);
+            if (deleteListener != null) deleteListener.Click(viewHolder, name);
         });
     }
 
