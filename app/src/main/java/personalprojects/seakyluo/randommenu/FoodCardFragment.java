@@ -125,7 +125,7 @@ public class FoodCardFragment extends Fragment {
                     case R.id.share_item:
                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                         shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.GetFileUri(getContext(), imageViewerFragment.getCurrentImage()));
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.GetFileUri(getContext(), Helper.GetImagePath(imageViewerFragment.getCurrentImage())));
                         shareIntent.setType("image/*");
                         startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;

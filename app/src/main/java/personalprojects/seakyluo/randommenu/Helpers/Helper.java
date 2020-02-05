@@ -90,7 +90,7 @@ public class Helper {
 //            imageView.setImageBitmap(image);
 //        }
     }
-    public static Bitmap GetFoodBitmap(String path) { return BitmapFactory.decodeFile(path); }
+    public static Bitmap GetFoodBitmap(String path) { return BitmapFactory.decodeFile(GetImagePath(path)); }
     public static Bitmap GetFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
     public static String SaveImage(ImageView imageView, File folder, String filename){
         return SaveImage(GetFoodBitmap(imageView), folder, filename);
