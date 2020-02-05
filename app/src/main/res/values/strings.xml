@@ -78,4 +78,6 @@
     <string name="data_saved">Data saved!</string>
     <string name="draft_deleted">Draft deleted!</string>
     <string name="delete_draft">Delete Draft</string>
+    <string name="note_copied">Note has been copied!</string>
+    <string name="name_copied">Food name has been copied!</string>
 </resources>

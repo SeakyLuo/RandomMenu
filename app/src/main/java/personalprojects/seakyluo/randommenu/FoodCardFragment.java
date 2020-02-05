@@ -3,7 +3,10 @@ package personalprojects.seakyluo.randommenu;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -82,6 +85,11 @@ public class FoodCardFragment extends Fragment {
         food_note_front.setCameraDistance(scale);
         food_note_back.setCameraDistance(scale);
 
+        food_name.setOnLongClickListener(v -> {
+            Helper.CopyToClipboard(getContext(), CurrentFood.Name);
+            Toast.makeText(getContext(), R.string.name_copied, Toast.LENGTH_SHORT).show();
+            return true;
+        });
         tagsFragment.SetSpanCount(1);
         tagsFragment.SetTagClickedListener((viewHolder, tag) -> {
             FragmentActivity currentActivity = getActivity();
@@ -190,16 +198,20 @@ public class FoodCardFragment extends Fragment {
     public void SetFoodFavorite(boolean favorite) { liked_image.setVisibility(favorite ? View.VISIBLE : View.GONE); }
 
     public void SetFoodNote(Food food){
-        Calendar date = Calendar.getInstance();
-        date.setTimeInMillis(food.GetDateAdded());
-        String food_info = String.format(getString(R.string.created_at), new SimpleDateFormat("yyyy-MM-dd").format(date.getTime())) + "\n";
+        String food_info = String.format(getString(R.string.created_at), food.GetDateAddedString()) + "\n";
         if (food.HideCount > 0) food_info += String.format(getString(R.string.hide_recent), food.HideCount);
         if (Helper.IsNullOrEmpty(food.Note)){
             food_note_front.setText(food_info);
             food_note_back.setText(food.Note);
+            food_note_front.setOnLongClickListener(null);
         }else{
             food_note_front.setText(food.Note);
             food_note_back.setText(food_info);
+            food_note_front.setOnLongClickListener(v -> {
+                Helper.CopyToClipboard(getContext(), food.Note);
+                Toast.makeText(getContext(), R.string.note_copied, Toast.LENGTH_SHORT).show();
+                return true;
+            });
         }
     }
 

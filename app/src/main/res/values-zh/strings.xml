@@ -78,4 +78,6 @@
     <string name="data_saved">数据已保存！</string>
     <string name="draft_deleted">草稿已删除！</string>
     <string name="delete_draft">删除草稿</string>
+    <string name="note_copied">笔记已复制！</string>
+    <string name="name_copied">菜名已复制！</string>
 </resources>

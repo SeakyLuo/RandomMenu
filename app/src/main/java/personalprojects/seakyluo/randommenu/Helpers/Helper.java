@@ -1,5 +1,7 @@
 package personalprojects.seakyluo.randommenu.Helpers;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,6 +50,14 @@ public class Helper {
     private static String imageFolderPath;
     private static Random random = new Random();
 
+    public static void CopyToClipboard(Context context, String text){
+        CopyToClipboard(context, text, text);
+    }
+    public static void CopyToClipboard(Context context, String label, String text){
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(label, text);
+        clipboard.setPrimaryClip(clip);
+    }
     public static Bitmap Screenshot(View view) {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

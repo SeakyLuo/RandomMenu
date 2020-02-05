@@ -4,10 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.R;
 
 public class Food implements Parcelable {
     public String Name;
@@ -43,6 +45,11 @@ public class Food implements Parcelable {
     public boolean HasTag(String name) { return Tags.Any(t -> t.Name.equals(name)); }
     public void RenameTag(String oldName, String newName){ Tags.First(t -> t.Name.equals(oldName)).Name = newName; }
     public Long GetDateAdded() { return DateAdded; }
+    public String GetDateAddedString(){
+        Calendar date = Calendar.getInstance();
+        date.setTimeInMillis(DateAdded);
+        return new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
+    }
     public AList<Tag> GetTags() { return Tags; }
     public String GetCover() { return Images.Count() == 0 ? "" : Images.Get(0); }
     public void RemoveTag(Tag tag) { Tags.Remove(tag); }
