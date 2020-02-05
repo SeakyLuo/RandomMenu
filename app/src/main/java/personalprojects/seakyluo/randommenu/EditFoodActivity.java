@@ -46,6 +46,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private Uri camera_image_uri, crop_image_uri;
     private AList<String> images = new AList<>();
     private boolean isDraft = false;
+    private String food_cover = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +86,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
                 dialog.setMessage(getString(R.string.save_as_draft));
                 dialog.setOnYesListener(view -> {
-                    Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked());
+                    Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
                     finish();
                 });
                 dialog.setOnNoListener(view -> finish());
@@ -109,7 +110,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
             }
             String note = getNote();
-            Food food = new Food(food_name, images, tags, note, like_toggle.isChecked());
+            Food food = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
             if (Food.IsIncomplete(currentFood)) Settings.settings.AddFood(food);
             else if (isDraft && !Settings.settings.Foods.Any(f -> f.Name.equals(food_name))){
                 Settings.settings.AddFood(food);
@@ -145,6 +146,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private void ShowMenuFlyout(){
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
         if (images.IsEmpty()) helper.removeItems(R.id.edit_image_item, R.id.remove_image_item);
+        else if (images.Count() < 2 || imageViewerFragment.getCurrentImage().equals(food_cover)) helper.removeItems(R.id.set_cover_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.open_camera_item:
@@ -162,8 +164,12 @@ public class EditFoodActivity extends AppCompatActivity {
                 case R.id.edit_image_item:
                     return CropImage();
                 case R.id.remove_image_item:
-                    images.Pop(imageViewerFragment.removeCurrentImage());
+                    String image = images.Pop(imageViewerFragment.removeCurrentImage());
+                    if (image.equals(food_cover)) food_cover = images.IsEmpty() ? "" : images.First();
                     if (images.IsEmpty()) food_image.setVisibility(View.VISIBLE);
+                    return true;
+                case R.id.set_cover_item:
+                    food_cover = imageViewerFragment.getCurrentImage();
                     return true;
             }
             return false;
@@ -209,6 +215,7 @@ public class EditFoodActivity extends AppCompatActivity {
         chooseTagFragment.SetData(food.GetTags());
         edit_note.setText(food.Note);
         like_toggle.setChecked(food.IsFavorite());
+        imageViewerFragment.setCover(food_cover = food.GetCover());
     }
 
     @Override
@@ -281,6 +288,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
         }
         food_image.setVisibility(View.GONE);
+        if (Helper.IsNullOrEmpty(food_cover)) food_cover = images.First();
     }
 
     @Override
@@ -289,7 +297,7 @@ public class EditFoodActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.putFragment(outState, ChooseTagFragment.TAG, chooseTagFragment);
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
-        outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.GetData(), getNote(), like_toggle.isChecked()));
+        outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.GetData(), getNote(), like_toggle.isChecked(), food_cover));
     }
     private String getFoodName() { return edit_food_name.getText().toString().trim(); }
     private String getNote() { return edit_note.getText().toString().trim(); }

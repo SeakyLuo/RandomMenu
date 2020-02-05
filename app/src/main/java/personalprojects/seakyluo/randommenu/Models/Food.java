@@ -17,6 +17,7 @@ public class Food implements Parcelable {
     private AList<Tag> Tags = new AList<>();
     public String Note = "";
     private boolean IsFavorite = false;
+    private String Cover = "";
     private Long DateAdded = 0L;
     public int HideCount = 0;
 
@@ -24,19 +25,20 @@ public class Food implements Parcelable {
         Name = name;
     }
 
-    public Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite){
-        this(name, images, tags, note, isFavorite, Calendar.getInstance().getTimeInMillis());
+    public Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite, String cover){
+        this(name, images, tags, note, isFavorite, cover, Calendar.getInstance().getTimeInMillis());
     }
-    private Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite, Long dateAdded){
+    private Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite, String cover, Long dateAdded){
         Name = name;
         Images = images;
         Tags = tags;
         Note = note;
         IsFavorite = isFavorite;
+        Cover = cover;
         DateAdded = dateAdded;
     }
 
-    public Food Copy(){ return new Food(Name, Images.Copy(), Tags.Copy(), Note, IsFavorite, DateAdded); }
+    public Food Copy(){ return new Food(Name, Images.Copy(), Tags.Copy(), Note, IsFavorite, Cover, DateAdded); }
     public boolean SetIsFavorite(boolean isFavorite){ return IsFavorite = isFavorite; }
     public boolean IsFavorite() { return IsFavorite; }
 
@@ -51,7 +53,7 @@ public class Food implements Parcelable {
         return new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
     }
     public AList<Tag> GetTags() { return Tags; }
-    public String GetCover() { return Images.Count() == 0 ? "" : Images.Get(0); }
+    public String GetCover() { return Cover; }
     public void RemoveTag(Tag tag) { Tags.Remove(tag); }
     public static boolean IsIncomplete(Food food) { return food == null || food.DateAdded == 0; }
 
@@ -70,6 +72,7 @@ public class Food implements Parcelable {
         Tags = new AList<>(tags);
         Note = in.readString();
         IsFavorite = in.readByte() != 0;
+        Cover = in.readString();
         if (in.readByte() == 0) {
             DateAdded = null;
         } else {
@@ -102,6 +105,7 @@ public class Food implements Parcelable {
         dest.writeTypedList(Tags.ToArrayList());
         dest.writeString(Note);
         dest.writeByte((byte) (IsFavorite ? 1 : 0));
+        dest.writeString(Cover);
         if (DateAdded == null) {
             dest.writeByte((byte) 0);
         } else {

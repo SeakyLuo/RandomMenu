@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
 
 public class ImageViewerFragment extends Fragment {
@@ -21,6 +22,7 @@ public class ImageViewerFragment extends Fragment {
     public ImageAdapter adapter = new ImageAdapter(ImageView.ScaleType.CENTER_CROP);
     private ViewPager viewPager;
     private ImageButton prev_image_button, next_image_button;
+    private int coverIndex = -1;
 
     @Nullable
     @Override
@@ -58,6 +60,7 @@ public class ImageViewerFragment extends Fragment {
 
             }
         });
+        if (coverIndex != -1) viewPager.setCurrentItem(coverIndex);
         return view;
     }
 
@@ -65,7 +68,10 @@ public class ImageViewerFragment extends Fragment {
         prev_image_button.setVisibility(current == 0 ? View.INVISIBLE : View.VISIBLE);
         next_image_button.setVisibility(current == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
     }
-
+    public void setCover(String image){
+        coverIndex = adapter.IndexOf(image);
+        if (viewPager != null) viewPager.setCurrentItem(adapter.IndexOf(image));
+    }
     public void setImages(AList<String> images) { images.CopyFrom(adapter.SetData(images)); }
     public int getCurrent() { return current; }
     public String getCurrentImage() { return adapter.Get(current); }

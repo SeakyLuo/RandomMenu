@@ -52,6 +52,7 @@ public class ImageAdapter extends PagerAdapter {
         notifyDataSetChanged();
         return image;
     }
+    public int IndexOf(String image) { return images.IndexOf(image); }
     public AList<String> SetData(AList<String> images){
         this.images.CopyFrom(images);
 //        if (container != null){
