@@ -4,11 +4,14 @@
         android:id="@+id/edit_food_item"
         android:icon="@drawable/ic_edit"
         android:title="@string/edit" />
-
     <item
-        android:id="@+id/save_food_item"
+        android:id="@+id/save_image_item"
         android:icon="@drawable/ic_save"
         android:title="@string/save_image" />
+    <item
+        android:id="@+id/save_all_images_item"
+        android:icon="@drawable/ic_save"
+        android:title="@string/save_all_images" />
     <item
         android:id="@+id/share_item"
         android:icon="@drawable/ic_share"

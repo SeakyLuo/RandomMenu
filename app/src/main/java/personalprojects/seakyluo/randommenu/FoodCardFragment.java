@@ -103,7 +103,8 @@ public class FoodCardFragment extends Fragment {
         food_note_back.setMovementMethod(new ScrollingMovementMethod());
         more_button.setOnClickListener(v -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
-            if (!CurrentFood.HasImage()) helper.removeItems(R.id.save_food_item, R.id.share_item);
+            if (!CurrentFood.HasImage()) helper.removeItems(R.id.save_image_item, R.id.share_item);
+            else if (CurrentFood.Images.Count() == 1) helper.removeItems(R.id.save_all_images_item);
             if (Helper.IsNullOrEmpty(CurrentFood.Note)) helper.removeItems(R.id.more_item);
             if (CurrentFood.HideCount == 0) helper.removeItems(R.id.show_food_item);
             else helper.removeItems(R.id.hide_food_item);
@@ -118,9 +119,13 @@ public class FoodCardFragment extends Fragment {
                         editFoodIntent.putExtra(EditFoodActivity.DELETE, true);
                         startActivityForResult(editFoodIntent, EDIT_FOOD);
                         return true;
-                    case R.id.save_food_item:
+                    case R.id.save_image_item:
                         Helper.SaveImage(Helper.GetFoodBitmap(imageViewerFragment.getCurrentImage()), Helper.SaveImageFolder, Helper.NewImageFileName());
-                        Toast.makeText(getContext(), getString(R.string.save_image_msg), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.save_image_msg, Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.save_all_images_item:
+                        CurrentFood.Images.ForEach(image -> Helper.SaveImage(Helper.GetFoodBitmap(image), Helper.SaveImageFolder, Helper.NewImageFileName()));
+                        Toast.makeText(getContext(), String.format(getString(R.string.count_images_saved), CurrentFood.Images.Count()), Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.share_item:
                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
