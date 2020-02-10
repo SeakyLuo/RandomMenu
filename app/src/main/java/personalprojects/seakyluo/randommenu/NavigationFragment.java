@@ -40,6 +40,7 @@ public class NavigationFragment extends Fragment {
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             SetData();
+            selectTag(selectTagAdapter.GetSelectedTag());
             swipeRefreshLayout.setRefreshing(false);
         });
         view.findViewById(R.id.search_button).setOnClickListener(v -> {

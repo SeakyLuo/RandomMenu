@@ -278,7 +278,10 @@ public class EditFoodActivity extends AppCompatActivity {
             case CROP_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
-                    images.Set(imageViewerFragment.setCurrentImage(Helper.SaveImage(image, Helper.ImageFolder, Helper.NewImageFileName())), imageViewerFragment.getCurrent());
+                    String name = Helper.SaveImage(image, Helper.ImageFolder, Helper.NewImageFileName());
+                    int current = imageViewerFragment.getCurrent();
+                    if (images.Get(current).equals(food_cover)) food_cover = name;
+                    images.Set(imageViewerFragment.setCurrentImage(name), current);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;

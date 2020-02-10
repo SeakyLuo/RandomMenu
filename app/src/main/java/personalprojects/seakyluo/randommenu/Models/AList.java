@@ -143,7 +143,7 @@ public class AList<T> extends IList<T> {
     public T Get(int index){ return list.get(ModIndex(index)); }
     public T Set(T element, int index) { list.set(ModIndex(index), element); return element; }
     public AList<T> Set(UnaryOperator<T> lambda) { list.replaceAll(lambda); return this; }
-    public T First() { return list.get(0); }
+    public T First() { return Count() > 0 ? list.get(0) : null; }
     public T First(T target){
         for (T element: list)
             if (element.equals(target))
@@ -156,7 +156,7 @@ public class AList<T> extends IList<T> {
                 return element;
         return null;
     }
-    public T Last() { return list.get(Count() - 1); }
+    public T Last() { return Count() > 0 ? list.get(Count() - 1) : null; }
     public T Last(BooleanLambda<T> lambda){ return Reverse().First(lambda); }
     public AList<T> For(ForLambda lambda) {
         for (int i = 0; i < Count(); i++) lambda.operate(i);
