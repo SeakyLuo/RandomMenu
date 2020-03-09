@@ -19,15 +19,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 
 public class FoodListFragment extends Fragment {
     public static final String TAG = "FoodListFragment";
+    private boolean selectable = false;
     private RecyclerView recyclerView;
     private FoodListAdapter adapter = new FoodListAdapter();
     private AList<Food> data = new AList<>();
+    private AList<Food> selected = new AList<>();
     private OnDataItemClickedListener<Food> foodRemovedListener;
     private Food removedFood;
     private int removedIndex;
@@ -42,7 +46,15 @@ public class FoodListFragment extends Fragment {
         return view;
     }
 
+    public void SetSelectedFood(AList<Food> data){
+
+    }
+    public AList<Food> GetSelectedFood(){
+        return selected;
+    }
     public void SetData(AList<Food> data){ this.data.CopyFrom(data); adapter.SetData(data); }
+    public void SetData(ArrayList<Food> data){ this.data.CopyFrom(data); adapter.SetData(data); }
+    public AList<Food> GetData(){ return data; }
     public void Clear() { this.data.Clear();  adapter.Clear(); }
     public int RemoveFood(Food food) {
         removedIndex = adapter.data.IndexOf(removedFood = food);
@@ -53,6 +65,12 @@ public class FoodListFragment extends Fragment {
     public void CancelRemoval(){
         adapter.data.Add(removedFood, removedIndex);
         adapter.notifyItemInserted(removedIndex);
+    }
+    public void Filter(String keyword){
+        adapter.SetData(data.Find(f -> f.Name.contains(keyword)));
+    }
+    public void CancelFilter(){
+        adapter.SetData(data);
     }
     public void SetFoodClickedListener(OnDataItemClickedListener<Food> listener){ adapter.SetFoodClickedListener(listener); }
     public void SetFoodRemovedListener(OnDataItemClickedListener<Food> listener){ foodRemovedListener = listener; AddSwipeControl(); }

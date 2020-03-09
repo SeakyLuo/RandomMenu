@@ -71,6 +71,11 @@ public class RandomFragment extends Fragment {
             filterDialog.showNow(getChildFragmentManager(), FilterDialog.TAG);
         });
         ImageButton menuButton = view.findViewById(R.id.menu_button);
+        menuDialog.SetFoodAddedListener((viewHolder, data) -> {
+            food_pool.RemoveAll(data);
+            menu.CopyFrom(data);
+            if (menu.Contains(foodCardFragment.GetFood())) NextFood();
+        });
         menuDialog.SetFoodRemovedListener((viewHolder, data) -> {
             menu.Remove(data);
             menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.Count()));

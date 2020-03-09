@@ -133,7 +133,7 @@ public class SearchActivity extends SwipeBackActivity {
     private boolean SearchFoodName(Food food, String keyword) { return food.Name.contains(keyword);}
     private boolean SearchFoodTag(Food food, String keyword) { return food.GetTags().Any(t -> t.Name.contains(keyword)); }
     private boolean SearchFoodNote(Food food, String keyword) { return food.Note.contains(keyword); }
-    private String getKeyword(Editable s) { return s.toString().trim(); }
+    public static String getKeyword(Editable s) { return s.toString().trim(); }
 
     public void Search(String keyword){
         if (keyword.isEmpty()){
