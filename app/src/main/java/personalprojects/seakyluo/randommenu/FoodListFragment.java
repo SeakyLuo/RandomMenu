@@ -24,6 +24,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 
 public class FoodListFragment extends Fragment {
+    public static final String TAG = "FoodListFragment";
     private RecyclerView recyclerView;
     private FoodListAdapter adapter = new FoodListAdapter();
     private AList<Food> data = new AList<>();

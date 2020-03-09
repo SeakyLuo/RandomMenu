@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,16 @@ import org.w3c.dom.Text;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.Models.Tag;
+
+import static android.app.Activity.RESULT_CANCELED;
 
 public class MenuDialog extends DialogFragment {
     public static final String TAG = "MenuDialog";
     private FoodListFragment fragment = new FoodListFragment();
     private Button clear_button, add_button;
-    private View.OnClickListener clearListener;
+    private View.OnClickListener addListener, clearListener;
     private OnDataItemClickedListener<Food> foodRemovedListener;
     private TextView header_text;
     private String header;
@@ -53,4 +58,14 @@ public class MenuDialog extends DialogFragment {
     public void SetFoodRemovedListener(OnDataItemClickedListener<Food> listener) { foodRemovedListener = listener; }
     public void SetData(AList<Food> data) { fragment.SetData(data); }
     public void Clear() { fragment.Clear(); }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_CANCELED) return;
+        AList<Food> foods = new AList<>();
+        for (String name: data.getStringArrayExtra(ChooseFoodActivity.TAG)){
+            foods.Add(Settings.settings.Foods.First(f -> f.Name.equals(name)));
+        }
+    }
 }

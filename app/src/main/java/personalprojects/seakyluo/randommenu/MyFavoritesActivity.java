@@ -2,6 +2,7 @@ package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,7 +24,7 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         setTitle();
 
         fragment = (FoodListFragment) getSupportFragmentManager().findFragmentById(R.id.food_list_fragment);
-        fragment.SetData(Settings.settings.Favorites);
+        fragment.SetData(Settings.settings.GetFavoriteFoods());
         fragment.SetShowLikeImage(false);
         fragment.SetFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
@@ -45,12 +46,12 @@ public class MyFavoritesActivity extends SwipeBackActivity {
             snackbar.setAction(getString(R.string.undo), view -> {
                 fragment.CancelRemoval();
                 Settings.settings.SetFavorite(data, true);
-                Settings.settings.Favorites.Move(0, index);
+                Settings.settings.MyFavorites.Move(0, index);
                 setTitle();
             });
             snackbar.show();
         });
     }
 
-    private void setTitle() { title.setText(Tag.Format(this, R.string.my_favorites, Settings.settings.Favorites.Count())); }
+    private void setTitle() { title.setText(Tag.Format(this, R.string.my_favorites, Settings.settings.MyFavorites.Count())); }
 }

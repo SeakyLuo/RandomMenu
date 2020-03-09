@@ -7,7 +7,7 @@ public class Settings {
     public static Settings settings;
     public AList<Food> Foods = new AList<>();
     public AList<Tag> Tags = new AList<>();
-    public AList<Food> Favorites = new AList<>();
+    public AList<String> MyFavorites = new AList<>();
     public AList<String> ToCook = new AList<>();
     public AList<String> ToEat = new AList<>();
     public AList<String> DislikeFood = new AList<>();
@@ -55,8 +55,14 @@ public class Settings {
     public void SetFavorite(Food food, boolean favorite){
         Food target = Foods.First(food);
         target.SetIsFavorite(favorite);
-        if (favorite) Favorites.Add(target, 0);
-        else Favorites.Remove(target);
+        if (favorite) MyFavorites.Add(target.Name, 0);
+        else MyFavorites.Remove(target.Name);
+    }
+
+    public AList<Food> GetFavoriteFoods(){
+        AList<Food> list = new AList<>();
+        MyFavorites.ForEach(name -> list.Add(Foods.First(f -> f.Name.equals(name))));
+        return list;
     }
 
     public static Settings FromJson(String json){
