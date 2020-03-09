@@ -83,4 +83,6 @@
     <string name="save_all_images">保存所有图片</string>
     <string name="count_images_saved">共保存%d张图片。</string>
     <string name="set_cover">设为封面</string>
+    <string name="add">添加</string>
+    <string name="input_food">输入菜肴</string>
 </resources>

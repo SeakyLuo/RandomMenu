@@ -83,4 +83,6 @@
     <string name="save_all_images">Save All Images</string>
     <string name="count_images_saved">%d images are saved.</string>
     <string name="set_cover">Set As Cover</string>
+    <string name="add">Add</string>
+    <string name="input_food">Input Food</string>
 </resources>

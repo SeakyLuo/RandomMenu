@@ -43,6 +43,7 @@
         <activity  android:name=".SearchActivity" android:label="SearchActivity" />
         <activity android:name=".ToEatActivity" android:label="ToEatActivity" />
         <activity android:name=".DislikeActivity" android:label="DislikeActivity" />
+        <activity android:name=".ChooseFoodActivity" android:label="ChooseFoodActivity" />
     </application>
 
 </manifest>

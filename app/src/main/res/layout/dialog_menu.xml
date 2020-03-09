@@ -30,6 +30,18 @@
                 android:gravity="center_vertical"/>
 
             <Button
+                android:id="@+id/add_button"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:text="@string/add"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
                 style="?android:attr/buttonBarStyle"
                 android:id="@+id/clear_button"
                 android:layout_width="wrap_content"
@@ -40,6 +52,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
+
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
 

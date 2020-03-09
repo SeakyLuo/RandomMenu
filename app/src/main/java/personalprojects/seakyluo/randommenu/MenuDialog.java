@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +22,7 @@ import personalprojects.seakyluo.randommenu.Models.Food;
 public class MenuDialog extends DialogFragment {
     public static final String TAG = "MenuDialog";
     private FoodListFragment fragment = new FoodListFragment();
-    private Button clear_button;
+    private Button clear_button, add_button;
     private View.OnClickListener clearListener;
     private OnDataItemClickedListener<Food> foodRemovedListener;
     private TextView header_text;
@@ -30,6 +31,7 @@ public class MenuDialog extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_menu, container, false);
+        add_button = view.findViewById(R.id.add_button);
         clear_button = view.findViewById(R.id.clear_button);
         header_text = view.findViewById(R.id.header_text);
 
@@ -38,6 +40,9 @@ public class MenuDialog extends DialogFragment {
             fragment.RemoveFood(data);
         });
         getChildFragmentManager().beginTransaction().add(R.id.food_list_frame, fragment).commit();
+        add_button.setOnClickListener(v -> {
+            startActivityForResult(new Intent(getActivity(), ChooseFoodActivity.class), ChooseFoodActivity.CODE);
+        });
         clear_button.setOnClickListener(clearListener);
         header_text.setText(header);
         return view;

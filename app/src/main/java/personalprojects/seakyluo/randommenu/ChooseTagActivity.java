@@ -21,7 +21,7 @@ import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class ChooseTagActivity extends SwipeBackActivity {
     public static final String SELECTED_TAGS = "selected", EXCLUDED_TAGS = "excluded";
-    private AutoCompleteTextView tag_box;
+    private AutoCompleteTextView inputBox;
     private TagListAdapter tagListAdapter;
     private TagsFragment tagsFragment;
     private ArrayList<Tag> selected_tags, excluded_tags;
@@ -31,16 +31,16 @@ public class ChooseTagActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_tag);
 
-        tag_box = findViewById(R.id.tag_box);
-        tag_box.requestFocus();
+        inputBox = findViewById(R.id.input_box);
+        inputBox.requestFocus();
         suggestionTagListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
-        tag_box.setAdapter(suggestionTagListAdapter);
-        tag_box.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        inputBox.setAdapter(suggestionTagListAdapter);
+        inputBox.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String tag = suggestionTagListAdapter.getItem(position);
                 ChooseTag(tagListAdapter.GetData().First(t -> t.Name.equals(tag)));
-                tag_box.setText("");
+                inputBox.setText("");
             }
 
             @Override
@@ -48,7 +48,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
 
             }
         });
-        tag_box.addTextChangedListener(new TextWatcher() {
+        inputBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -66,7 +66,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
-        tag_box.setOnKeyListener((v, keyCode, event) -> {
+        inputBox.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 SubmitTag();
                 return true;
@@ -127,7 +127,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
     }
 
     private void SubmitTag(){
-        String tag_name = tag_box.getText().toString();
+        String tag_name = inputBox.getText().toString();
         if (tag_name.length() > 0){
             Tag tag = new Tag(tag_name);
             if (!tagsFragment.Contains(tag)){
@@ -135,7 +135,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
                     tagListAdapter.CheckTag(tag, true);
                 tagsFragment.Add(tag, 0);
             }
-            tag_box.setText("");
+            inputBox.setText("");
         }else{
             FinishActivity();
         }
