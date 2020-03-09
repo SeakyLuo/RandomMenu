@@ -80,14 +80,12 @@
             android:layout_height="40dp" />
     </android.support.v7.widget.Toolbar>
 
-    <fragment
-        android:id="@+id/food_list_fragment"
-        class="personalprojects.seakyluo.randommenu.FoodListFragment"
+    <FrameLayout
+        android:id="@+id/food_list_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tag_toolbar"
-        tools:layout="@layout/fragment_linear_recycler_view" />
+        app:layout_constraintTop_toBottomOf="@id/tag_toolbar" />
 </android.support.constraint.ConstraintLayout>

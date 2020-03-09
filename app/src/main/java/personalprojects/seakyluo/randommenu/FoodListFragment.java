@@ -40,6 +40,10 @@ public class FoodListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linear_recycler_view, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
+        adapter.SetSelectable(selectable);
+        adapter.SetsSelectionChangedListener((vh, selected) -> {
+            ((FoodListAdapter.ViewHolder)vh).setSelected(selected);
+        });
         adapter.SetContext(getContext());
         recyclerView.setAdapter(adapter);
         if (foodRemovedListener != null) AddSwipeControl();
@@ -47,7 +51,7 @@ public class FoodListFragment extends Fragment {
     }
 
     public void SetSelectedFood(AList<Food> data){
-
+        adapter.SetSelectedFood(data);
     }
     public AList<Food> GetSelectedFood(){
         return selected;
@@ -55,7 +59,8 @@ public class FoodListFragment extends Fragment {
     public void SetData(AList<Food> data){ this.data.CopyFrom(data); adapter.SetData(data); }
     public void SetData(ArrayList<Food> data){ this.data.CopyFrom(data); adapter.SetData(data); }
     public AList<Food> GetData(){ return data; }
-    public void Clear() { this.data.Clear();  adapter.Clear(); }
+    public void Clear() { this.data.Clear(); adapter.Clear(); }
+    public void SetSelectable(boolean selectable) { this.selectable = selectable; }
     public int RemoveFood(Food food) {
         removedIndex = adapter.data.IndexOf(removedFood = food);
         adapter.data.Pop(removedIndex);
@@ -71,6 +76,7 @@ public class FoodListFragment extends Fragment {
     }
     public void CancelFilter(){
         adapter.SetData(data);
+        recyclerView.smoothScrollToPosition(0);
     }
     public void SetFoodClickedListener(OnDataItemClickedListener<Food> listener){ adapter.SetFoodClickedListener(listener); }
     public void SetFoodRemovedListener(OnDataItemClickedListener<Food> listener){ foodRemovedListener = listener; AddSwipeControl(); }

@@ -28,15 +28,21 @@ public class ChooseFoodActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_food);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        foodListFragment = (FoodListFragment) fragmentManager.findFragmentById(R.id.food_list_fragment);
-        fragmentManager.beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
+        if (savedInstanceState == null){
+            getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment())
+                                                          .add(R.id.food_list_frame, foodListFragment = new FoodListFragment()).commit();
+            foodListFragment.SetSelectable(true);
+        }else{
+            tagsFragment = (TagsFragment) getSupportFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
+            foodListFragment = (FoodListFragment) getSupportFragmentManager().getFragment(savedInstanceState, FoodListFragment.TAG);
+        }
         clear_button = findViewById(R.id.clear_button);
         inputBox = findViewById(R.id.input_box);
         AList<Food> foods = new AList<>(getIntent().getParcelableArrayListExtra(TAG));
 
         tagsFragment.SetData(foods.Convert(f -> new Tag(f.Name)));
         foodListFragment.SetData(Settings.settings.Foods);
+        foodListFragment.SetSelectedFood(foods);
         clear_button.setVisibility(View.GONE);
         clear_button.setOnClickListener(v -> {
             inputBox.setText("");

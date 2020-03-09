@@ -33,6 +33,7 @@ public class MenuDialog extends DialogFragment {
     private OnDataItemClickedListener<AList<Food>> foodAddedListener;
     private TextView header_text;
     private String header;
+    private boolean chooseFoodClicked = false;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
