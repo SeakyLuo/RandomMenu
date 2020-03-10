@@ -35,6 +35,7 @@ public class TagsFragment extends Fragment {
     public AList<Tag> GetData() { return adapter.GetData(); }
     public TagAdapter GetAdapter() { return adapter; }
     public void Add(Tag tag, int index) { adapter.Add(tag, index); }
+    public void Add(Tag tag) { adapter.Add(tag); }
     public void Remove(Tag tag) { adapter.Remove(tag); }
     public boolean Contains(Tag tag) { return adapter.Contains(tag); }
     public void SetData(AList<Tag> data){ adapter.SetData(data); }

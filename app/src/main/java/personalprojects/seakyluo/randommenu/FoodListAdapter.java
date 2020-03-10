@@ -1,6 +1,5 @@
 package personalprojects.seakyluo.randommenu;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +20,7 @@ import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class FoodListAdapter extends CustomAdapter<Food> {
+    public AList<Food> selectedFood = new AList<>();
     private boolean selectable = false;
     private OnDataItemClickedListener<Food> foodClickedListener;
     private OnDataItemClickedListener<Tag> tagClickedListener;
@@ -44,7 +44,11 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         super.onBindViewHolder(holder, position);
         ViewHolder viewHolder = (ViewHolder)holder;
         viewHolder.view.setOnClickListener(v -> {
-            if (foodClickedListener != null) foodClickedListener.Click(holder, data.Get(position));
+            if (foodClickedListener != null) foodClickedListener.Click(holder, viewHolder.data);
+            if (selectable){
+                viewHolder.SetSelected(!viewHolder.selected);
+                if (selectionChangedListener != null) selectionChangedListener.Click(holder, viewHolder.selected);
+            }
         });
         viewHolder.adapter.SetTagClickedListener((v, t) -> {
             if (tagClickedListener != null) tagClickedListener.Click(v, t);
@@ -52,16 +56,14 @@ public class FoodListAdapter extends CustomAdapter<Food> {
     }
 
     public void SetSelectedFood(AList<Food> foods){
-        viewHolders.ForEach(vh -> {
-            if (foods.Contains(vh.data))
-                ((ViewHolder)vh).setSelected(true);
-        });
+        selectedFood.CopyFrom(foods);
     }
 
     class ViewHolder extends CustomViewHolder {
         private ImageView food_image, liked_image, checked_image;
         private TextView food_name;
         private TagAdapter adapter = new TagAdapter();
+        private boolean selected = false;
 
         ViewHolder(View view) {
             super(view);
@@ -71,12 +73,6 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             checked_image = view.findViewById(R.id.checked_image);
             RecyclerView recyclerView = view.findViewById(R.id.tags_recycler_view);
 
-            view.setOnClickListener(v -> {
-                Log.d("fuck", data.Name);
-                Log.d("fuck", String.valueOf(checked_image.getVisibility() == View.VISIBLE));
-                if (selectionChangedListener != null)
-                    selectionChangedListener.Click(this, checked_image.getVisibility() == View.VISIBLE);
-            });
             food_image.setOnClickListener(v -> {
                 if (data.HasImage()){
                     Intent intent = new Intent(context, FullScreenImageActivity.class);
@@ -86,12 +82,13 @@ public class FoodListAdapter extends CustomAdapter<Food> {
                     Toast.makeText(context, R.string.no_food_image, Toast.LENGTH_SHORT).show();
                 }
             });
-            setSelected(selectable);
             recyclerView.setAdapter(adapter);
         }
 
-        void setSelected(boolean selected){
-            checked_image.setVisibility(selected ? View.GONE : View.VISIBLE);
+        void SetSelected(boolean selected){
+            checked_image.setVisibility((this.selected = selected) ? View.VISIBLE : View.GONE);
+            if (selected) selectedFood.Add(data);
+            else selectedFood.Remove(data);
         }
 
         @Override
@@ -100,6 +97,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             food_name.setText(data.Name);
             liked_image.setVisibility(showLikeImage && data.IsFavorite() ? View.VISIBLE : View.GONE);
             adapter.SetData(data.GetTags());
+            checked_image.setVisibility(selectedFood.Contains(data) ?  View.VISIBLE : View.GONE);
         }
     }
 }

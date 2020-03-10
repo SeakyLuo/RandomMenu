@@ -1,91 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/cf_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:background="?android:attr/colorBackgroundFloating"
         android:elevation="2dp"
-        app:contentInsetStart="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tag_toolbar">
+        app:contentInsetStart="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/cancel_button"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:paddingStart="16dp"
-                android:paddingEnd="8dp"
-                android:src="@drawable/ic_cancel" />
+                android:layout_marginVertical="12dp"
+                android:orientation="horizontal">
 
-            <AutoCompleteTextView
-                android:id="@+id/input_box"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:completionThreshold="1"
-                android:hint="@string/input_food"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLength="@integer/maxTagNameLength"
-                android:maxLines="1"
-                android:layout_weight="1" />
+                <ImageButton
+                    android:id="@+id/cancel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="8dp"
+                    android:src="@drawable/ic_cancel" />
 
-            <ImageButton
-                android:id="@+id/clear_button"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:padding="8dp"
-                app:srcCompat="@drawable/ic_clear" />
+                <AutoCompleteTextView
+                    android:id="@+id/input_box"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:completionThreshold="1"
+                    android:hint="@string/input_food"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLength="@integer/maxTagNameLength"
+                    android:maxLines="1" />
 
-            <ImageButton
-                android:id="@+id/confirm_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:paddingStart="8dp"
-                android:paddingEnd="16dp"
-                android:src="@drawable/ic_confirm" />
+                <ImageButton
+                    android:id="@+id/clear_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_clear" />
+
+                <ImageButton
+                    android:id="@+id/confirm_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="16dp"
+                    android:src="@drawable/ic_confirm" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/tags_frame"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="4dp"/>
         </LinearLayout>
-    </android.support.v7.widget.Toolbar>
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/tag_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="4dp"
-        app:contentInsetStart="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cf_toolbar">
-
-        <FrameLayout
-            android:id="@+id/tags_frame"
-            android:layout_width="match_parent"
-            android:layout_height="40dp" />
     </android.support.v7.widget.Toolbar>
 
     <FrameLayout
         android:id="@+id/food_list_frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tag_toolbar" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_height="match_parent" />
+</LinearLayout>

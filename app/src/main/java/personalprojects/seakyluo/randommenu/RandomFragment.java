@@ -74,11 +74,12 @@ public class RandomFragment extends Fragment {
         menuDialog.SetFoodAddedListener((viewHolder, data) -> {
             food_pool.RemoveAll(data);
             menu.CopyFrom(data);
+            SetMenuHeader();
             if (menu.Contains(foodCardFragment.GetFood())) NextFood();
         });
         menuDialog.SetFoodRemovedListener((viewHolder, data) -> {
             menu.Remove(data);
-            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.Count()));
+            SetMenuHeader();
             food_pool.Add(data, Helper.RandRange(0, food_pool.Count()));
         });
         menuDialog.SetOnClearListener(button -> {
@@ -97,6 +98,7 @@ public class RandomFragment extends Fragment {
         return view;
     }
 
+    private void SetMenuHeader() { menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.Count())); }
     private void GoodFood() { food_card.startAnimation(good_food); }
     private void BadFood() { food_card.startAnimation(bad_food); }
     private void ResetFood() { flip_in.setTarget(food_card); flip_in.start(); }

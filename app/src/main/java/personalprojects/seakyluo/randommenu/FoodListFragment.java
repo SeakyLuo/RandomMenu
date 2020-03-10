@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +30,8 @@ public class FoodListFragment extends Fragment {
     private RecyclerView recyclerView;
     private FoodListAdapter adapter = new FoodListAdapter();
     private AList<Food> data = new AList<>();
-    private AList<Food> selected = new AList<>();
     private OnDataItemClickedListener<Food> foodRemovedListener;
+    private OnDataItemClickedListener<Boolean> foodSelectedListener;
     private Food removedFood;
     private int removedIndex;
     @Nullable
@@ -41,21 +40,15 @@ public class FoodListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_linear_recycler_view, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         adapter.SetSelectable(selectable);
-        adapter.SetsSelectionChangedListener((vh, selected) -> {
-            ((FoodListAdapter.ViewHolder)vh).setSelected(selected);
-        });
+        adapter.SetsSelectionChangedListener(foodSelectedListener);
         adapter.SetContext(getContext());
         recyclerView.setAdapter(adapter);
         if (foodRemovedListener != null) AddSwipeControl();
         return view;
     }
 
-    public void SetSelectedFood(AList<Food> data){
-        adapter.SetSelectedFood(data);
-    }
-    public AList<Food> GetSelectedFood(){
-        return selected;
-    }
+    public void SetSelectedFood(AList<Food> data){ adapter.SetSelectedFood(data); }
+    public AList<Food> GetSelectedFood(){ return adapter.selectedFood; }
     public void SetData(AList<Food> data){ this.data.CopyFrom(data); adapter.SetData(data); }
     public void SetData(ArrayList<Food> data){ this.data.CopyFrom(data); adapter.SetData(data); }
     public AList<Food> GetData(){ return data; }
@@ -66,6 +59,9 @@ public class FoodListFragment extends Fragment {
         adapter.data.Pop(removedIndex);
         adapter.notifyItemRemoved(removedIndex);
         return removedIndex;
+    }
+    public void UnselectFood(String food){
+        ((FoodListAdapter.ViewHolder)adapter.viewHolders.First(vh -> ((FoodListAdapter.ViewHolder)vh).data.Name.equals(food))).SetSelected(false);
     }
     public void CancelRemoval(){
         adapter.data.Add(removedFood, removedIndex);
@@ -79,6 +75,7 @@ public class FoodListFragment extends Fragment {
         recyclerView.smoothScrollToPosition(0);
     }
     public void SetFoodClickedListener(OnDataItemClickedListener<Food> listener){ adapter.SetFoodClickedListener(listener); }
+    public void SetFoodSelectedListener(OnDataItemClickedListener<Boolean> listener){ foodSelectedListener = listener; }
     public void SetFoodRemovedListener(OnDataItemClickedListener<Food> listener){ foodRemovedListener = listener; AddSwipeControl(); }
     public void SetShowLikeImage(boolean showLikeImage) { adapter.SetShowLikeImage(showLikeImage); }
     public void AddSwipeControl(){

@@ -40,9 +40,17 @@ public class ChooseFoodActivity extends AppCompatActivity {
         inputBox = findViewById(R.id.input_box);
         AList<Food> foods = new AList<>(getIntent().getParcelableArrayListExtra(TAG));
 
+        tagsFragment.SetSpanCount(1);
+        tagsFragment.SetCloseable(true);
         tagsFragment.SetData(foods.Convert(f -> new Tag(f.Name)));
+        tagsFragment.SetTagClosedListener((vh, food) -> foodListFragment.UnselectFood(food.Name));
         foodListFragment.SetData(Settings.settings.Foods);
         foodListFragment.SetSelectedFood(foods);
+        foodListFragment.SetFoodSelectedListener((vh, selected) -> {
+            Tag food = new Tag(((FoodListAdapter.ViewHolder)vh).data.Name);
+            if (selected) tagsFragment.Add(food);
+            else tagsFragment.Remove(food);
+        });
         clear_button.setVisibility(View.GONE);
         clear_button.setOnClickListener(v -> {
             inputBox.setText("");

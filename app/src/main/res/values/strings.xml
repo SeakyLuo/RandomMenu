@@ -65,7 +65,7 @@
     <string name="select_image">Select Image</string>
     <string name="dislike_food">Dislike food</string>
     <string name="history">History</string>
-    <string name="no_food_image">No food image.</string>
+    <string name="no_food_image">No food images</string>
     <string name="clear_cache">Clear Cache</string>
     <string name="export_data">Export Data</string>
     <string name="placeholder">Placeholder</string>
