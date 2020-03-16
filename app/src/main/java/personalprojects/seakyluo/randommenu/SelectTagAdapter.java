@@ -3,7 +3,6 @@ package personalprojects.seakyluo.randommenu;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +61,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
     }
 
     public void SetTags(AList<Tag> tags){
-        if (tags.SameCollection(data.After(1))) return;
+        if (tags.Equals(data.After(1))) return;
         if (data.Count() == 0) data.Add(Tag.AllCategoriesTag);
         else data.Clear(1);
         data.AddAll(tags);

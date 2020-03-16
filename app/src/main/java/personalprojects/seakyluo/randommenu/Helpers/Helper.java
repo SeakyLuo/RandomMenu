@@ -92,16 +92,19 @@ public class Helper {
     }
     public static Bitmap GetFoodBitmap(String path) { return BitmapFactory.decodeFile(GetImagePath(path)); }
     public static Bitmap GetFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
-    public static String SaveImage(ImageView imageView, File folder, String filename){
+    public static boolean SaveImage(ImageView imageView, File folder, String filename){
         return SaveImage(GetFoodBitmap(imageView), folder, filename);
     }
-    public static String SaveImage(Bitmap image, File folder, String filename){
+    public static boolean SaveImage(Bitmap image, File folder, String filename){
         try (FileOutputStream out = new FileOutputStream(new File(folder, filename))) {
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
+        } catch (Exception e){
+            return false;
         }
-        return filename;
     }
     public static String Timestamp() { return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); }
     public static String NewImageFileName(){ return Timestamp() + ".jpg"; }

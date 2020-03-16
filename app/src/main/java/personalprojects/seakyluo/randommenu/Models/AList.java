@@ -24,6 +24,7 @@ public class AList<T> extends IList<T> {
     public AList(AList<T> collection) { AddAll(collection); }
     public AList(T... collection) { for (T element: collection) Add(element); }
     public AList(T element) { Add(element); }
+    public AList(T element, int count) { for (int i = 0; i < count; i++) Add(element); }
 
     public int Count() { return list.size(); }
     public boolean IsEmpty() { return list.size() == 0; }
@@ -41,15 +42,15 @@ public class AList<T> extends IList<T> {
         for (T obj: list) if (!lambda.operate(obj)) return false;
         return true;
     }
-    public boolean SameCollection(AList<T> collection){
+    public boolean Equals(AList<T> collection){
         int count = Count();
         if (count != collection.Count()) return false;
-        for(int i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
             if (!Get(i).equals(collection.Get(i)))
                 return false;
         return true;
     }
-    public boolean SameCollection(Collection<T> collection){  return SameCollection(new AList<>(collection)); }
+    public boolean Equals(Collection<T> collection){ return Equals(new AList<>(collection)); }
     public T Add(T element) { list.add(element); return element; }
     public T Add(T element, int index) {
         index = ModIndex(index);

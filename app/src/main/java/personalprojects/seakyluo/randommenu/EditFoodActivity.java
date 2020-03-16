@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -44,7 +43,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private ImageViewerFragment imageViewerFragment;
     private Food currentFood;
     private Uri camera_image_uri, crop_image_uri;
-    private AList<String> images = new AList<>();
+    private AList<String> images = new AList<>(), sources = new AList<>();
     private boolean isDraft = false;
     private String food_cover = "";
 
@@ -77,8 +76,8 @@ public class EditFoodActivity extends AppCompatActivity {
             String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
             AList<Tag> tags = chooseTagFragment.GetData();
             boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
-                    imageChanged = currentFood == null ? images.Count() > 0 : !images.SameCollection(currentFood.Images),
-                    tagChanged = currentFood == null ? tags.Count() > 0 : !tags.SameCollection(currentFood.GetTags()),
+                    imageChanged = currentFood == null ? images.Count() > 0 : !images.Equals(currentFood.Images),
+                    tagChanged = currentFood == null ? tags.Count() > 0 : !tags.Equals(currentFood.GetTags()),
                     noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note),
                     likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.IsFavorite();
             if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
@@ -212,6 +211,7 @@ public class EditFoodActivity extends AppCompatActivity {
         edit_food_name.setText(food.Name);
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
         imageViewerFragment.setImages(images.CopyFrom(food.Images));
+        sources.CopyFrom(new AList<>("", food.Images.Count()));
         chooseTagFragment.SetData(food.GetTags());
         edit_note.setText(food.Note);
         like_toggle.setChecked(food.IsFavorite());
@@ -237,18 +237,23 @@ public class EditFoodActivity extends AppCompatActivity {
     }
 
     private String CurrentImage() { return Helper.GetImagePath(images.Get(imageViewerFragment.getCurrent())); }
-    private void AddImage(String image) { images.Add(imageViewerFragment.adapter.Add(image), 0); }
-
+    private boolean AddImage(Bitmap image, String filename){
+        boolean success = Helper.SaveImage(image, Helper.ImageFolder, filename);
+        if (success) images.Add(imageViewerFragment.adapter.Add(filename), 0);
+        return success;
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         Bitmap image;
+        String filename = "";
         switch (requestCode){
             case CAMERA_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
-                    AddImage(Helper.SaveImage(image, Helper.ImageFolder, camera_image_uri.getPath()));
+                    if (AddImage(image, filename = camera_image_uri.getPath()))
+                        sources.Add(filename, 0);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;
@@ -256,19 +261,39 @@ public class EditFoodActivity extends AppCompatActivity {
                 break;
             case GALLERY_CODE:
                 try {
-                    if (data.getClipData() != null) {
+                    Uri uri;
+                    int index;
+                    if (data.getClipData() == null) {
+                        uri = data.getData();
+                        index = sources.IndexOf(uri.getPath());
+                        if (index > -1){
+                            images.Move(index, 0);
+                            sources.Move(index, 0);
+                            imageViewerFragment.adapter.Move(index, 0);
+                        }else if (AddImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), Helper.NewImageFileName()))
+                            sources.Add(uri.getPath(), 0);
+                    }else{
                         ClipData clipData = data.getClipData();
                         int count = clipData.getItemCount();
-                        AList<String> paths = new AList<>();
-                        for (int i = 0; i < count; i++)
-                            paths.Add(Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), clipData.getItemAt(i).getUri()),
-                                                       Helper.ImageFolder,
-                                                       Helper.NewImageFileName(i)), 0);
-                        images.AddAll(imageViewerFragment.adapter.Add(paths), 0);
-                    }else{
-                        AddImage(Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData()),
-                                                  Helper.ImageFolder,
-                                                  Helper.NewImageFileName()));
+                        AList<String> files = new AList<>(), paths = new AList<>();
+                        String path;
+                        for (int i = 0; i < count; i++){
+                            uri = clipData.getItemAt(i).getUri();
+                            path = uri.getPath();
+                            index = sources.IndexOf(path);
+                            if (index > -1){
+                                images.Pop(index);
+                                sources.Pop(index);
+                                imageViewerFragment.adapter.Remove(index);
+                            }else if (Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
+                                                        Helper.ImageFolder,
+                                                        filename = Helper.NewImageFileName(i))){
+                                files.Add(filename, 0);
+                                paths.Add(path, 0);
+                            }
+                        }
+                        images.AddAll(imageViewerFragment.adapter.Add(files), 0);
+                        sources.AddAll(paths, 0);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -278,10 +303,11 @@ public class EditFoodActivity extends AppCompatActivity {
             case CROP_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
-                    String name = Helper.SaveImage(image, Helper.ImageFolder, Helper.NewImageFileName());
+                    if (!Helper.SaveImage(image, Helper.ImageFolder, filename = Helper.NewImageFileName())) return;
                     int current = imageViewerFragment.getCurrent();
-                    if (images.Get(current).equals(food_cover)) food_cover = name;
-                    images.Set(imageViewerFragment.setCurrentImage(name), current);
+                    if (images.Get(current).equals(food_cover)) food_cover = filename;
+                    images.Set(imageViewerFragment.setCurrentImage(filename), current);
+                    sources.Set("", current);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;

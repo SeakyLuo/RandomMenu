@@ -65,6 +65,10 @@ public class ImageAdapter extends PagerAdapter {
     }
     public AList<String> GetData() { return images; }
     public String Get(int index) { return images.Get(index); }
+    public void Move(int from, int to) {
+        images.Move(from, to);
+        notifyDataSetChanged();
+    }
     public void setOnImageClickedListener(View.OnClickListener listener) { clickListener = listener; }
 
     @Override

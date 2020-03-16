@@ -75,7 +75,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         });
 
         findViewById(R.id.back_button).setOnClickListener(v -> {
-            if (tagsFragment.GetData().SameCollection(selected_tags)){
+            if (tagsFragment.GetData().Equals(selected_tags)){
                 setResult(RESULT_CANCELED);
                 finish();
             }else{
@@ -145,7 +145,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         Intent intent = new Intent();
         AList<Tag> tags = tagsFragment.GetData();
         intent.putExtra(SELECTED_TAGS, tags.ToArrayList());
-        if (tags.SameCollection(selected_tags)) setResult(RESULT_CANCELED);
+        if (tags.Equals(selected_tags)) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);
         finish();
     }

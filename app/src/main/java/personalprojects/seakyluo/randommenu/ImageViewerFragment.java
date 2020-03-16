@@ -56,7 +56,6 @@ public class ImageViewerFragment extends Fragment {
 
             @Override
             public void onPageSelected(int i) {
-                Log.d("fuck", "onPageSelected: " + i);
                 setButtonVisibility(current = i);
             }
 
@@ -70,7 +69,6 @@ public class ImageViewerFragment extends Fragment {
     }
     public void scrollTo(int index) { viewPager.setCurrentItem(index, true); }
     public void setButtonVisibility(int current){
-        Log.d("fuck", "setButtonVisibility: " + current);
         prev_image_button.setVisibility(current <= 0 ? View.INVISIBLE : View.VISIBLE);
         next_image_button.setVisibility(current < 0 || current == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
     }
@@ -83,4 +81,8 @@ public class ImageViewerFragment extends Fragment {
     public String getCurrentImage() { return adapter.Get(current); }
     public String setCurrentImage(String image) { return adapter.Set(image, current); }
     public int removeCurrentImage() { return adapter.Remove(current--); }
+//    public void Move(int from, int to) {
+//        adapter.Move(from, to);
+//        if (current == from) current = to;
+//    }
 }
