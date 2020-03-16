@@ -18,7 +18,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 
 public class ImageViewerFragment extends Fragment {
     public static final String TAG = "ImageViewerFragment";
-    private int current = 0;
+    private int current = -1;
     public ImageAdapter adapter = new ImageAdapter(ImageView.ScaleType.CENTER_CROP);
     private ViewPager viewPager;
     private ImageButton prev_image_button, next_image_button;
@@ -32,10 +32,14 @@ public class ImageViewerFragment extends Fragment {
         next_image_button = view.findViewById(R.id.next_image_button);
         viewPager = view.findViewById(R.id.imageViewPager);
 
-        prev_image_button.setOnClickListener(v -> viewPager.setCurrentItem(current - 1, true));
-        next_image_button.setOnClickListener(v -> viewPager.setCurrentItem(current + 1, true));
+        prev_image_button.setOnClickListener(v -> scrollTo(current - 1));
+        next_image_button.setOnClickListener(v -> scrollTo(current + 1));
         setButtonVisibility(current);
-        adapter.setOnDataChangedListener(images -> setButtonVisibility(current));
+        adapter.setOnDataChangedListener(images -> {
+            if (images.Count() == 0) current = -1;
+            else scrollTo(current = 0);
+            setButtonVisibility(current);
+        });
         adapter.setContext(getContext());
         adapter.setOnImageClickedListener(v -> {
             Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
@@ -52,6 +56,7 @@ public class ImageViewerFragment extends Fragment {
 
             @Override
             public void onPageSelected(int i) {
+                Log.d("fuck", "onPageSelected: " + i);
                 setButtonVisibility(current = i);
             }
 
@@ -60,17 +65,18 @@ public class ImageViewerFragment extends Fragment {
 
             }
         });
-        if (coverIndex != -1) viewPager.setCurrentItem(coverIndex);
+        if (coverIndex != -1) scrollTo(coverIndex);
         return view;
     }
-
+    public void scrollTo(int index) { viewPager.setCurrentItem(index, true); }
     public void setButtonVisibility(int current){
-        prev_image_button.setVisibility(current == 0 ? View.INVISIBLE : View.VISIBLE);
-        next_image_button.setVisibility(current == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
+        Log.d("fuck", "setButtonVisibility: " + current);
+        prev_image_button.setVisibility(current <= 0 ? View.INVISIBLE : View.VISIBLE);
+        next_image_button.setVisibility(current < 0 || current == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
     }
     public void setCover(String image){
         coverIndex = adapter.IndexOf(image);
-        if (viewPager != null) viewPager.setCurrentItem(adapter.IndexOf(image));
+        if (viewPager != null) scrollTo(adapter.IndexOf(image));
     }
     public void setImages(AList<String> images) { images.CopyFrom(adapter.SetData(images)); }
     public int getCurrent() { return current; }
