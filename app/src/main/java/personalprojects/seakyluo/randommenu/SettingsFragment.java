@@ -90,6 +90,8 @@ public class SettingsFragment extends Fragment {
             dialog.setOnViewCreatedListener(d -> {
                 dialog.setMessage(getString(R.string.exporting_data));
                 new Thread(() -> {
+                    File settings = new File(Helper.getPath(Helper.ROOT_FOLDER, Settings.FILENAME));
+                    boolean exists = settings.exists();
                     if (Helper.Zip(path, Helper.ImageFolder, new File(Settings.FILENAME))){
                         getActivity().runOnUiThread(() -> {
                             dialog.dismiss();
@@ -97,7 +99,8 @@ public class SettingsFragment extends Fragment {
 
                             Intent shareIntent = new Intent(Intent.ACTION_SEND);
                             shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
+                            shareIntent.setType("*/*");
+                            shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.GetFileUri(getContext(), path));
                             startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
                         });
                     }

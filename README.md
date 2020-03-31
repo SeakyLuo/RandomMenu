@@ -8,6 +8,8 @@ An Android app that records your cooking list.
 
 3. Share image to this app.
 
+4. Zip file manager.
+
 # TO FIX
 1. Improve image zoom in/out.
 
