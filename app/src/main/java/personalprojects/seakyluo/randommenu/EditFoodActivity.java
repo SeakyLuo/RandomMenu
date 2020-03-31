@@ -239,7 +239,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private String CurrentImage() { return Helper.GetImagePath(images.Get(imageViewerFragment.getCurrent())); }
     private boolean AddImage(Bitmap image, String filename){
         boolean success = Helper.SaveImage(image, Helper.ImageFolder, filename);
-        if (success) images.Add(imageViewerFragment.adapter.Add(filename), 0);
+        if (success) images.Add(imageViewerFragment.addImage(filename), 0);
         return success;
     }
     @Override
@@ -266,10 +266,11 @@ public class EditFoodActivity extends AppCompatActivity {
                     if (data.getClipData() == null) {
                         uri = data.getData();
                         index = sources.IndexOf(uri.getPath());
+                        // Avoid re-adding images
                         if (index > -1){
                             images.Move(index, 0);
                             sources.Move(index, 0);
-                            imageViewerFragment.adapter.Move(index, 0);
+                            imageViewerFragment.moveImage(index, 0);
                         }else if (AddImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), Helper.NewImageFileName()))
                             sources.Add(uri.getPath(), 0);
                     }else{
@@ -284,7 +285,7 @@ public class EditFoodActivity extends AppCompatActivity {
                             if (index > -1){
                                 images.Pop(index);
                                 sources.Pop(index);
-                                imageViewerFragment.adapter.Remove(index);
+                                imageViewerFragment.removeImage(index);
                             }else if (Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
                                                         Helper.ImageFolder,
                                                         filename = Helper.NewImageFileName(i))){
@@ -292,7 +293,7 @@ public class EditFoodActivity extends AppCompatActivity {
                                 paths.Add(path, 0);
                             }
                         }
-                        images.AddAll(imageViewerFragment.adapter.Add(files), 0);
+                        images.AddAll(imageViewerFragment.addImages(files), 0);
                         sources.AddAll(paths, 0);
                     }
                 } catch (IOException e) {

@@ -19,7 +19,7 @@ import personalprojects.seakyluo.randommenu.Models.AList;
 public class ImageViewerFragment extends Fragment {
     public static final String TAG = "ImageViewerFragment";
     private int current = -1;
-    public ImageAdapter adapter = new ImageAdapter(ImageView.ScaleType.CENTER_CROP);
+    private ImageAdapter adapter = new ImageAdapter(ImageView.ScaleType.CENTER_CROP);
     private ViewPager viewPager;
     private ImageButton prev_image_button, next_image_button;
     private int coverIndex = -1;
@@ -34,12 +34,8 @@ public class ImageViewerFragment extends Fragment {
 
         prev_image_button.setOnClickListener(v -> scrollTo(current - 1));
         next_image_button.setOnClickListener(v -> scrollTo(current + 1));
-        setButtonVisibility(current);
-        adapter.setOnDataChangedListener(images -> {
-            if (images.Count() == 0) current = -1;
-            else scrollTo(current = 0);
-            setButtonVisibility(current);
-        });
+        setButtonVisibility(current = adapter.GetData().Count() > 0 ? 0 : -1);
+        adapter.setOnDataChangedListener(images -> setButtonVisibility(current));
         adapter.setContext(getContext());
         adapter.setOnImageClickedListener(v -> {
             Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
@@ -80,7 +76,25 @@ public class ImageViewerFragment extends Fragment {
     public int getCurrent() { return current; }
     public String getCurrentImage() { return adapter.Get(current); }
     public String setCurrentImage(String image) { return adapter.Set(image, current); }
-    public int removeCurrentImage() { return adapter.Remove(current--); }
+    public int removeCurrentImage() {
+        int index = adapter.Remove(current--);
+        if (current != -1) scrollTo(current);
+        return index;
+    }
+    public int removeImage(int index) {
+        return adapter.Remove(index);
+    }
+    public void moveImage(int from, int to) { adapter.Move(from, to); }
+    public AList<String> addImages(AList<String> data) {
+        adapter.Add(data);
+        scrollTo(current = 0);
+        return data;
+    }
+    public String addImage(String data) {
+        adapter.Add(data);
+        scrollTo(current = 0);
+        return data;
+    }
 //    public void Move(int from, int to) {
 //        adapter.Move(from, to);
 //        if (current == from) current = to;
