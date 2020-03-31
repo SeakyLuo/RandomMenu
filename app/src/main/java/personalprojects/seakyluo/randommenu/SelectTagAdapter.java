@@ -61,7 +61,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
     }
 
     public void SetTags(AList<Tag> tags){
-        if (tags.Equals(data.After(1))) return;
+        if (tags.Equals(data.After(0))) return;
         if (data.Count() == 0) data.Add(Tag.AllCategoriesTag);
         else data.Clear(1);
         data.AddAll(tags);

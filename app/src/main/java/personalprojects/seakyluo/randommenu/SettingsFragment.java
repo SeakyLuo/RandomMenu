@@ -72,10 +72,15 @@ public class SettingsFragment extends Fragment {
                     for (File file: Helper.ImageFolder.listFiles())
                         if (!paths.contains(file.getName()))
                             file.delete();
+                    HashSet<String> files = new AList<>(Helper.ImageFolder.listFiles()).Convert(File::getName).ToHashSet();
+                    Settings.settings.Foods.ForEach(food -> {
+                       food.Images.Copy().ForEach(image -> {
+                           if (!files.contains(image)) food.Images.Remove(image);
+                       });
+                    });
                     for (File file: Helper.TempFolder.listFiles())
                         file.delete();
-//                    for (File file: Helper.ExportedDataFolder.listFiles())
-//                        file.delete();
+                    new AList<>(Helper.ExportedDataFolder.listFiles()).After(0).ForEach(File::delete);
                     dialog.dismiss();
                     getActivity().runOnUiThread(() -> {
                         Toast.makeText(getContext(), R.string.clear_cache_msg, Toast.LENGTH_SHORT).show();
@@ -90,9 +95,7 @@ public class SettingsFragment extends Fragment {
             dialog.setOnViewCreatedListener(d -> {
                 dialog.setMessage(getString(R.string.exporting_data));
                 new Thread(() -> {
-                    File settings = new File(Helper.getPath(Helper.ROOT_FOLDER, Settings.FILENAME));
-                    boolean exists = settings.exists();
-                    if (Helper.Zip(path, Helper.ImageFolder, new File(Settings.FILENAME))){
+                    if (Helper.Zip(path, Helper.ImageFolder, new File(Helper.getPath(Helper.ROOT_FOLDER, Settings.FILENAME)))){
                         getActivity().runOnUiThread(() -> {
                             dialog.dismiss();
                             Toast.makeText(getContext(), R.string.export_data_msg, Toast.LENGTH_SHORT).show();

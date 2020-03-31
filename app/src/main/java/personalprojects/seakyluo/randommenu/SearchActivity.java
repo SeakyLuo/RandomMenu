@@ -59,7 +59,7 @@ public class SearchActivity extends SwipeBackActivity {
             historyFragment.Remove(data);
             Settings.settings.SearchHistory.Remove(data);
         });
-        tabPagerAdapter.GetFragments().After(1).ForEach(f -> {
+        tabPagerAdapter.GetFragments().After(0).ForEach(f -> {
             FoodListFragment fragment = (FoodListFragment) f;
             fragment.SetFoodClickedListener((viewHolder, food) -> {
                 FoodCardDialog dialog = new FoodCardDialog();
@@ -137,7 +137,7 @@ public class SearchActivity extends SwipeBackActivity {
 
     public void Search(String keyword){
         if (keyword.isEmpty()){
-            tabPagerAdapter.GetFragments().After(1).ForEach(f -> ((FoodListFragment) f).Clear());
+            tabPagerAdapter.GetFragments().After(0).ForEach(f -> ((FoodListFragment) f).Clear());
         }else{
             AList<Food> filtered = Settings.settings.Foods.Find(f -> SearchFoodName(f, keyword) || SearchFoodTag(f, keyword) || SearchFoodNote(f, keyword));
             if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
