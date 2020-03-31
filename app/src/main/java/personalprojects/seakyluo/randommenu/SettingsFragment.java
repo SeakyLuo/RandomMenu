@@ -55,9 +55,13 @@ public class SettingsFragment extends Fragment {
             startActivity(new Intent(getContext(), DislikeActivity.class));
             getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
-        view.findViewById(R.id.delete_draft_button).setOnClickListener(v -> {
-            Settings.settings.FoodDraft = null;
-            Toast.makeText(getContext(), R.string.draft_deleted, Toast.LENGTH_SHORT).show();
+        view.findViewById(R.id.dislike_food_button).setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), DislikeActivity.class));
+            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
+        });
+        view.findViewById(R.id.note_button).setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), NoteActivity.class));
+            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
         view.findViewById(R.id.clear_cache_button).setOnClickListener(v -> {
             LoadingDialog dialog = new LoadingDialog();

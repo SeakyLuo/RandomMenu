@@ -13,6 +13,7 @@ public class Settings {
     public AList<String> DislikeFood = new AList<>();
     public AList<String> SearchHistory = new AList<>();
     public Food FoodDraft;
+    public String Note = "";
 
     public void AddFood(Food food, int index){
         food.GetTags().ForEach(tag -> {
