@@ -20,4 +20,8 @@
         android:id="@+id/set_cover_item"
         android:icon="@drawable/ic_set_cover"
         android:title="@string/set_cover" />
+    <item
+        android:id="@+id/move_to_first_item"
+        android:icon="@drawable/ic_move_to_first"
+        android:title="@string/move_to_first" />
 </menu>

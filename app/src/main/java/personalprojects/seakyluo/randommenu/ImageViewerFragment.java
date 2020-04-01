@@ -97,8 +97,11 @@ public class ImageViewerFragment extends Fragment {
         scrollTo(current = 0);
         return data;
     }
-//    public void Move(int from, int to) {
-//        adapter.Move(from, to);
-//        if (current == from) current = to;
-//    }
+    public void Move(int from, int to) {
+        adapter.Move(from, to);
+        if (current == from){
+            current = to;
+            scrollTo(to);
+        }
+    }
 }
