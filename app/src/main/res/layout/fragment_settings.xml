@@ -201,6 +201,13 @@
                         android:text="@string/delete_draft"
                         android:textAllCaps="false" />
                     <Button
+                        android:id="@+id/import_data_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:text="@string/import_data"
+                        android:textAllCaps="false" />
+                    <Button
                         android:id="@+id/export_data_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

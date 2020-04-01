@@ -93,6 +93,22 @@ public class SettingsFragment extends Fragment {
             });
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
+        view.findViewById(R.id.import_data_button).setOnClickListener(v -> {
+            LoadingDialog dialog = new LoadingDialog();
+            dialog.setOnViewCreatedListener(d -> {
+                dialog.setMessage(getString(R.string.importing_data));
+                new Thread(() -> {
+                    getActivity().runOnUiThread(() -> {
+//                    Helper.Unzip(null, Helper.Root);
+//                    Helper.Init(getContext());
+//                    Helper.Save();
+                        dialog.dismiss();
+                        Toast.makeText(getContext(), R.string.import_data_msg, Toast.LENGTH_SHORT).show();
+                    });
+                }).start();
+            });
+            dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
+        });
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
             String filename = Helper.Timestamp() + ".zip", path = Helper.ExportedDataFolder.getPath() + File.separator + filename;
             LoadingDialog dialog = new LoadingDialog();

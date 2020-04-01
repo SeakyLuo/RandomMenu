@@ -86,4 +86,7 @@
     <string name="add">Add</string>
     <string name="input_food">Input Food</string>
     <string name="note_hint">Note down anything!</string>
+    <string name="import_data">Import Data</string>
+    <string name="importing_data">Importing data...</string>
+    <string name="import_data_msg">Data imported!</string>
 </resources>

@@ -86,4 +86,7 @@
     <string name="add">添加</string>
     <string name="input_food">输入菜肴</string>
     <string name="note_hint">随便写点什么吧！</string>
+    <string name="import_data">导入数据</string>
+    <string name="importing_data">正在导入数据……</string>
+    <string name="import_data_msg">数据已导入！</string>
 </resources>

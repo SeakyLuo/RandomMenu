@@ -10,9 +10,7 @@ An Android app that records your cooking list.
 
 4. Zip file manager.
 
-5. Image move to top.
+5. Import data.
 
 # TO FIX
 1. Improve image zoom in/out.
-
-2. ImageViewer deletion.
