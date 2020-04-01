@@ -210,12 +210,11 @@ public class EditFoodActivity extends AppCompatActivity {
         if (food == null) return;
         edit_food_name.setText(food.Name);
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
-        imageViewerFragment.setImages(images.CopyFrom(food.Images));
+        imageViewerFragment.setImages(images.CopyFrom(food.Images), food_cover = food.GetCover());
         sources.CopyFrom(new AList<>("", food.Images.Count()));
         chooseTagFragment.SetData(food.GetTags());
         edit_note.setText(food.Note);
         like_toggle.setChecked(food.IsFavorite());
-        imageViewerFragment.setCover(food_cover = food.GetCover());
     }
 
     @Override

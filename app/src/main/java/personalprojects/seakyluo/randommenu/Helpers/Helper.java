@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -209,6 +211,31 @@ public class Helper {
             in.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public static void Unzip(File zipFile, File targetDirectory) {
+        try (FileInputStream fis = new FileInputStream(zipFile)) {
+            try (BufferedInputStream bis = new BufferedInputStream(fis)) {
+                try (ZipInputStream zis = new ZipInputStream(bis)) {
+                    ZipEntry ze;
+                    int count;
+                    byte[] buffer = new byte[1024];
+                    while ((ze = zis.getNextEntry()) != null) {
+                        File file = new File(targetDirectory, ze.getName());
+                        File dir = ze.isDirectory() ? file : file.getParentFile();
+                        if (!dir.isDirectory() && !dir.mkdirs())
+                            throw new FileNotFoundException("Failed to ensure directory: " + dir.getAbsolutePath());
+                        if (ze.isDirectory())
+                            continue;
+                        try (FileOutputStream fout = new FileOutputStream(file)) {
+                            while ((count = zis.read(buffer)) != -1)
+                                fout.write(buffer, 0, count);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            //handle exception
         }
     }
 }

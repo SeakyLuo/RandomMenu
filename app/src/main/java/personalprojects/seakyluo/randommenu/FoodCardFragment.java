@@ -190,8 +190,7 @@ public class FoodCardFragment extends Fragment {
         food_note_back.setText(food.Note);
         SetFoodNote(food);
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
-        imageViewerFragment.setImages(food.Images);
-        imageViewerFragment.setCover(food.GetCover());
+        imageViewerFragment.setImages(food.Images, food.GetCover());
         SetFoodFavorite(food.IsFavorite());
         tagsFragment.SetData(food.GetTags());
     }

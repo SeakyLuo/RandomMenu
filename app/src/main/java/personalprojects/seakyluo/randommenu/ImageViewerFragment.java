@@ -22,7 +22,6 @@ public class ImageViewerFragment extends Fragment {
     private ImageAdapter adapter = new ImageAdapter(ImageView.ScaleType.CENTER_CROP);
     private ViewPager viewPager;
     private ImageButton prev_image_button, next_image_button;
-    private int coverIndex = -1;
 
     @Nullable
     @Override
@@ -34,7 +33,6 @@ public class ImageViewerFragment extends Fragment {
 
         prev_image_button.setOnClickListener(v -> scrollTo(current - 1));
         next_image_button.setOnClickListener(v -> scrollTo(current + 1));
-        setButtonVisibility(current = adapter.GetData().Count() > 0 ? 0 : -1);
         adapter.setOnDataChangedListener(images -> setButtonVisibility(current));
         adapter.setContext(getContext());
         adapter.setOnImageClickedListener(v -> {
@@ -43,7 +41,7 @@ public class ImageViewerFragment extends Fragment {
             intent.putExtra(FullScreenImageActivity.INDEX, current);
             startActivity(intent);
         });
-        viewPager.setAdapter(adapter); // Here we are passing and setting the adapter for the images
+        viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -60,7 +58,8 @@ public class ImageViewerFragment extends Fragment {
 
             }
         });
-        if (coverIndex != -1) scrollTo(coverIndex);
+        scrollTo(current);
+        setButtonVisibility(current);
         return view;
     }
     public void scrollTo(int index) { viewPager.setCurrentItem(index, true); }
@@ -68,11 +67,14 @@ public class ImageViewerFragment extends Fragment {
         prev_image_button.setVisibility(current <= 0 ? View.INVISIBLE : View.VISIBLE);
         next_image_button.setVisibility(current < 0 || current == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
     }
-    public void setCover(String image){
-        coverIndex = adapter.IndexOf(image);
-        if (viewPager != null) scrollTo(adapter.IndexOf(image));
+    public void setImages(AList<String> images, String cover) {
+        current = images.IndexOf(cover);
+        adapter.SetData(images);
+        if (viewPager != null){
+            scrollTo(current);
+            setButtonVisibility(current);
+        }
     }
-    public void setImages(AList<String> images) { images.CopyFrom(adapter.SetData(images)); }
     public int getCurrent() { return current; }
     public String getCurrentImage() { return adapter.Get(current); }
     public String setCurrentImage(String image) { return adapter.Set(image, current); }
