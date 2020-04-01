@@ -79,4 +79,11 @@ public class Settings {
         Gson gson = new Gson();
         return gson.toJson(this);
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null) return false;
+        if (!(obj instanceof Settings)) return false;
+        return ToJson().equals(((Settings)obj).ToJson());
+    }
 }

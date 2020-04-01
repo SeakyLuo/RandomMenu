@@ -19,8 +19,8 @@ public class NoteActivity extends SwipeBackActivity {
 
     @Override
     public void finish(){
-        super.finish();
         Settings.settings.Note = editText.getText().toString();
         Helper.Save();
+        super.finish();
     }
 }

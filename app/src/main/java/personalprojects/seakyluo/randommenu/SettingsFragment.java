@@ -68,16 +68,20 @@ public class SettingsFragment extends Fragment {
             dialog.setOnViewCreatedListener(d -> {
                 dialog.setMessage(R.string.clearing_cache);
                 new Thread(() -> {
+                    // Removing unused images
                     HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
                     for (File file: Helper.ImageFolder.listFiles())
                         if (!paths.contains(file.getName()))
                             file.delete();
+                    // Removing non-existed images
                     HashSet<String> files = new AList<>(Helper.ImageFolder.listFiles()).Convert(File::getName).ToHashSet();
                     Settings.settings.Foods.ForEach(food -> {
                        food.Images.Copy().ForEach(image -> {
                            if (!files.contains(image)) food.Images.Remove(image);
                        });
                     });
+                    for (File file: Helper.LogFolder.listFiles())
+                        file.delete();
                     for (File file: Helper.TempFolder.listFiles())
                         file.delete();
                     new AList<>(Helper.ExportedDataFolder.listFiles()).After(0).ForEach(File::delete);
@@ -95,7 +99,7 @@ public class SettingsFragment extends Fragment {
             dialog.setOnViewCreatedListener(d -> {
                 dialog.setMessage(getString(R.string.exporting_data));
                 new Thread(() -> {
-                    if (Helper.Zip(path, Helper.ImageFolder, new File(Helper.getPath(Helper.ROOT_FOLDER, Settings.FILENAME)))){
+                    if (Helper.Zip(path, Helper.ImageFolder, new File(Helper.getPath(Settings.FILENAME)))){
                         getActivity().runOnUiThread(() -> {
                             dialog.dismiss();
                             Toast.makeText(getContext(), R.string.export_data_msg, Toast.LENGTH_SHORT).show();
