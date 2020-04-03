@@ -146,7 +146,7 @@ public class EditFoodActivity extends AppCompatActivity {
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
         if (images.IsEmpty()) helper.removeItems(R.id.edit_image_item, R.id.remove_image_item);
         if (images.Count() < 2 || imageViewerFragment.getCurrentImage().equals(food_cover)) helper.removeItems(R.id.set_cover_item);
-        if (imageViewerFragment.getCurrent() == 0) helper.removeItems(R.id.move_to_first_item);
+        if (images.IsEmpty() || imageViewerFragment.getCurrent() == 0) helper.removeItems(R.id.move_to_first_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.open_camera_item:
