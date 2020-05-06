@@ -29,12 +29,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.R;
 
@@ -105,8 +107,15 @@ public class Helper {
         String settings = Settings.settings.ToJson(), emptyJson = new Settings().ToJson();
         if (settings.equals(emptyJson) && !ReadFile(Settings.FILENAME).equals(emptyJson))
             Log("Trying to overwrite Settings with Empty content.");
-        else
+        else{
             WriteFile(Settings.FILENAME, settings);
+            String backupSettings = "BackupSettings";
+            WriteFile("Temp/" + backupSettings + Timestamp() + ".json", settings);
+            AList<File> temp_settings = new AList<>(TempFolder.listFiles()).Find(f -> f.getName().startsWith(backupSettings));
+            if (temp_settings.Count() > 10){
+                temp_settings.Sort((o1, o2) -> (int) (o2.lastModified() - o1.lastModified())).After(10).ForEach(File::delete);
+            }
+        }
     }
     public static String getPath(String... paths) {
         StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory().getPath() + File.separator + ROOT_FOLDER);
