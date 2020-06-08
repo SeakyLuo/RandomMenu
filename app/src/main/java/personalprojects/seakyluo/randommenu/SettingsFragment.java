@@ -69,10 +69,12 @@ public class SettingsFragment extends Fragment {
                 dialog.setMessage(R.string.clearing_cache);
                 new Thread(() -> {
                     // Removing unused images
-                    HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
-                    for (File file: Helper.ImageFolder.listFiles())
-                        if (!paths.contains(file.getName()))
-                            file.delete();
+                    if (Settings.settings.Foods.Count() > 0){
+                        HashSet<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToHashSet();
+                        for (File file: Helper.ImageFolder.listFiles())
+                            if (!paths.contains(file.getName()))
+                                file.delete();
+                    }
                     // Removing non-existed images
                     HashSet<String> files = new AList<>(Helper.ImageFolder.listFiles()).Convert(File::getName).ToHashSet();
                     Settings.settings.Foods.ForEach(food -> {
@@ -110,7 +112,7 @@ public class SettingsFragment extends Fragment {
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
-            String filename = Helper.Timestamp() + ".zip", path = Helper.ExportedDataFolder.getPath() + File.separator + filename;
+            String filename = "RandomMenu" + Helper.Timestamp() + ".zip", path = Helper.ExportedDataFolder.getPath() + File.separator + filename;
             LoadingDialog dialog = new LoadingDialog();
             dialog.setOnViewCreatedListener(d -> {
                 dialog.setMessage(getString(R.string.exporting_data));
