@@ -14,6 +14,7 @@ public class Settings {
     public AList<String> SearchHistory = new AList<>();
     public Food FoodDraft;
     public String Note = "";
+    public boolean AutoTag = true;
 
     public void AddFood(Food food, int index){
         food.GetTags().ForEach(tag -> {

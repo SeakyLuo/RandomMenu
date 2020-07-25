@@ -16,6 +16,8 @@ import java.util.ArrayList;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 import static android.app.Activity.RESULT_OK;
@@ -28,6 +30,8 @@ public class ChooseTagFragment extends Fragment {
     private TagsFragment tagsFragment = new TagsFragment();
     private String header;
     private OnLaunchActivityListener chooseTagListener;
+    private Food guessTagFood;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,6 +59,9 @@ public class ChooseTagFragment extends Fragment {
     private void LaunchChooseTagActivity(){
         Intent intent = new Intent(getActivity(), ChooseTagActivity.class);
         intent.putExtra(ChooseTagActivity.SELECTED_TAGS, tagsFragment.GetData().ToArrayList());
+        if (Settings.settings.AutoTag){
+            intent.putExtra(ChooseTagActivity.FOOD, ((EditFoodActivity)getActivity()).getFoodName());
+        }
         if (chooseTagListener != null) chooseTagListener.Launch(intent);
         startActivityForResult(intent, CHOOSE_TAG_CODE);
         getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);

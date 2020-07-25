@@ -20,6 +20,10 @@ import android.widget.TextView;
 
 import com.jude.swipbackhelper.SwipeBackHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
@@ -130,21 +134,66 @@ public class SearchActivity extends SwipeBackActivity {
         });
     }
 
-    private boolean SearchFoodName(Food food, String keyword) { return food.Name.contains(keyword);}
-    private boolean SearchFoodTag(Food food, String keyword) { return food.GetTags().Any(t -> t.Name.contains(keyword)); }
-    private boolean SearchFoodNote(Food food, String keyword) { return food.Note.contains(keyword); }
+    private static boolean SearchFoodName(Food food, String keyword) { return food.Name.contains(keyword);}
+    private static boolean SearchFoodTag(Food food, String keyword) { return food.GetTags().Any(t -> t.Name.contains(keyword)); }
+    private static boolean SearchFoodNote(Food food, String keyword) { return food.Note.contains(keyword); }
     public static String getKeyword(Editable s) { return s.toString().trim(); }
+    private static int getMatchPoints(Food food, String keyword){
+        int points = 0;
+        if (food.Name.equals(keyword)) points = 100;
+        else if (food.Name.startsWith(keyword)) points = 95;
+        else if (food.Name.endsWith(keyword)) points = 90;
+        else if (food.Name.contains(keyword)) points = 85;
+        if (points < 85){
+            for (Tag t: food.GetTags().GetList()) {
+                if (t.Name.equals(keyword)){
+                    points = 85;
+                    break;
+                }
+                else if (t.Name.startsWith(keyword)) points = Math.max(80, points);
+                else if (t.Name.endsWith(keyword)) points = Math.max(75, points);
+                else if (t.Name.contains(keyword)) points = Math.max(70, points);
+            }
+        }
+        if (!Helper.IsBlank(food.Note)){
+            if (food.Note.equals(keyword)) points = 100;
+            else if (points < 65){
+                if (food.Note.startsWith(keyword)) points = 65;
+                else if (food.Note.endsWith(keyword)) points = 60;
+                else if (food.Note.contains(keyword)) points = 55;
+            }
+        }
+        points -= food.HideCount;
+        if (food.IsFavorite()) points += 10;
+        return points;
+    }
 
     public void Search(String keyword){
         if (keyword.isEmpty()){
             tabPagerAdapter.GetFragments().After(0).ForEach(f -> ((FoodListFragment) f).Clear());
         }else{
-            AList<Food> filtered = Settings.settings.Foods.Find(f -> SearchFoodName(f, keyword) || SearchFoodTag(f, keyword) || SearchFoodNote(f, keyword));
             if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
-            allFragment.SetData(filtered);
-            foodFragment.SetData(filtered.Find(f -> SearchFoodName(f, keyword)));
-            tagFragment.SetData(filtered.Find(f -> SearchFoodTag(f, keyword)));
-            noteFragment.SetData(filtered.Find(f -> SearchFoodNote(f, keyword)));
+            AList<Food> food = new AList<>(), tag = new AList<>(), note = new AList<>();
+            List<MatchFood> all = new ArrayList<>();
+            Settings.settings.Foods.ForEach(f -> {
+                if (SearchFoodName(f, keyword)){
+                    food.Add(f);
+                }
+                if (SearchFoodTag(f, keyword)){
+                    tag.Add(f);
+                }
+                if (SearchFoodNote(f, keyword)){
+                    note.Add(f);
+                }
+                int points = getMatchPoints(f, keyword);
+                if (points > 0){
+                    all.add(new MatchFood(f, points));
+                }
+            });
+            allFragment.SetData(new AList<>(all.stream().sorted((f1, f2) -> (f2.points - f1.points)).map(f -> f.food).collect(Collectors.toList())));
+            foodFragment.SetData(food);
+            tagFragment.SetData(tag);
+            noteFragment.SetData(note);
         }
     }
 
@@ -188,5 +237,14 @@ public class SearchActivity extends SwipeBackActivity {
         tabPagerAdapter.AddFragment(foodFragment);
         tabPagerAdapter.AddFragment(tagFragment);
         tabPagerAdapter.AddFragment(noteFragment);
+    }
+
+    private static class MatchFood{
+        public Food food;
+        public int points;
+        public MatchFood(Food food, int points){
+            this.food = food;
+            this.points = points;
+        }
     }
 }

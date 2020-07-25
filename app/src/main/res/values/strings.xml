@@ -90,4 +90,6 @@
     <string name="importing_data">Importing data...</string>
     <string name="import_data_msg">Data imported!</string>
     <string name="move_to_first">Move to first</string>
+    <string name="more_settings">More Settings</string>
+    <string name="auto_tag">Automatic food tag completion</string>
 </resources>

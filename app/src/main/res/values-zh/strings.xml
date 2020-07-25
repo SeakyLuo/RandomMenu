@@ -90,4 +90,6 @@
     <string name="importing_data">正在导入数据……</string>
     <string name="import_data_msg">数据已导入！</string>
     <string name="move_to_first">移到最前</string>
+    <string name="more_settings">更多设置</string>
+    <string name="auto_tag">自动填充食物标签</string>
 </resources>

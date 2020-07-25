@@ -63,6 +63,10 @@ public class SettingsFragment extends Fragment {
             startActivity(new Intent(getContext(), NoteActivity.class));
             getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
+        view.findViewById(R.id.more_settings_button).setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), MoreSettingsActivity.class));
+            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
+        });
         view.findViewById(R.id.clear_cache_button).setOnClickListener(v -> {
             LoadingDialog dialog = new LoadingDialog();
             dialog.setOnViewCreatedListener(d -> {

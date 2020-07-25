@@ -14,16 +14,22 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
 public class ChooseTagActivity extends SwipeBackActivity {
-    public static final String SELECTED_TAGS = "selected", EXCLUDED_TAGS = "excluded";
+    public static final String SELECTED_TAGS = "selected", EXCLUDED_TAGS = "excluded", FOOD = "source_food";
     private AutoCompleteTextView inputBox;
     private TagListAdapter tagListAdapter;
     private TagsFragment tagsFragment;
+    private String guessFoodName;
     private ArrayList<Tag> selected_tags, excluded_tags;
     private ArrayAdapter<String> suggestionTagListAdapter;
     @Override
@@ -96,6 +102,19 @@ public class ChooseTagActivity extends SwipeBackActivity {
         Intent intent = getIntent();
         selected_tags = intent.getParcelableArrayListExtra(SELECTED_TAGS);
         excluded_tags = intent.getParcelableArrayListExtra(EXCLUDED_TAGS);
+        guessFoodName = intent.getStringExtra(FOOD);
+
+        if (Settings.settings.AutoTag && guessFoodName != null){
+            List<Tag> tags = Helper.GuessTags(guessFoodName);
+            for (Tag tag: tags){
+                if (!selected_tags.contains(tag)){
+                    selected_tags.add(tag);
+                }
+                if (!Settings.settings.Tags.Contains(tag)){
+                    Settings.settings.Tags.Add(tag);
+                }
+            }
+        }
         tagListAdapter = new TagListAdapter(this, Settings.settings.Tags.RemoveAll(excluded_tags), selected_tags);
         tagListAdapter.SetTagClickedListener((viewHolder, tag) -> ChooseTag(tag));
 

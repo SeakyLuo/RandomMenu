@@ -45,6 +45,7 @@
         <activity android:name=".DislikeActivity" android:label="DislikeActivity" />
         <activity android:name=".ChooseFoodActivity" android:label="ChooseFoodActivity" />
         <activity android:name=".NoteActivity" android:label="NoteActivity" />
+        <activity android:name=".MoreSettingsActivity" android:label="MoreSettingsActivity" />
     </application>
 
 </manifest>

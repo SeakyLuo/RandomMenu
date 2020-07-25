@@ -2,11 +2,12 @@ package personalprojects.seakyluo.randommenu.Models;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import personalprojects.seakyluo.randommenu.Interfaces.ZipVoidLambda;
 
 public class ZipList<T1, T2> extends IList<T1>{
-    private ArrayList<T2> zip_list;
+    private List<T2> zip_list;
     public ZipList(IList<T1> list1, Collection<T2> list2){
         list = list1.list;
         zip_list = new ArrayList<>(list2);

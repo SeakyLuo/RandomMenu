@@ -29,15 +29,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class Helper {
@@ -78,6 +83,14 @@ public class Helper {
     }
     public static String GetFilename(String path) { return new File(path).getName(); }
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
+    public static boolean IsBlank(String string){
+        if (IsNullOrEmpty(string)) return true;
+        for (char ch: string.toCharArray()){
+            if (ch != ' ')
+                return true;
+        }
+        return false;
+    }
     public static void LoadImage(RequestManager glide, String path, ImageView imageView){
         if (IsNullOrEmpty(path)) imageView.setImageBitmap(DefaultFoodImage);
         else glide.load(GetImagePath(path)).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
@@ -247,4 +260,41 @@ public class Helper {
             //handle exception
         }
     }
+
+    public static List<Tag> GuessTags(String food){
+        HashSet<Tag> tags = new HashSet<>();
+        if (food.contains("肉") || food.contains("骨") || food.contains("血") ) tags.add(new Tag("荤"));
+        if (food.contains("汤") || food.contains("羹")) tags.add(new Tag("汤"));
+        if (food.contains("菇") || food.contains("菌")) tags.add(new Tag("菌"));
+        if (food.contains("菜") || food.contains("素") || food.contains("豆") || food.contains("瓜")  || food.contains("茄") || food.contains("笋") ||
+            food.contains("韭") || food.contains("苗") || food.contains("蒜") || food.contains("藕") || food.contains("叶"))
+            tags.add(new Tag("素"));
+        if (food.contains("鱼") || food.contains("虾") || food.contains("蟹")){
+            tags.add(new Tag("荤"));
+            tags.add(new Tag("河鲜"));
+            tags.add(new Tag("海鲜"));
+        }
+        if (food.contains("鸡") || food.contains("鸭") || food.contains("鹅")){
+            tags.add(new Tag("荤"));
+            tags.add(new Tag("禽类"));
+        }
+        if (food.contains("猪")){
+            tags.add(new Tag("荤"));
+            tags.add(new Tag("猪肉"));
+        }
+        if (food.contains("牛")){
+            tags.add(new Tag("荤"));
+            tags.add(new Tag("牛肉"));
+        }
+        if (food.contains("羊")){
+            tags.add(new Tag("荤"));
+            tags.add(new Tag("羊肉"));
+        }
+        if (food.contains("饺") || food.contains("粉") || food.contains("面") || food.contains("粥") || food.contains("包") || food.contains("饭") ||
+            food.contains("饼") || food.contains("年糕")){
+            tags.add(new Tag("主食"));
+        }
+        return new ArrayList<>(tags);
+    }
+
 }

@@ -333,7 +333,7 @@ public class EditFoodActivity extends AppCompatActivity {
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
         outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.GetData(), getNote(), like_toggle.isChecked(), food_cover));
     }
-    private String getFoodName() { return edit_food_name.getText().toString().trim(); }
+    public String getFoodName() { return edit_food_name.getText().toString().trim(); }
     private String getNote() { return edit_note.getText().toString().trim(); }
 
     @Override
