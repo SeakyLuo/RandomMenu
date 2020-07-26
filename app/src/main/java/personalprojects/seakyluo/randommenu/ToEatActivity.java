@@ -7,6 +7,9 @@ import android.widget.TextView;
 
 import com.jude.swipbackhelper.SwipeBackHelper;
 
+import personalprojects.seakyluo.randommenu.Adapters.SimpleFoodListAdapter;
+import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.Dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;

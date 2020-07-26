@@ -33,9 +33,9 @@
     <string name="save_as_draft">You have unsaved changes.\\nDo you want to save it as draft?</string>
     <string name="empty_food_name">Food name cannot be empty!</string>
     <string name="food_exists">Food name already exists!</string>
-    <string name="at_least_one_tag">Food must have a at least 1 tag!</string>
+    <string name="at_least_one_tag">Food must have at least 1 tag!\\n Do you want to enable Auto-Tag mode?</string>
     <string name="delete_food">Delete Food</string>
-    <string name="delete_tag">Do you want delete tag \"%s\"?</string>
+    <string name="delete_tag">Do you want to delete tag \"%s\"?</string>
     <string name="ask_delete">Do you want to delete \"%s\"?</string>
     <string name="tag_exists">Tag already exists!</string>
     <string name="input_tag">Input Tag</string>
@@ -92,4 +92,7 @@
     <string name="move_to_first">Move to first</string>
     <string name="more_settings">More Settings</string>
     <string name="auto_tag">Automatic food tag completion</string>
+    <string name="duplicate_food_merge">Duplicate food name found, do you want to merge this two food?</string>
+    <string name="tag_auto_added">Tags have been added automatically.</string>
+    <string name="auto_tag_failed">Cannot infer tags! Please add at least 1 tag!</string>
 </resources>

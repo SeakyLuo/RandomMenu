@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import personalprojects.seakyluo.randommenu.Adapters.SimpleFoodListAdapter;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.R;
 
 public class StringListFragment extends Fragment {
     private SimpleFoodListAdapter adapter = new SimpleFoodListAdapter();

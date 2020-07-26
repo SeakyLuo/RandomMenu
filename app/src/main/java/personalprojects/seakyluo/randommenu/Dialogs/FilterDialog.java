@@ -1,6 +1,5 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Dialogs;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,9 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import personalprojects.seakyluo.randommenu.ChooseTagActivity;
+import personalprojects.seakyluo.randommenu.Fragments.ChooseTagFragment;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 import personalprojects.seakyluo.randommenu.Interfaces.TagFilterListener;
+import personalprojects.seakyluo.randommenu.R;
 
 public class FilterDialog extends DialogFragment {
     public static final String TAG = "FilterDialog";
@@ -45,6 +47,3 @@ public class FilterDialog extends DialogFragment {
     public void SetOnResetListener(View.OnClickListener listener) { resetListener = listener; }
 }
 
-interface OnLaunchActivityListener{
-    void Launch(Intent intent);
-}

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Fragments;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,9 +20,12 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
+import personalprojects.seakyluo.randommenu.Adapters.FoodListAdapter;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.R;
 
 public class FoodListFragment extends Fragment {
     public static final String TAG = "FoodListFragment";

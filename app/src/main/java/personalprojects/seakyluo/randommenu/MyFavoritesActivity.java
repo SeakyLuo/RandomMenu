@@ -2,10 +2,11 @@ package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
+import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.Dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.Fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 

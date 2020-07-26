@@ -1,27 +1,17 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Fragments;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.FileProvider;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -29,17 +19,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
+import personalprojects.seakyluo.randommenu.EditFoodActivity;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.Interfaces.FoodEditedListener;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.MainActivity;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.R;
 
 import static android.app.Activity.RESULT_OK;
 

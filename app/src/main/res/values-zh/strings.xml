@@ -33,7 +33,7 @@
     <string name="save_as_draft">你有未保存的更改。是否将其保存为草稿？</string>
     <string name="empty_food_name">菜名不能为空！</string>
     <string name="food_exists">菜名已存在！</string>
-    <string name="at_least_one_tag">菜肴至少要有一个标签！</string>
+    <string name="at_least_one_tag">菜肴至少要有1个标签！你想开启自动标签模式吗？</string>
     <string name="delete_food">删除菜肴</string>
     <string name="delete_tag">你想要删除标签“%s”吗？</string>
     <string name="ask_delete">你想要删除“%s”吗？</string>
@@ -92,4 +92,6 @@
     <string name="move_to_first">移到最前</string>
     <string name="more_settings">更多设置</string>
     <string name="auto_tag">自动填充食物标签</string>
+    <string name="duplicate_food_merge">发现重复菜名，你想合并这两道菜吗？</string>
+    <string name="tag_auto_added">标签已经自动添加</string>
 </resources>

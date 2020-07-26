@@ -1,22 +1,15 @@
 package personalprojects.seakyluo.randommenu;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.jude.swipbackhelper.SwipeBackHelper;
 
@@ -24,6 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import personalprojects.seakyluo.randommenu.Adapters.TabPagerAdapter;
+import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.Dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.Fragments.FoodListFragment;
+import personalprojects.seakyluo.randommenu.Fragments.StringListFragment;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
@@ -163,8 +161,10 @@ public class SearchActivity extends SwipeBackActivity {
                 else if (food.Note.contains(keyword)) points = 55;
             }
         }
-        points -= food.HideCount;
-        if (food.IsFavorite()) points += 10;
+        if (points > 0){
+            points -= food.HideCount;
+            if (food.IsFavorite()) points += 10;
+        }
         return points;
     }
 

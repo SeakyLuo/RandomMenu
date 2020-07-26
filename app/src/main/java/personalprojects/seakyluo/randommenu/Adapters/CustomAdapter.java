@@ -1,6 +1,5 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -12,14 +11,14 @@ import java.util.List;
 import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
 import personalprojects.seakyluo.randommenu.Models.AList;
 
-public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
-    AList<T> data = new AList<>();
-    AList<CustomViewHolder> viewHolders = new AList<>();
-    Context context;
+public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter<T>.CustomViewHolder> {
+    public AList<T> data = new AList<>();
+    public AList<CustomViewHolder> viewHolders = new AList<>();
+    public Context context;
     public CustomAdapter() {}
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CustomAdapter<T>.CustomViewHolder holder, int position) {
         holder.SetData(holder.data = data.Get(position));
         if (viewHolders.Count() >= position) viewHolders.Add(holder);
         else viewHolders.Set(holder, position);
@@ -96,12 +95,13 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     public int getItemCount() { return data.Count(); }
 
     public abstract class CustomViewHolder extends RecyclerView.ViewHolder{
-        protected View view;
-        protected T data;
-        CustomViewHolder(@NonNull View view) {
+        public View view;
+        public T data;
+        public CustomViewHolder(@NonNull View view) {
             super(view);
             this.view = view;
         }
+
         abstract void SetData(T data);
     }
 }

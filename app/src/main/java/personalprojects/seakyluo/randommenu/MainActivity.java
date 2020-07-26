@@ -1,19 +1,16 @@
 package personalprojects.seakyluo.randommenu;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
-import android.util.Log;
-import android.view.MenuItem;
 
+import personalprojects.seakyluo.randommenu.Fragments.NavigationFragment;
+import personalprojects.seakyluo.randommenu.Fragments.RandomFragment;
+import personalprojects.seakyluo.randommenu.Fragments.SettingsFragment;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Models.Settings;
 
 public class MainActivity extends AppCompatActivity {
     public RandomFragment randomFragment;

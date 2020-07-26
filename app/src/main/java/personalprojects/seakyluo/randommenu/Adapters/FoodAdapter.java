@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Adapters;
 
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -9,11 +9,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.R;
 
 public class FoodAdapter extends CustomAdapter<Food> {
     private OnDataItemClickedListener<Food> foodClickedListener, longClickListener;

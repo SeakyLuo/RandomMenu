@@ -14,13 +14,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import personalprojects.seakyluo.randommenu.Adapters.TagListAdapter;
+import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.Fragments.TagsFragment;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
 
@@ -87,7 +87,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             }else{
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
-                dialog.setMessage(getString(R.string.ask_save));
+                dialog.setMessage(R.string.ask_save);
                 dialog.setOnYesListener(view -> {
                     FinishActivity();
                 });

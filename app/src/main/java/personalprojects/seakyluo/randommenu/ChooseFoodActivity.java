@@ -11,6 +11,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 
+import personalprojects.seakyluo.randommenu.Adapters.FoodListAdapter;
+import personalprojects.seakyluo.randommenu.Fragments.FoodListFragment;
+import personalprojects.seakyluo.randommenu.Fragments.TagsFragment;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;

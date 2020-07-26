@@ -52,7 +52,15 @@ public class Food implements Parcelable {
         date.setTimeInMillis(DateAdded);
         return new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
     }
+    public void AddTags(AList<Tag> tags) {
+        Tags.AddAll(tags);
+        tags.ForEach(tag -> {
+            if (!Tags.Contains(tag))
+                Tags.Add(tag);
+        });
+    }
     public AList<Tag> GetTags() { return Tags; }
+    public void SetCover(String Cover) { this.Cover = Cover; }
     public String GetCover() { return Cover; }
     public void RemoveTag(Tag tag) { Tags.Remove(tag); }
     public static boolean IsIncomplete(Food food) { return food == null || food.DateAdded == 0; }

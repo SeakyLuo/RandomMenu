@@ -1,15 +1,16 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import personalprojects.seakyluo.randommenu.Fragments.FoodCardFragment;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.R;
 
 public class CardStackAdapter extends BaseAdapter{
     private LayoutInflater inflater;

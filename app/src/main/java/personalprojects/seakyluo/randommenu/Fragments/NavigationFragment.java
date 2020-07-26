@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,10 +15,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.Dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.Dialogs.InputDialog;
+import personalprojects.seakyluo.randommenu.EditFoodActivity;
+import personalprojects.seakyluo.randommenu.Adapters.FoodAdapter;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.SearchActivity;
+import personalprojects.seakyluo.randommenu.Adapters.SelectTagAdapter;
 
 import static android.app.Activity.RESULT_OK;
 

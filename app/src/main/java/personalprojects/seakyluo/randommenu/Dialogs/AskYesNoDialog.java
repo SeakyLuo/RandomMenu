@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Dialogs;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import personalprojects.seakyluo.randommenu.R;
 
 public class AskYesNoDialog extends DialogFragment {
     public static final String TAG = "AskYesNoDialog";
@@ -42,6 +44,9 @@ public class AskYesNoDialog extends DialogFragment {
         return view;
     }
 
+    public void setMessage(int message_resource){
+        setMessage(getString(message_resource));
+    }
     public void setMessage(String message) {
         this.message = message;
         if (text_message != null) text_message.setText(message);

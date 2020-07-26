@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,9 +12,11 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import personalprojects.seakyluo.randommenu.Adapters.TagAdapter;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.R;
 
 public class TagsFragment extends Fragment {
     public static final String TAG = "TagsFragment";

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,9 +10,11 @@ import android.widget.TextView;
 
 import java.util.Collection;
 
+import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.R;
 
 public class TagListAdapter extends CustomAdapter<Tag> {
     private AList<Tag> CheckTags = new AList<>();

@@ -1,9 +1,7 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Adapters;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,7 +9,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Interfaces.OnDataChangedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.Views.ScalableImageView;
 
 public class ImageAdapter extends PagerAdapter {
     private Context context;
@@ -106,8 +106,4 @@ public class ImageAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((ImageView) object);
     }
-}
-
-interface OnDataChangedListener<T>{
-    void OnChange(T newData);
 }

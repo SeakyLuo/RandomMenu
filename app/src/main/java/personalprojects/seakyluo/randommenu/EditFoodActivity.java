@@ -14,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,8 +24,13 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.Fragments.ChooseTagFragment;
+import personalprojects.seakyluo.randommenu.Fragments.ImageViewerFragment;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
@@ -83,7 +87,7 @@ public class EditFoodActivity extends AppCompatActivity {
             if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
-                dialog.setMessage(getString(R.string.save_as_draft));
+                dialog.setMessage(R.string.save_as_draft);
                 dialog.setOnYesListener(view -> {
                     Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
                     finish();
@@ -96,16 +100,47 @@ public class EditFoodActivity extends AppCompatActivity {
         confirm_button.setOnClickListener(v -> {
             String food_name = getFoodName();
             if (food_name.length() == 0){
-                Toast.makeText(this, getString(R.string.empty_food_name), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.empty_food_name, Toast.LENGTH_SHORT).show();
                 return;
             }
+            // 非草稿、重名、新菜
             if (!isDraft && Settings.settings.Foods.Any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
-                Toast.makeText(this, getString(R.string.food_exists), Toast.LENGTH_SHORT).show();
+                AskYesNoDialog dialog = new AskYesNoDialog();
+                dialog.setMessage(R.string.duplicate_food_merge);
+                dialog.setOnYesListener(view -> {
+                    int index = Settings.settings.Foods.IndexOf(f -> f.Name.equals(food_name));
+                    Food food = Settings.settings.Foods.Get(index);
+                    food.Images.AddAll(images);
+                    if (!Helper.IsNullOrEmpty(food_cover)){
+                        food.SetCover(food_cover);
+                    }
+                    food.SetIsFavorite(food.IsFavorite() || like_toggle.isChecked());
+                    food.AddTags(chooseTagFragment.GetData());
+                    if (!Helper.IsBlank(food.Note)){
+                        food.Note = food.Note + '\n' + getNote();
+                    }
+                    Settings.settings.Foods.Move(index, 0);
+                    FinishWithFood(food);
+                });
+                dialog.setOnNoListener(view -> {
+                    Toast.makeText(this, R.string.food_exists, Toast.LENGTH_SHORT).show();
+                });
+                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 return;
             }
             AList<Tag> tags = chooseTagFragment.GetData();
             if (tags.IsEmpty()){
-                Toast.makeText(this, getString(R.string.at_least_one_tag), Toast.LENGTH_SHORT).show();
+                if (Settings.settings.AutoTag){
+                    List<Tag> guessTags = Helper.GuessTags(food_name);
+                    chooseTagFragment.SetData(guessTags);
+                    if (guessTags.size() > 0){
+                        Toast.makeText(this, R.string.tag_auto_added, Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(this, R.string.auto_tag_failed, Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(this, R.string.at_least_one_tag, Toast.LENGTH_SHORT).show();
+                }
                 return;
             }
             String note = getNote();
@@ -117,10 +152,7 @@ public class EditFoodActivity extends AppCompatActivity {
             }else{
                 Settings.settings.UpdateFood(currentFood, food);
             }
-            Intent intent = new Intent();
-            intent.putExtra(FOOD, food);
-            setResult(RESULT_OK, intent);
-            finish();
+            FinishWithFood(food);
         });
         camera_button.setOnClickListener(v -> {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
@@ -132,7 +164,7 @@ public class EditFoodActivity extends AppCompatActivity {
         delete_food_button.setOnClickListener(v -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
-            dialog.setMessage(getString(R.string.ask_delete_food));
+            dialog.setMessage(R.string.ask_delete_food);
             dialog.setOnYesListener(view -> {
                 if (isDraft) Settings.settings.FoodDraft = null;
                 else Settings.settings.RemoveFood(currentFood);
@@ -335,6 +367,13 @@ public class EditFoodActivity extends AppCompatActivity {
     }
     public String getFoodName() { return edit_food_name.getText().toString().trim(); }
     private String getNote() { return edit_note.getText().toString().trim(); }
+
+    public void FinishWithFood(Food food){
+        Intent intent = new Intent();
+        intent.putExtra(FOOD, food);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
 
     @Override
     public void finish() {

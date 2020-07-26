@@ -1,35 +1,30 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Fragments;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
+import personalprojects.seakyluo.randommenu.Dialogs.LoadingDialog;
+import personalprojects.seakyluo.randommenu.DislikeActivity;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.MainActivity;
 import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.MoreSettingsActivity;
+import personalprojects.seakyluo.randommenu.MyFavoritesActivity;
+import personalprojects.seakyluo.randommenu.NoteActivity;
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.ToCookActivity;
+import personalprojects.seakyluo.randommenu.ToEatActivity;
 
 import static android.app.Activity.RESULT_OK;
 

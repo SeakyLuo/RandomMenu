@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Adapters;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.R;
 
 public class SelectTagAdapter extends CustomAdapter<Tag> {
     private OnDataItemClickedListener<Tag> listener, longClickListener;
@@ -68,7 +70,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
         notifyDataSetChanged();
     }
 
-    class ViewHolder extends CustomViewHolder {
+    public class ViewHolder extends CustomViewHolder {
         TextView tag_name;
         ConstraintLayout background;
         ViewHolder(View view) {

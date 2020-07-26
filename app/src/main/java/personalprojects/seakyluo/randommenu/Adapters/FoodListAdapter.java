@@ -1,9 +1,8 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Adapters;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +12,15 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
+import personalprojects.seakyluo.randommenu.Adapters.TagAdapter;
+import personalprojects.seakyluo.randommenu.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.R;
 
 public class FoodListAdapter extends CustomAdapter<Food> {
     public AList<Food> selectedFood = new AList<>();
@@ -59,13 +62,13 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         selectedFood.CopyFrom(foods);
     }
 
-    class ViewHolder extends CustomViewHolder {
+    public class ViewHolder extends CustomViewHolder {
         private ImageView food_image, liked_image, checked_image;
         private TextView food_name;
         private TagAdapter adapter = new TagAdapter();
         private boolean selected = false;
 
-        ViewHolder(View view) {
+        public ViewHolder(View view) {
             super(view);
             food_image = view.findViewById(R.id.food_image);
             food_name = view.findViewById(R.id.food_name);
@@ -85,14 +88,14 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             recyclerView.setAdapter(adapter);
         }
 
-        void SetSelected(boolean selected){
+        public void SetSelected(boolean selected){
             checked_image.setVisibility((this.selected = selected) ? View.VISIBLE : View.GONE);
             if (selected) selectedFood.Add(data);
             else selectedFood.Remove(data);
         }
 
         @Override
-        void SetData(Food data) {
+        public void SetData(Food data) {
             Helper.LoadImage(Glide.with(view), data.GetCover(), food_image);
             food_name.setText(data.Name);
             liked_image.setVisibility(showLikeImage && data.IsFavorite() ? View.VISIBLE : View.GONE);

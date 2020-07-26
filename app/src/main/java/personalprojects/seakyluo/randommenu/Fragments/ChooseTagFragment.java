@@ -1,6 +1,5 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.Fragments;
 
-import android.app.LauncherActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,12 +12,17 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import personalprojects.seakyluo.randommenu.ChooseTagActivity;
+import personalprojects.seakyluo.randommenu.EditFoodActivity;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.Interfaces.OnLaunchActivityListener;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;
 import personalprojects.seakyluo.randommenu.Models.Settings;
 import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.R;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -50,7 +54,7 @@ public class ChooseTagFragment extends Fragment {
         return view;
     }
 
-    public void SetData(ArrayList<Tag> data) { tagsFragment.SetData(data); }
+    public void SetData(List<Tag> data) { tagsFragment.SetData(data); }
     public void SetData(AList<Tag> data) { tagsFragment.SetData(data); }
     public AList<Tag> GetData() { return tagsFragment.GetData(); }
     public void SetHeader(String text) { header = text; if (header_text != null) header_text.setText(text); }
