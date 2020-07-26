@@ -2,6 +2,10 @@ package personalprojects.seakyluo.randommenu.Models;
 
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Settings {
     public static String FILENAME = "RandomMenuSettings.json";
     public static Settings settings;
@@ -15,6 +19,7 @@ public class Settings {
     public Food FoodDraft;
     public String Note = "";
     public boolean AutoTag = true;
+    public Map<String, List<String>> AutoTagMap = new HashMap<>();
 
     public void AddFood(Food food, int index){
         food.GetTags().ForEach(tag -> {

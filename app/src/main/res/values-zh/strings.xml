@@ -91,7 +91,8 @@
     <string name="import_data_msg">数据已导入！</string>
     <string name="move_to_first">移到最前</string>
     <string name="more_settings">更多设置</string>
-    <string name="auto_tag">自动填充食物标签</string>
+    <string name="auto_tag">自动填充菜肴标签</string>
     <string name="duplicate_food_merge">发现重复菜名，你想合并这两道菜吗？</string>
     <string name="tag_auto_added">标签已经自动添加</string>
+    <string name="auto_tag_failed">无法填充标签！请添加至少一个标签！</string>
 </resources>

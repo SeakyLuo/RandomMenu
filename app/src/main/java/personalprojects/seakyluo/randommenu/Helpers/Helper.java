@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -30,8 +31,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -80,6 +83,42 @@ public class Helper {
         String settings = ReadFile(Settings.FILENAME);
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
         if (IsNullOrEmpty(settings)) Log("Empty Settings Created");
+        HashMap<String, List<String>> map = new HashMap<>();
+        for (String tag: Arrays.asList("肉", "骨", "血", "荤")){
+            map.put(tag, Arrays.asList("荤"));
+        }
+        for (String tag: Arrays.asList("汤", "羹")){
+            map.put(tag, Arrays.asList("汤"));
+        }
+        for (String tag: Arrays.asList("菌", "菇")){
+            map.put(tag, Arrays.asList("菌"));
+        }
+        for (String tag: Arrays.asList("菜", "素", "豆", "瓜", "茄", "笋", "韭", "苗", "蒜", "藕", "叶", "萝卜")){
+            map.put(tag, Arrays.asList("素"));
+        }
+        for (String tag: Arrays.asList("鱼", "虾", "蟹")){
+            map.put(tag, Arrays.asList("荤", "海鲜", "河鲜"));
+        }
+        for (String tag: Arrays.asList("鸡", "鸭", "鹅")){
+            map.put(tag, Arrays.asList("荤", "禽类"));
+        }
+        for (String tag: Arrays.asList("猪", "五花肉")){
+            map.put(tag, Arrays.asList("荤", "猪肉"));
+        }
+        for (String tag: Arrays.asList("牛")){
+            map.put(tag, Arrays.asList("荤", "牛肉"));
+        }
+        for (String tag: Arrays.asList("羊")){
+            map.put(tag, Arrays.asList("荤", "羊肉"));
+        }
+        for (String tag: Arrays.asList("排骨")){
+            map.put(tag, Arrays.asList("荤", "猪肉", "排骨"));
+        }
+        for (String tag: Arrays.asList("饺", "粉", "面", "粥", "包", "饭", "饼", "年糕")){
+            map.put(tag, Arrays.asList("主食"));
+        }
+        Settings.settings.AutoTagMap = map;
+        Helper.Save();
     }
     public static String GetFilename(String path) { return new File(path).getName(); }
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
@@ -263,37 +302,11 @@ public class Helper {
 
     public static List<Tag> GuessTags(String food){
         HashSet<Tag> tags = new HashSet<>();
-        if (food.contains("肉") || food.contains("骨") || food.contains("血") ) tags.add(new Tag("荤"));
-        if (food.contains("汤") || food.contains("羹")) tags.add(new Tag("汤"));
-        if (food.contains("菇") || food.contains("菌")) tags.add(new Tag("菌"));
-        if (food.contains("菜") || food.contains("素") || food.contains("豆") || food.contains("瓜")  || food.contains("茄") || food.contains("笋") ||
-            food.contains("韭") || food.contains("苗") || food.contains("蒜") || food.contains("藕") || food.contains("叶") || food.contains("萝卜"))
-            tags.add(new Tag("素"));
-        if (food.contains("鱼") || food.contains("虾") || food.contains("蟹")){
-            tags.add(new Tag("荤"));
-            tags.add(new Tag("河鲜"));
-            tags.add(new Tag("海鲜"));
-        }
-        if (food.contains("鸡") || food.contains("鸭") || food.contains("鹅")){
-            tags.add(new Tag("荤"));
-            tags.add(new Tag("禽类"));
-        }
-        if (food.contains("猪")){
-            tags.add(new Tag("荤"));
-            tags.add(new Tag("猪肉"));
-        }
-        if (food.contains("牛")){
-            tags.add(new Tag("荤"));
-            tags.add(new Tag("牛肉"));
-        }
-        if (food.contains("羊")){
-            tags.add(new Tag("荤"));
-            tags.add(new Tag("羊肉"));
-        }
-        if (food.contains("饺") || food.contains("粉") || food.contains("面") || food.contains("粥") || food.contains("包") || food.contains("饭") ||
-            food.contains("饼") || food.contains("年糕")){
-            tags.add(new Tag("主食"));
-        }
+        Settings.settings.AutoTagMap.entrySet().forEach(e -> {
+            if (food.contains(e.getKey())){
+                e.getValue().forEach(t -> tags.add(new Tag(t)));
+            }
+        });
         return new ArrayList<>(tags);
     }
 }

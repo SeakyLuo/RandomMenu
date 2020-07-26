@@ -30,7 +30,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
     private TagListAdapter tagListAdapter;
     private TagsFragment tagsFragment;
     private String guessFoodName;
-    private ArrayList<Tag> selected_tags, excluded_tags;
+    private ArrayList<Tag> original_tags, selected_tags = new ArrayList<>(), excluded_tags;
     private ArrayAdapter<String> suggestionTagListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +100,11 @@ public class ChooseTagActivity extends SwipeBackActivity {
         findViewById(R.id.confirm_button).setOnClickListener(v -> SubmitTag());
 
         Intent intent = getIntent();
-        selected_tags = intent.getParcelableArrayListExtra(SELECTED_TAGS);
+        original_tags = intent.getParcelableArrayListExtra(SELECTED_TAGS);
         excluded_tags = intent.getParcelableArrayListExtra(EXCLUDED_TAGS);
         guessFoodName = intent.getStringExtra(FOOD);
 
+        selected_tags.addAll(original_tags);
         if (Settings.settings.AutoTag && selected_tags.size() == 0 && guessFoodName != null){
             List<Tag> tags = Helper.GuessTags(guessFoodName);
             for (Tag tag: tags){
@@ -164,7 +165,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         Intent intent = new Intent();
         AList<Tag> tags = tagsFragment.GetData();
         intent.putExtra(SELECTED_TAGS, tags.ToArrayList());
-        if (tags.Equals(selected_tags)) setResult(RESULT_CANCELED);
+        if (tags.Equals(original_tags)) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);
         finish();
     }
