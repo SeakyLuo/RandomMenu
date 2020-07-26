@@ -12,8 +12,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.Adapters.TagAdapter;
 import personalprojects.seakyluo.randommenu.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;

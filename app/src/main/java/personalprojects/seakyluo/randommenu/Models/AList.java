@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.UnaryOperator;
 
 import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
@@ -199,17 +201,18 @@ public class AList<T> extends IList<T> {
         list.add(to, item);
         return this;
     }
-    public AList<T> SetDifference(AList<T> collection){ return SetDifference(collection.ToHashSet()); }
-    public AList<T> SetDifference(Collection<T> collection){ return SetDifference((new AList<>(collection)).ToHashSet()); }
-    public AList<T> SetDifference(HashSet<T> set2){
-        HashSet<T> set1 = ToHashSet();
+    public AList<T> SetDifference(AList<T> collection){ return SetDifference(collection.ToSet()); }
+    public AList<T> SetDifference(Collection<T> collection){ return SetDifference((new AList<>(collection)).ToSet()); }
+    public AList<T> SetDifference(Set<T> set2){
+        Set<T> set1 = ToSet();
         AList<T> diff = new AList<>();
         for (T element: set1) if (!set2.contains(element)) diff.Add(element);
         return diff;
     }
     public T[] ToArray() { return (T[])list.toArray(); }
-    public HashSet<T> ToHashSet() { return new HashSet<>(list); }
-    public ArrayList<T> ToArrayList(){ return new ArrayList<T>(list); }
+    public Set<T> ToSet() { return new HashSet<>(list); }
+    public List<T> ToList() { return ToArrayList(); }
+    public ArrayList<T> ToArrayList() { return new ArrayList<T>(list); }
     public AList<T> Sort(Comparator<? super T> comparator) {
         list.sort(comparator);
         return this;
@@ -231,9 +234,9 @@ public class AList<T> extends IList<T> {
         return hashMap;
     }
     public <A> ZipList<T, A> Zip(Collection<A> zip){
-        return new ZipList(this, zip);
+        return new ZipList<>(this, zip);
     }
-    public <A> ZipList Zip(IList<A> zip){ return new ZipList(this, zip); }
+    public <A> ZipList<T, A> Zip(IList<A> zip){ return new ZipList<>(this, zip); }
     public AList<T> Enumerate(ZipVoidLambda<Integer, T> lambda) {
         for (int i = 0; i < Count(); i++)
             lambda.operate(i, Get(i));

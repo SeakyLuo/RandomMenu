@@ -267,7 +267,7 @@ public class Helper {
         if (food.contains("汤") || food.contains("羹")) tags.add(new Tag("汤"));
         if (food.contains("菇") || food.contains("菌")) tags.add(new Tag("菌"));
         if (food.contains("菜") || food.contains("素") || food.contains("豆") || food.contains("瓜")  || food.contains("茄") || food.contains("笋") ||
-            food.contains("韭") || food.contains("苗") || food.contains("蒜") || food.contains("藕") || food.contains("叶"))
+            food.contains("韭") || food.contains("苗") || food.contains("蒜") || food.contains("藕") || food.contains("叶") || food.contains("萝卜"))
             tags.add(new Tag("素"));
         if (food.contains("鱼") || food.contains("虾") || food.contains("蟹")){
             tags.add(new Tag("荤"));
@@ -296,5 +296,4 @@ public class Helper {
         }
         return new ArrayList<>(tags);
     }
-
 }

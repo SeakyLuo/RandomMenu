@@ -18,10 +18,12 @@ public class Settings {
 
     public void AddFood(Food food, int index){
         food.GetTags().ForEach(tag -> {
-            tag.More();
             int tag_index = Tags.IndexOf(tag);
-            if (tag_index > -1) Tags.Set(tag, tag_index);
-            else Tags.Add(tag);
+            if (tag_index == -1){
+                Tags.Add(tag.More());
+            }else{
+                tag.Counter = Tags.Get(tag_index).More().Counter;
+            }
         });
         Foods.Add(food, index);
         SortTags();

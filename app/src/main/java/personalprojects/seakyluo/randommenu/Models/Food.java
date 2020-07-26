@@ -8,9 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.R;
-
 public class Food implements Parcelable {
     public String Name;
     public AList<String> Images = new AList<>();
@@ -109,8 +106,8 @@ public class Food implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(Name);
-        dest.writeStringList(Images.ToArrayList());
-        dest.writeTypedList(Tags.ToArrayList());
+        dest.writeStringList(Images.ToList());
+        dest.writeTypedList(Tags.ToList());
         dest.writeString(Note);
         dest.writeByte((byte) (IsFavorite ? 1 : 0));
         dest.writeString(Cover);

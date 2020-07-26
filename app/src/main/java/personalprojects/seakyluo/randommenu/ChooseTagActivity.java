@@ -68,7 +68,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
-                suggestionTagListAdapter.addAll(tagListAdapter.GetData().RemoveAll(tagsFragment.GetData()).Convert(t -> t.Name).ToArrayList());
+                suggestionTagListAdapter.addAll(tagListAdapter.GetData().RemoveAll(tagsFragment.GetData()).Convert(t -> t.Name).ToList());
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -104,7 +104,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         excluded_tags = intent.getParcelableArrayListExtra(EXCLUDED_TAGS);
         guessFoodName = intent.getStringExtra(FOOD);
 
-        if (Settings.settings.AutoTag && guessFoodName != null){
+        if (Settings.settings.AutoTag && selected_tags.size() == 0 && guessFoodName != null){
             List<Tag> tags = Helper.GuessTags(guessFoodName);
             for (Tag tag: tags){
                 if (!selected_tags.contains(tag)){

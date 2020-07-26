@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import personalprojects.seakyluo.randommenu.Dialogs.FilterDialog;
 import personalprojects.seakyluo.randommenu.Dialogs.MenuDialog;
-import personalprojects.seakyluo.randommenu.Fragments.FoodCardFragment;
 import personalprojects.seakyluo.randommenu.Helpers.Helper;
 import personalprojects.seakyluo.randommenu.Models.AList;
 import personalprojects.seakyluo.randommenu.Models.Food;

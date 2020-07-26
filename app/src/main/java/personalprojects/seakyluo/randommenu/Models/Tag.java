@@ -9,9 +9,7 @@ import android.support.annotation.Nullable;
 
 import personalprojects.seakyluo.randommenu.R;
 
-public class Tag implements Comparable, Parcelable {
-    public static final String TABLE_NAME = "Tag", COLUMN_NAME = "Name", COLUMN_COUNT = "count";
-    public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" + COLUMN_NAME +" text PRIMARY KEY," + COLUMN_COUNT + " integer)";
+public class Tag implements Comparable<Tag>, Parcelable {
     public static String AllCategories = "All Categories";
     public static Tag AllCategoriesTag = new Tag(AllCategories);
     public static final int MAX_TAGS = 10;
@@ -73,8 +71,7 @@ public class Tag implements Comparable, Parcelable {
     };
 
     @Override
-    public int compareTo(Object o) {
-        Tag tag = (Tag)o;
+    public int compareTo(Tag tag) {
         return Counter == tag.Counter ? Name.compareTo(tag.Name) : Counter - tag.Counter ;
     }
 
