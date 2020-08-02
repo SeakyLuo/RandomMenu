@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Fragments;
+package personalprojects.seakyluo.randommenu.fragments;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,11 +20,11 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.Adapters.FoodListAdapter;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
+import personalprojects.seakyluo.randommenu.adapters.FoodListAdapter;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.R;
 
 public class FoodListFragment extends Fragment {
@@ -44,44 +44,44 @@ public class FoodListFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         adapter.SetSelectable(selectable);
         adapter.SetsSelectionChangedListener(foodSelectedListener);
-        adapter.SetContext(getContext());
+        adapter.context = getContext();
         recyclerView.setAdapter(adapter);
-        if (foodRemovedListener != null) AddSwipeControl();
+        if (foodRemovedListener != null) addSwipeControl();
         return view;
     }
 
-    public void SetSelectedFood(AList<Food> data){ adapter.SetSelectedFood(data); }
+    public void setSelectedFood(AList<Food> data){ adapter.SetSelectedFood(data); }
     public AList<Food> GetSelectedFood(){ return adapter.selectedFood; }
-    public void SetData(AList<Food> data){ this.data.CopyFrom(data); adapter.SetData(data); }
-    public void SetData(ArrayList<Food> data){ this.data.CopyFrom(data); adapter.SetData(data); }
+    public void setData(AList<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
+    public void setData(ArrayList<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
     public AList<Food> GetData(){ return data; }
-    public void Clear() { this.data.Clear(); adapter.Clear(); }
+    public void Clear() { this.data.clear(); adapter.clear(); }
     public void SetSelectable(boolean selectable) { this.selectable = selectable; }
     public int RemoveFood(Food food) {
-        removedIndex = adapter.data.IndexOf(removedFood = food);
-        adapter.data.Pop(removedIndex);
+        removedIndex = adapter.data.indexOf(removedFood = food);
+        adapter.data.pop(removedIndex);
         adapter.notifyItemRemoved(removedIndex);
         return removedIndex;
     }
-    public void UnselectFood(String food){
-        ((FoodListAdapter.ViewHolder)adapter.viewHolders.First(vh -> ((FoodListAdapter.ViewHolder)vh).data.Name.equals(food))).SetSelected(false);
+    public void unselectFood(String food){
+        ((FoodListAdapter.ViewHolder)adapter.viewHolders.first(vh -> ((FoodListAdapter.ViewHolder)vh).data.Name.equals(food))).SetSelected(false);
     }
-    public void CancelRemoval(){
-        adapter.data.Add(removedFood, removedIndex);
+    public void cancelRemoval(){
+        adapter.data.add(removedFood, removedIndex);
         adapter.notifyItemInserted(removedIndex);
     }
-    public void Filter(String keyword){
-        adapter.SetData(data.Find(f -> f.Name.contains(keyword)));
+    public void filter(String keyword){
+        adapter.setData(data.find(f -> f.Name.contains(keyword)));
     }
-    public void CancelFilter(){
-        adapter.SetData(data);
+    public void cancelFilter(){
+        adapter.setData(data);
         recyclerView.smoothScrollToPosition(0);
     }
-    public void SetFoodClickedListener(OnDataItemClickedListener<Food> listener){ adapter.SetFoodClickedListener(listener); }
-    public void SetFoodSelectedListener(OnDataItemClickedListener<Boolean> listener){ foodSelectedListener = listener; }
-    public void SetFoodRemovedListener(OnDataItemClickedListener<Food> listener){ foodRemovedListener = listener; AddSwipeControl(); }
-    public void SetShowLikeImage(boolean showLikeImage) { adapter.SetShowLikeImage(showLikeImage); }
-    public void AddSwipeControl(){
+    public void setFoodClickedListener(OnDataItemClickedListener<Food> listener){ adapter.SetFoodClickedListener(listener); }
+    public void setFoodSelectedListener(OnDataItemClickedListener<Boolean> listener){ foodSelectedListener = listener; }
+    public void setFoodRemovedListener(OnDataItemClickedListener<Food> listener){ foodRemovedListener = listener; addSwipeControl(); }
+    public void setShowLikeImage(boolean showLikeImage) { adapter.SetShowLikeImage(showLikeImage); }
+    public void addSwipeControl(){
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -91,7 +91,7 @@ public class FoodListFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
-                foodRemovedListener.Click((CustomAdapter.CustomViewHolder)viewHolder, adapter.data.Get(viewHolder.getAdapterPosition()));
+                foodRemovedListener.click((CustomAdapter.CustomViewHolder)viewHolder, adapter.data.get(viewHolder.getAdapterPosition()));
             }
 
             @Override

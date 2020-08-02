@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Fragments;
+package personalprojects.seakyluo.randommenu.fragments;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
@@ -20,14 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import personalprojects.seakyluo.randommenu.EditFoodActivity;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.Interfaces.FoodEditedListener;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
+import personalprojects.seakyluo.randommenu.interfaces.FoodEditedListener;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.MainActivity;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -79,15 +79,15 @@ public class FoodCardFragment extends Fragment {
             Toast.makeText(getContext(), R.string.name_copied, Toast.LENGTH_SHORT).show();
             return true;
         });
-        tagsFragment.SetSpanCount(1);
-        tagsFragment.SetTagClickedListener((viewHolder, tag) -> {
+        tagsFragment.setSpanCount(1);
+        tagsFragment.setTagClickedListener((viewHolder, tag) -> {
             FragmentActivity currentActivity = getActivity();
             if (!(currentActivity instanceof MainActivity)) currentActivity.finish();
             MainActivity activity = (MainActivity) getActivity();
             activity.ShowFragment(NavigationFragment.TAG);
             NavigationFragment navigationFragment = (NavigationFragment) activity.GetCurrentFragment();
             navigationFragment.SelectTag(tag);
-            if (tagClickedListener != null) tagClickedListener.Click(viewHolder, tag);
+            if (tagClickedListener != null) tagClickedListener.click(viewHolder, tag);
         });
         food_note_back.setMovementMethod(new ScrollingMovementMethod());
         more_button.setOnClickListener(v -> {
@@ -131,13 +131,13 @@ public class FoodCardFragment extends Fragment {
                     case R.id.show_food_item:
                         CurrentFood.HideCount = 0;
                         SetFoodNote(CurrentFood);
-                        Settings.settings.Foods.First(CurrentFood).HideCount = CurrentFood.HideCount;
+                        Settings.settings.Foods.first(CurrentFood).HideCount = CurrentFood.HideCount;
                         Helper.Save();
                         return true;
                     case R.id.hide_food_item:
                         CurrentFood.HideCount += 3;
                         SetFoodNote(CurrentFood);
-                        Settings.settings.Foods.First(CurrentFood).HideCount = CurrentFood.HideCount;
+                        Settings.settings.Foods.first(CurrentFood).HideCount = CurrentFood.HideCount;
                         Helper.Save();
                         return true;
                     case R.id.more_item:
@@ -170,7 +170,7 @@ public class FoodCardFragment extends Fragment {
     }
 
     public void Refresh() {
-        setFood(CurrentFood = Settings.settings.Foods.First(CurrentFood));
+        setFood(CurrentFood = Settings.settings.Foods.first(CurrentFood));
     }
 
     private void setFood(Food food){
@@ -181,7 +181,7 @@ public class FoodCardFragment extends Fragment {
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
         imageViewerFragment.setImages(food.Images, food.GetCover());
         SetFoodFavorite(food.IsFavorite());
-        tagsFragment.SetData(food.GetTags());
+        tagsFragment.setData(food.GetTags());
     }
 
     public void SetFoodFavorite(boolean favorite) { liked_image.setVisibility(favorite ? View.VISIBLE : View.GONE); }

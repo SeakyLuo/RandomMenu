@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Fragments;
+package personalprojects.seakyluo.randommenu.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,10 +12,10 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import personalprojects.seakyluo.randommenu.Adapters.TagAdapter;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.adapters.TagAdapter;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class TagsFragment extends Fragment {
@@ -34,15 +34,17 @@ public class TagsFragment extends Fragment {
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.HORIZONTAL));
         return view;
     }
-    public AList<Tag> GetData() { return adapter.GetData(); }
+    public AList<Tag> getData() { return adapter.getData(); }
     public TagAdapter GetAdapter() { return adapter; }
-    public void Add(Tag tag, int index) { adapter.Add(tag, index); }
-    public void Add(Tag tag) { adapter.Add(tag); }
-    public void Remove(Tag tag) { adapter.Remove(tag); }
-    public boolean Contains(Tag tag) { return adapter.Contains(tag); }
-    public void SetData(AList<Tag> data){ adapter.SetData(data); }
-    public void SetData(List<Tag> data){ adapter.SetData(data); }
-    public void SetSpanCount(int spanCount) { this.spanCount = spanCount; }
-    public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagClickedListener(listener); }
-    public void SetTagClosedListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagCloseListener(listener); }
+    public void add(Tag tag, int index) { adapter.add(tag, index); }
+    public void add(Tag tag) { adapter.add(tag); }
+    public void move(int from, int to) { adapter.move(from, to); }
+    public void remove(Tag tag) { adapter.remove(tag); }
+    public boolean contains(Tag tag) { return adapter.contains(tag); }
+    public int indexOf(Tag tag) { return adapter.indexOf(tag); }
+    public void setData(AList<Tag> data){ adapter.setData(data); }
+    public void setData(List<Tag> data){ adapter.setData(data); }
+    public void setSpanCount(int spanCount) { this.spanCount = spanCount; }
+    public void setTagClickedListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagClickedListener(listener); }
+    public void setTagClosedListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagCloseListener(listener); }
 }

@@ -12,7 +12,7 @@ An Android app that records your cooking list.
 
 5. Import data.
 
-6. Autohint of tag.
+6. User-custom AutoTag
 
 # TO FIX
 1. Improve image zoom in/out.

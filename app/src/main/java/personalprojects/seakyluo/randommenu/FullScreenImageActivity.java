@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.Adapters.ImageAdapter;
-import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.adapters.ImageAdapter;
+import personalprojects.seakyluo.randommenu.models.AList;
 
 public class FullScreenImageActivity extends AppCompatActivity {
     public static final String IMAGE = "Image", INDEX = "Index";
@@ -27,7 +27,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
         viewPager.setOnClickListener(v -> finish());
         ImageAdapter adapter = new ImageAdapter(this, images = new AList<>(intent.getStringArrayListExtra(IMAGE)), ImageView.ScaleType.CENTER_INSIDE);
         adapter.setOnImageClickedListener(v -> finish());
-        swipeCounter.setVisibility(images.Count() == 1 ? View.GONE : View.VISIBLE);
+        swipeCounter.setVisibility(images.count() == 1 ? View.GONE : View.VISIBLE);
         setCounter(1);
         viewPager.setAdapter(adapter); // Here we are passing and setting the adapter for the images
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -50,6 +50,6 @@ public class FullScreenImageActivity extends AppCompatActivity {
     }
 
     private void setCounter(int current){
-        swipeCounter.setText(current + "/" + images.Count());
+        swipeCounter.setText(current + "/" + images.count());
     }
 }

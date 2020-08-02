@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Fragments;
+package personalprojects.seakyluo.randommenu.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,12 +16,12 @@ import java.util.List;
 
 import personalprojects.seakyluo.randommenu.ChooseTagActivity;
 import personalprojects.seakyluo.randommenu.EditFoodActivity;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Interfaces.OnLaunchActivityListener;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.interfaces.OnLaunchActivityListener;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -48,21 +48,21 @@ public class ChooseTagFragment extends Fragment {
         if (!Helper.IsNullOrEmpty(header)) header_text.setText(header);
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
         view.findViewById(R.id.tag_card_view).setOnClickListener(v -> {
-            if (tagsFragment.GetData().Count() < Tag.MAX_TAGS)
+            if (tagsFragment.getData().count() < Tag.MAX_TAGS)
                 LaunchChooseTagActivity();
         });
         return view;
     }
 
-    public void SetData(List<Tag> data) { tagsFragment.SetData(data); }
-    public void SetData(AList<Tag> data) { tagsFragment.SetData(data); }
-    public AList<Tag> GetData() { return tagsFragment.GetData(); }
+    public void SetData(List<Tag> data) { tagsFragment.setData(data); }
+    public void SetData(AList<Tag> data) { tagsFragment.setData(data); }
+    public AList<Tag> GetData() { return tagsFragment.getData(); }
     public void SetHeader(String text) { header = text; if (header_text != null) header_text.setText(text); }
     public void SetChooseTagListener(OnLaunchActivityListener launchActivityListener) { chooseTagListener = launchActivityListener; }
 
     private void LaunchChooseTagActivity(){
         Intent intent = new Intent(getActivity(), ChooseTagActivity.class);
-        intent.putExtra(ChooseTagActivity.SELECTED_TAGS, tagsFragment.GetData().ToArrayList());
+        intent.putExtra(ChooseTagActivity.SELECTED_TAGS, tagsFragment.getData().toArrayList());
         if (Settings.settings.AutoTag){
             intent.putExtra(ChooseTagActivity.FOOD, ((EditFoodActivity)getActivity()).getFoodName());
         }

@@ -1,8 +1,8 @@
-package personalprojects.seakyluo.randommenu.Models;
+package personalprojects.seakyluo.randommenu.models;
 
 import com.google.gson.Gson;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,58 +19,58 @@ public class Settings {
     public Food FoodDraft;
     public String Note = "";
     public boolean AutoTag = true;
-    public Map<String, List<String>> AutoTagMap = new HashMap<>();
+    public LinkedHashMap<String, List<String>> AutoTagMap = new LinkedHashMap<>();
 
     public void AddFood(Food food, int index){
-        food.GetTags().ForEach(tag -> {
-            int tag_index = Tags.IndexOf(tag);
+        food.GetTags().forEach(tag -> {
+            int tag_index = Tags.indexOf(tag);
             if (tag_index == -1){
-                Tags.Add(tag.More());
+                Tags.add(tag.More());
             }else{
-                tag.Counter = Tags.Get(tag_index).More().Counter;
+                tag.Counter = Tags.get(tag_index).More().Counter;
             }
         });
-        Foods.Add(food, index);
+        Foods.add(food, index);
         SortTags();
     }
     public void AddFood(Food food){ AddFood(food, 0); }
 
     public void RemoveFood(Food food){
-        Foods.Remove(food);
-        Tags.RemoveAll(Tags.Find(food::HasTag).ForEach(Tag::Less).Find(Tag::IsEmpty));
+        Foods.remove(food);
+        Tags.removeAll(Tags.find(food::HasTag).forEach(Tag::Less).find(Tag::IsEmpty));
         SortTags();
     }
 
-    public void SortTags(){ Tags.Sort(Tag::compareTo).Reverse(); }
+    public void SortTags(){ Tags.sort(Tag::compareTo).reverse(); }
 
     public void UpdateFood(Food before, Food after){
-        int index = Foods.IndexOf(before);
+        int index = Foods.indexOf(before);
         if (index == -1) return;
-        Foods.Set(after, index);
+        Foods.set(after, index);
         AList<Tag> a = after.GetTags(), b = before.GetTags(),
-                   add = a.SetDifference(b), remove = b.SetDifference(a);
-        Tags.ForEach(t -> {
-            if (remove.Contains(t))
+                   add = a.setDifference(b), remove = b.setDifference(a);
+        Tags.forEach(t -> {
+            if (remove.contains(t))
                 t.Less();
-        }).Remove(Tag::IsEmpty);
-        Tags.ForEach(t -> {
-            if (add.Contains(t))
-                add.Remove(t.More());
+        }).remove(Tag::IsEmpty);
+        Tags.forEach(t -> {
+            if (add.contains(t))
+                add.remove(t.More());
         });
-        Tags.AddAll(add.ForEach(Tag::More));
+        Tags.addAll(add.forEach(Tag::More));
         SortTags();
     }
 
     public void SetFavorite(Food food, boolean favorite){
-        Food target = Foods.First(food);
+        Food target = Foods.first(food);
         target.SetIsFavorite(favorite);
-        if (favorite) MyFavorites.Add(target.Name, 0);
-        else MyFavorites.Remove(target.Name);
+        if (favorite) MyFavorites.add(target.Name, 0);
+        else MyFavorites.remove(target.Name);
     }
 
     public AList<Food> GetFavoriteFoods(){
         AList<Food> list = new AList<>();
-        MyFavorites.ForEach(name -> list.Add(Foods.First(f -> f.Name.equals(name))));
+        MyFavorites.forEach(name -> list.add(Foods.first(f -> f.Name.equals(name))));
         return list;
     }
 

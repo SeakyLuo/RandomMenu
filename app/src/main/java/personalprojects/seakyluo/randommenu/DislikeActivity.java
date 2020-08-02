@@ -7,12 +7,12 @@ import android.widget.TextView;
 
 import com.jude.swipbackhelper.SwipeBackHelper;
 
-import personalprojects.seakyluo.randommenu.Adapters.SimpleFoodListAdapter;
-import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.Dialogs.InputDialog;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.adapters.SimpleFoodListAdapter;
+import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class DislikeActivity extends SwipeBackActivity {
     private TextView titleText;
@@ -30,13 +30,13 @@ public class DislikeActivity extends SwipeBackActivity {
         RecyclerView recyclerView = findViewById(R.id.food_list_recycler_view);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new SimpleFoodListAdapter();
-        adapter.SetData(Settings.settings.DislikeFood);
+        adapter.setData(Settings.settings.DislikeFood);
         adapter.SetOnDeletedClickedListener((viewHolder, data) -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
-            dialog.setMessage(String.format(getString(R.string.ask_delete), data));
+            dialog.setMessage(getString(R.string.ask_delete, data));
             dialog.setOnYesListener(dv -> {
-                Settings.settings.DislikeFood.Remove(data);
-                adapter.Remove(data);
+                Settings.settings.DislikeFood.remove(data);
+                adapter.remove(data);
                 SetTitle();
             });
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
@@ -46,9 +46,9 @@ public class DislikeActivity extends SwipeBackActivity {
             InputDialog dialog = new InputDialog();
             dialog.SetHint(getString(R.string.food_name));
             dialog.SetConfirmListener(text -> {
-                if (Settings.settings.DislikeFood.Remove(text)) adapter.Remove(text);
-                Settings.settings.DislikeFood.Add(text, 0);
-                adapter.Add(text, 0);
+                if (Settings.settings.DislikeFood.remove(text)) adapter.remove(text);
+                Settings.settings.DislikeFood.add(text, 0);
+                adapter.add(text, 0);
                 recyclerView.smoothScrollToPosition(0);
                 updated = true;
                 SetTitle();
@@ -59,7 +59,7 @@ public class DislikeActivity extends SwipeBackActivity {
     }
 
     public void SetTitle(){
-        titleText.setText(Tag.Format(this, R.string.dislike_food, adapter.GetData().Count()));
+        titleText.setText(Tag.Format(this, R.string.dislike_food, adapter.getData().count()));
     }
 
     @Override

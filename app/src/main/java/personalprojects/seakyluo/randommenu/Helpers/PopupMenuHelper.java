@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Helpers;
+package personalprojects.seakyluo.randommenu.helpers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

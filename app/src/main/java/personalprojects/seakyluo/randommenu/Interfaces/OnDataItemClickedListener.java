@@ -1,7 +1,7 @@
-package personalprojects.seakyluo.randommenu.Interfaces;
+package personalprojects.seakyluo.randommenu.interfaces;
 
-import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
+import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 
 public interface OnDataItemClickedListener<T> {
-    void Click(CustomAdapter.CustomViewHolder viewHolder, T data);
+    void click(CustomAdapter.CustomViewHolder viewHolder, T data);
 }

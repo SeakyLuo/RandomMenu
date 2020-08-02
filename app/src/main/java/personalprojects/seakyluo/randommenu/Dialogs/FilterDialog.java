@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Dialogs;
+package personalprojects.seakyluo.randommenu.dialogs;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import personalprojects.seakyluo.randommenu.ChooseTagActivity;
-import personalprojects.seakyluo.randommenu.Fragments.ChooseTagFragment;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Tag;
-import personalprojects.seakyluo.randommenu.Interfaces.TagFilterListener;
+import personalprojects.seakyluo.randommenu.fragments.ChooseTagFragment;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Tag;
+import personalprojects.seakyluo.randommenu.interfaces.TagFilterListener;
 import personalprojects.seakyluo.randommenu.R;
 
 public class FilterDialog extends DialogFragment {
@@ -31,9 +31,9 @@ public class FilterDialog extends DialogFragment {
 
         getChildFragmentManager().beginTransaction().add(R.id.prefer_tags, prefer).add(R.id.exclude_tags, exclude).commit();
         prefer.SetHeader(getString(R.string.prefer_tags));
-        prefer.SetChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, exclude.GetData().ToArrayList()));
+        prefer.SetChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, exclude.GetData().toArrayList()));
         exclude.SetHeader(getString(R.string.exclude_tags));
-        exclude.SetChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, prefer.GetData().ToArrayList()));
+        exclude.SetChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, prefer.GetData().toArrayList()));
         confirm_button.setOnClickListener(v -> tagFilterListener.Filter(prefer.GetData(), exclude.GetData()));
         reset_button.setOnClickListener(resetListener);
         return view;

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Fragments;
+package personalprojects.seakyluo.randommenu.fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
@@ -16,13 +16,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import personalprojects.seakyluo.randommenu.Dialogs.FilterDialog;
-import personalprojects.seakyluo.randommenu.Dialogs.MenuDialog;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.dialogs.FilterDialog;
+import personalprojects.seakyluo.randommenu.dialogs.MenuDialog;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class RandomFragment extends Fragment {
@@ -46,23 +46,23 @@ public class RandomFragment extends Fragment {
             getChildFragmentManager().beginTransaction().add(R.id.food_card_frame, foodCardFragment = new FoodCardFragment()).commit();
         else{
             foodCardFragment = (FoodCardFragment) getChildFragmentManager().getFragment(savedInstanceState, FoodCardFragment.TAG);
-            menu.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_MENU));
-            preferred_tags.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_PREFERRED_TAGS));
-            excluded_tags.CopyFrom(savedInstanceState.getParcelableArrayList(TAG_EXCLUDED_TAGS));
+            menu.copyFrom(savedInstanceState.getParcelableArrayList(TAG_MENU));
+            preferred_tags.copyFrom(savedInstanceState.getParcelableArrayList(TAG_PREFERRED_TAGS));
+            excluded_tags.copyFrom(savedInstanceState.getParcelableArrayList(TAG_EXCLUDED_TAGS));
         }
         SetAnimations();
         view.findViewById(R.id.check_button).setOnClickListener(v -> GoodFood());
         view.findViewById(R.id.cross_button).setOnClickListener(v -> BadFood());
         view.findViewById(R.id.refresh_button).setOnClickListener(v -> ResetFood());
         filterDialog.SetTagFilterListener((preferred, excluded) -> {
-            preferred_tags.CopyFrom(preferred);
-            excluded_tags.CopyFrom(excluded);
+            preferred_tags.copyFrom(preferred);
+            excluded_tags.copyFrom(excluded);
             filterDialog.dismiss();
             Reset();
             foodCardFragment.SetFood(NextFood());
         });
         filterDialog.SetOnResetListener(v -> {
-            filterDialog.SetData(preferred_tags.Clear(), excluded_tags.Clear());
+            filterDialog.SetData(preferred_tags.clear(), excluded_tags.clear());
             Reset();
             foodCardFragment.SetFood(NextFood());
         });
@@ -73,52 +73,52 @@ public class RandomFragment extends Fragment {
         });
         ImageButton menuButton = view.findViewById(R.id.menu_button);
         menuDialog.SetFoodAddedListener((viewHolder, data) -> {
-            food_pool.RemoveAll(data);
-            menu.CopyFrom(data);
+            food_pool.removeAll(data);
+            menu.copyFrom(data);
             SetMenuHeader();
-            if (menu.Contains(foodCardFragment.GetFood())) NextFood();
+            if (menu.contains(foodCardFragment.GetFood())) NextFood();
         });
         menuDialog.SetFoodRemovedListener((viewHolder, data) -> {
-            menu.Remove(data);
+            menu.remove(data);
             SetMenuHeader();
-            food_pool.Add(data, Helper.RandRange(0, food_pool.Count()));
+            food_pool.add(data, Helper.RandRange(0, food_pool.count()));
         });
         menuDialog.SetOnClearListener(button -> {
-            food_pool.AddAll(menu).Shuffle();
-            menu.Clear();
+            food_pool.addAll(menu).shuffle();
+            menu.clear();
             menuDialog.SetHeaderText(String.format(getString(R.string.food_count), 0));
             menuDialog.Clear();
         });
         menuButton.setOnClickListener(v -> {
-            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.Count()));
+            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.count()));
             menuDialog.SetData(menu);
             menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });
         Reset();
-        if (!food_pool.IsEmpty()) foodCardFragment.LoadFood(food_pool.Pop(0));
+        if (!food_pool.isEmpty()) foodCardFragment.LoadFood(food_pool.pop(0));
         return view;
     }
 
-    private void SetMenuHeader() { menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.Count())); }
+    private void SetMenuHeader() { menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.count())); }
     private void GoodFood() { food_card.startAnimation(good_food); }
     private void BadFood() { food_card.startAnimation(bad_food); }
     private void ResetFood() { flip_in.setTarget(food_card); flip_in.start(); }
 
     private Food NextFood(){
-        if (food_pool.IsEmpty()){
+        if (food_pool.isEmpty()){
             Reset();
             Toast.makeText(getContext(), getString(R.string.reshuffle), Toast.LENGTH_SHORT).show();
         }
-        return food_pool.IsEmpty() ? null : foodCardFragment.SetFood(food_pool.Pop(0));
+        return food_pool.isEmpty() ? null : foodCardFragment.SetFood(food_pool.pop(0));
     }
 
     private AList<Food> Reset(){
-        AList<Food> source = Settings.settings.Foods.ForEach(f -> f.HideCount = Math.max(f.HideCount - 1, 0)).Find(f -> !menu.Contains(f) && f.HideCount == 0);
-        if (!preferred_tags.IsEmpty()) source.Remove(f -> !preferred_tags.Any(f::HasTag));
-        if (!excluded_tags.IsEmpty()) source.Remove(f -> excluded_tags.Any(f::HasTag));
-        do source.Shuffle();
-        while (!food_pool.IsEmpty() && food_pool.Get(0).equals(source.Get(0)));
-        return food_pool.CopyFrom(source);
+        AList<Food> source = Settings.settings.Foods.forEach(f -> f.HideCount = Math.max(f.HideCount - 1, 0)).find(f -> !menu.contains(f) && f.HideCount == 0);
+        if (!preferred_tags.isEmpty()) source.remove(f -> !preferred_tags.any(f::HasTag));
+        if (!excluded_tags.isEmpty()) source.remove(f -> excluded_tags.any(f::HasTag));
+        do source.shuffle();
+        while (!food_pool.isEmpty() && food_pool.get(0).equals(source.get(0)));
+        return food_pool.copyFrom(source);
     }
 
     public void Refresh() { foodCardFragment.Refresh(); }
@@ -127,9 +127,9 @@ public class RandomFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         getChildFragmentManager().putFragment(outState, FoodCardFragment.TAG, foodCardFragment);
-        outState.putParcelableArrayList(TAG_MENU, menu.ToArrayList());
-        outState.putParcelableArrayList(TAG_PREFERRED_TAGS, preferred_tags.ToArrayList());
-        outState.putParcelableArrayList(TAG_EXCLUDED_TAGS, excluded_tags.ToArrayList());
+        outState.putParcelableArrayList(TAG_MENU, menu.toArrayList());
+        outState.putParcelableArrayList(TAG_PREFERRED_TAGS, preferred_tags.toArrayList());
+        outState.putParcelableArrayList(TAG_EXCLUDED_TAGS, excluded_tags.toArrayList());
     }
 
     private void SetAnimations(){
@@ -142,7 +142,7 @@ public class RandomFragment extends Fragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                menu.Add(foodCardFragment.GetFood(), 0);
+                menu.add(foodCardFragment.GetFood(), 0);
                 NextFood();
             }
 

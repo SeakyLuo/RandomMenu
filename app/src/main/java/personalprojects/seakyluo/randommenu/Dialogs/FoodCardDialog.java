@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Dialogs;
+package personalprojects.seakyluo.randommenu.dialogs;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import personalprojects.seakyluo.randommenu.Fragments.FoodCardFragment;
-import personalprojects.seakyluo.randommenu.Interfaces.FoodEditedListener;
-import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.fragments.FoodCardFragment;
+import personalprojects.seakyluo.randommenu.interfaces.FoodEditedListener;
+import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.R;
 
 public class FoodCardDialog extends DialogFragment {

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Dialogs;
+package personalprojects.seakyluo.randommenu.dialogs;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,10 +12,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.ChooseFoodActivity;
-import personalprojects.seakyluo.randommenu.Fragments.FoodListFragment;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.R;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -38,8 +38,8 @@ public class MenuDialog extends DialogFragment {
         clear_button = view.findViewById(R.id.clear_button);
         header_text = view.findViewById(R.id.header_text);
 
-        fragment.SetFoodRemovedListener((viewHolder, data) -> {
-            if (foodRemovedListener != null) foodRemovedListener.Click(viewHolder, data);
+        fragment.setFoodRemovedListener((viewHolder, data) -> {
+            if (foodRemovedListener != null) foodRemovedListener.click(viewHolder, data);
             fragment.RemoveFood(data);
         });
         if (savedInstanceState == null){
@@ -49,7 +49,7 @@ public class MenuDialog extends DialogFragment {
         }
         add_button.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ChooseFoodActivity.class);
-            intent.putExtra(ChooseFoodActivity.TAG, fragment.GetData().ToArrayList());
+            intent.putExtra(ChooseFoodActivity.TAG, fragment.GetData().toArrayList());
             startActivityForResult(intent, ChooseFoodActivity.CODE);
         });
         clear_button.setOnClickListener(clearListener);
@@ -61,15 +61,15 @@ public class MenuDialog extends DialogFragment {
     public void SetOnClearListener(View.OnClickListener listener) { clearListener = listener; if (clear_button != null) clear_button.setOnClickListener(clearListener); }
     public void SetFoodRemovedListener(OnDataItemClickedListener<Food> listener) { foodRemovedListener = listener; }
     public void SetFoodAddedListener(OnDataItemClickedListener<AList<Food>> listener) { foodAddedListener = listener; }
-    public void SetData(AList<Food> data) { fragment.SetData(data); }
+    public void SetData(AList<Food> data) { fragment.setData(data); }
     public void Clear() { fragment.Clear(); }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_CANCELED) return;
-        fragment.SetData(data.getParcelableArrayListExtra(ChooseFoodActivity.TAG));
-        foodAddedListener.Click(null, fragment.GetData());
+        fragment.setData(data.getParcelableArrayListExtra(ChooseFoodActivity.TAG));
+        foodAddedListener.click(null, fragment.GetData());
     }
 
     @Override

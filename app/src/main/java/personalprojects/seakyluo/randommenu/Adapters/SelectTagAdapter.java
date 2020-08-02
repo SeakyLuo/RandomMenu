@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Adapters;
+package personalprojects.seakyluo.randommenu.adapters;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -8,16 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class SelectTagAdapter extends CustomAdapter<Tag> {
     private OnDataItemClickedListener<Tag> listener, longClickListener;
     public SelectTagAdapter(OnDataItemClickedListener<Tag> listener) { this.listener = listener; }
-    public void SetLongClickListener(OnDataItemClickedListener<Tag> longClickListener) { this.longClickListener = longClickListener; }
+    public void setLongClickListener(OnDataItemClickedListener<Tag> longClickListener) { this.longClickListener = longClickListener; }
     private static int HighlightColor = Color.parseColor("#0078D7");
     private Tag pendingTag;
     private ViewHolder lastTag;
@@ -31,15 +30,15 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        Tag tag = data.Get(position);
+        Tag tag = data.get(position);
         ViewHolder viewHolder = (ViewHolder)holder;
         viewHolder.view.setOnClickListener(v -> {
             HighlightTag(viewHolder);
-            listener.Click(holder, tag);
+            listener.click(holder, tag);
         });
         viewHolder.view.setOnLongClickListener(v -> {
             boolean success = longClickListener != null;
-            if (success) longClickListener.Click(holder, tag);
+            if (success) longClickListener.click(holder, tag);
             return success;
         });
         if (tag.equals(pendingTag) || (lastTag != null && lastTag.data.equals(tag))){
@@ -52,7 +51,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
 
     public void HighlightTag(Tag tag){
         if (tag == null || (lastTag != null && tag.equals(lastTag.data))) return;
-        ViewHolder viewHolder = (ViewHolder) viewHolders.First(vh -> vh.data.equals(tag));
+        ViewHolder viewHolder = (ViewHolder) viewHolders.first(vh -> vh.data.equals(tag));
         if (viewHolder == null) pendingTag = tag;
         else HighlightTag(viewHolder);
     }
@@ -63,10 +62,10 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
     }
 
     public void SetTags(AList<Tag> tags){
-        if (tags.Equals(data.After(0))) return;
-        if (data.Count() == 0) data.Add(Tag.AllCategoriesTag);
-        else data.Clear(1);
-        data.AddAll(tags);
+        if (tags.equals(data.after(0))) return;
+        if (data.count() == 0) data.add(Tag.AllCategoriesTag);
+        else data.clear(1);
+        data.addAll(tags);
         notifyDataSetChanged();
     }
 
@@ -80,7 +79,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
         }
 
         @Override
-        void SetData(Tag data) {
+        void setData(Tag data) {
             tag_name.setText(data.IsAllCategoriesTag() ? context.getString(R.string.all_categories) : data.Name);
             SetHighlight(false);
         }

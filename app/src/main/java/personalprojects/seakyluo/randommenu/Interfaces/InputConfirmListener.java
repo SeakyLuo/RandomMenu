@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Interfaces;
+package personalprojects.seakyluo.randommenu.interfaces;
 
 public interface InputConfirmListener{
     void Confirm(String text);

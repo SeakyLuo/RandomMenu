@@ -47,7 +47,7 @@
     </android.support.v7.widget.Toolbar>
 
     <fragment
-        class="personalprojects.seakyluo.randommenu.Fragments.FoodListFragment"
+        class="personalprojects.seakyluo.randommenu.fragments.FoodListFragment"
         android:id="@+id/food_list_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -95,4 +95,14 @@
     <string name="duplicate_food_merge">发现重复菜名，你想合并这两道菜吗？</string>
     <string name="tag_auto_added">标签已经自动添加</string>
     <string name="auto_tag_failed">无法填充标签！请添加至少一个标签！</string>
+    <string name="tag_map">标签映射表</string>
+    <string name="keyword_colon">关键词：</string>
+    <string name="tag_map_hint">输入关键词和标签。如果新的菜名中包含关键词，相应的标签会被自动添加到该菜肴。</string>
+    <string name="tag_colon">标签：</string>
+    <string name="duplicate_tag_mapper">发现了重复的关键词，已自动合并标签</string>
+    <string name="duplicate">复制</string>
+    <string name="empty_keyword">空的关键词！</string>
+    <string name="ask_delete_keyword">你想要删除关键词“%s”及其所有标签吗？</string>
+    <string name="duplicate_tag_mapper_with_tag_overflow">发现了重复的关键词，但其标签太多，无法保存！</string>
+    <string name="keyword_at_least_one_tag">关键词至少要有1个标签！</string>
 </resources>

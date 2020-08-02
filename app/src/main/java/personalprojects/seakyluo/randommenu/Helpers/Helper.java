@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Helpers;
+package personalprojects.seakyluo.randommenu.helpers;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -16,7 +16,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.gson.Gson;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -31,10 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -42,10 +38,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class Helper {
@@ -83,52 +78,47 @@ public class Helper {
         String settings = ReadFile(Settings.FILENAME);
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
         if (IsNullOrEmpty(settings)) Log("Empty Settings Created");
-        HashMap<String, List<String>> map = new HashMap<>();
-        for (String tag: Arrays.asList("肉", "骨", "血", "荤")){
-            map.put(tag, Arrays.asList("荤"));
-        }
-        for (String tag: Arrays.asList("汤", "羹")){
-            map.put(tag, Arrays.asList("汤"));
-        }
-        for (String tag: Arrays.asList("菌", "菇")){
-            map.put(tag, Arrays.asList("菌"));
-        }
-        for (String tag: Arrays.asList("菜", "素", "豆", "瓜", "茄", "笋", "韭", "苗", "蒜", "藕", "叶", "萝卜")){
-            map.put(tag, Arrays.asList("素"));
-        }
-        for (String tag: Arrays.asList("鱼", "虾", "蟹")){
-            map.put(tag, Arrays.asList("荤", "海鲜", "河鲜"));
-        }
-        for (String tag: Arrays.asList("鸡", "鸭", "鹅")){
-            map.put(tag, Arrays.asList("荤", "禽类"));
-        }
-        for (String tag: Arrays.asList("猪", "五花肉")){
-            map.put(tag, Arrays.asList("荤", "猪肉"));
-        }
-        for (String tag: Arrays.asList("牛")){
-            map.put(tag, Arrays.asList("荤", "牛肉"));
-        }
-        for (String tag: Arrays.asList("羊")){
-            map.put(tag, Arrays.asList("荤", "羊肉"));
-        }
-        for (String tag: Arrays.asList("排骨")){
-            map.put(tag, Arrays.asList("荤", "猪肉", "排骨"));
-        }
-        for (String tag: Arrays.asList("饺", "粉", "面", "粥", "包", "饭", "饼", "年糕")){
-            map.put(tag, Arrays.asList("主食"));
-        }
-        Settings.settings.AutoTagMap = map;
-        Helper.Save();
+//        HashMap<String, List<String>> map = new HashMap<>();
+//        for (String tag: Arrays.asList("肉", "骨", "血", "荤")){
+//            map.put(tag, Arrays.asList("荤"));
+//        }
+//        for (String tag: Arrays.asList("汤", "羹")){
+//            map.put(tag, Arrays.asList("汤"));
+//        }
+//        for (String tag: Arrays.asList("菌", "菇")){
+//            map.put(tag, Arrays.asList("菌"));
+//        }
+//        for (String tag: Arrays.asList("菜", "素", "豆", "瓜", "茄", "笋", "韭", "苗", "蒜", "藕", "叶", "萝卜")){
+//            map.put(tag, Arrays.asList("素"));
+//        }
+//        for (String tag: Arrays.asList("鱼", "虾", "蟹")){
+//            map.put(tag, Arrays.asList("荤", "海鲜", "河鲜"));
+//        }
+//        for (String tag: Arrays.asList("鸡", "鸭", "鹅")){
+//            map.put(tag, Arrays.asList("荤", "禽类"));
+//        }
+//        for (String tag: Arrays.asList("猪", "五花肉")){
+//            map.put(tag, Arrays.asList("荤", "猪肉"));
+//        }
+//        for (String tag: Arrays.asList("牛")){
+//            map.put(tag, Arrays.asList("荤", "牛肉"));
+//        }
+//        for (String tag: Arrays.asList("羊")){
+//            map.put(tag, Arrays.asList("荤", "羊肉"));
+//        }
+//        for (String tag: Arrays.asList("排骨")){
+//            map.put(tag, Arrays.asList("荤", "猪肉", "排骨"));
+//        }
+//        for (String tag: Arrays.asList("饺", "粉", "面", "粥", "包", "饭", "饼", "年糕")){
+//            map.put(tag, Arrays.asList("主食"));
+//        }
+//        Settings.settings.AutoTagMap = map;
+//        Helper.Save();
     }
     public static String GetFilename(String path) { return new File(path).getName(); }
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
     public static boolean IsBlank(String string){
-        if (IsNullOrEmpty(string)) return true;
-        for (char ch: string.toCharArray()){
-            if (ch != ' ')
-                return true;
-        }
-        return false;
+        return IsNullOrEmpty(string.trim());
     }
     public static void LoadImage(RequestManager glide, String path, ImageView imageView){
         if (IsNullOrEmpty(path)) imageView.setImageBitmap(DefaultFoodImage);
@@ -163,9 +153,9 @@ public class Helper {
             WriteFile(Settings.FILENAME, settings);
             String backupSettings = "BackupSettings";
             WriteFile("Temp/" + backupSettings + Timestamp() + ".json", settings);
-            AList<File> temp_settings = new AList<>(TempFolder.listFiles()).Find(f -> f.getName().startsWith(backupSettings));
-            if (temp_settings.Count() > 10){
-                temp_settings.Sort((o1, o2) -> (int) (o2.lastModified() - o1.lastModified())).After(10).ForEach(File::delete);
+            AList<File> temp_settings = new AList<>(TempFolder.listFiles()).find(f -> f.getName().startsWith(backupSettings));
+            if (temp_settings.count() > 10){
+                temp_settings.sort((o1, o2) -> (int) (o2.lastModified() - o1.lastModified())).after(10).forEach(File::delete);
             }
         }
     }

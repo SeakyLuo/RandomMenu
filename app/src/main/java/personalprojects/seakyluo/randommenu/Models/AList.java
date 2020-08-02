@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Models;
+package personalprojects.seakyluo.randommenu.models;
 
 
 import android.support.annotation.NonNull;
@@ -13,249 +13,256 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-import personalprojects.seakyluo.randommenu.Interfaces.BooleanLambda;
-import personalprojects.seakyluo.randommenu.Interfaces.ForLambda;
-import personalprojects.seakyluo.randommenu.Interfaces.ObjectLambda;
-import personalprojects.seakyluo.randommenu.Interfaces.ReduceLambda;
-import personalprojects.seakyluo.randommenu.Interfaces.VoidLambda;
-import personalprojects.seakyluo.randommenu.Interfaces.ZipVoidLambda;
+import personalprojects.seakyluo.randommenu.interfaces.BooleanLambda;
+import personalprojects.seakyluo.randommenu.interfaces.ForLambda;
+import personalprojects.seakyluo.randommenu.interfaces.ObjectLambda;
+import personalprojects.seakyluo.randommenu.interfaces.ReduceLambda;
+import personalprojects.seakyluo.randommenu.interfaces.VoidLambda;
+import personalprojects.seakyluo.randommenu.interfaces.ZipVoidLambda;
 
 public class AList<T> extends IList<T> {
     public AList(){}
-    public AList(Collection<T> collection) { for (T element: collection) Add(element); }
-    public AList(AList<T> collection) { AddAll(collection); }
-    public AList(T... collection) { for (T element: collection) Add(element); }
-    public AList(T element) { Add(element); }
-    public AList(T element, int count) { for (int i = 0; i < count; i++) Add(element); }
+    public AList(Collection<T> collection) { for (T element: collection) add(element); }
+    public AList(AList<T> collection) { addAll(collection); }
+    public AList(T... collection) { for (T element: collection) add(element); }
+    public AList(T element) { add(element); }
+    public AList(T element, int count) { for (int i = 0; i < count; i++) add(element); }
 
-    public int Count() { return list.size(); }
-    public boolean IsEmpty() { return list.size() == 0; }
-    public int Count(BooleanLambda<T> lambda){
+    public int count() { return list.size(); }
+    public boolean isEmpty() { return list.size() == 0; }
+    public int count(BooleanLambda<T> lambda){
         int count = 0;
         for (T element: list) if (lambda.operate(element)) count++;
         return count;
     }
-    public boolean Contains(T element) { return list.contains(element); }
-    public boolean Any(BooleanLambda<T> lambda){
+    public boolean contains(T element) { return list.contains(element); }
+    public boolean any(BooleanLambda<T> lambda){
         for (T obj: list) if (lambda.operate(obj)) return true;
         return false;
     }
-    public boolean All(BooleanLambda<T> lambda){
+    public boolean all(BooleanLambda<T> lambda){
         for (T obj: list) if (!lambda.operate(obj)) return false;
         return true;
     }
-    public boolean Equals(AList<T> collection){
-        int count = Count();
-        if (count != collection.Count()) return false;
-        for (int i = 0; i < count; i++)
-            if (!Get(i).equals(collection.Get(i)))
-                return false;
-        return true;
+    @Override
+    public boolean equals(Object object){
+        if (object == null) return false;
+        if (object instanceof AList){
+            AList<T> collection = (AList<T>) object;
+            int count = count();
+            if (count != collection.count()) return false;
+            for (int i = 0; i < count; i++)
+                if (!get(i).equals(collection.get(i)))
+                    return false;
+            return true;
+        }else if (object instanceof Collection){
+            return equals(new AList<>((Collection)object));
+        }else{
+            return false;
+        }
     }
-    public boolean Equals(Collection<T> collection){ return Equals(new AList<>(collection)); }
-    public T Add(T element) { list.add(element); return element; }
-    public T Add(T element, int index) {
-        index = ModIndex(index);
+    public T add(T element) { list.add(element); return element; }
+    public T add(T element, int index) {
+        index = modIndex(index);
         list.add(index, element);
         return element;
     }
-    public AList<T> With(T element) { Add(element); return this; }
-    public AList<T> With(T element, int index) { Add(element, index); return this; }
-    public AList<T> AddAll(Collection<T> collection) { list.addAll(collection); return this; }
-    public AList<T> AddAll(AList<T> collection) { list.addAll(collection.list); return this; }
-    public AList<T> AddAll(Collection<T> collection, int index) {
-        index = ModIndex(index);
+    public AList<T> with(T element) { add(element); return this; }
+    public AList<T> with(T element, int index) { add(element, index); return this; }
+    public AList<T> addAll(Collection<T> collection) { list.addAll(collection); return this; }
+    public AList<T> addAll(AList<T> collection) { list.addAll(collection.list); return this; }
+    public AList<T> addAll(Collection<T> collection, int index) {
+        index = modIndex(index);
         list.addAll(index, collection);
         return this;
     }
-    public AList<T> AddAll(AList<T> collection, int index) { return AddAll(collection.list, index); }
-    public boolean Remove(T element) { return list.remove(element); }
-    public AList<T> Remove(BooleanLambda<T> lambda){ list.removeIf(lambda::operate); return this; }
-    public T Pop() { return Pop(-1); }
-    public T Pop(int index){
-        index = ModIndex(index);
+    public AList<T> addAll(AList<T> collection, int index) { return addAll(collection.list, index); }
+    public boolean remove(T element) { return list.remove(element); }
+    public AList<T> remove(BooleanLambda<T> lambda){ list.removeIf(lambda::operate); return this; }
+    public T pop() { return pop(-1); }
+    public T pop(int index){
+        index = modIndex(index);
         T element = list.get(index);
         list.remove(index);
         return element;
     }
-    public AList<T> Pop(int start, int end){
+    public AList<T> pop(int start, int end){
         AList<T> collection = new AList<>();
-        start = ModIndex(start);
-        end = ModIndex(end);
+        start = modIndex(start);
+        end = modIndex(end);
         for (int i = start; i < end; i++)
-            collection.Add(list.remove(start));
+            collection.add(list.remove(start));
         return collection;
     }
-    public AList<T> Without(T element){ Remove(element); return this; }
-    public AList<T> RemoveAll(AList<T> collection) { if (collection != null) list.removeAll(collection.list); return this; }
-    public AList<T> RemoveAll(Collection<T> collection) { if (collection != null) list.removeAll(collection); return this; }
-    public AList<T> Clear() { list.clear(); return this; }
-    public AList<T> Clear(int start) {
-        return Clear(start, Count());
+    public AList<T> without(T element){ remove(element); return this; }
+    public AList<T> removeAll(AList<T> collection) { if (collection != null) list.removeAll(collection.list); return this; }
+    public AList<T> removeAll(Collection<T> collection) { if (collection != null) list.removeAll(collection); return this; }
+    public AList<T> clear() { list.clear(); return this; }
+    public AList<T> clear(int start) {
+        return clear(start, count());
     }
-    public AList<T> Clear(int start, int end) {
-        list.subList(ModIndex(start), ModIndex(end)).clear();
+    public AList<T> clear(int start, int end) {
+        list.subList(modIndex(start), modIndex(end)).clear();
         return this;
     }
-    public AList<T> Copy(){ return new AList<>(list); }
-    public AList<T> CopyFrom(AList<T> collection){ return CopyFrom(collection.list); }
-    public AList<T> CopyFrom(Collection<T> collection){
+    public AList<T> copy(){ return new AList<>(list); }
+    public AList<T> copyFrom(AList<T> collection){ return copyFrom(collection.list); }
+    public AList<T> copyFrom(Collection<T> collection){
         list.clear();
         list.addAll(collection);
         return this;
     }
-    public int IndexOf(T element){ return list.indexOf(element); }
-    public int IndexOf(BooleanLambda<T> lambda){
+    public int indexOf(T element){ return list.indexOf(element); }
+    public int indexOf(BooleanLambda<T> lambda){
         for (int i = 0; i < list.size(); i++)
             if (lambda.operate(list.get(i)))
                 return i;
         return -1;
     }
-    public AList<Integer> IndexOfAll(BooleanLambda<T> lambda){
+    public AList<Integer> indexOfAll(BooleanLambda<T> lambda){
         AList<Integer> collection = new AList<>();
         for (int i = 0; i < list.size(); i++)
             if (lambda.operate(list.get(i)))
-                collection.Add(i);
+                collection.add(i);
         return collection;
     }
-    public int LastIndexOf(T element) { return list.lastIndexOf(element); }
-    public int LastIndexOf(BooleanLambda<T> lambda){
-        for (int i = Count(); i >= 0; i--)
+    public int lastIndexOf(T element) { return list.lastIndexOf(element); }
+    public int lastIndexOf(BooleanLambda<T> lambda){
+        for (int i = count(); i >= 0; i--)
             if (lambda.operate(list.get(i)))
                 return i;
         return -1;
     }
-    public AList<T> Before(int index){ return Sub(0, index); }
-    public AList<T> After(int index) { return Sub(index + 1, Count()); }
-    public AList<T> Sub(int start, int end){
+    public AList<T> before(int index){ return sub(0, index); }
+    public AList<T> after(int index) { return sub(index + 1, count()); }
+    public AList<T> sub(int start, int end){
         AList<T> collection = new AList<>();
-        start = ModIndex(start);
-        end = ModIndex(end);
+        start = modIndex(start);
+        end = modIndex(end);
         for (int i = start; i < end; i = i + 1)
-            collection.Add(list.get(i));
+            collection.add(list.get(i));
         return collection;
     }
-    public AList<T> Sub(int start, int end, int step){
+    public AList<T> sub(int start, int end, int step){
         AList<T> collection = new AList<>();
-        start = ModIndex(start);
-        end = ModIndex(end);
+        start = modIndex(start);
+        end = modIndex(end);
         for (int i = start; i < end; i = i + step)
-            collection.Add(list.get(i));
+            collection.add(list.get(i));
         return collection;
     }
-    public T Get(int index){ return list.get(ModIndex(index)); }
-    public T Set(T element, int index) { list.set(ModIndex(index), element); return element; }
-    public AList<T> Set(UnaryOperator<T> lambda) { list.replaceAll(lambda); return this; }
-    public T First() { return Count() > 0 ? list.get(0) : null; }
-    public T First(T target){
+    public T get(int index){ return list.get(modIndex(index)); }
+    public T set(T element, int index) { list.set(modIndex(index), element); return element; }
+    public AList<T> set(UnaryOperator<T> lambda) { list.replaceAll(lambda); return this; }
+    public T first() { return count() > 0 ? list.get(0) : null; }
+    public T first(T target){
         for (T element: list)
             if (element.equals(target))
                 return element;
         return null;
     }
-    public T First(BooleanLambda<T> lambda){
+    public T first(BooleanLambda<T> lambda){
         for (T element: list)
             if (lambda.operate(element))
                 return element;
         return null;
     }
-    public T Last() { return Count() > 0 ? list.get(Count() - 1) : null; }
-    public T Last(BooleanLambda<T> lambda){ return Reverse().First(lambda); }
+    public T last() { return count() > 0 ? list.get(count() - 1) : null; }
+    public T last(BooleanLambda<T> lambda){ return reverse().first(lambda); }
     public AList<T> For(ForLambda lambda) {
-        for (int i = 0; i < Count(); i++) lambda.operate(i);
+        for (int i = 0; i < count(); i++) lambda.operate(i);
         return this;
     }
-    public AList<T> ForEach(VoidLambda<T> lambda){
+    public AList<T> forEach(VoidLambda<T> lambda){
         for (T element: list) lambda.operate(element);
         return this;
     }
-    public <A> AList<A> Convert(ObjectLambda<T, A> lambda){
+    public <A> AList<A> convert(ObjectLambda<T, A> lambda){
         AList<A> collection = new AList<A>();
-        for (T element: list) collection.Add(lambda.operate(element));
+        for (T element: list) collection.add(lambda.operate(element));
         return collection;
     }
-    public AList<T> Find(BooleanLambda<T> lambda){
+    public AList<T> find(BooleanLambda<T> lambda){
         AList<T> collection = new AList<>();
-        for (T element: list) if (lambda.operate(element)) collection.Add(element);
+        for (T element: list) if (lambda.operate(element)) collection.add(element);
         return collection;
     }
-    public AList<T> Reverse(){
-        int count = Count();
-        for (int i = 0; i < count / 2; i++) Swap(i, count - 1 - i);
+    public AList<T> reverse(){
+        int count = count();
+        for (int i = 0; i < count / 2; i++) swap(i, count - 1 - i);
         return this;
     }
-    public AList<T> Swap(int item1, int item2){
-        item1 = ModIndex(item1);
-        item2 = ModIndex(item2);
+    public AList<T> swap(int item1, int item2){
+        item1 = modIndex(item1);
+        item2 = modIndex(item2);
         T temp = list.get(item1);
         list.set(item1, list.get(item2));
         list.set(item2, temp);
         return this;
     }
-    public AList<T> Swap(T item1, T item2){ return Swap(IndexOf(item1), IndexOf(item2)); }
-    public AList<T> Move(int from, int to){
-        from = ModIndex(from);
-        to = ModIndex(to);
+    public AList<T> swap(T item1, T item2){ return swap(indexOf(item1), indexOf(item2)); }
+    public AList<T> move(int from, int to){
+        from = modIndex(from);
+        to = modIndex(to);
         T item = list.get(from);
         list.remove(from);
         list.add(to, item);
         return this;
     }
-    public AList<T> SetDifference(AList<T> collection){ return SetDifference(collection.ToSet()); }
-    public AList<T> SetDifference(Collection<T> collection){ return SetDifference((new AList<>(collection)).ToSet()); }
-    public AList<T> SetDifference(Set<T> set2){
-        Set<T> set1 = ToSet();
+    public AList<T> setDifference(AList<T> collection){ return setDifference(collection.toSet()); }
+    public AList<T> setDifference(Collection<T> collection){ return setDifference((new AList<>(collection)).toSet()); }
+    public AList<T> setDifference(Set<T> set2){
+        Set<T> set1 = toSet();
         AList<T> diff = new AList<>();
-        for (T element: set1) if (!set2.contains(element)) diff.Add(element);
+        for (T element: set1) if (!set2.contains(element)) diff.add(element);
         return diff;
     }
-    public T[] ToArray() { return (T[])list.toArray(); }
-    public Set<T> ToSet() { return new HashSet<>(list); }
-    public List<T> ToList() { return ToArrayList(); }
-    public ArrayList<T> ToArrayList() { return new ArrayList<T>(list); }
-    public AList<T> Sort(Comparator<? super T> comparator) {
+    public Set<T> toSet() { return new HashSet<>(list); }
+    public List<T> toList() { return toArrayList(); }
+    public ArrayList<T> toArrayList() { return new ArrayList<T>(list); }
+    public AList<T> sort(Comparator<? super T> comparator) {
         list.sort(comparator);
         return this;
     }
-    public <A> HashMap<A, AList<T>> GroupBy(ObjectLambda<T, A> lambda){
+    public <A> HashMap<A, AList<T>> groupBy(ObjectLambda<T, A> lambda){
         HashMap<A, AList<T>> hashMap = new HashMap<>();
         for (T element: list){
             A key = lambda.operate(element);
             AList<T> group = hashMap.getOrDefault(key, new AList<>());
-            group.Add(element);
+            group.add(element);
             hashMap.put(key, group);
         }
         return hashMap;
     }
-    public HashMap<T, Integer> ToHashMap(){
+    public HashMap<T, Integer> toHashMap(){
         HashMap<T, Integer> hashMap = new HashMap<>();
         for (T element: list)
             hashMap.put(element, hashMap.getOrDefault(element, 0) + 1);
         return hashMap;
     }
-    public <A> ZipList<T, A> Zip(Collection<A> zip){
+    public <A> ZipList<T, A> zip(Collection<A> zip){
         return new ZipList<>(this, zip);
     }
-    public <A> ZipList<T, A> Zip(IList<A> zip){ return new ZipList<>(this, zip); }
-    public AList<T> Enumerate(ZipVoidLambda<Integer, T> lambda) {
-        for (int i = 0; i < Count(); i++)
-            lambda.operate(i, Get(i));
+    public <A> ZipList<T, A> zip(IList<A> zip){ return new ZipList<>(this, zip); }
+    public AList<T> enumerate(ZipVoidLambda<Integer, T> lambda) {
+        for (int i = 0; i < count(); i++)
+            lambda.operate(i, get(i));
         return this;
     }
-    public T Reduce(ReduceLambda<T> lambda){
-        if (Count() == 0) return null;
+    public T reduce(ReduceLambda<T> lambda){
+        if (count() == 0) return null;
         T start = list.get(0);
-        for (T element: list.subList(1, Count()))
+        for (T element: list.subList(1, count()))
             start = lambda.operate(start, element);
         return start;
     }
-    private int ModIndex(int index){
-        int count = Count();
+    private int modIndex(int index){
+        int count = count();
         if (count == index) return index;
         if (count > 0) index = index % count;
         return index < 0 ? index + count : index;
     }
-    public AList<T> Shuffle(){
+    public AList<T> shuffle(){
         Collections.shuffle(list);
         return this;
     }

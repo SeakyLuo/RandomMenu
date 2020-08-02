@@ -7,13 +7,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.Adapters.SimpleFoodListAdapter;
-import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.Dialogs.InputDialog;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.adapters.SimpleFoodListAdapter;
+import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class ToCookActivity extends SwipeBackActivity {
     private TextView titleText;
@@ -27,9 +27,10 @@ public class ToCookActivity extends SwipeBackActivity {
         titleText = findViewById(R.id.title_text_view);
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         RecyclerView recyclerView = findViewById(R.id.food_list_recycler_view);
+        findViewById(R.id.sf_toolbar).setOnClickListener(v -> recyclerView.smoothScrollToPosition(0));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new SimpleFoodListAdapter();
-        adapter.SetData(Settings.settings.ToCook);
+        adapter.setData(Settings.settings.ToCook);
         adapter.SetOnDataItemClickedListener((viewHolder, data) -> {
             Intent intent = new Intent(this, EditFoodActivity.class);
             intent.putExtra(EditFoodActivity.FOOD, new Food(data));
@@ -39,8 +40,8 @@ public class ToCookActivity extends SwipeBackActivity {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.setMessage(String.format(getString(R.string.ask_delete), data));
             dialog.setOnYesListener(dv -> {
-                Settings.settings.ToCook.Remove(data);
-                adapter.Remove(data);
+                Settings.settings.ToCook.remove(data);
+                adapter.remove(data);
                 SetTitle();
             });
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
@@ -50,9 +51,9 @@ public class ToCookActivity extends SwipeBackActivity {
             InputDialog dialog = new InputDialog();
             dialog.SetHint(getString(R.string.food_name));
             dialog.SetConfirmListener(text -> {
-                if (Settings.settings.ToCook.Remove(text)) adapter.Remove(text);
-                Settings.settings.ToCook.Add(text, 0);
-                adapter.Add(text, 0);
+                if (Settings.settings.ToCook.remove(text)) adapter.remove(text);
+                Settings.settings.ToCook.add(text, 0);
+                adapter.add(text, 0);
                 recyclerView.smoothScrollToPosition(0);
                 updated = true;
                 SetTitle();
@@ -63,7 +64,7 @@ public class ToCookActivity extends SwipeBackActivity {
     }
 
     public void SetTitle(){
-        titleText.setText(Tag.Format(this, R.string.to_cook, adapter.GetData().Count()));
+        titleText.setText(Tag.Format(this, R.string.to_cook, adapter.getData().count()));
     }
 
     @Override
@@ -78,8 +79,8 @@ public class ToCookActivity extends SwipeBackActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         String food = ((Food) data.getParcelableExtra(EditFoodActivity.FOOD)).Name;
-        Settings.settings.ToCook.Remove(food);
-        adapter.Remove(food);
+        Settings.settings.ToCook.remove(food);
+        adapter.remove(food);
         updated = true;
         SetTitle();
     }

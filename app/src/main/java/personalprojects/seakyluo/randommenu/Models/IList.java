@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Models;
+package personalprojects.seakyluo.randommenu.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;

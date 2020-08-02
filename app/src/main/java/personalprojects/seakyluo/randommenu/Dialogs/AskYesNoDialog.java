@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Dialogs;
+package personalprojects.seakyluo.randommenu.dialogs;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

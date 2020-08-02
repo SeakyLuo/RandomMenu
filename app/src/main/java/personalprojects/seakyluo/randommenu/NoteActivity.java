@@ -3,8 +3,8 @@ package personalprojects.seakyluo.randommenu;
 import android.os.Bundle;
 import android.widget.EditText;
 
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.models.Settings;
 
 public class NoteActivity extends SwipeBackActivity {
     private EditText editText;

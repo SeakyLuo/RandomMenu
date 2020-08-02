@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Dialogs;
+package personalprojects.seakyluo.randommenu.dialogs;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import personalprojects.seakyluo.randommenu.Interfaces.InputConfirmListener;
+import personalprojects.seakyluo.randommenu.interfaces.InputConfirmListener;
 import personalprojects.seakyluo.randommenu.R;
 
 public class InputDialog extends DialogFragment {

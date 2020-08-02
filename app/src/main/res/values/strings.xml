@@ -95,4 +95,14 @@
     <string name="duplicate_food_merge">Duplicate food name found, do you want to merge this two food?</string>
     <string name="tag_auto_added">Tags have been added automatically.</string>
     <string name="auto_tag_failed">Cannot infer tags! Please add at least 1 tag!</string>
+    <string name="tag_map">Tag Map</string>
+    <string name="keyword_colon">Keyword:</string>
+    <string name="tag_map_hint">Input keyword and tags. If a new food has keyword in its name, the mapping tags will be automatically added.</string>
+    <string name="tag_colon">Tag:</string>
+    <string name="duplicate_tag_mapper">Duplicate keyword is found. Tags have been added into this one.</string>
+    <string name="duplicate">Duplicate</string>
+    <string name="empty_keyword">Empty keyword!</string>
+    <string name="ask_delete_keyword">Do you want to delete keyword \"%s\" and its tags?</string>
+    <string name="duplicate_tag_mapper_with_tag_overflow">Duplicate keyword is found but it has too many tags to save!</string>
+    <string name="keyword_at_least_one_tag">Keyword must have one tag!</string>
 </resources>

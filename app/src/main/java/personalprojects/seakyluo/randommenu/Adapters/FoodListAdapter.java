@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Adapters;
+package personalprojects.seakyluo.randommenu.adapters;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -13,11 +13,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import personalprojects.seakyluo.randommenu.FullScreenImageActivity;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class FoodListAdapter extends CustomAdapter<Food> {
@@ -41,23 +41,23 @@ public class FoodListAdapter extends CustomAdapter<Food> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull CustomAdapter<Food>.CustomViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         ViewHolder viewHolder = (ViewHolder)holder;
         viewHolder.view.setOnClickListener(v -> {
-            if (foodClickedListener != null) foodClickedListener.Click(holder, viewHolder.data);
+            if (foodClickedListener != null) foodClickedListener.click(holder, viewHolder.data);
             if (selectable){
                 viewHolder.SetSelected(!viewHolder.selected);
-                if (selectionChangedListener != null) selectionChangedListener.Click(holder, viewHolder.selected);
+                if (selectionChangedListener != null) selectionChangedListener.click(holder, viewHolder.selected);
             }
         });
         viewHolder.adapter.SetTagClickedListener((v, t) -> {
-            if (tagClickedListener != null) tagClickedListener.Click(v, t);
+            if (tagClickedListener != null) tagClickedListener.click(v, t);
         });
     }
 
     public void SetSelectedFood(AList<Food> foods){
-        selectedFood.CopyFrom(foods);
+        selectedFood.copyFrom(foods);
     }
 
     public class ViewHolder extends CustomViewHolder {
@@ -77,7 +77,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             food_image.setOnClickListener(v -> {
                 if (data.HasImage()){
                     Intent intent = new Intent(context, FullScreenImageActivity.class);
-                    intent.putExtra(FullScreenImageActivity.IMAGE, data.Images.ToArrayList());
+                    intent.putExtra(FullScreenImageActivity.IMAGE, data.Images.toArrayList());
                     context.startActivity(intent);
                 }else{
                     Toast.makeText(context, R.string.no_food_image, Toast.LENGTH_SHORT).show();
@@ -88,17 +88,17 @@ public class FoodListAdapter extends CustomAdapter<Food> {
 
         public void SetSelected(boolean selected){
             checked_image.setVisibility((this.selected = selected) ? View.VISIBLE : View.GONE);
-            if (selected) selectedFood.Add(data);
-            else selectedFood.Remove(data);
+            if (selected) selectedFood.add(data);
+            else selectedFood.remove(data);
         }
 
         @Override
-        public void SetData(Food data) {
+        public void setData(Food data) {
             Helper.LoadImage(Glide.with(view), data.GetCover(), food_image);
             food_name.setText(data.Name);
             liked_image.setVisibility(showLikeImage && data.IsFavorite() ? View.VISIBLE : View.GONE);
-            adapter.SetData(data.GetTags());
-            checked_image.setVisibility(selectedFood.Contains(data) ?  View.VISIBLE : View.GONE);
+            adapter.setData(data.GetTags());
+            checked_image.setVisibility(selectedFood.contains(data) ?  View.VISIBLE : View.GONE);
         }
     }
 }

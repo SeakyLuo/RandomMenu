@@ -14,15 +14,14 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import personalprojects.seakyluo.randommenu.Adapters.TagListAdapter;
-import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.Fragments.TagsFragment;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.adapters.TagListAdapter;
+import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.fragments.TagsFragment;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class ChooseTagActivity extends SwipeBackActivity {
     public static final String SELECTED_TAGS = "selected", EXCLUDED_TAGS = "excluded", FOOD = "source_food";
@@ -45,7 +44,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String tag = suggestionTagListAdapter.getItem(position);
-                ChooseTag(tagListAdapter.GetData().First(t -> t.Name.equals(tag)));
+                ChooseTag(tagListAdapter.getData().first(t -> t.Name.equals(tag)));
                 inputBox.setText("");
             }
 
@@ -68,7 +67,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
-                suggestionTagListAdapter.addAll(tagListAdapter.GetData().RemoveAll(tagsFragment.GetData()).Convert(t -> t.Name).ToList());
+                suggestionTagListAdapter.addAll(tagListAdapter.getData().removeAll(tagsFragment.getData()).convert(t -> t.Name).toList());
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -81,7 +80,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         });
 
         findViewById(R.id.back_button).setOnClickListener(v -> {
-            if (tagsFragment.GetData().Equals(selected_tags)){
+            if (tagsFragment.getData().equals(selected_tags)){
                 setResult(RESULT_CANCELED);
                 finish();
             }else{
@@ -106,17 +105,16 @@ public class ChooseTagActivity extends SwipeBackActivity {
 
         selected_tags.addAll(original_tags);
         if (Settings.settings.AutoTag && selected_tags.size() == 0 && guessFoodName != null){
-            List<Tag> tags = Helper.GuessTags(guessFoodName);
-            for (Tag tag: tags){
+            for (Tag tag: Helper.GuessTags(guessFoodName)){
                 if (!selected_tags.contains(tag)){
                     selected_tags.add(tag);
                 }
-                if (!Settings.settings.Tags.Contains(tag)){
-                    Settings.settings.Tags.Add(tag);
+                if (!Settings.settings.Tags.contains(tag)){
+                    Settings.settings.Tags.add(tag);
                 }
             }
         }
-        tagListAdapter = new TagListAdapter(this, Settings.settings.Tags.RemoveAll(excluded_tags), selected_tags);
+        tagListAdapter = new TagListAdapter(this, Settings.settings.Tags.removeAll(excluded_tags), selected_tags);
         tagListAdapter.SetTagClickedListener((viewHolder, tag) -> ChooseTag(tag));
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
@@ -127,45 +125,48 @@ public class ChooseTagActivity extends SwipeBackActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).commit();
         else
             tagsFragment = (TagsFragment) getSupportFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
-        tagsFragment.SetSpanCount(1);
+        tagsFragment.setSpanCount(1);
         tagsFragment.SetCloseable(true);
-        tagsFragment.SetData(selected_tags);
-        tagsFragment.SetTagClosedListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
+        tagsFragment.setData(selected_tags);
+        tagsFragment.setTagClosedListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
     }
 
     private void ChooseTag(Tag tag){
         if (tagsFragment.GetAdapter().getItemCount() == Tag.MAX_TAGS){
             Toast.makeText(ChooseTagActivity.this, getString(R.string.tag_limit), Toast.LENGTH_SHORT).show();
         }else{
-            if (tagsFragment.Contains(tag)){
-                tagsFragment.Remove(tag);
+            if (tagsFragment.contains(tag)){
+                tagsFragment.remove(tag);
             }else{
-                tagsFragment.Add(tag, 0);
+                tagsFragment.add(tag, 0);
                 tagsFragment.recyclerView.smoothScrollToPosition(0);
             }
         }
     }
 
     private void SubmitTag(){
-        String tag_name = inputBox.getText().toString();
-        if (tag_name.length() > 0){
+        String tag_name = inputBox.getText().toString().trim();
+        if (tag_name.length() == 0){
+            FinishActivity();
+        }else{
             Tag tag = new Tag(tag_name);
-            if (!tagsFragment.Contains(tag)){
-                if (tagListAdapter.Contains(tag))
+            int index = tagsFragment.indexOf(tag);
+            if (index == -1){
+                if (tagListAdapter.contains(tag))
                     tagListAdapter.CheckTag(tag, true);
-                tagsFragment.Add(tag, 0);
+                tagsFragment.add(tag, 0);
+            }else{
+                tagsFragment.move(index, 0);
             }
             inputBox.setText("");
-        }else{
-            FinishActivity();
         }
     }
 
     private void FinishActivity(){
         Intent intent = new Intent();
-        AList<Tag> tags = tagsFragment.GetData();
-        intent.putExtra(SELECTED_TAGS, tags.ToArrayList());
-        if (tags.Equals(original_tags)) setResult(RESULT_CANCELED);
+        AList<Tag> tags = tagsFragment.getData();
+        intent.putExtra(SELECTED_TAGS, tags.toArrayList());
+        if (tags.equals(original_tags)) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);
         finish();
     }

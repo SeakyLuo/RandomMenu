@@ -65,9 +65,7 @@
             android:orientation="horizontal"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             app:layout_constraintStart_toEndOf="@id/food_image_card"
-            app:layout_constraintTop_toBottomOf="@+id/food_name_row">
-
-        </android.support.v7.widget.RecyclerView>
+            app:layout_constraintTop_toBottomOf="@+id/food_name_row" />
 
         <ImageView
             android:id="@+id/checked_image"

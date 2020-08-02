@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Fragments;
+package personalprojects.seakyluo.randommenu.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import personalprojects.seakyluo.randommenu.Adapters.SimpleFoodListAdapter;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
-import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.adapters.SimpleFoodListAdapter;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.R;
 
 public class StringListFragment extends Fragment {
@@ -27,9 +27,9 @@ public class StringListFragment extends Fragment {
         return view;
     }
 
-    public void SetData(AList<String> data){ adapter.SetData(data); }
+    public void SetData(AList<String> data){ adapter.setData(data); }
     public void SetClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDataItemClickedListener(listener); }
     public void SetOnDeletedClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDeletedClickedListener(listener); }
-    public void Remove(String item) { adapter.Remove(item); }
-    public void Add(String item) { Remove(item); adapter.Add(item, 0); }
+    public void Remove(String item) { adapter.remove(item); }
+    public void Add(String item) { Remove(item); adapter.add(item, 0); }
 }

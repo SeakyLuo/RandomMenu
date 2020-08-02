@@ -1,0 +1,91 @@
+package personalprojects.seakyluo.randommenu.dialogs;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
+
+import java.util.Objects;
+
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.adapters.TagAdapter;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
+import personalprojects.seakyluo.randommenu.models.TagMapper;
+
+public class TagMapperDialog extends DialogFragment {
+    public static final String TAG = "TagMapperDialog";
+    private TagMapper tagMapper;
+    private EditText keyword_content, tag_content;
+    private RecyclerView recyclerView;
+    private ImageButton add;
+    private AppCompatButton confirm, cancel;
+    private TagAdapter adapter = new TagAdapter(true);
+    private DataOperationListener<TagMapper> confirmListener;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_tag_mapper, container,false);
+
+        confirm = view.findViewById(R.id.confirm_button);
+        cancel = view.findViewById(R.id.cancel_button);
+        add = view.findViewById(R.id.add_button);
+        keyword_content = view.findViewById(R.id.keyword_content);
+        tag_content = view.findViewById(R.id.tag_content);
+        recyclerView = view.findViewById(R.id.tags_recycler_view);
+
+        confirm.setOnClickListener(v -> {
+            String keyword = keyword_content.getText().toString().trim();
+            if (Helper.IsNullOrEmpty(keyword)){
+                Toast.makeText(getContext(), R.string.empty_keyword, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (adapter.getData().count() == 0){
+                Toast.makeText(getContext(), R.string.keyword_at_least_one_tag, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (confirmListener != null) confirmListener.operate(new TagMapper(keyword, adapter.getData().toList()));
+            dismiss();
+        });
+        cancel.setOnClickListener(v -> {
+            dismiss();
+        });
+        add.setOnClickListener(v -> {
+            if (tagMapper != null && tagMapper.value != null && tagMapper.value.size() > 10){
+                Toast.makeText(getContext(), R.string.tag_limit, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String tag = tag_content.getText().toString().trim();
+            if (Helper.IsNullOrEmpty(tag)){
+                return;
+            }
+            int index = adapter.data.indexOf(t -> t.Name.equals(tag));
+            if (index == -1){
+                adapter.add(tag, 0);
+            }else{
+                adapter.move(index, 0);
+            }
+            tag_content.setText("");
+        });
+        if (Objects.nonNull(tagMapper)){
+            keyword_content.setText(tagMapper.key);
+            adapter.setData(tagMapper.value);
+        }
+        recyclerView.setAdapter(adapter);
+        return view;
+    }
+
+    public void setConfirmListener(DataOperationListener<TagMapper> listener) { confirmListener = listener; }
+    public void setTagMapper(TagMapper tagMapper){
+        this.tagMapper = tagMapper;
+    }
+}

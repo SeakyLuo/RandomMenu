@@ -4,11 +4,11 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.Dialogs.FoodCardDialog;
-import personalprojects.seakyluo.randommenu.Fragments.FoodListFragment;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class MyFavoritesActivity extends SwipeBackActivity {
     public static final int REQUEST_CODE = 10;
@@ -25,9 +25,9 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         setTitle();
 
         fragment = (FoodListFragment) getSupportFragmentManager().findFragmentById(R.id.food_list_fragment);
-        fragment.SetData(Settings.settings.GetFavoriteFoods());
-        fragment.SetShowLikeImage(false);
-        fragment.SetFoodClickedListener((viewHolder, food) -> {
+        fragment.setData(Settings.settings.GetFavoriteFoods());
+        fragment.setShowLikeImage(false);
+        fragment.setFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.SetFood(food);
             dialog.SetFoodEditedListener((before, after) -> {
@@ -38,21 +38,21 @@ public class MyFavoritesActivity extends SwipeBackActivity {
             });
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         });
-        fragment.SetFoodRemovedListener((viewHolder, data) -> {
+        fragment.setFoodRemovedListener((viewHolder, data) -> {
             int index = fragment.RemoveFood(data);
             Settings.settings.SetFavorite(data, false);
             setTitle();
             setResult(RESULT_OK);
             Snackbar snackbar = Snackbar.make(findViewById(R.id.mf_toolbar), String.format(getString(R.string.item_removed), data.Name), Snackbar.LENGTH_LONG);
             snackbar.setAction(getString(R.string.undo), view -> {
-                fragment.CancelRemoval();
+                fragment.cancelRemoval();
                 Settings.settings.SetFavorite(data, true);
-                Settings.settings.MyFavorites.Move(0, index);
+                Settings.settings.MyFavorites.move(0, index);
                 setTitle();
             });
             snackbar.show();
         });
     }
 
-    private void setTitle() { title.setText(Tag.Format(this, R.string.my_favorites, Settings.settings.MyFavorites.Count())); }
+    private void setTitle() { title.setText(Tag.Format(this, R.string.my_favorites, Settings.settings.MyFavorites.count())); }
 }

@@ -17,16 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import personalprojects.seakyluo.randommenu.Adapters.TabPagerAdapter;
-import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.Dialogs.FoodCardDialog;
-import personalprojects.seakyluo.randommenu.Fragments.FoodListFragment;
-import personalprojects.seakyluo.randommenu.Fragments.StringListFragment;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.adapters.TabPagerAdapter;
+import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
+import personalprojects.seakyluo.randommenu.fragments.StringListFragment;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class SearchActivity extends SwipeBackActivity {
     private static final String HISTORY = "History", ALL = "All", FOOD = "Food", TAG = "Tag", NOTE = "Note";
@@ -59,11 +59,11 @@ public class SearchActivity extends SwipeBackActivity {
         });
         historyFragment.SetOnDeletedClickedListener((viewHolder, data) -> {
             historyFragment.Remove(data);
-            Settings.settings.SearchHistory.Remove(data);
+            Settings.settings.SearchHistory.remove(data);
         });
-        tabPagerAdapter.GetFragments().After(0).ForEach(f -> {
+        tabPagerAdapter.GetFragments().after(0).forEach(f -> {
             FoodListFragment fragment = (FoodListFragment) f;
-            fragment.SetFoodClickedListener((viewHolder, food) -> {
+            fragment.setFoodClickedListener((viewHolder, food) -> {
                 FoodCardDialog dialog = new FoodCardDialog();
                 dialog.SetFood(food);
                 dialog.SetFoodEditedListener((before, after) -> dialog.SetFood(after));
@@ -89,8 +89,8 @@ public class SearchActivity extends SwipeBackActivity {
                 if (keyword.isEmpty()){
                     clear_button.setVisibility(View.GONE);
                 }else{
-                    Settings.settings.SearchHistory.Remove(keyword);
-                    Search(Settings.settings.SearchHistory.Add(keyword, 0));
+                    Settings.settings.SearchHistory.remove(keyword);
+                    Search(Settings.settings.SearchHistory.add(keyword, 0));
                     clear_button.setVisibility(View.VISIBLE);
                 }
             }
@@ -133,7 +133,7 @@ public class SearchActivity extends SwipeBackActivity {
     }
 
     private static boolean SearchFoodName(Food food, String keyword) { return food.Name.contains(keyword);}
-    private static boolean SearchFoodTag(Food food, String keyword) { return food.GetTags().Any(t -> t.Name.contains(keyword)); }
+    private static boolean SearchFoodTag(Food food, String keyword) { return food.GetTags().any(t -> t.Name.contains(keyword)); }
     private static boolean SearchFoodNote(Food food, String keyword) { return food.Note.contains(keyword); }
     public static String getKeyword(Editable s) { return s.toString().trim(); }
     private static int getMatchPoints(Food food, String keyword){
@@ -170,30 +170,30 @@ public class SearchActivity extends SwipeBackActivity {
 
     public void Search(String keyword){
         if (keyword.isEmpty()){
-            tabPagerAdapter.GetFragments().After(0).ForEach(f -> ((FoodListFragment) f).Clear());
+            tabPagerAdapter.GetFragments().after(0).forEach(f -> ((FoodListFragment) f).Clear());
         }else{
             if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
             AList<Food> food = new AList<>(), tag = new AList<>(), note = new AList<>();
             List<MatchFood> all = new ArrayList<>();
-            Settings.settings.Foods.ForEach(f -> {
+            Settings.settings.Foods.forEach(f -> {
                 if (SearchFoodName(f, keyword)){
-                    food.Add(f);
+                    food.add(f);
                 }
                 if (SearchFoodTag(f, keyword)){
-                    tag.Add(f);
+                    tag.add(f);
                 }
                 if (SearchFoodNote(f, keyword)){
-                    note.Add(f);
+                    note.add(f);
                 }
                 int points = getMatchPoints(f, keyword);
                 if (points > 0){
                     all.add(new MatchFood(f, points));
                 }
             });
-            allFragment.SetData(new AList<>(all.stream().sorted((f1, f2) -> (f2.points - f1.points)).map(f -> f.food).collect(Collectors.toList())));
-            foodFragment.SetData(food);
-            tagFragment.SetData(tag);
-            noteFragment.SetData(note);
+            allFragment.setData(new AList<>(all.stream().sorted((f1, f2) -> (f2.points - f1.points)).map(f -> f.food).collect(Collectors.toList())));
+            foodFragment.setData(food);
+            tagFragment.setData(tag);
+            noteFragment.setData(note);
         }
     }
 

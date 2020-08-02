@@ -11,13 +11,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 
-import personalprojects.seakyluo.randommenu.Adapters.FoodListAdapter;
-import personalprojects.seakyluo.randommenu.Fragments.FoodListFragment;
-import personalprojects.seakyluo.randommenu.Fragments.TagsFragment;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
+import personalprojects.seakyluo.randommenu.fragments.TagsFragment;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class ChooseFoodActivity extends AppCompatActivity {
     public static final int CODE = 12;
@@ -43,16 +42,16 @@ public class ChooseFoodActivity extends AppCompatActivity {
         inputBox = findViewById(R.id.input_box);
         AList<Food> foods = new AList<>(getIntent().getParcelableArrayListExtra(TAG));
 
-        tagsFragment.SetSpanCount(1);
+        tagsFragment.setSpanCount(1);
         tagsFragment.SetCloseable(true);
-        tagsFragment.SetData(foods.Convert(f -> new Tag(f.Name)));
-        tagsFragment.SetTagClosedListener((vh, food) -> foodListFragment.UnselectFood(food.Name));
-        foodListFragment.SetData(Settings.settings.Foods);
-        foodListFragment.SetSelectedFood(foods);
-        foodListFragment.SetFoodSelectedListener((vh, selected) -> {
-            Tag food = new Tag(((FoodListAdapter.ViewHolder)vh).data.Name);
-            if (selected) tagsFragment.Add(food);
-            else tagsFragment.Remove(food);
+        tagsFragment.setData(foods.convert(f -> new Tag(f.Name)));
+        tagsFragment.setTagClosedListener((vh, food) -> foodListFragment.unselectFood(food.Name));
+        foodListFragment.setData(Settings.settings.Foods);
+        foodListFragment.setSelectedFood(foods);
+        foodListFragment.setFoodSelectedListener((vh, selected) -> {
+            Tag food = new Tag(((Tag)vh.data).Name);
+            if (selected) tagsFragment.add(food);
+            else tagsFragment.remove(food);
         });
         clear_button.setVisibility(View.GONE);
         clear_button.setOnClickListener(v -> {
@@ -65,7 +64,7 @@ public class ChooseFoodActivity extends AppCompatActivity {
         });
         findViewById(R.id.confirm_button).setOnClickListener(v -> {
             Intent intent = new Intent();
-            intent.putExtra(TAG, foodListFragment.GetSelectedFood().ToArrayList());
+            intent.putExtra(TAG, foodListFragment.GetSelectedFood().toArrayList());
             setResult(RESULT_OK, intent);
             finish();
         });
@@ -98,10 +97,10 @@ public class ChooseFoodActivity extends AppCompatActivity {
         String keyword = SearchActivity.getKeyword(s);
         if (keyword.isEmpty()){
             clear_button.setVisibility(View.GONE);
-            foodListFragment.CancelFilter();
+            foodListFragment.cancelFilter();
         }else{
             clear_button.setVisibility(View.VISIBLE);
-            foodListFragment.Filter(keyword);
+            foodListFragment.filter(keyword);
         }
     }
 

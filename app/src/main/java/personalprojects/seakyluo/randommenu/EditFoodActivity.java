@@ -26,15 +26,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.Fragments.ChooseTagFragment;
-import personalprojects.seakyluo.randommenu.Fragments.ImageViewerFragment;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.fragments.ChooseTagFragment;
+import personalprojects.seakyluo.randommenu.fragments.ImageViewerFragment;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class EditFoodActivity extends AppCompatActivity {
     public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
@@ -80,8 +80,8 @@ public class EditFoodActivity extends AppCompatActivity {
             String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
             AList<Tag> tags = chooseTagFragment.GetData();
             boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
-                    imageChanged = currentFood == null ? images.Count() > 0 : !images.Equals(currentFood.Images),
-                    tagChanged = currentFood == null ? tags.Count() > 0 : !tags.Equals(currentFood.GetTags()),
+                    imageChanged = currentFood == null ? images.count() > 0 : !images.equals(currentFood.Images),
+                    tagChanged = currentFood == null ? tags.count() > 0 : !tags.equals(currentFood.GetTags()),
                     noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note),
                     likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.IsFavorite();
             if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
@@ -104,13 +104,13 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
             }
             // 非草稿、重名、新菜
-            if (!isDraft && Settings.settings.Foods.Any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
+            if (!isDraft && Settings.settings.Foods.any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.setMessage(R.string.duplicate_food_merge);
                 dialog.setOnYesListener(view -> {
-                    int index = Settings.settings.Foods.IndexOf(f -> f.Name.equals(food_name));
-                    Food food = Settings.settings.Foods.Get(index);
-                    food.Images.AddAll(images);
+                    int index = Settings.settings.Foods.indexOf(f -> f.Name.equals(food_name));
+                    Food food = Settings.settings.Foods.get(index);
+                    food.Images.addAll(images);
                     if (!Helper.IsNullOrEmpty(food_cover)){
                         food.SetCover(food_cover);
                     }
@@ -119,7 +119,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     if (!Helper.IsBlank(food.Note)){
                         food.Note = food.Note + '\n' + getNote();
                     }
-                    Settings.settings.Foods.Move(index, 0);
+                    Settings.settings.Foods.move(index, 0);
                     FinishWithFood(food);
                 });
                 dialog.setOnNoListener(view -> {
@@ -129,7 +129,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
             }
             AList<Tag> tags = chooseTagFragment.GetData();
-            if (tags.IsEmpty()){
+            if (tags.isEmpty()){
                 if (Settings.settings.AutoTag){
                     List<Tag> guessTags = Helper.GuessTags(food_name);
                     chooseTagFragment.SetData(guessTags);
@@ -146,7 +146,7 @@ public class EditFoodActivity extends AppCompatActivity {
             String note = getNote();
             Food food = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
             if (Food.IsIncomplete(currentFood)) Settings.settings.AddFood(food);
-            else if (isDraft && !Settings.settings.Foods.Any(f -> f.Name.equals(food_name))){
+            else if (isDraft && !Settings.settings.Foods.any(f -> f.Name.equals(food_name))){
                 Settings.settings.AddFood(food);
                 Settings.settings.FoodDraft = null;
             }else{
@@ -176,9 +176,9 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void ShowMenuFlyout(){
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
-        if (images.IsEmpty()) helper.removeItems(R.id.edit_image_item, R.id.remove_image_item);
-        if (images.Count() < 2 || imageViewerFragment.getCurrentImage().equals(food_cover)) helper.removeItems(R.id.set_cover_item);
-        if (images.IsEmpty() || imageViewerFragment.getCurrent() == 0) helper.removeItems(R.id.move_to_first_item);
+        if (images.isEmpty()) helper.removeItems(R.id.edit_image_item, R.id.remove_image_item);
+        if (images.count() < 2 || imageViewerFragment.getCurrentImage().equals(food_cover)) helper.removeItems(R.id.set_cover_item);
+        if (images.isEmpty() || imageViewerFragment.getCurrent() == 0) helper.removeItems(R.id.move_to_first_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.open_camera_item:
@@ -196,15 +196,15 @@ public class EditFoodActivity extends AppCompatActivity {
                 case R.id.edit_image_item:
                     return CropImage();
                 case R.id.remove_image_item:
-                    String image = images.Pop(imageViewerFragment.removeCurrentImage());
-                    if (image.equals(food_cover)) food_cover = images.IsEmpty() ? "" : images.First();
-                    if (images.IsEmpty()) food_image.setVisibility(View.VISIBLE);
+                    String image = images.pop(imageViewerFragment.removeCurrentImage());
+                    if (image.equals(food_cover)) food_cover = images.isEmpty() ? "" : images.first();
+                    if (images.isEmpty()) food_image.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.set_cover_item:
                     food_cover = imageViewerFragment.getCurrentImage();
                     return true;
                 case R.id.move_to_first_item:
-                    images.Move(imageViewerFragment.getCurrent(), 0);
+                    images.move(imageViewerFragment.getCurrent(), 0);
                     imageViewerFragment.Move(imageViewerFragment.getCurrent(), 0);
                     return true;
             }
@@ -247,8 +247,8 @@ public class EditFoodActivity extends AppCompatActivity {
         if (food == null) return;
         edit_food_name.setText(food.Name);
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
-        imageViewerFragment.setImages(images.CopyFrom(food.Images), food_cover = food.GetCover());
-        sources.CopyFrom(new AList<>("", food.Images.Count()));
+        imageViewerFragment.setImages(images.copyFrom(food.Images), food_cover = food.GetCover());
+        sources.copyFrom(new AList<>("", food.Images.count()));
         chooseTagFragment.SetData(food.GetTags());
         edit_note.setText(food.Note);
         like_toggle.setChecked(food.IsFavorite());
@@ -272,10 +272,10 @@ public class EditFoodActivity extends AppCompatActivity {
         }
     }
 
-    private String CurrentImage() { return Helper.GetImagePath(images.Get(imageViewerFragment.getCurrent())); }
+    private String CurrentImage() { return Helper.GetImagePath(images.get(imageViewerFragment.getCurrent())); }
     private boolean AddImage(Bitmap image, String filename){
         boolean success = Helper.SaveImage(image, Helper.ImageFolder, filename);
-        if (success) images.Add(imageViewerFragment.addImage(filename), 0);
+        if (success) images.add(imageViewerFragment.addImage(filename), 0);
         return success;
     }
     @Override
@@ -289,7 +289,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
                     if (AddImage(image, filename = camera_image_uri.getPath()))
-                        sources.Add(filename, 0);
+                        sources.add(filename, 0);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;
@@ -301,14 +301,14 @@ public class EditFoodActivity extends AppCompatActivity {
                     int index;
                     if (data.getClipData() == null) {
                         uri = data.getData();
-                        index = sources.IndexOf(uri.getPath());
+                        index = sources.indexOf(uri.getPath());
                         // Avoid re-adding images
                         if (index > -1){
-                            images.Move(index, 0);
-                            sources.Move(index, 0);
+                            images.move(index, 0);
+                            sources.move(index, 0);
                             imageViewerFragment.moveImage(index, 0);
                         }else if (AddImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), Helper.NewImageFileName()))
-                            sources.Add(uri.getPath(), 0);
+                            sources.add(uri.getPath(), 0);
                     }else{
                         ClipData clipData = data.getClipData();
                         int count = clipData.getItemCount();
@@ -317,20 +317,20 @@ public class EditFoodActivity extends AppCompatActivity {
                         for (int i = 0; i < count; i++){
                             uri = clipData.getItemAt(i).getUri();
                             path = uri.getPath();
-                            index = sources.IndexOf(path);
+                            index = sources.indexOf(path);
                             if (index > -1){
-                                images.Pop(index);
-                                sources.Pop(index);
+                                images.pop(index);
+                                sources.pop(index);
                                 imageViewerFragment.removeImage(index);
                             }else if (Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
                                                         Helper.ImageFolder,
                                                         filename = Helper.NewImageFileName(i))){
-                                files.Add(filename, 0);
-                                paths.Add(path, 0);
+                                files.add(filename, 0);
+                                paths.add(path, 0);
                             }
                         }
-                        images.AddAll(imageViewerFragment.addImages(files), 0);
-                        sources.AddAll(paths, 0);
+                        images.addAll(imageViewerFragment.addImages(files), 0);
+                        sources.addAll(paths, 0);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -342,9 +342,9 @@ public class EditFoodActivity extends AppCompatActivity {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
                     if (!Helper.SaveImage(image, Helper.ImageFolder, filename = Helper.NewImageFileName())) return;
                     int current = imageViewerFragment.getCurrent();
-                    if (images.Get(current).equals(food_cover)) food_cover = filename;
-                    images.Set(imageViewerFragment.setCurrentImage(filename), current);
-                    sources.Set("", current);
+                    if (images.get(current).equals(food_cover)) food_cover = filename;
+                    images.set(imageViewerFragment.setCurrentImage(filename), current);
+                    sources.set("", current);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;
@@ -354,7 +354,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
         }
         food_image.setVisibility(View.GONE);
-        if (Helper.IsNullOrEmpty(food_cover)) food_cover = images.First();
+        if (Helper.IsNullOrEmpty(food_cover)) food_cover = images.first();
     }
 
     @Override

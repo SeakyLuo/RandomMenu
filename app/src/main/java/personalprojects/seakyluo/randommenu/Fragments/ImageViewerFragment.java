@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Fragments;
+package personalprojects.seakyluo.randommenu.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import personalprojects.seakyluo.randommenu.Adapters.ImageAdapter;
+import personalprojects.seakyluo.randommenu.adapters.ImageAdapter;
 import personalprojects.seakyluo.randommenu.FullScreenImageActivity;
-import personalprojects.seakyluo.randommenu.Models.AList;
+import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.R;
 
 public class ImageViewerFragment extends Fragment {
@@ -38,7 +38,7 @@ public class ImageViewerFragment extends Fragment {
         adapter.setContext(getContext());
         adapter.setOnImageClickedListener(v -> {
             Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
-            intent.putExtra(FullScreenImageActivity.IMAGE, adapter.GetData().ToArrayList());
+            intent.putExtra(FullScreenImageActivity.IMAGE, adapter.GetData().toArrayList());
             intent.putExtra(FullScreenImageActivity.INDEX, current);
             startActivity(intent);
         });
@@ -69,7 +69,7 @@ public class ImageViewerFragment extends Fragment {
         next_image_button.setVisibility(current < 0 || current == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
     }
     public void setImages(AList<String> images, String cover) {
-        current = images.IndexOf(cover);
+        current = images.indexOf(cover);
         adapter.SetData(images);
         if (viewPager != null){
             scrollTo(current);

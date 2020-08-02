@@ -1,10 +1,10 @@
-package personalprojects.seakyluo.randommenu.Models;
+package personalprojects.seakyluo.randommenu.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import personalprojects.seakyluo.randommenu.Interfaces.ZipVoidLambda;
+import personalprojects.seakyluo.randommenu.interfaces.ZipVoidLambda;
 
 public class ZipList<T1, T2> extends IList<T1>{
     private List<T2> zip_list;
@@ -34,7 +34,7 @@ public class ZipList<T1, T2> extends IList<T1>{
     
     public AList<ZipObject> ToAList(){
         AList<ZipObject> collection = new AList<>();
-        ForEach(((object1, object2) -> collection.Add(new ZipObject(object1, object2))));
+        ForEach(((object1, object2) -> collection.add(new ZipObject(object1, object2))));
         return collection;
     }
 

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Adapters;
+package personalprojects.seakyluo.randommenu.adapters;
 
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import personalprojects.seakyluo.randommenu.Fragments.FoodCardFragment;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Food;
+import personalprojects.seakyluo.randommenu.fragments.FoodCardFragment;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.R;
 
 public class CardStackAdapter extends BaseAdapter{
@@ -33,15 +33,15 @@ public class CardStackAdapter extends BaseAdapter{
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.SetData(data.Get(position));
+        holder.SetData(data.get(position));
         return convertView;
     }
 
     @Override
-    public int getCount() { return data.Count(); }
+    public int getCount() { return data.count(); }
 
     @Override
-    public Object getItem(int position) { return data.Get(position); }
+    public Object getItem(int position) { return data.get(position); }
 
     @Override
     public long getItemId(int position) { return position; }

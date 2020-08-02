@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Fragments;
+package personalprojects.seakyluo.randommenu.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,13 +13,13 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.Set;
 
-import personalprojects.seakyluo.randommenu.Dialogs.LoadingDialog;
+import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
 import personalprojects.seakyluo.randommenu.DislikeActivity;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Helpers.RecalculateHelper;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.helpers.RecalculateHelper;
 import personalprojects.seakyluo.randommenu.MainActivity;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Settings;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.MoreSettingsActivity;
 import personalprojects.seakyluo.randommenu.MyFavoritesActivity;
 import personalprojects.seakyluo.randommenu.NoteActivity;
@@ -69,24 +69,24 @@ public class SettingsFragment extends Fragment {
                 dialog.setMessage(R.string.clearing_cache);
                 new Thread(() -> {
                     // Removing unused images
-                    if (Settings.settings.Foods.Count() > 0){
-                        Set<String> paths = Settings.settings.Foods.Convert(f -> f.Images).Reduce(AList::AddAll).ToSet();
+                    if (Settings.settings.Foods.count() > 0){
+                        Set<String> paths = Settings.settings.Foods.convert(f -> f.Images).reduce(AList::addAll).toSet();
                         for (File file: Helper.ImageFolder.listFiles())
                             if (!paths.contains(file.getName()))
                                 file.delete();
                     }
                     // Removing non-existed images
-                    Set<String> files = new AList<>(Helper.ImageFolder.listFiles()).Convert(File::getName).ToSet();
-                    Settings.settings.Foods.ForEach(food -> {
-                       food.Images.Copy().ForEach(image -> {
-                           if (!files.contains(image)) food.Images.Remove(image);
+                    Set<String> files = new AList<>(Helper.ImageFolder.listFiles()).convert(File::getName).toSet();
+                    Settings.settings.Foods.forEach(food -> {
+                       food.Images.copy().forEach(image -> {
+                           if (!files.contains(image)) food.Images.remove(image);
                        });
                     });
                     for (File file: Helper.LogFolder.listFiles())
                         file.delete();
                     for (File file: Helper.TempFolder.listFiles())
                         file.delete();
-                    new AList<>(Helper.ExportedDataFolder.listFiles()).After(0).ForEach(File::delete);
+                    new AList<>(Helper.ExportedDataFolder.listFiles()).after(0).forEach(File::delete);
                     dialog.dismiss();
                     getActivity().runOnUiThread(() -> {
                         Toast.makeText(getContext(), R.string.clear_cache_msg, Toast.LENGTH_SHORT).show();

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Fragments;
+package personalprojects.seakyluo.randommenu.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,19 +15,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import personalprojects.seakyluo.randommenu.Dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.Dialogs.FoodCardDialog;
-import personalprojects.seakyluo.randommenu.Dialogs.InputDialog;
+import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.EditFoodActivity;
-import personalprojects.seakyluo.randommenu.Adapters.FoodAdapter;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.Models.Food;
-import personalprojects.seakyluo.randommenu.Models.Settings;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.adapters.FoodAdapter;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.SearchActivity;
-import personalprojects.seakyluo.randommenu.Adapters.SelectTagAdapter;
+import personalprojects.seakyluo.randommenu.adapters.SelectTagAdapter;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -59,8 +59,8 @@ public class NavigationFragment extends Fragment {
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         selectTagAdapter = new SelectTagAdapter((viewHolder, tag) -> selectTag(tag));
-        selectTagAdapter.SetContext(getContext());
-        selectTagAdapter.SetLongClickListener(((viewHolder, data) -> {
+        selectTagAdapter.context = getContext();
+        selectTagAdapter.setLongClickListener(((viewHolder, data) -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_tag_menu, getContext(), viewHolder.view);
             if (data.IsAllCategoriesTag()){
                 helper.removeItems(R.id.edit_tag_item);
@@ -72,23 +72,23 @@ public class NavigationFragment extends Fragment {
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
                 switch (menuItem.getItemId()){
                     case R.id.sort_by_default:
-                        selectTagAdapter.SetTags(Settings.settings.Tags.Sort(Tag::compareTo).Reverse());
+                        selectTagAdapter.SetTags(Settings.settings.Tags.sort(Tag::compareTo).reverse());
                         return true;
                     case R.id.sort_by_name_item:
-                        selectTagAdapter.SetTags(Settings.settings.Tags.Sort((t1, t2) -> t1.Name.compareTo(t2.Name)));
+                        selectTagAdapter.SetTags(Settings.settings.Tags.sort((t1, t2) -> t1.Name.compareTo(t2.Name)));
                         return true;
                     case R.id.edit_tag_item:
                         InputDialog inputDialog = new InputDialog();
                         inputDialog.SetText(data.Name);
                         inputDialog.SetConfirmListener(text -> {
                             if (text.equals(data.Name)) return;
-                            if (Settings.settings.Tags.Any(t -> t.Name.equals(text))){
+                            if (Settings.settings.Tags.any(t -> t.Name.equals(text))){
                                 Toast.makeText(getContext(), getString(R.string.tag_exists), Toast.LENGTH_SHORT).show();
                             }else{
-                                Tag tag = Settings.settings.Tags.First(t -> t.Name.equals(data.Name));
+                                Tag tag = Settings.settings.Tags.first(t -> t.Name.equals(data.Name));
                                 tag.Name = text;
-                                Settings.settings.Foods.ForEach(f -> f.RenameTag(data.Name, text));
-                                selectTagAdapter.Set(tag, selectTagAdapter.IndexOf(t -> t.Name.equals(data.Name)));
+                                Settings.settings.Foods.forEach(f -> f.RenameTag(data.Name, text));
+                                selectTagAdapter.set(tag, selectTagAdapter.indexOf(t -> t.Name.equals(data.Name)));
                                 Helper.Save();
                             }
                         });
@@ -99,9 +99,9 @@ public class NavigationFragment extends Fragment {
                         askDialog.setMessage(String.format(getString(R.string.delete_tag), data.Name));
                         askDialog.setOnYesListener(v -> {
                             if (data.equals(lastTag)) lastTag = Tag.AllCategoriesTag;
-                            selectTagAdapter.Remove(data);
-                            Settings.settings.Tags.Remove(data);
-                            Settings.settings.Foods.ForEach(food -> food.RemoveTag(data));
+                            selectTagAdapter.remove(data);
+                            Settings.settings.Tags.remove(data);
+                            Settings.settings.Foods.forEach(food -> food.RemoveTag(data));
                             Helper.Save();
                         });
                         askDialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
@@ -138,7 +138,7 @@ public class NavigationFragment extends Fragment {
     public void SetData(){
         if (!IsLoaded) return;
         selectTagAdapter.SetTags(Settings.settings.Tags);
-        foodAdapter.SetData(Settings.settings.Foods);
+        foodAdapter.setData(Settings.settings.Foods);
     }
 
     public void SelectTag(Tag tag){
@@ -151,10 +151,10 @@ public class NavigationFragment extends Fragment {
     private void selectTag(Tag tag){
         if (tag.IsAllCategoriesTag()){
             lastTag = Tag.AllCategoriesTag;
-            title_text_view.setText(Tag.Format(getContext(), R.string.all_categories, Settings.settings.Foods.Count()));
+            title_text_view.setText(Tag.Format(getContext(), R.string.all_categories, Settings.settings.Foods.count()));
             foodAdapter.Reset();
         }else{
-            lastTag = Settings.settings.Tags.First(tag);
+            lastTag = Settings.settings.Tags.first(tag);
             title_text_view.setText(Tag.Format(getContext(), lastTag));
             foodAdapter.Filter(lastTag);
         }
@@ -173,7 +173,7 @@ public class NavigationFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) SetData();
-        if (!lastTag.IsAllCategoriesTag() && !Settings.settings.Tags.Contains(lastTag))
+        if (!lastTag.IsAllCategoriesTag() && !Settings.settings.Tags.contains(lastTag))
             selectTagAdapter.HighlightTag(lastTag = Tag.AllCategoriesTag);
         selectTag(lastTag);
     }

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Interfaces;
+package personalprojects.seakyluo.randommenu.interfaces;
 
 import android.content.Intent;
 

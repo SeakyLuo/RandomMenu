@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Adapters;
+package personalprojects.seakyluo.randommenu.adapters;
 
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -7,9 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class TagAdapter extends CustomAdapter<Tag> {
@@ -28,16 +27,24 @@ public class TagAdapter extends CustomAdapter<Tag> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CustomAdapter<Tag>.CustomViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        Tag tag = data.Get(position);
+        Tag tag = data.get(position);
         ((ViewHolder)holder).SetOnCloseClickedListener(v -> {
-            Remove(tag);
-            if (closeListener != null) closeListener.Click(holder, tag);
+            remove(tag);
+            if (closeListener != null) closeListener.click(holder, tag);
         });
         holder.view.setOnClickListener(v -> {
-            if (tagListener != null) tagListener.Click(holder, tag);
+            if (tagListener != null) tagListener.click(holder, tag);
         });
+    }
+
+    public void add(String tag){
+        add(new Tag(tag));
+    }
+
+    public void add(String tag, int index){
+        add(new Tag(tag), index);
     }
     
     class ViewHolder extends CustomViewHolder {
@@ -50,7 +57,7 @@ public class TagAdapter extends CustomAdapter<Tag> {
         }
 
         @Override
-        void SetData(Tag data) {
+        void setData(Tag data) {
             tag_name.setText(data.Name);
             close_button.setVisibility(closeable ? View.VISIBLE : View.GONE);
         }

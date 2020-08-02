@@ -7,10 +7,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import personalprojects.seakyluo.randommenu.Fragments.NavigationFragment;
-import personalprojects.seakyluo.randommenu.Fragments.RandomFragment;
-import personalprojects.seakyluo.randommenu.Fragments.SettingsFragment;
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
+import personalprojects.seakyluo.randommenu.fragments.NavigationFragment;
+import personalprojects.seakyluo.randommenu.fragments.RandomFragment;
+import personalprojects.seakyluo.randommenu.fragments.SettingsFragment;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
 
 public class MainActivity extends AppCompatActivity {
     public RandomFragment randomFragment;

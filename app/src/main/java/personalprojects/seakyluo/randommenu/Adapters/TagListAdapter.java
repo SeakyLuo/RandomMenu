@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Adapters;
+package personalprojects.seakyluo.randommenu.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,10 +10,9 @@ import android.widget.TextView;
 
 import java.util.Collection;
 
-import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Models.Tag;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class TagListAdapter extends CustomAdapter<Tag> {
@@ -21,8 +20,8 @@ public class TagListAdapter extends CustomAdapter<Tag> {
     private OnDataItemClickedListener<Tag> listener;
     public TagListAdapter(Context context, AList<Tag> data, Collection<Tag> checkTags){
         this.context = context;
-        SetData(data);
-        CheckTags.CopyFrom(checkTags);
+        setData(data);
+        CheckTags.copyFrom(checkTags);
     }
     public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { this.listener = listener; }
 
@@ -32,20 +31,20 @@ public class TagListAdapter extends CustomAdapter<Tag> {
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_listed_tag, parent, false));
     }
 
-    public boolean Contains(Tag target){ return data.Any(tag -> tag.equals(target)); }
+    public boolean contains(Tag target){ return data.any(tag -> tag.equals(target)); }
     public void SetTagChecked(Tag tag, boolean checked){
-        if (checked) CheckTags.Add(tag, 0);
-        else CheckTags.Remove(tag);
+        if (checked) CheckTags.add(tag, 0);
+        else CheckTags.remove(tag);
     }
     public void CheckTag(Tag tag, boolean checked){
-        ((ViewHolder)viewHolders.First(vh -> vh.data.equals(tag))).SetCheckButtonVisibility(checked);
+        ((ViewHolder)viewHolders.first(vh -> vh.data.equals(tag))).SetCheckButtonVisibility(checked);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, final int position) {
         super.onBindViewHolder(holder, position);
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.SetCheckButtonVisibility(CheckTags.Contains(viewHolder.data));
+        viewHolder.SetCheckButtonVisibility(CheckTags.contains(viewHolder.data));
     }
 
     class ViewHolder extends CustomViewHolder {
@@ -60,16 +59,16 @@ public class TagListAdapter extends CustomAdapter<Tag> {
             check_button.setOnClickListener(v -> OnClick());
         }
 
+        @Override
+        void setData(Tag data) {
+            tag_name.setText(Tag.Format(context, data));
+            SetCheckButtonVisibility(checked);
+        }
+
         private void OnClick(){
             checked = !checked;
             SetCheckButtonVisibility(checked);
-            listener.Click(this, data);
-        }
-
-        @Override
-        void SetData(Tag data) {
-            tag_name.setText(Tag.Format(context, data));
-            SetCheckButtonVisibility(checked);
+            listener.click(this, data);
         }
 
         void SetCheckButtonVisibility(boolean visible){

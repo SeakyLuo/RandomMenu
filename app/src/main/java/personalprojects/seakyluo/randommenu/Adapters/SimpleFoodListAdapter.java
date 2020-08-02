@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Adapters;
+package personalprojects.seakyluo.randommenu.adapters;
 
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -7,8 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.Adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.R;
 
 public class SimpleFoodListAdapter extends CustomAdapter<String> {
@@ -27,10 +26,10 @@ public class SimpleFoodListAdapter extends CustomAdapter<String> {
         ViewHolder viewHolder = (ViewHolder) holder;
         String name = viewHolder.data;
         viewHolder.food_name.setOnClickListener(v -> {
-            if (listener != null) listener.Click(viewHolder, name);
+            if (listener != null) listener.click(viewHolder, name);
         });
         viewHolder.delete_button.setOnClickListener(v -> {
-            if (deleteListener != null) deleteListener.Click(viewHolder, name);
+            if (deleteListener != null) deleteListener.click(viewHolder, name);
         });
     }
 
@@ -44,7 +43,7 @@ public class SimpleFoodListAdapter extends CustomAdapter<String> {
         }
 
         @Override
-        void SetData(String data) {
+        void setData(String data) {
             food_name.setText(data);
         }
     }

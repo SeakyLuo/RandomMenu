@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Adapters;
+package personalprojects.seakyluo.randommenu.adapters;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -8,10 +8,10 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import personalprojects.seakyluo.randommenu.Helpers.Helper;
-import personalprojects.seakyluo.randommenu.Interfaces.OnDataChangedListener;
-import personalprojects.seakyluo.randommenu.Models.AList;
-import personalprojects.seakyluo.randommenu.Views.ScalableImageView;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.interfaces.OnDataChangedListener;
+import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.views.ScalableImageView;
 
 public class ImageAdapter extends PagerAdapter {
     private Context context;
@@ -33,28 +33,28 @@ public class ImageAdapter extends PagerAdapter {
     public void setContext(Context context) { this.context = context; }
     public void setOnDataChangedListener(OnDataChangedListener<AList<String>> listener) { dataChangedListener = listener; }
     public String Add(String image) {
-        images.Add(image, 0);
+        images.add(image, 0);
         notifyDataSetChanged();
         return image;
     }
     public AList<String> Add(AList<String> images) {
-        this.images.AddAll(images, 0);
+        this.images.addAll(images, 0);
         notifyDataSetChanged();
         return images;
     }
     public int Remove(int index) {
-        images.Pop(index);
+        images.pop(index);
         notifyDataSetChanged();
         return index;
     }
     public String Set(String image, int index){
-        images.Set(image, index);
+        images.set(image, index);
         notifyDataSetChanged();
         return image;
     }
-    public int IndexOf(String image) { return images.IndexOf(image); }
+    public int IndexOf(String image) { return images.indexOf(image); }
     public AList<String> SetData(AList<String> images){
-        this.images.CopyFrom(images);
+        this.images.copyFrom(images);
 //        if (container != null){
 //            int count = container.getChildCount();
 //            for (int i = 0; i < count; i++)
@@ -64,9 +64,9 @@ public class ImageAdapter extends PagerAdapter {
         return this.images;
     }
     public AList<String> GetData() { return images; }
-    public String Get(int index) { return images.Get(index); }
+    public String Get(int index) { return images.get(index); }
     public void Move(int from, int to) {
-        images.Move(from, to);
+        images.move(from, to);
         notifyDataSetChanged();
     }
     public void setOnImageClickedListener(View.OnClickListener listener) { clickListener = listener; }
@@ -82,7 +82,7 @@ public class ImageAdapter extends PagerAdapter {
     public int getItemPosition(Object object) { return POSITION_NONE; }
 
     @Override
-    public int getCount() { return images.Count(); }
+    public int getCount() { return images.count(); }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
@@ -98,7 +98,7 @@ public class ImageAdapter extends PagerAdapter {
             imageView = new ImageView(context);
         imageView.setScaleType(scaleType);
         imageView.setOnClickListener(clickListener);
-        Helper.LoadImage(Glide.with(context), images.Get(position), imageView);
+        Helper.LoadImage(Glide.with(context), images.get(position), imageView);
         container.addView(imageView);
         return imageView;
     }

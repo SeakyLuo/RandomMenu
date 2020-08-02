@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.Models;
+package personalprojects.seakyluo.randommenu.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -35,14 +35,14 @@ public class Food implements Parcelable {
         DateAdded = dateAdded;
     }
 
-    public Food Copy(){ return new Food(Name, Images.Copy(), Tags.Copy(), Note, IsFavorite, Cover, DateAdded); }
+    public Food Copy(){ return new Food(Name, Images.copy(), Tags.copy(), Note, IsFavorite, Cover, DateAdded); }
     public boolean SetIsFavorite(boolean isFavorite){ return IsFavorite = isFavorite; }
     public boolean IsFavorite() { return IsFavorite; }
 
-    public boolean HasImage() { return Images.Count() > 0; }
-    public boolean HasTag(Tag tag) { return Tags.Contains(tag); }
-    public boolean HasTag(String name) { return Tags.Any(t -> t.Name.equals(name)); }
-    public void RenameTag(String oldName, String newName){ Tags.First(t -> t.Name.equals(oldName)).Name = newName; }
+    public boolean HasImage() { return Images.count() > 0; }
+    public boolean HasTag(Tag tag) { return Tags.contains(tag); }
+    public boolean HasTag(String name) { return Tags.any(t -> t.Name.equals(name)); }
+    public void RenameTag(String oldName, String newName){ Tags.first(t -> t.Name.equals(oldName)).Name = newName; }
     public Long GetDateAdded() { return DateAdded; }
     public String GetDateAddedString(){
         Calendar date = Calendar.getInstance();
@@ -50,16 +50,16 @@ public class Food implements Parcelable {
         return new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
     }
     public void AddTags(AList<Tag> tags) {
-        Tags.AddAll(tags);
-        tags.ForEach(tag -> {
-            if (!Tags.Contains(tag))
-                Tags.Add(tag);
+        Tags.addAll(tags);
+        tags.forEach(tag -> {
+            if (!Tags.contains(tag))
+                Tags.add(tag);
         });
     }
     public AList<Tag> GetTags() { return Tags; }
     public void SetCover(String Cover) { this.Cover = Cover; }
     public String GetCover() { return Cover; }
-    public void RemoveTag(Tag tag) { Tags.Remove(tag); }
+    public void RemoveTag(Tag tag) { Tags.remove(tag); }
     public static boolean IsIncomplete(Food food) { return food == null || food.DateAdded == 0; }
 
     @Override
@@ -106,8 +106,8 @@ public class Food implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(Name);
-        dest.writeStringList(Images.ToList());
-        dest.writeTypedList(Tags.ToList());
+        dest.writeStringList(Images.toList());
+        dest.writeTypedList(Tags.toList());
         dest.writeString(Note);
         dest.writeByte((byte) (IsFavorite ? 1 : 0));
         dest.writeString(Cover);
