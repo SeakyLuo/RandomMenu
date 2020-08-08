@@ -55,6 +55,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:completionThreshold="1"
+                android:imeOptions="actionNext"
                 android:ems="10"
                 android:inputType="text"
                 android:maxLength="@integer/maxTagNameLength"

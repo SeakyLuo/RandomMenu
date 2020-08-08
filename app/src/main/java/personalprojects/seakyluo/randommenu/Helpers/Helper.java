@@ -78,42 +78,6 @@ public class Helper {
         String settings = ReadFile(Settings.FILENAME);
         Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
         if (IsNullOrEmpty(settings)) Log("Empty Settings Created");
-//        HashMap<String, List<String>> map = new HashMap<>();
-//        for (String tag: Arrays.asList("肉", "骨", "血", "荤")){
-//            map.put(tag, Arrays.asList("荤"));
-//        }
-//        for (String tag: Arrays.asList("汤", "羹")){
-//            map.put(tag, Arrays.asList("汤"));
-//        }
-//        for (String tag: Arrays.asList("菌", "菇")){
-//            map.put(tag, Arrays.asList("菌"));
-//        }
-//        for (String tag: Arrays.asList("菜", "素", "豆", "瓜", "茄", "笋", "韭", "苗", "蒜", "藕", "叶", "萝卜")){
-//            map.put(tag, Arrays.asList("素"));
-//        }
-//        for (String tag: Arrays.asList("鱼", "虾", "蟹")){
-//            map.put(tag, Arrays.asList("荤", "海鲜", "河鲜"));
-//        }
-//        for (String tag: Arrays.asList("鸡", "鸭", "鹅")){
-//            map.put(tag, Arrays.asList("荤", "禽类"));
-//        }
-//        for (String tag: Arrays.asList("猪", "五花肉")){
-//            map.put(tag, Arrays.asList("荤", "猪肉"));
-//        }
-//        for (String tag: Arrays.asList("牛")){
-//            map.put(tag, Arrays.asList("荤", "牛肉"));
-//        }
-//        for (String tag: Arrays.asList("羊")){
-//            map.put(tag, Arrays.asList("荤", "羊肉"));
-//        }
-//        for (String tag: Arrays.asList("排骨")){
-//            map.put(tag, Arrays.asList("荤", "猪肉", "排骨"));
-//        }
-//        for (String tag: Arrays.asList("饺", "粉", "面", "粥", "包", "饭", "饼", "年糕")){
-//            map.put(tag, Arrays.asList("主食"));
-//        }
-//        Settings.settings.AutoTagMap = map;
-//        Helper.Save();
     }
     public static String GetFilename(String path) { return new File(path).getName(); }
     public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }

@@ -24,7 +24,7 @@ public class Tag implements Comparable<Tag>, Parcelable {
 
     public Tag More() { ++Counter; return this; }
     public Tag Less() { --Counter; return this; }
-
+    public int getCounter() { return Counter; }
     public boolean IsEmpty() { return Counter == 0; }
 
     @Override

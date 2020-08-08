@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Settings {
     public static String FILENAME = "RandomMenuSettings.json";
@@ -21,6 +22,9 @@ public class Settings {
     public boolean AutoTag = true;
     public LinkedHashMap<String, List<String>> AutoTagMap = new LinkedHashMap<>();
 
+    public void putTagMapper(TagMapper tagMapper){
+        AutoTagMap.put(tagMapper.key, tagMapper.value.stream().map(t -> t.Name).collect(Collectors.toList()));
+    }
     public void AddFood(Food food, int index){
         food.GetTags().forEach(tag -> {
             int tag_index = Tags.indexOf(tag);

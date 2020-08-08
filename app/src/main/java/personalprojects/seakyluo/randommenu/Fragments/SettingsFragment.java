@@ -26,6 +26,7 @@ import personalprojects.seakyluo.randommenu.NoteActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.ToCookActivity;
 import personalprojects.seakyluo.randommenu.ToEatActivity;
+import personalprojects.seakyluo.randommenu.models.Tag;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -135,7 +136,6 @@ public class SettingsFragment extends Fragment {
         });
         view.findViewById(R.id.save_data_button).setOnClickListener(v -> {
             Helper.Save();
-            RecalculateHelper.FindAbnormalFood();
             Toast.makeText(getContext(), R.string.data_saved, Toast.LENGTH_SHORT).show();
         });
         return view;

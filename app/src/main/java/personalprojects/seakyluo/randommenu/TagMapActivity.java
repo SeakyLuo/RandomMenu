@@ -83,9 +83,11 @@ public class TagMapActivity extends SwipeBackActivity {
                     }
                 }else{
                     tagMapAdapter.add(tm, 1);
+                    Settings.settings.putTagMapper(tm);
                 }
             }else{
                 tagMapAdapter.set(tm, index);
+                Settings.settings.putTagMapper(tm);
             }
             updated = true;
         });

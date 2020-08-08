@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import personalprojects.seakyluo.randommenu.interfaces.BooleanLambda;
 import personalprojects.seakyluo.randommenu.interfaces.ForLambda;
@@ -265,6 +266,12 @@ public class AList<T> extends IList<T> {
     public AList<T> shuffle(){
         Collections.shuffle(list);
         return this;
+    }
+    public Stream<T> stream(){
+        return list.stream();
+    }
+    public Stream<T> parallelStream(){
+        return list.parallelStream();
     }
 
     @NonNull

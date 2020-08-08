@@ -23,6 +23,7 @@ import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.StringListFragment;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.helpers.SearchHelper;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
@@ -136,37 +137,6 @@ public class SearchActivity extends SwipeBackActivity {
     private static boolean SearchFoodTag(Food food, String keyword) { return food.GetTags().any(t -> t.Name.contains(keyword)); }
     private static boolean SearchFoodNote(Food food, String keyword) { return food.Note.contains(keyword); }
     public static String getKeyword(Editable s) { return s.toString().trim(); }
-    private static int getMatchPoints(Food food, String keyword){
-        int points = 0;
-        if (food.Name.equals(keyword)) points = 100;
-        else if (food.Name.startsWith(keyword)) points = 95;
-        else if (food.Name.endsWith(keyword)) points = 90;
-        else if (food.Name.contains(keyword)) points = 85;
-        if (points < 85){
-            for (Tag t: food.GetTags().GetList()) {
-                if (t.Name.equals(keyword)){
-                    points = 85;
-                    break;
-                }
-                else if (t.Name.startsWith(keyword)) points = Math.max(80, points);
-                else if (t.Name.endsWith(keyword)) points = Math.max(75, points);
-                else if (t.Name.contains(keyword)) points = Math.max(70, points);
-            }
-        }
-        if (!Helper.IsBlank(food.Note)){
-            if (food.Note.equals(keyword)) points = 100;
-            else if (points < 65){
-                if (food.Note.startsWith(keyword)) points = 65;
-                else if (food.Note.endsWith(keyword)) points = 60;
-                else if (food.Note.contains(keyword)) points = 55;
-            }
-        }
-        if (points > 0){
-            points -= food.HideCount;
-            if (food.IsFavorite()) points += 10;
-        }
-        return points;
-    }
 
     public void Search(String keyword){
         if (keyword.isEmpty()){
@@ -185,7 +155,7 @@ public class SearchActivity extends SwipeBackActivity {
                 if (SearchFoodNote(f, keyword)){
                     note.add(f);
                 }
-                int points = getMatchPoints(f, keyword);
+                int points = SearchHelper.evalFood(f, keyword);
                 if (points > 0){
                     all.add(new MatchFood(f, points));
                 }

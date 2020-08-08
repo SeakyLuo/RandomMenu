@@ -6,30 +6,42 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.TagAdapter;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.helpers.SearchHelper;
 import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
+import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.TagMapper;
 
 public class TagMapperDialog extends DialogFragment {
     public static final String TAG = "TagMapperDialog";
     private TagMapper tagMapper;
-    private EditText keyword_content, tag_content;
+    private EditText keyword_content;
+    private AutoCompleteTextView tag_content;
     private RecyclerView recyclerView;
     private ImageButton add;
     private AppCompatButton confirm, cancel;
     private TagAdapter adapter = new TagAdapter(true);
     private DataOperationListener<TagMapper> confirmListener;
+    private ArrayAdapter<String> suggestionTagListAdapter;
 
     @Nullable
     @Override
@@ -42,7 +54,47 @@ public class TagMapperDialog extends DialogFragment {
         keyword_content = view.findViewById(R.id.keyword_content);
         tag_content = view.findViewById(R.id.tag_content);
         recyclerView = view.findViewById(R.id.tags_recycler_view);
+        suggestionTagListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line);
 
+        tag_content.setAdapter(suggestionTagListAdapter);
+        tag_content.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String tag = suggestionTagListAdapter.getItem(position);
+                tag_content.setText(tag);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        tag_content.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                suggestionTagListAdapter.clear();
+                String keyword = s.toString().trim();
+                suggestionTagListAdapter.addAll(SearchHelper.searchTags(Settings.settings.Tags.stream(), keyword));
+                suggestionTagListAdapter.notifyDataSetChanged();
+            }
+        });
+        tag_content.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                submitTag();
+                return true;
+            }
+            return false;
+        });
         confirm.setOnClickListener(v -> {
             String keyword = keyword_content.getText().toString().trim();
             if (Helper.IsNullOrEmpty(keyword)){
@@ -56,26 +108,8 @@ public class TagMapperDialog extends DialogFragment {
             if (confirmListener != null) confirmListener.operate(new TagMapper(keyword, adapter.getData().toList()));
             dismiss();
         });
-        cancel.setOnClickListener(v -> {
-            dismiss();
-        });
-        add.setOnClickListener(v -> {
-            if (tagMapper != null && tagMapper.value != null && tagMapper.value.size() > 10){
-                Toast.makeText(getContext(), R.string.tag_limit, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            String tag = tag_content.getText().toString().trim();
-            if (Helper.IsNullOrEmpty(tag)){
-                return;
-            }
-            int index = adapter.data.indexOf(t -> t.Name.equals(tag));
-            if (index == -1){
-                adapter.add(tag, 0);
-            }else{
-                adapter.move(index, 0);
-            }
-            tag_content.setText("");
-        });
+        cancel.setOnClickListener(v -> dismiss());
+        add.setOnClickListener(v -> submitTag());
         if (Objects.nonNull(tagMapper)){
             keyword_content.setText(tagMapper.key);
             adapter.setData(tagMapper.value);
@@ -87,5 +121,22 @@ public class TagMapperDialog extends DialogFragment {
     public void setConfirmListener(DataOperationListener<TagMapper> listener) { confirmListener = listener; }
     public void setTagMapper(TagMapper tagMapper){
         this.tagMapper = tagMapper;
+    }
+    public void submitTag(){
+        if (tagMapper != null && tagMapper.value != null && tagMapper.value.size() > 10){
+            Toast.makeText(getContext(), R.string.tag_limit, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String tag = tag_content.getText().toString().trim();
+        if (Helper.IsNullOrEmpty(tag)){
+            return;
+        }
+        int index = adapter.data.indexOf(t -> t.Name.equals(tag));
+        if (index == -1){
+            adapter.add(tag, 0);
+        }else{
+            adapter.move(index, 0);
+        }
+        tag_content.setText("");
     }
 }
