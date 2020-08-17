@@ -106,6 +106,7 @@ public class EditFoodActivity extends AppCompatActivity {
             // 非草稿、重名、新菜
             if (!isDraft && Settings.settings.Foods.any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
                 AskYesNoDialog dialog = new AskYesNoDialog();
+                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 dialog.setMessage(R.string.duplicate_food_merge);
                 dialog.setOnYesListener(view -> {
                     int index = Settings.settings.Foods.indexOf(f -> f.Name.equals(food_name));
@@ -125,7 +126,6 @@ public class EditFoodActivity extends AppCompatActivity {
                 dialog.setOnNoListener(view -> {
                     Toast.makeText(this, R.string.food_exists, Toast.LENGTH_SHORT).show();
                 });
-                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 return;
             }
             AList<Tag> tags = chooseTagFragment.GetData();

@@ -38,7 +38,7 @@
                 android:background="@null"
                 android:completionThreshold="1"
                 android:hint="@string/input_tag"
-                android:imeOptions="actionNext"
+                android:imeOptions="actionDone"
                 android:inputType="text"
                 android:maxLength="@integer/maxTagNameLength"
                 android:maxLines="1"

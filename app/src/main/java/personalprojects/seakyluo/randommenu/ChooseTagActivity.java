@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -71,9 +72,9 @@ public class ChooseTagActivity extends SwipeBackActivity {
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
-        inputBox.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                SubmitTag();
+        inputBox.setOnEditorActionListener((v, action, event) -> {
+            if (action == EditorInfo.IME_ACTION_DONE) {
+                submitTag();
                 return true;
             }
             return false;
@@ -96,7 +97,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
                 });
             }
         });
-        findViewById(R.id.confirm_button).setOnClickListener(v -> SubmitTag());
+        findViewById(R.id.confirm_button).setOnClickListener(v -> submitTag());
 
         Intent intent = getIntent();
         original_tags = intent.getParcelableArrayListExtra(SELECTED_TAGS);
@@ -144,7 +145,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         }
     }
 
-    private void SubmitTag(){
+    private void submitTag(){
         String tag_name = inputBox.getText().toString().trim();
         if (tag_name.length() == 0){
             FinishActivity();
