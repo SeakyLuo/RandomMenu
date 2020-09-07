@@ -150,7 +150,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 Settings.settings.AddFood(food);
                 Settings.settings.FoodDraft = null;
             }else{
-                Settings.settings.UpdateFood(currentFood, food);
+                Settings.settings.updateFood(currentFood, food);
             }
             FinishWithFood(food);
         });

@@ -6,18 +6,18 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import personalprojects.seakyluo.randommenu.models.AList;
 
-public class TabPagerAdapter extends FragmentStatePagerAdapter {
-    private final AList<Fragment> fragmentList = new AList<>();
+public class TabPagerAdapter<T extends Fragment> extends FragmentStatePagerAdapter {
+    private final AList<T> fragmentList = new AList<>();
 
     public TabPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    public void AddFragment(Fragment fragment){ fragmentList.add(fragment); }
-    public void AddFragments(AList<Fragment> fragments){
+    public void AddFragment(T fragment){ fragmentList.add(fragment); }
+    public void AddFragments(AList<T> fragments){
         fragments.forEach(this::AddFragment);
     }
-    public AList<Fragment> GetFragments() { return fragmentList; }
+    public AList<T> getFragments() { return fragmentList; }
 
     @Override
     public Fragment getItem(int i) { return fragmentList.get(i); }

@@ -29,10 +29,10 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         fragment.setShowLikeImage(false);
         fragment.setFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
-            dialog.SetFood(food);
-            dialog.SetFoodEditedListener((before, after) -> {
+            dialog.setFood(food);
+            dialog.setFoodEditedListener((before, after) -> {
                 fragment.RemoveFood(before);
-                dialog.SetFood(after);
+                dialog.setFood(after);
                 setTitle();
                 setResult(RESULT_OK);
             });

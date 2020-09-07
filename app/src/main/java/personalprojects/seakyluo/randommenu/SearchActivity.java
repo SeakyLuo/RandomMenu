@@ -2,6 +2,7 @@ package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
@@ -27,7 +28,6 @@ import personalprojects.seakyluo.randommenu.helpers.SearchHelper;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
-import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class SearchActivity extends SwipeBackActivity {
     private static final String HISTORY = "History", ALL = "All", FOOD = "Food", TAG = "Tag", NOTE = "Note";
@@ -35,7 +35,7 @@ public class SearchActivity extends SwipeBackActivity {
     private ImageButton clear_button;
     private FoodListFragment allFragment, foodFragment, tagFragment, noteFragment;
     private StringListFragment historyFragment;
-    private TabPagerAdapter tabPagerAdapter;
+    private TabPagerAdapter<Fragment> tabPagerAdapter;
     private TabLayout tabLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,25 +49,33 @@ public class SearchActivity extends SwipeBackActivity {
         tabLayout = findViewById(R.id.search_tabs);
         ViewPager viewPager = findViewById(R.id.search_viewpager);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        tabPagerAdapter = new TabPagerAdapter(fragmentManager);
+        tabPagerAdapter = new TabPagerAdapter<>(fragmentManager);
         AddFragments(fragmentManager, savedInstanceState);
-        historyFragment.SetData(Settings.settings.SearchHistory);
-        historyFragment.SetClickedListener((viewHolder, data) -> {
+        historyFragment.setData(Settings.settings.SearchHistory);
+        historyFragment.setClickedListener((viewHolder, data) -> {
             search_bar.setText(data);
             search_bar.setSelection(data.length());
             Search(data);
             tabLayout.getTabAt(1).select();
         });
-        historyFragment.SetOnDeletedClickedListener((viewHolder, data) -> {
+        historyFragment.setOnDeletedClickedListener((viewHolder, data) -> {
             historyFragment.Remove(data);
             Settings.settings.SearchHistory.remove(data);
         });
-        tabPagerAdapter.GetFragments().after(0).forEach(f -> {
+        tabPagerAdapter.getFragments().after(0).forEach(f -> {
             FoodListFragment fragment = (FoodListFragment) f;
             fragment.setFoodClickedListener((viewHolder, food) -> {
                 FoodCardDialog dialog = new FoodCardDialog();
-                dialog.SetFood(food);
-                dialog.SetFoodEditedListener((before, after) -> dialog.SetFood(after));
+                dialog.setFood(food);
+                dialog.setFoodEditedListener((before, after) -> {
+                    dialog.setFood(after);
+                    tabPagerAdapter.getFragments().after(0).forEach(ff -> ((FoodListFragment) ff).updateFood(before, after));
+                    Settings.settings.updateFood(before, after);
+                });
+                dialog.setFoodLikedListener(((before, after) -> {
+                    tabPagerAdapter.getFragments().after(0).forEach(ff -> ((FoodListFragment) ff).updateFood(before, after));
+                    Settings.settings.updateFood(before, after);
+                }));
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
             });
         });
@@ -140,7 +148,7 @@ public class SearchActivity extends SwipeBackActivity {
 
     public void Search(String keyword){
         if (keyword.isEmpty()){
-            tabPagerAdapter.GetFragments().after(0).forEach(f -> ((FoodListFragment) f).Clear());
+            tabPagerAdapter.getFragments().after(0).forEach(f -> ((FoodListFragment) f).Clear());
         }else{
             if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
             AList<Food> food = new AList<>(), tag = new AList<>(), note = new AList<>();

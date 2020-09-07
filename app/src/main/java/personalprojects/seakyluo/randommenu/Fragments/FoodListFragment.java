@@ -42,15 +42,15 @@ public class FoodListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linear_recycler_view, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
-        adapter.SetSelectable(selectable);
-        adapter.SetsSelectionChangedListener(foodSelectedListener);
+        adapter.setSelectable(selectable);
+        adapter.setsSelectionChangedListener(foodSelectedListener);
         adapter.context = getContext();
         recyclerView.setAdapter(adapter);
         if (foodRemovedListener != null) addSwipeControl();
         return view;
     }
 
-    public void setSelectedFood(AList<Food> data){ adapter.SetSelectedFood(data); }
+    public void setSelectedFood(AList<Food> data){ adapter.setSelectedFood(data); }
     public AList<Food> GetSelectedFood(){ return adapter.selectedFood; }
     public void setData(AList<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
     public void setData(ArrayList<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
@@ -64,7 +64,7 @@ public class FoodListFragment extends Fragment {
         return removedIndex;
     }
     public void unselectFood(String food){
-        ((FoodListAdapter.ViewHolder)adapter.viewHolders.first(vh -> ((FoodListAdapter.ViewHolder)vh).data.Name.equals(food))).SetSelected(false);
+        ((FoodListAdapter.ViewHolder)adapter.viewHolders.first(vh -> ((FoodListAdapter.ViewHolder)vh).data.Name.equals(food))).setSelected(false);
     }
     public void cancelRemoval(){
         adapter.data.add(removedFood, removedIndex);
@@ -77,10 +77,16 @@ public class FoodListFragment extends Fragment {
         adapter.setData(data);
         recyclerView.smoothScrollToPosition(0);
     }
-    public void setFoodClickedListener(OnDataItemClickedListener<Food> listener){ adapter.SetFoodClickedListener(listener); }
+    public void updateFood(Food before, Food after){
+        int index = adapter.getData().indexOf(before);
+        if (index > -1){
+            adapter.update(after, index);
+        }
+    }
+    public void setFoodClickedListener(OnDataItemClickedListener<Food> listener){ adapter.setFoodClickedListener(listener); }
     public void setFoodSelectedListener(OnDataItemClickedListener<Boolean> listener){ foodSelectedListener = listener; }
     public void setFoodRemovedListener(OnDataItemClickedListener<Food> listener){ foodRemovedListener = listener; addSwipeControl(); }
-    public void setShowLikeImage(boolean showLikeImage) { adapter.SetShowLikeImage(showLikeImage); }
+    public void setShowLikeImage(boolean showLikeImage) { adapter.setShowLikeImage(showLikeImage); }
     public void addSwipeControl(){
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override

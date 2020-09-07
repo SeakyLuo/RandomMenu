@@ -54,7 +54,7 @@ public class CardStackAdapter extends BaseAdapter{
             manager.beginTransaction().add(R.id.food_card_frame, foodCardFragment).commit();
         }
         void SetData(Food data){
-            foodCardFragment.LoadFood(data);
+            foodCardFragment.loadFood(data);
         }
     }
 

@@ -27,9 +27,9 @@ public class StringListFragment extends Fragment {
         return view;
     }
 
-    public void SetData(AList<String> data){ adapter.setData(data); }
-    public void SetClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDataItemClickedListener(listener); }
-    public void SetOnDeletedClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDeletedClickedListener(listener); }
+    public void setData(AList<String> data){ adapter.setData(data); }
+    public void setClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDataItemClickedListener(listener); }
+    public void setOnDeletedClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDeletedClickedListener(listener); }
     public void Remove(String item) { adapter.remove(item); }
     public void Add(String item) { Remove(item); adapter.add(item, 0); }
 }

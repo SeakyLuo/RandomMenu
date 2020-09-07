@@ -28,11 +28,11 @@ public class FoodListAdapter extends CustomAdapter<Food> {
     private OnDataItemClickedListener<Boolean> selectionChangedListener;
     private boolean showLikeImage = true;
 //    public FoodListAdapter(Context context) { this.context = context; }
-    public void SetFoodClickedListener(OnDataItemClickedListener<Food> foodClickedListener) { this.foodClickedListener = foodClickedListener; }
-    public void SetTagClickedListener(OnDataItemClickedListener<Tag> tagClickedListener) { this.tagClickedListener = tagClickedListener; }
-    public void SetsSelectionChangedListener(OnDataItemClickedListener<Boolean> selectionChangedListener) { this.selectionChangedListener = selectionChangedListener; }
-    public void SetShowLikeImage(boolean showLikeImage) { this.showLikeImage = showLikeImage; }
-    public void SetSelectable(boolean selectable) { this.selectable = selectable; }
+    public void setFoodClickedListener(OnDataItemClickedListener<Food> foodClickedListener) { this.foodClickedListener = foodClickedListener; }
+    public void setTagClickedListener(OnDataItemClickedListener<Tag> tagClickedListener) { this.tagClickedListener = tagClickedListener; }
+    public void setsSelectionChangedListener(OnDataItemClickedListener<Boolean> selectionChangedListener) { this.selectionChangedListener = selectionChangedListener; }
+    public void setShowLikeImage(boolean showLikeImage) { this.showLikeImage = showLikeImage; }
+    public void setSelectable(boolean selectable) { this.selectable = selectable; }
 
     @NonNull
     @Override
@@ -45,10 +45,14 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         super.onBindViewHolder(holder, position);
         ViewHolder viewHolder = (ViewHolder)holder;
         viewHolder.view.setOnClickListener(v -> {
-            if (foodClickedListener != null) foodClickedListener.click(holder, viewHolder.data);
+            if (foodClickedListener != null){
+                foodClickedListener.click(holder, viewHolder.data);
+            }
             if (selectable){
-                viewHolder.SetSelected(!viewHolder.selected);
-                if (selectionChangedListener != null) selectionChangedListener.click(holder, viewHolder.selected);
+                viewHolder.setSelected(!viewHolder.selected);
+                if (selectionChangedListener != null){
+                    selectionChangedListener.click(holder, viewHolder.selected);
+                }
             }
         });
         viewHolder.adapter.SetTagClickedListener((v, t) -> {
@@ -56,7 +60,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
         });
     }
 
-    public void SetSelectedFood(AList<Food> foods){
+    public void setSelectedFood(AList<Food> foods){
         selectedFood.copyFrom(foods);
     }
 
@@ -86,7 +90,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             recyclerView.setAdapter(adapter);
         }
 
-        public void SetSelected(boolean selected){
+        public void setSelected(boolean selected){
             checked_image.setVisibility((this.selected = selected) ? View.VISIBLE : View.GONE);
             if (selected) selectedFood.add(data);
             else selectedFood.remove(data);

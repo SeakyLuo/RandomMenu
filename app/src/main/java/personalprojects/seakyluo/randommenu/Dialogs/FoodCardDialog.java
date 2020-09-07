@@ -21,12 +21,12 @@ public class FoodCardDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_food_card, container,false);
         getChildFragmentManager().beginTransaction().add(R.id.dialog_food_card_frame, foodCardFragment).commit();
-        foodCardFragment.LoadFood(CurrentFood);
-//        foodCardFragment.SetTagClickedListener((viewHolder, tag) -> dismiss());
+        foodCardFragment.loadFood(CurrentFood);
+        foodCardFragment.setTagClickedListener(((viewHolder, data) -> {}));
         return view;
     }
 
-    public void SetFood(Food food){ CurrentFood = food; }
-    public void SetFoodEditedListener(FoodEditedListener listener) { foodCardFragment.SetFoodEditedListener(listener); }
-    public void SetFoodLikedListener(FoodEditedListener listener) { foodCardFragment.SetFoodLikedChangedListener(listener); }
+    public void setFood(Food food){ CurrentFood = food; }
+    public void setFoodEditedListener(FoodEditedListener listener) { foodCardFragment.setFoodEditedListener(listener); }
+    public void setFoodLikedListener(FoodEditedListener listener) { foodCardFragment.setFoodLikedChangedListener(listener); }
 }

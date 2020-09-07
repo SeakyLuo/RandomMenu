@@ -68,6 +68,10 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
             notifyItemRemoved(index);
         }
     }
+    public void update(T element, int index){
+        data.set(element, index);
+        notifyItemChanged(index);
+    }
     public void sort(Comparator<? super T> comparator) {
         data.sort(comparator);
         notifyDataSetChanged();

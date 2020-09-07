@@ -95,7 +95,7 @@ public class RandomFragment extends Fragment {
             menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });
         Reset();
-        if (!food_pool.isEmpty()) foodCardFragment.LoadFood(food_pool.pop(0));
+        if (!food_pool.isEmpty()) foodCardFragment.loadFood(food_pool.pop(0));
         return view;
     }
 

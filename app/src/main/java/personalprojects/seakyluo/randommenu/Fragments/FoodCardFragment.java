@@ -81,13 +81,16 @@ public class FoodCardFragment extends Fragment {
         });
         tagsFragment.setSpanCount(1);
         tagsFragment.setTagClickedListener((viewHolder, tag) -> {
-            FragmentActivity currentActivity = getActivity();
-            if (!(currentActivity instanceof MainActivity)) currentActivity.finish();
-            MainActivity activity = (MainActivity) getActivity();
-            activity.ShowFragment(NavigationFragment.TAG);
-            NavigationFragment navigationFragment = (NavigationFragment) activity.GetCurrentFragment();
-            navigationFragment.SelectTag(tag);
-            if (tagClickedListener != null) tagClickedListener.click(viewHolder, tag);
+            if (tagClickedListener == null){
+                FragmentActivity currentActivity = getActivity();
+                if (!(currentActivity instanceof MainActivity)) currentActivity.finish();
+                MainActivity activity = (MainActivity) getActivity();
+                activity.ShowFragment(NavigationFragment.TAG);
+                NavigationFragment navigationFragment = (NavigationFragment) activity.GetCurrentFragment();
+                navigationFragment.SelectTag(tag);
+            }else{
+                tagClickedListener.click(viewHolder, tag);
+            }
         });
         food_note_back.setMovementMethod(new ScrollingMovementMethod());
         more_button.setOnClickListener(v -> {
@@ -204,7 +207,7 @@ public class FoodCardFragment extends Fragment {
         }
     }
 
-    public void LoadFood(Food food){ CurrentFood = food; }
+    public void loadFood(Food food){ CurrentFood = food; }
 
     public Food SetFood(Food food) {
         setFood(food);
@@ -212,9 +215,9 @@ public class FoodCardFragment extends Fragment {
     }
     public Food GetFood() { return CurrentFood; }
 
-    public void SetFoodEditedListener(FoodEditedListener listener) { this.foodEditedListener = listener; }
-    public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { this.tagClickedListener = listener; }
-    public void SetFoodLikedChangedListener(FoodEditedListener listener){ this.foodLikedChangedListener = listener; }
+    public void setFoodEditedListener(FoodEditedListener listener) { this.foodEditedListener = listener; }
+    public void setTagClickedListener(OnDataItemClickedListener<Tag> listener) { this.tagClickedListener = listener; }
+    public void setFoodLikedChangedListener(FoodEditedListener listener){ this.foodLikedChangedListener = listener; }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
