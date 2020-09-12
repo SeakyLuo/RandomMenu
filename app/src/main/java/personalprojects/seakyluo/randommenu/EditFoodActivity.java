@@ -81,7 +81,7 @@ public class EditFoodActivity extends AppCompatActivity {
             AList<Tag> tags = chooseTagFragment.GetData();
             boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
                     imageChanged = currentFood == null ? images.count() > 0 : !images.equals(currentFood.Images),
-                    tagChanged = currentFood == null ? tags.count() > 0 : !tags.equals(currentFood.GetTags()),
+                    tagChanged = currentFood == null ? tags.count() > 0 : !tags.equals(currentFood.getTags()),
                     noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note),
                     likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.IsFavorite();
             if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
@@ -249,7 +249,7 @@ public class EditFoodActivity extends AppCompatActivity {
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
         imageViewerFragment.setImages(images.copyFrom(food.Images), food_cover = food.GetCover());
         sources.copyFrom(new AList<>("", food.Images.count()));
-        chooseTagFragment.SetData(food.GetTags());
+        chooseTagFragment.SetData(food.getTags());
         edit_note.setText(food.Note);
         like_toggle.setChecked(food.IsFavorite());
     }

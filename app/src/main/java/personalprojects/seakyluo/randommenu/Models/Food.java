@@ -56,7 +56,7 @@ public class Food implements Parcelable {
                 Tags.add(tag);
         });
     }
-    public AList<Tag> GetTags() { return Tags; }
+    public AList<Tag> getTags() { return Tags; }
     public void SetCover(String Cover) { this.Cover = Cover; }
     public String GetCover() { return Cover; }
     public void RemoveTag(Tag tag) { Tags.remove(tag); }

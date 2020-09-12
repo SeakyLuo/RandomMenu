@@ -12,5 +12,5 @@ public abstract class IList<T> {
     public IList(Collection<T> collection) { list.addAll(collection); }
     public IList(T element) { list.add(element); }
     public IList(IList<T> collection) { list = collection.list; }
-    public List<T> GetList() { return list; }
+    public List<T> getList() { return list; }
 }

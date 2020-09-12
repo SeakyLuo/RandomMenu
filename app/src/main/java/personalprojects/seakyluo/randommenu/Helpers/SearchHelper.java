@@ -20,19 +20,18 @@ public class SearchHelper {
 
     public static int evalFood(Food food, String keyword){
         int points = evalString(food.Name, keyword);
-        if (points < 85){
-            for (Tag t: food.GetTags().GetList()) {
-                points = evalString(t.Name, keyword) - 15;
+        if (points == 0){
+            for (Tag t: food.getTags().getList()) {
+                points = Math.max(points, evalString(t.Name, keyword) - 15);
                 if (points == 85){
                     break;
                 }
             }
         }
         if (!Helper.IsBlank(food.Note)){
-            points = evalString(food.Note, keyword);
-            if (points == 100) points += 15;
-            else points -= 30;
-            if (food.Note.equals(keyword)) points = 100;
+            int notePoints = evalString(food.Note, keyword);
+            if (notePoints == 100) points = 115;
+            else points = Math.max(notePoints - 30, points);
         }
         if (points > 0){
             points -= food.HideCount;

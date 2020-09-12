@@ -14,7 +14,7 @@ public class RecalculateHelper {
     public static void RecalculateTags(){
         Map<String, Integer> map = new HashMap<>();
         Settings.settings.Foods.forEach(f -> {
-            f.GetTags().forEach(t -> {
+            f.getTags().forEach(t -> {
                 int count = map.getOrDefault( t.Name,0);
                 map.put(t.Name, ++count);
             });

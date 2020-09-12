@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Settings {
@@ -26,7 +25,7 @@ public class Settings {
         AutoTagMap.put(tagMapper.key, tagMapper.value.stream().map(t -> t.Name).collect(Collectors.toList()));
     }
     public void AddFood(Food food, int index){
-        food.GetTags().forEach(tag -> {
+        food.getTags().forEach(tag -> {
             int tag_index = Tags.indexOf(tag);
             if (tag_index == -1){
                 Tags.add(tag.More());
@@ -55,7 +54,7 @@ public class Settings {
         int index = Foods.indexOf(before);
         if (index == -1) return;
         Foods.set(after, index);
-        AList<Tag> a = after.GetTags(), b = before.GetTags(),
+        AList<Tag> a = after.getTags(), b = before.getTags(),
                    add = a.setDifference(b), remove = b.setDifference(a);
         Tags.forEach(t -> {
             if (remove.contains(t))

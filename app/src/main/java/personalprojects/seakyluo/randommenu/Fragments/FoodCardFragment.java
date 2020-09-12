@@ -184,7 +184,7 @@ public class FoodCardFragment extends Fragment {
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
         imageViewerFragment.setImages(food.Images, food.GetCover());
         SetFoodFavorite(food.IsFavorite());
-        tagsFragment.setData(food.GetTags());
+        tagsFragment.setData(food.getTags());
     }
 
     public void SetFoodFavorite(boolean favorite) { liked_image.setVisibility(favorite ? View.VISIBLE : View.GONE); }

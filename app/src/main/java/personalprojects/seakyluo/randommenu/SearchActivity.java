@@ -16,6 +16,7 @@ import com.jude.swipbackhelper.SwipeBackHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.adapters.TabPagerAdapter;
@@ -142,7 +143,7 @@ public class SearchActivity extends SwipeBackActivity {
     }
 
     private static boolean SearchFoodName(Food food, String keyword) { return food.Name.contains(keyword);}
-    private static boolean SearchFoodTag(Food food, String keyword) { return food.GetTags().any(t -> t.Name.contains(keyword)); }
+    private static boolean SearchFoodTag(Food food, String keyword) { return food.getTags().any(t -> t.Name.contains(keyword)); }
     private static boolean SearchFoodNote(Food food, String keyword) { return food.Note.contains(keyword); }
     public static String getKeyword(Editable s) { return s.toString().trim(); }
 
@@ -151,28 +152,35 @@ public class SearchActivity extends SwipeBackActivity {
             tabPagerAdapter.getFragments().after(0).forEach(f -> ((FoodListFragment) f).Clear());
         }else{
             if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
-            AList<Food> food = new AList<>(), tag = new AList<>(), note = new AList<>();
-            List<MatchFood> all = new ArrayList<>();
+            List<MatchFood> food = new ArrayList<>(), tag = new ArrayList<>(), note = new ArrayList<>(), all = new ArrayList<>();
             Settings.settings.Foods.forEach(f -> {
+                int points = SearchHelper.evalFood(f, keyword);
+                if (f.Name.equals("肉末太阳蛋")){
+                    SearchHelper.evalFood(f, keyword);
+                }
+                MatchFood mf = new MatchFood(f, points);
                 if (SearchFoodName(f, keyword)){
-                    food.add(f);
+                    food.add(mf);
                 }
                 if (SearchFoodTag(f, keyword)){
-                    tag.add(f);
+                    tag.add(mf);
                 }
                 if (SearchFoodNote(f, keyword)){
-                    note.add(f);
+                    note.add(mf);
                 }
-                int points = SearchHelper.evalFood(f, keyword);
                 if (points > 0){
                     all.add(new MatchFood(f, points));
                 }
             });
-            allFragment.setData(new AList<>(all.stream().sorted((f1, f2) -> (f2.points - f1.points)).map(f -> f.food).collect(Collectors.toList())));
-            foodFragment.setData(food);
-            tagFragment.setData(tag);
-            noteFragment.setData(note);
+            CompletableFuture.runAsync(() -> allFragment.setData(toAList(all))).join();
+            CompletableFuture.runAsync(() -> foodFragment.setData(toAList(food))).join();
+            CompletableFuture.runAsync(() -> tagFragment.setData(toAList(tag))).join();
+            CompletableFuture.runAsync(() -> noteFragment.setData(toAList(note))).join();
         }
+    }
+
+    private static AList<Food> toAList(List<MatchFood> foods){
+        return new AList<>(foods.stream().sorted((f1, f2) -> (f2.points - f1.points)).map(f -> f.food).collect(Collectors.toList()));
     }
 
     @Override

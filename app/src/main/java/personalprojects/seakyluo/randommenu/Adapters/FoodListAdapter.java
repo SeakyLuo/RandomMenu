@@ -101,7 +101,7 @@ public class FoodListAdapter extends CustomAdapter<Food> {
             Helper.LoadImage(Glide.with(view), data.GetCover(), food_image);
             food_name.setText(data.Name);
             liked_image.setVisibility(showLikeImage && data.IsFavorite() ? View.VISIBLE : View.GONE);
-            adapter.setData(data.GetTags());
+            adapter.setData(data.getTags());
             checked_image.setVisibility(selectedFood.contains(data) ?  View.VISIBLE : View.GONE);
         }
     }
