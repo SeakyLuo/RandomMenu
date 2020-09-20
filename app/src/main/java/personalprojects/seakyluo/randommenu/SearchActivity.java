@@ -28,6 +28,7 @@ import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.SearchHelper;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.MatchFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 
 public class SearchActivity extends SwipeBackActivity {
@@ -154,33 +155,29 @@ public class SearchActivity extends SwipeBackActivity {
             if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
             List<MatchFood> food = new ArrayList<>(), tag = new ArrayList<>(), note = new ArrayList<>(), all = new ArrayList<>();
             Settings.settings.Foods.forEach(f -> {
-                int points = SearchHelper.evalFood(f, keyword);
-                if (f.Name.equals("肉末太阳蛋")){
-                    SearchHelper.evalFood(f, keyword);
+                MatchFood mf = SearchHelper.evalFood(f, keyword);
+                if (mf.namePoints > 0){
+                    food.add(new MatchFood(mf.food, mf.namePoints + mf.bonus));
                 }
-                MatchFood mf = new MatchFood(f, points);
-                if (SearchFoodName(f, keyword)){
-                    food.add(mf);
+                if (mf.tagPoints > 0){
+                    tag.add(new MatchFood(mf.food, mf.tagPoints + mf.bonus));
                 }
-                if (SearchFoodTag(f, keyword)){
-                    tag.add(mf);
+                if (mf.notePoints > 0){
+                    note.add(new MatchFood(mf.food, mf.notePoints + mf.bonus));
                 }
-                if (SearchFoodNote(f, keyword)){
-                    note.add(mf);
-                }
-                if (points > 0){
-                    all.add(new MatchFood(f, points));
+                if (mf.points > 0){
+                    all.add(new MatchFood(mf.food, mf.points + mf.bonus));
                 }
             });
-            CompletableFuture.runAsync(() -> allFragment.setData(toAList(all))).join();
-            CompletableFuture.runAsync(() -> foodFragment.setData(toAList(food))).join();
-            CompletableFuture.runAsync(() -> tagFragment.setData(toAList(tag))).join();
-            CompletableFuture.runAsync(() -> noteFragment.setData(toAList(note))).join();
+            CompletableFuture.runAsync(() -> allFragment.setData(sortFoods(all))).join();
+            CompletableFuture.runAsync(() -> foodFragment.setData(sortFoods(food))).join();
+            CompletableFuture.runAsync(() -> tagFragment.setData(sortFoods(tag))).join();
+            CompletableFuture.runAsync(() -> noteFragment.setData(sortFoods(note))).join();
         }
     }
 
-    private static AList<Food> toAList(List<MatchFood> foods){
-        return new AList<>(foods.stream().sorted((f1, f2) -> (f2.points - f1.points)).map(f -> f.food).collect(Collectors.toList()));
+    public static List<Food> sortFoods(List<MatchFood> foods){
+        return foods.stream().sorted((f1, f2) -> (f2.points - f1.points)).map(f -> f.food).collect(Collectors.toList());
     }
 
     @Override
@@ -223,14 +220,5 @@ public class SearchActivity extends SwipeBackActivity {
         tabPagerAdapter.AddFragment(foodFragment);
         tabPagerAdapter.AddFragment(tagFragment);
         tabPagerAdapter.AddFragment(noteFragment);
-    }
-
-    private static class MatchFood{
-        public Food food;
-        public int points;
-        public MatchFood(Food food, int points){
-            this.food = food;
-            this.points = points;
-        }
     }
 }

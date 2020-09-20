@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.FoodListAdapter;
@@ -53,7 +54,7 @@ public class FoodListFragment extends Fragment {
     public void setSelectedFood(AList<Food> data){ adapter.setSelectedFood(data); }
     public AList<Food> GetSelectedFood(){ return adapter.selectedFood; }
     public void setData(AList<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
-    public void setData(ArrayList<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
+    public void setData(List<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
     public AList<Food> GetData(){ return data; }
     public void Clear() { this.data.clear(); adapter.clear(); }
     public void SetSelectable(boolean selectable) { this.selectable = selectable; }
