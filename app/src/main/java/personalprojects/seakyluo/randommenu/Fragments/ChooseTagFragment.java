@@ -63,9 +63,6 @@ public class ChooseTagFragment extends Fragment {
     private void LaunchChooseTagActivity(){
         Intent intent = new Intent(getActivity(), ChooseTagActivity.class);
         intent.putExtra(ChooseTagActivity.SELECTED_TAGS, tagsFragment.getData().toArrayList());
-        if (Settings.settings.AutoTag){
-            intent.putExtra(ChooseTagActivity.FOOD, ((EditFoodActivity)getActivity()).getFoodName());
-        }
         if (chooseTagListener != null) chooseTagListener.Launch(intent);
         startActivityForResult(intent, CHOOSE_TAG_CODE);
         getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
