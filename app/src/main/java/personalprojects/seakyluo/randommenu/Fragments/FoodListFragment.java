@@ -47,7 +47,7 @@ public class FoodListFragment extends Fragment {
         adapter.setsSelectionChangedListener(foodSelectedListener);
         adapter.context = getContext();
         recyclerView.setAdapter(adapter);
-        if (foodRemovedListener != null) addSwipeControl();
+            if (foodRemovedListener != null) addSwipeControl();
         return view;
     }
 
@@ -55,11 +55,12 @@ public class FoodListFragment extends Fragment {
     public AList<Food> GetSelectedFood(){ return adapter.selectedFood; }
     public void setData(AList<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
     public void setData(List<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
-    public AList<Food> GetData(){ return data; }
+    public AList<Food> getData(){ return data; }
     public void Clear() { this.data.clear(); adapter.clear(); }
     public void SetSelectable(boolean selectable) { this.selectable = selectable; }
     public int RemoveFood(Food food) {
         removedIndex = adapter.data.indexOf(removedFood = food);
+        data.pop(removedIndex);
         adapter.data.pop(removedIndex);
         adapter.notifyItemRemoved(removedIndex);
         return removedIndex;
@@ -98,7 +99,7 @@ public class FoodListFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
-                foodRemovedListener.click((CustomAdapter.CustomViewHolder)viewHolder, adapter.data.get(viewHolder.getAdapterPosition()));
+                foodRemovedListener.click((CustomAdapter<Food>.CustomViewHolder)viewHolder, adapter.data.get(viewHolder.getAdapterPosition()));
             }
 
             @Override
