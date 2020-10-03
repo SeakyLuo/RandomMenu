@@ -10,20 +10,20 @@ import android.widget.TextView;
 
 import java.util.Collection;
 
-import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class TagListAdapter extends CustomAdapter<Tag> {
     private AList<Tag> CheckTags = new AList<>();
-    private OnDataItemClickedListener<Tag> listener;
+    private DataItemClickedListener<Tag> listener;
     public TagListAdapter(Context context, AList<Tag> data, Collection<Tag> checkTags){
         this.context = context;
         setData(data);
         CheckTags.copyFrom(checkTags);
     }
-    public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { this.listener = listener; }
+    public void SetTagClickedListener(DataItemClickedListener<Tag> listener) { this.listener = listener; }
 
     @NonNull
     @Override

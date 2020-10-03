@@ -107,7 +107,7 @@ public class TagMapActivity extends SwipeBackActivity {
 
     @Override
     public void finish() {
-        if (updated) Helper.Save();
+        if (updated) Helper.save();
         updated = false;
         super.finish();
     }

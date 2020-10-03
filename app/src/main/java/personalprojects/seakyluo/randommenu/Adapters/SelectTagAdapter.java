@@ -8,15 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class SelectTagAdapter extends CustomAdapter<Tag> {
-    private OnDataItemClickedListener<Tag> listener, longClickListener;
-    public SelectTagAdapter(OnDataItemClickedListener<Tag> listener) { this.listener = listener; }
-    public void setLongClickListener(OnDataItemClickedListener<Tag> longClickListener) { this.longClickListener = longClickListener; }
+    private DataItemClickedListener<Tag> listener, longClickListener;
+    public SelectTagAdapter(DataItemClickedListener<Tag> listener) { this.listener = listener; }
+    public void setLongClickListener(DataItemClickedListener<Tag> longClickListener) { this.longClickListener = longClickListener; }
     private static int HighlightColor = Color.parseColor("#0078D7");
     private Tag pendingTag;
     private ViewHolder lastTag;
@@ -61,10 +61,13 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
         (lastTag = viewHolder).SetHighlight(true);
     }
 
-    public void SetTags(AList<Tag> tags){
-        if (tags.equals(data.after(0))) return;
-        if (data.count() == 0) data.add(Tag.AllCategoriesTag);
-        else data.clear(1);
+    public void setTags(AList<Tag> tags){
+        if (data.isEmpty()){
+            data.add(Tag.AllCategoriesTag);
+        }else{
+            if (tags.equals(data.after(0))) return;
+            data.clear(1);
+        }
         data.addAll(tags);
         notifyDataSetChanged();
     }

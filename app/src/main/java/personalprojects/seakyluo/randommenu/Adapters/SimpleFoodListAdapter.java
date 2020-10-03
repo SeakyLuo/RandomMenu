@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.R;
 
 public class SimpleFoodListAdapter extends CustomAdapter<String> {
-    private OnDataItemClickedListener<String> listener, deleteListener;
-    public void SetOnDataItemClickedListener(OnDataItemClickedListener<String> listener) { this.listener = listener; }
-    public void SetOnDeletedClickedListener(OnDataItemClickedListener<String> listener) { this.deleteListener = listener; }
+    private DataItemClickedListener<String> listener, deleteListener;
+    public void SetOnDataItemClickedListener(DataItemClickedListener<String> listener) { this.listener = listener; }
+    public void SetOnDeletedClickedListener(DataItemClickedListener<String> listener) { this.deleteListener = listener; }
     @NonNull
     @Override
     public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

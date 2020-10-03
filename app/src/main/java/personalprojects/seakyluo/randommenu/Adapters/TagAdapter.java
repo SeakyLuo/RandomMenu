@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
@@ -16,9 +16,9 @@ public class TagAdapter extends CustomAdapter<Tag> {
     public TagAdapter() {}
     public TagAdapter(boolean closeable) { SetCloseable(closeable); }
     public void SetCloseable(boolean closeable){ this.closeable = closeable; }
-    private OnDataItemClickedListener<Tag> closeListener, tagListener;
-    public void SetTagCloseListener(OnDataItemClickedListener<Tag> listener) { this.closeListener = listener; }
-    public void SetTagClickedListener(OnDataItemClickedListener<Tag> listener) { this.tagListener = listener; }
+    private DataItemClickedListener<Tag> closeListener, tagListener;
+    public void SetTagCloseListener(DataItemClickedListener<Tag> listener) { this.closeListener = listener; }
+    public void SetTagClickedListener(DataItemClickedListener<Tag> listener) { this.tagListener = listener; }
 
     @NonNull
     @Override

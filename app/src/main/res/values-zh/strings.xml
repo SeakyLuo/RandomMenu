@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">随机菜单</string>
-    <string name="note">笔记</string>
+    <string name="note">备注</string>
     <string name="random">随机</string>
     <string name="navigation">导航</string>
     <string name="settings">设置</string>
@@ -78,7 +78,7 @@
     <string name="data_saved">数据已保存！</string>
     <string name="draft_deleted">草稿已删除！</string>
     <string name="delete_draft">删除草稿</string>
-    <string name="note_copied">笔记已复制！</string>
+    <string name="note_copied">备注已复制！</string>
     <string name="name_copied">菜名已复制！</string>
     <string name="save_all_images">保存所有图片</string>
     <string name="count_images_saved">共保存%d张图片。</string>
@@ -105,4 +105,7 @@
     <string name="ask_delete_keyword">你想要删除关键词“%s”及其所有标签吗？</string>
     <string name="duplicate_tag_mapper_with_tag_overflow">发现了重复的关键词，但其标签太多，无法保存！</string>
     <string name="keyword_at_least_one_tag">关键词至少要有1个标签！</string>
+    <string name="tag_header">标签：</string>
+    <string name="note_header">备注：</string>
+    <string name="comma">，</string>
 </resources>

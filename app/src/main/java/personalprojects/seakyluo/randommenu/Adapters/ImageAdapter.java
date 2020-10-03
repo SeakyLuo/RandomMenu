@@ -98,7 +98,7 @@ public class ImageAdapter extends PagerAdapter {
             imageView = new ImageView(context);
         imageView.setScaleType(scaleType);
         imageView.setOnClickListener(clickListener);
-        Helper.LoadImage(Glide.with(context), images.get(position), imageView);
+        Helper.loadImage(Glide.with(context), images.get(position), imageView);
         container.addView(imageView);
         return imageView;
     }

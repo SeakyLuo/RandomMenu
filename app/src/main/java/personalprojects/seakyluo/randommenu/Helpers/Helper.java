@@ -10,9 +10,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -76,24 +78,24 @@ public class Helper {
         ExportedDataFolder = CreateOrOpenFolder("ExportedData");
         LogFolder = CreateOrOpenFolder("Logs");
         String settings = ReadFile(Settings.FILENAME);
-        Settings.settings = IsNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
-        if (IsNullOrEmpty(settings)) Log("Empty Settings Created");
+        Settings.settings = isNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
+        if (isNullOrEmpty(settings)) Log("Empty Settings Created");
     }
     public static String GetFilename(String path) { return new File(path).getName(); }
-    public static boolean IsNullOrEmpty(String string) { return string == null || string.equals(""); }
-    public static boolean IsBlank(String string){
-        return IsNullOrEmpty(string.trim());
+    public static boolean isNullOrEmpty(String string) { return string == null || string.equals(""); }
+    public static boolean isBlank(String string){
+        return isNullOrEmpty(string.trim());
     }
-    public static void LoadImage(RequestManager glide, String path, ImageView imageView){
-        if (IsNullOrEmpty(path)) imageView.setImageBitmap(DefaultFoodImage);
-        else glide.load(GetImagePath(path)).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+    public static void loadImage(RequestManager glide, String path, ImageView imageView){
+        if (isNullOrEmpty(path)) imageView.setImageBitmap(DefaultFoodImage);
+        else glide.load(getImagePath(path)).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
     }
-    public static Bitmap GetFoodBitmap(String path) { return BitmapFactory.decodeFile(GetImagePath(path)); }
-    public static Bitmap GetFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
-    public static boolean SaveImage(ImageView imageView, File folder, String filename){
-        return SaveImage(GetFoodBitmap(imageView), folder, filename);
+    public static Bitmap getFoodBitmap(String path) { return BitmapFactory.decodeFile(getImagePath(path)); }
+    public static Bitmap getFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
+    public static boolean saveImage(ImageView imageView, File folder, String filename){
+        return saveImage(getFoodBitmap(imageView), folder, filename);
     }
-    public static boolean SaveImage(Bitmap image, File folder, String filename){
+    public static boolean saveImage(Bitmap image, File folder, String filename){
         try (FileOutputStream out = new FileOutputStream(new File(folder, filename))) {
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
             return true;
@@ -104,12 +106,22 @@ public class Helper {
             return false;
         }
     }
+    public static boolean contains(String string, String subString){
+        return string != null && string.contains(subString);
+    }
     public static String Timestamp() { return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); }
     public static String NewImageFileName(){ return Timestamp() + ".jpg"; }
     public static String NewImageFileName(int suffix){ return Timestamp() + "_" + suffix + ".jpg"; }
-    public static String GetImagePath(String path){ return getPath("RandomMenuFood", path); }
+    public static String getImagePath(String path){ return getPath("RandomMenuFood", path); }
+    public static boolean hasEllipSize(TextView textView) {
+        Layout layout = textView.getLayout();
+        if (layout == null) return false;
+        int lines = layout.getLineCount();
+        if (lines == 0) return false;
+        return layout.getEllipsisCount(lines - 1) > 0;
+    }
 
-    public static void Save(){
+    public static void save(){
         String settings = Settings.settings.ToJson(), emptyJson = new Settings().ToJson();
         if (settings.equals(emptyJson) && !ReadFile(Settings.FILENAME).equals(emptyJson))
             Log("Trying to overwrite Settings with Empty content.");
@@ -185,7 +197,7 @@ public class Helper {
 
     public static void Clear(){
         Settings.settings = new Settings();
-        Save();
+        save();
     }
     public static boolean Zip(String filename, File... files){
         FileOutputStream dest = null;

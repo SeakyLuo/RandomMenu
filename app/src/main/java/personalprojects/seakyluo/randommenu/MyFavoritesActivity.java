@@ -31,7 +31,7 @@ public class MyFavoritesActivity extends SwipeBackActivity {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.setFood(food);
             dialog.setFoodEditedListener((before, after) -> {
-                fragment.RemoveFood(before);
+                fragment.removeFood(before);
                 dialog.setFood(after);
                 setTitle();
                 setResult(RESULT_OK);
@@ -39,7 +39,7 @@ public class MyFavoritesActivity extends SwipeBackActivity {
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         });
         fragment.setFoodRemovedListener((viewHolder, data) -> {
-            int index = fragment.RemoveFood(data);
+            int index = fragment.removeFood(data);
             Settings.settings.SetFavorite(data, false);
             setTitle();
             setResult(RESULT_OK);

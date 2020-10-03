@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.ChooseFoodActivity;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
-import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.R;
@@ -25,8 +25,8 @@ public class MenuDialog extends DialogFragment {
     private FoodListFragment fragment = new FoodListFragment();
     private Button clear_button, add_button;
     private View.OnClickListener clearListener;
-    private OnDataItemClickedListener<Food> foodRemovedListener;
-    private OnDataItemClickedListener<AList<Food>> foodAddedListener;
+    private DataItemClickedListener<Food> foodRemovedListener;
+    private DataItemClickedListener<AList<Food>> foodAddedListener;
     private TextView header_text;
     private String header;
     private boolean chooseFoodClicked = false;
@@ -40,7 +40,7 @@ public class MenuDialog extends DialogFragment {
 
         fragment.setFoodRemovedListener((viewHolder, data) -> {
             if (foodRemovedListener != null) foodRemovedListener.click(viewHolder, data);
-            fragment.RemoveFood(data);
+            fragment.removeFood(data);
         });
         if (savedInstanceState == null){
             getChildFragmentManager().beginTransaction().add(R.id.food_list_frame, fragment).commit();
@@ -59,10 +59,10 @@ public class MenuDialog extends DialogFragment {
 
     public void SetHeaderText(String text) { header = text; if (header_text != null) header_text.setText(header); }
     public void SetOnClearListener(View.OnClickListener listener) { clearListener = listener; if (clear_button != null) clear_button.setOnClickListener(clearListener); }
-    public void SetFoodRemovedListener(OnDataItemClickedListener<Food> listener) { foodRemovedListener = listener; }
-    public void SetFoodAddedListener(OnDataItemClickedListener<AList<Food>> listener) { foodAddedListener = listener; }
+    public void SetFoodRemovedListener(DataItemClickedListener<Food> listener) { foodRemovedListener = listener; }
+    public void SetFoodAddedListener(DataItemClickedListener<AList<Food>> listener) { foodAddedListener = listener; }
     public void SetData(AList<Food> data) { fragment.setData(data); }
-    public void Clear() { fragment.Clear(); }
+    public void Clear() { fragment.clear(); }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

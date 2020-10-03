@@ -13,12 +13,12 @@ import java.util.Objects;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.interfaces.DataViewOperationListener;
-import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.TagMapper;
 
 public class TagMapAdapter extends CustomAdapter<TagMapper> {
     public Context context;
-    private OnDataItemClickedListener<TagMapper> onDataItemClickedListener;
+    private DataItemClickedListener<TagMapper> dataItemClickedListener;
     private DataViewOperationListener<TagMapper> moreClickedListener;
     private static final int VIEW_TAG_MAPPER = 0;
     private static final int VIEW_HEADER = 1;
@@ -45,8 +45,8 @@ public class TagMapAdapter extends CustomAdapter<TagMapper> {
         return VIEW_TAG_MAPPER;
     }
 
-    public void setOnItemClickListener(OnDataItemClickedListener<TagMapper> listener){
-        onDataItemClickedListener = listener;
+    public void setOnItemClickListener(DataItemClickedListener<TagMapper> listener){
+        dataItemClickedListener = listener;
     }
 
     public void setMoreClickedListener(DataViewOperationListener<TagMapper> listener){
@@ -65,7 +65,7 @@ public class TagMapAdapter extends CustomAdapter<TagMapper> {
             RecyclerView recyclerView = view.findViewById(R.id.tags_recycler_view);
             recyclerView.setAdapter(adapter);
             view.setOnClickListener(v -> {
-                onDataItemClickedListener.click(this, data);
+                dataItemClickedListener.click(this, data);
             });
             if (moreClickedListener == null){
                 more.setVisibility(View.INVISIBLE);

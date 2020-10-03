@@ -112,12 +112,12 @@ public class EditFoodActivity extends AppCompatActivity {
                     int index = Settings.settings.Foods.indexOf(f -> f.Name.equals(food_name));
                     Food food = Settings.settings.Foods.get(index);
                     food.Images.addAll(images);
-                    if (!Helper.IsNullOrEmpty(food_cover)){
+                    if (!Helper.isNullOrEmpty(food_cover)){
                         food.SetCover(food_cover);
                     }
                     food.SetIsFavorite(food.IsFavorite() || like_toggle.isChecked());
                     food.AddTags(chooseTagFragment.GetData());
-                    if (!Helper.IsBlank(food.Note)){
+                    if (!Helper.isBlank(food.Note)){
                         food.Note = food.Note + '\n' + getNote();
                     }
                     Settings.settings.Foods.move(index, 0);
@@ -247,7 +247,7 @@ public class EditFoodActivity extends AppCompatActivity {
         if (food == null) return;
         edit_food_name.setText(food.Name);
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
-        imageViewerFragment.setImages(images.copyFrom(food.Images), food_cover = food.GetCover());
+        imageViewerFragment.setImages(images.copyFrom(food.Images), food_cover = food.getCover());
         sources.copyFrom(new AList<>("", food.Images.count()));
         chooseTagFragment.SetData(food.getTags());
         edit_note.setText(food.Note);
@@ -272,9 +272,9 @@ public class EditFoodActivity extends AppCompatActivity {
         }
     }
 
-    private String CurrentImage() { return Helper.GetImagePath(images.get(imageViewerFragment.getCurrent())); }
+    private String CurrentImage() { return Helper.getImagePath(images.get(imageViewerFragment.getCurrent())); }
     private boolean AddImage(Bitmap image, String filename){
-        boolean success = Helper.SaveImage(image, Helper.ImageFolder, filename);
+        boolean success = Helper.saveImage(image, Helper.ImageFolder, filename);
         if (success) images.add(imageViewerFragment.addImage(filename), 0);
         return success;
     }
@@ -322,7 +322,7 @@ public class EditFoodActivity extends AppCompatActivity {
                                 images.pop(index);
                                 sources.pop(index);
                                 imageViewerFragment.removeImage(index);
-                            }else if (Helper.SaveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
+                            }else if (Helper.saveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
                                                         Helper.ImageFolder,
                                                         filename = Helper.NewImageFileName(i))){
                                 files.add(filename, 0);
@@ -340,7 +340,7 @@ public class EditFoodActivity extends AppCompatActivity {
             case CROP_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
-                    if (!Helper.SaveImage(image, Helper.ImageFolder, filename = Helper.NewImageFileName())) return;
+                    if (!Helper.saveImage(image, Helper.ImageFolder, filename = Helper.NewImageFileName())) return;
                     int current = imageViewerFragment.getCurrent();
                     if (images.get(current).equals(food_cover)) food_cover = filename;
                     images.set(imageViewerFragment.setCurrentImage(filename), current);
@@ -354,7 +354,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
         }
         food_image.setVisibility(View.GONE);
-        if (Helper.IsNullOrEmpty(food_cover)) food_cover = images.first();
+        if (Helper.isNullOrEmpty(food_cover)) food_cover = images.first();
     }
 
     @Override
@@ -377,7 +377,7 @@ public class EditFoodActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        Helper.Save();
+        Helper.save();
         super.finish();
     }
 }

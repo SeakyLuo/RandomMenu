@@ -23,7 +23,7 @@ import personalprojects.seakyluo.randommenu.EditFoodActivity;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.interfaces.FoodEditedListener;
-import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.MainActivity;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
@@ -42,7 +42,7 @@ public class FoodCardFragment extends Fragment {
     private ImageButton more_button;
     private Food CurrentFood;
     private FoodEditedListener foodEditedListener, foodLikedChangedListener;
-    private OnDataItemClickedListener<Tag> tagClickedListener;
+    private DataItemClickedListener<Tag> tagClickedListener;
     private AnimatorSet flip_in, flip_out;
     private boolean isBack = false;
 
@@ -96,7 +96,7 @@ public class FoodCardFragment extends Fragment {
         more_button.setOnClickListener(v -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
             if (!CurrentFood.HasImage()) helper.removeItems(R.id.save_image_item, R.id.share_item);
-            if (Helper.IsNullOrEmpty(CurrentFood.Note)) helper.removeItems(R.id.more_item);
+            if (Helper.isNullOrEmpty(CurrentFood.Note)) helper.removeItems(R.id.more_item);
             if (CurrentFood.HideCount == 0) helper.removeItems(R.id.show_food_item);
             else helper.removeItems(R.id.hide_food_item);
             helper.removeItems(CurrentFood.IsFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
@@ -111,13 +111,13 @@ public class FoodCardFragment extends Fragment {
                         startActivityForResult(editFoodIntent, EDIT_FOOD);
                         return true;
                     case R.id.save_image_item:
-                        Helper.SaveImage(Helper.GetFoodBitmap(imageViewerFragment.getCurrentImage()), Helper.SaveImageFolder, Helper.NewImageFileName());
+                        Helper.saveImage(Helper.getFoodBitmap(imageViewerFragment.getCurrentImage()), Helper.SaveImageFolder, Helper.NewImageFileName());
                         Toast.makeText(getContext(), R.string.save_image_msg, Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.share_item:
                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                         shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.GetFileUri(getContext(), Helper.GetImagePath(imageViewerFragment.getCurrentImage())));
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.GetFileUri(getContext(), Helper.getImagePath(imageViewerFragment.getCurrentImage())));
                         shareIntent.setType("image/*");
                         startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;
@@ -135,13 +135,13 @@ public class FoodCardFragment extends Fragment {
                         CurrentFood.HideCount = 0;
                         SetFoodNote(CurrentFood);
                         Settings.settings.Foods.first(CurrentFood).HideCount = CurrentFood.HideCount;
-                        Helper.Save();
+                        Helper.save();
                         return true;
                     case R.id.hide_food_item:
                         CurrentFood.HideCount += 3;
                         SetFoodNote(CurrentFood);
                         Settings.settings.Foods.first(CurrentFood).HideCount = CurrentFood.HideCount;
-                        Helper.Save();
+                        Helper.save();
                         return true;
                     case R.id.more_item:
                         Flip();
@@ -152,8 +152,8 @@ public class FoodCardFragment extends Fragment {
             ObjectAnimator.ofFloat(v, "rotation", 0, 180).start();
             helper.show();
         });
-        food_note_front.setOnClickListener(v -> { if (!Helper.IsNullOrEmpty(CurrentFood.Note)) Flip(); });
-        food_note_back.setOnClickListener(v -> { if (!Helper.IsNullOrEmpty(CurrentFood.Note)) Flip(); });
+        food_note_front.setOnClickListener(v -> { if (!Helper.isNullOrEmpty(CurrentFood.Note)) Flip(); });
+        food_note_back.setOnClickListener(v -> { if (!Helper.isNullOrEmpty(CurrentFood.Note)) Flip(); });
         if (CurrentFood != null) setFood(CurrentFood);
         return view;
     }
@@ -182,7 +182,7 @@ public class FoodCardFragment extends Fragment {
         food_note_back.setText(food.Note);
         SetFoodNote(food);
         food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
-        imageViewerFragment.setImages(food.Images, food.GetCover());
+        imageViewerFragment.setImages(food.Images, food.getCover());
         SetFoodFavorite(food.IsFavorite());
         tagsFragment.setData(food.getTags());
     }
@@ -192,7 +192,7 @@ public class FoodCardFragment extends Fragment {
     public void SetFoodNote(Food food){
         String food_info = String.format(getString(R.string.created_at), food.GetDateAddedString()) + "\n";
         if (food.HideCount > 0) food_info += String.format(getString(R.string.hide_recent), food.HideCount);
-        if (Helper.IsNullOrEmpty(food.Note)){
+        if (Helper.isNullOrEmpty(food.Note)){
             food_note_front.setText(food_info);
             food_note_back.setText(food.Note);
             food_note_front.setOnLongClickListener(null);
@@ -216,7 +216,7 @@ public class FoodCardFragment extends Fragment {
     public Food GetFood() { return CurrentFood; }
 
     public void setFoodEditedListener(FoodEditedListener listener) { this.foodEditedListener = listener; }
-    public void setTagClickedListener(OnDataItemClickedListener<Tag> listener) { this.tagClickedListener = listener; }
+    public void setTagClickedListener(DataItemClickedListener<Tag> listener) { this.tagClickedListener = listener; }
     public void setFoodLikedChangedListener(FoodEditedListener listener){ this.foodLikedChangedListener = listener; }
 
     @Override

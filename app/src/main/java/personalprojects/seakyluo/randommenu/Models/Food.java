@@ -58,7 +58,7 @@ public class Food implements Parcelable {
     }
     public AList<Tag> getTags() { return Tags; }
     public void SetCover(String Cover) { this.Cover = Cover; }
-    public String GetCover() { return Cover; }
+    public String getCover() { return Cover; }
     public void RemoveTag(Tag tag) { Tags.remove(tag); }
     public static boolean IsIncomplete(Food food) { return food == null || food.DateAdded == 0; }
 

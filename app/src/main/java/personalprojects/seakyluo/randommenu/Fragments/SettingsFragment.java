@@ -16,7 +16,6 @@ import java.util.Set;
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
 import personalprojects.seakyluo.randommenu.DislikeActivity;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.helpers.RecalculateHelper;
 import personalprojects.seakyluo.randommenu.MainActivity;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Settings;
@@ -26,7 +25,6 @@ import personalprojects.seakyluo.randommenu.NoteActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.ToCookActivity;
 import personalprojects.seakyluo.randommenu.ToEatActivity;
-import personalprojects.seakyluo.randommenu.models.Tag;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -135,7 +133,7 @@ public class SettingsFragment extends Fragment {
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
         view.findViewById(R.id.save_data_button).setOnClickListener(v -> {
-            Helper.Save();
+            Helper.save();
             Toast.makeText(getContext(), R.string.data_saved, Toast.LENGTH_SHORT).show();
         });
         return view;

@@ -44,13 +44,13 @@ public class SearchHelper {
     }
 
     public static int evalFoodNote(Food food, String keyword){
-        if (Helper.IsBlank(food.Note)) return 0;
+        if (Helper.isBlank(food.Note)) return 0;
         int points = evalString(food.Note, keyword);
         return points == MAX_POINTS ? 120 : Math.max(points - 30, 0);
     }
 
     public static List<String> searchTags(Stream<Tag> tags, String keyword){
-        if (Helper.IsNullOrEmpty(keyword)) return new ArrayList<>();
+        if (Helper.isNullOrEmpty(keyword)) return new ArrayList<>();
         return tags.filter(t -> t.Name.contains(keyword))
                     .sorted((t1, t2) -> {
                         int res = SearchHelper.evalString(t1.Name, keyword) - SearchHelper.evalString(t2.Name, keyword);

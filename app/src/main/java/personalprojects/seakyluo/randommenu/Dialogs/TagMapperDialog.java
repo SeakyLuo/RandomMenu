@@ -8,7 +8,6 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.TagAdapter;
@@ -98,7 +95,7 @@ public class TagMapperDialog extends DialogFragment {
         });
         confirm.setOnClickListener(v -> {
             String keyword = keyword_content.getText().toString().trim();
-            if (Helper.IsNullOrEmpty(keyword)){
+            if (Helper.isNullOrEmpty(keyword)){
                 Toast.makeText(getContext(), R.string.empty_keyword, Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -129,7 +126,7 @@ public class TagMapperDialog extends DialogFragment {
             return;
         }
         String tag = tag_content.getText().toString().trim();
-        if (Helper.IsNullOrEmpty(tag)){
+        if (Helper.isNullOrEmpty(tag)){
             return;
         }
         int index = adapter.data.indexOf(t -> t.Name.equals(tag));

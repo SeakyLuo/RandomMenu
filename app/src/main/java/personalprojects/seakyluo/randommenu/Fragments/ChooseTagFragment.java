@@ -15,12 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.ChooseTagActivity;
-import personalprojects.seakyluo.randommenu.EditFoodActivity;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.interfaces.OnLaunchActivityListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
-import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
@@ -45,7 +43,7 @@ public class ChooseTagFragment extends Fragment {
 
         tagsFragment.SetCloseable(true);
         getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
-        if (!Helper.IsNullOrEmpty(header)) header_text.setText(header);
+        if (!Helper.isNullOrEmpty(header)) header_text.setText(header);
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
         view.findViewById(R.id.tag_card_view).setOnClickListener(v -> {
             if (tagsFragment.getData().count() < Tag.MAX_TAGS)

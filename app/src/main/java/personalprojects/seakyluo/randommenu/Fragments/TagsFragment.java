@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.adapters.TagAdapter;
-import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
@@ -45,6 +45,6 @@ public class TagsFragment extends Fragment {
     public void setData(AList<Tag> data){ adapter.setData(data); }
     public void setData(List<Tag> data){ adapter.setData(data); }
     public void setSpanCount(int spanCount) { this.spanCount = spanCount; }
-    public void setTagClickedListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagClickedListener(listener); }
-    public void setTagClosedListener(OnDataItemClickedListener<Tag> listener) { adapter.SetTagCloseListener(listener); }
+    public void setTagClickedListener(DataItemClickedListener<Tag> listener) { adapter.SetTagClickedListener(listener); }
+    public void setTagClosedListener(DataItemClickedListener<Tag> listener) { adapter.SetTagCloseListener(listener); }
 }

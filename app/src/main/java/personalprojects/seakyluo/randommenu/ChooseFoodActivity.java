@@ -33,7 +33,7 @@ public class ChooseFoodActivity extends AppCompatActivity {
         if (savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment())
                                                           .add(R.id.food_list_frame, foodListFragment = new FoodListFragment()).commit();
-            foodListFragment.SetSelectable(true);
+            foodListFragment.setSelectable(true);
         }else{
             tagsFragment = (TagsFragment) getSupportFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
             foodListFragment = (FoodListFragment) getSupportFragmentManager().getFragment(savedInstanceState, FoodListFragment.TAG);
@@ -49,7 +49,7 @@ public class ChooseFoodActivity extends AppCompatActivity {
         foodListFragment.setData(Settings.settings.Foods);
         foodListFragment.setSelectedFood(foods);
         foodListFragment.setFoodSelectedListener((vh, selected) -> {
-            Tag food = new Tag(((Tag)vh.data).Name);
+            Tag food = new Tag(vh.data.Name);
             if (selected) tagsFragment.add(food);
             else tagsFragment.remove(food);
         });
@@ -64,7 +64,7 @@ public class ChooseFoodActivity extends AppCompatActivity {
         });
         findViewById(R.id.confirm_button).setOnClickListener(v -> {
             Intent intent = new Intent();
-            intent.putExtra(TAG, foodListFragment.GetSelectedFood().toArrayList());
+            intent.putExtra(TAG, foodListFragment.getSelectedFood().toArrayList());
             setResult(RESULT_OK, intent);
             finish();
         });

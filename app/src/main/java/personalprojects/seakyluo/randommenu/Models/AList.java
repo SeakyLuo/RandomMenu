@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import personalprojects.seakyluo.randommenu.interfaces.BooleanLambda;
@@ -137,12 +138,9 @@ public class AList<T> extends IList<T> {
     public AList<T> before(int index){ return sub(0, index); }
     public AList<T> after(int index) { return sub(index + 1, count()); }
     public AList<T> sub(int start, int end){
-        AList<T> collection = new AList<>();
         start = modIndex(start);
         end = modIndex(end);
-        for (int i = start; i < end; i = i + 1)
-            collection.add(list.get(i));
-        return collection;
+        return new AList<>(list.subList(start, end));
     }
     public AList<T> sub(int start, int end, int step){
         AList<T> collection = new AList<>();
@@ -258,6 +256,7 @@ public class AList<T> extends IList<T> {
         return start;
     }
     private int modIndex(int index){
+        if (index == 0) return 0;
         int count = count();
         if (count == index) return index;
         if (count > 0) index = index % count;

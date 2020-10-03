@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import personalprojects.seakyluo.randommenu.adapters.SimpleFoodListAdapter;
-import personalprojects.seakyluo.randommenu.interfaces.OnDataItemClickedListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.R;
 
@@ -28,8 +28,8 @@ public class StringListFragment extends Fragment {
     }
 
     public void setData(AList<String> data){ adapter.setData(data); }
-    public void setClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDataItemClickedListener(listener); }
-    public void setOnDeletedClickedListener(OnDataItemClickedListener<String> listener) { adapter.SetOnDeletedClickedListener(listener); }
+    public void setClickedListener(DataItemClickedListener<String> listener) { adapter.SetOnDataItemClickedListener(listener); }
+    public void setOnDeletedClickedListener(DataItemClickedListener<String> listener) { adapter.SetOnDeletedClickedListener(listener); }
     public void Remove(String item) { adapter.remove(item); }
     public void Add(String item) { Remove(item); adapter.add(item, 0); }
 }
