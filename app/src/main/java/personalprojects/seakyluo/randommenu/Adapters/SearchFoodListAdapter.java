@@ -131,11 +131,12 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
      * 备注可能因为太长不展示，需要调整展示内容
      */
     private static void adjustTextView(TextView textView, String keyword){
-        if (Helper.contains(getVisibleText(textView), keyword)){
+        String text = textView.getText().toString();
+        if (noNeedForFurtherAdjustment(textView, text, keyword, getVisibleText(textView), text.indexOf(keyword))){
             return;
         }
         // 找第一个带关键词的段落
-        String[] paragraphs = textView.getText().toString().split("\n");
+        String[] paragraphs = text.split("\n");
         for (int i = 0; i < paragraphs.length; i++){
             String paragraph = paragraphs[i];
             if (!paragraph.contains(keyword)){
@@ -153,18 +154,7 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
                 String visibleText = getVisibleText(textView);
                 int index = paragraph.indexOf(keyword);
                 int start, end;
-                if (visibleText.endsWith(keyword)){
-                    // 如果可见文本以关键词结尾，可能会存在最后一个字看不到的情况
-                    // 所以如果可能的话往后挪一点，不能的话就算了
-                    start = dots.length() + keyword.length();
-                    end = start + index;
-                    if (end <= paragraph.length()){
-                        textView.setText(dots + paragraph.substring(start, end));
-                    }else{
-                        break;
-                    }
-                }
-                if (visibleText.contains(keyword)){
+                if (noNeedForFurtherAdjustment(textView, paragraph, keyword, visibleText, index)){
                     break;
                 }
                 start = Math.max(paragraph.length() - visibleText.length(), 0);
@@ -192,6 +182,21 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
             }
             break;
         }
+    }
+
+    private static boolean noNeedForFurtherAdjustment(TextView textView, String content, String keyword, String visibleText, int index){
+        if (visibleText.endsWith(keyword)){
+            // 如果可见文本以关键词结尾，可能会存在最后一个字看不到的情况
+            // 所以如果可能的话往后挪一点，不能的话就算了
+            int start = dots.length() + Math.min(keyword.length(), dots.length());
+            int end = start + index;
+            if (end <= content.length()){
+                String subString = content.substring(start, end);
+                textView.setText(dots + subString);
+            }
+            return true;
+        }
+        return visibleText.contains(keyword);
     }
 
     private static String getVisibleText(TextView textView) {
