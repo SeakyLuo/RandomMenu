@@ -72,8 +72,8 @@
     <string name="clear_cache_msg">Cache cleared!</string>
     <string name="export_data_msg">Data exported!</string>
     <string name="share_image">Share image</string>
-    <string name="clearing_cache">Clearing cache...</string>
-    <string name="exporting_data">Exporting data...</string>
+    <string name="clearing_cache">Clearing cache…</string>
+    <string name="exporting_data">Exporting data…</string>
     <string name="save_data">Save data</string>
     <string name="data_saved">Data saved!</string>
     <string name="draft_deleted">Draft deleted!</string>
@@ -87,7 +87,7 @@
     <string name="input_food">Input Food</string>
     <string name="note_hint">Note down anything!</string>
     <string name="import_data">Import Data</string>
-    <string name="importing_data">Importing data...</string>
+    <string name="importing_data">Importing data…</string>
     <string name="import_data_msg">Data imported!</string>
     <string name="move_to_first">Move to first</string>
     <string name="more_settings">More Settings</string>
@@ -108,4 +108,10 @@
     <string name="tag_header">Tag: </string>
     <string name="note_header">Note: </string>
     <string name="comma">,</string>
+    <string name="export_data_failed">"Data export failed: "</string>
+    <string name="file_not_found">File cannot be found!</string>
+    <string name="illegal_unzip_target">Only zip files are supported for importing!</string>
+    <string name="import_data_failed">Cannot import data：</string>
+    <string name="no_import_image_folder">No food image folder to import!</string>
+    <string name="no_import_settings">No settings file to import!</string>
 </resources>

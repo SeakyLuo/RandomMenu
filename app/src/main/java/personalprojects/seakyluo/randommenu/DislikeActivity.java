@@ -59,7 +59,7 @@ public class DislikeActivity extends SwipeBackActivity {
     }
 
     public void SetTitle(){
-        titleText.setText(Tag.Format(this, R.string.dislike_food, adapter.getData().count()));
+        titleText.setText(Tag.format(this, R.string.dislike_food, adapter.getData().count()));
     }
 
     @Override

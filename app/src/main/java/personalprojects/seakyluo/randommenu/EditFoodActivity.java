@@ -131,7 +131,7 @@ public class EditFoodActivity extends AppCompatActivity {
             AList<Tag> tags = chooseTagFragment.GetData();
             if (tags.isEmpty()){
                 if (Settings.settings.AutoTag){
-                    List<Tag> guessTags = Helper.GuessTags(food_name);
+                    List<Tag> guessTags = Helper.guessTags(food_name);
                     chooseTagFragment.SetData(guessTags);
                     if (guessTags.size() > 0){
                         Toast.makeText(this, R.string.tag_auto_added, Toast.LENGTH_SHORT).show();
@@ -145,9 +145,9 @@ public class EditFoodActivity extends AppCompatActivity {
             }
             String note = getNote();
             Food food = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
-            if (Food.IsIncomplete(currentFood)) Settings.settings.AddFood(food);
+            if (Food.IsIncomplete(currentFood)) Settings.settings.addFood(food);
             else if (isDraft && !Settings.settings.Foods.any(f -> f.Name.equals(food_name))){
-                Settings.settings.AddFood(food);
+                Settings.settings.addFood(food);
                 Settings.settings.FoodDraft = null;
             }else{
                 Settings.settings.updateFood(currentFood, food);
@@ -167,7 +167,7 @@ public class EditFoodActivity extends AppCompatActivity {
             dialog.setMessage(R.string.ask_delete_food);
             dialog.setOnYesListener(view -> {
                 if (isDraft) Settings.settings.FoodDraft = null;
-                else Settings.settings.RemoveFood(currentFood);
+                else Settings.settings.removeFood(currentFood);
                 setResult(RESULT_OK);
                 finish();
             });
@@ -232,7 +232,7 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void OpenCamera(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camera_image_uri = Helper.GetFileUri(this, Helper.NewImageFileName());
+        camera_image_uri = Helper.getFileUri(this, Helper.NewImageFileName());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, camera_image_uri);
         startActivityForResult(intent, CAMERA_CODE);
     }

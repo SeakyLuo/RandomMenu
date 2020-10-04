@@ -114,8 +114,8 @@ public class RandomFragment extends Fragment {
 
     private AList<Food> Reset(){
         AList<Food> source = Settings.settings.Foods.forEach(f -> f.HideCount = Math.max(f.HideCount - 1, 0)).find(f -> !menu.contains(f) && f.HideCount == 0);
-        if (!preferred_tags.isEmpty()) source.remove(f -> !preferred_tags.any(f::HasTag));
-        if (!excluded_tags.isEmpty()) source.remove(f -> excluded_tags.any(f::HasTag));
+        if (!preferred_tags.isEmpty()) source.remove(f -> !preferred_tags.any(f::hasTag));
+        if (!excluded_tags.isEmpty()) source.remove(f -> excluded_tags.any(f::hasTag));
         do source.shuffle();
         while (!food_pool.isEmpty() && food_pool.get(0).equals(source.get(0)));
         return food_pool.copyFrom(source);

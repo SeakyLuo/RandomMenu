@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
-        Helper.Init(this);
+        Helper.init(this);
 
         if (savedInstanceState == null) {
             randomFragment = new RandomFragment();

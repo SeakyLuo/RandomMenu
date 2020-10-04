@@ -40,8 +40,8 @@ public class Food implements Parcelable {
     public boolean IsFavorite() { return IsFavorite; }
 
     public boolean HasImage() { return Images.count() > 0; }
-    public boolean HasTag(Tag tag) { return Tags.contains(tag); }
-    public boolean HasTag(String name) { return Tags.any(t -> t.Name.equals(name)); }
+    public boolean hasTag(Tag tag) { return Tags.contains(tag); }
+    public boolean hasTag(String name) { return Tags.any(t -> t.Name.equals(name)); }
     public void RenameTag(String oldName, String newName){ Tags.first(t -> t.Name.equals(oldName)).Name = newName; }
     public Long GetDateAdded() { return DateAdded; }
     public String GetDateAddedString(){

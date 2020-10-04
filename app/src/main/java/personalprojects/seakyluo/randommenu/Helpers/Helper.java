@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -47,12 +48,12 @@ import personalprojects.seakyluo.randommenu.R;
 
 public class Helper {
     public static final String ROOT_FOLDER = "RandomMenu";
-    public static File Root, SaveImageFolder, ImageFolder, TempFolder, ExportedDataFolder, LogFolder;
+    public static File Root, SaveImageFolder, ImageFolder, TempFolder, TempUnzipFolder, ExportedDataFolder, LogFolder;
     public static Bitmap DefaultFoodImage;
     private static Random random = new Random();
 
     public static void Log(String content){
-        WriteFile("Logs/" + Helper.Timestamp() + ".txt" , content);
+        writeFile("Logs/" + Helper.Timestamp() + ".txt" , content);
     }
     public static void CopyToClipboard(Context context, String text){
         CopyToClipboard(context, text, text);
@@ -69,19 +70,20 @@ public class Helper {
         return bitmap;
     }
     public static int RandRange(int start, int end) { return random.nextInt((end - start)) + start; }
-    public static void Init(Context context){
+    public static void init(Context context){
         DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
-        Root = CreateOrOpenFolder(ROOT_FOLDER);
-        ImageFolder = CreateOrOpenFolder("RandomMenuFood");
-        SaveImageFolder = CreateOrOpenFolder("SavedImages");
-        TempFolder = CreateOrOpenFolder("Temp");
-        ExportedDataFolder = CreateOrOpenFolder("ExportedData");
-        LogFolder = CreateOrOpenFolder("Logs");
-        String settings = ReadFile(Settings.FILENAME);
-        Settings.settings = isNullOrEmpty(settings) ? new Settings() : Settings.FromJson(settings);
+        Root = createOrOpenFolder(ROOT_FOLDER);
+        ImageFolder = createOrOpenFolder("RandomMenuFood");
+        SaveImageFolder = createOrOpenFolder("SavedImages");
+        TempFolder = createOrOpenFolder("Temp");
+        TempUnzipFolder = createOrOpenFolder("TempUnzipFiles");
+        ExportedDataFolder = createOrOpenFolder("ExportedData");
+        LogFolder = createOrOpenFolder("Logs");
+        String settings = readFile(Settings.FILENAME);
+        Settings.settings = isNullOrEmpty(settings) ? new Settings() : Settings.fromJson(settings);
         if (isNullOrEmpty(settings)) Log("Empty Settings Created");
     }
-    public static String GetFilename(String path) { return new File(path).getName(); }
+    public static String getFilename(String path) { return new File(path).getName(); }
     public static boolean isNullOrEmpty(String string) { return string == null || string.equals(""); }
     public static boolean isBlank(String string){
         return isNullOrEmpty(string.trim());
@@ -100,7 +102,7 @@ public class Helper {
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log("IOException: " + e.toString());
             return false;
         } catch (Exception e){
             return false;
@@ -122,13 +124,13 @@ public class Helper {
     }
 
     public static void save(){
-        String settings = Settings.settings.ToJson(), emptyJson = new Settings().ToJson();
-        if (settings.equals(emptyJson) && !ReadFile(Settings.FILENAME).equals(emptyJson))
-            Log("Trying to overwrite Settings with Empty content.");
+        String settings = Settings.settings.toString(), emptyJson = new Settings().toString();
+        if (settings.equals(emptyJson) && !readFile(Settings.FILENAME).equals(emptyJson))
+            Log("Trying to overwrite Settings with Empty content.\nStackTrace:" + Arrays.toString(Thread.currentThread().getStackTrace()));
         else{
-            WriteFile(Settings.FILENAME, settings);
+            writeFile(Settings.FILENAME, settings);
             String backupSettings = "BackupSettings";
-            WriteFile("Temp/" + backupSettings + Timestamp() + ".json", settings);
+            writeFile("Temp/" + backupSettings + Timestamp() + ".json", settings);
             AList<File> temp_settings = new AList<>(TempFolder.listFiles()).find(f -> f.getName().startsWith(backupSettings));
             if (temp_settings.count() > 10){
                 temp_settings.sort((o1, o2) -> (int) (o2.lastModified() - o1.lastModified())).after(10).forEach(File::delete);
@@ -141,11 +143,11 @@ public class Helper {
         return sb.toString();
     }
 
-    public static String ReadFile(String filename) {
+    public static String readFile(String filename) {
         /* It reads file under root folder */
-        return Fread(getPath(filename));
+        return fread(getPath(filename));
     }
-    private static String Fread(String filename){
+    private static String fread(String filename){
         String string = "";
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filename));
@@ -162,11 +164,11 @@ public class Helper {
         }
         return string;
     }
-    public static void WriteFile(String filename, String content){
+    public static void writeFile(String filename, String content){
         /* It writes file to root folder */
-        Fwrite(getPath(filename), content);
+        fwrite(getPath(filename), content);
     }
-    private static void Fwrite(String filename, String content){
+    private static void fwrite(String filename, String content){
         try {
             FileOutputStream out = new FileOutputStream(filename);
             out.write(content.getBytes());
@@ -175,11 +177,11 @@ public class Helper {
             Log.e("fuck", "File write failed: " + e.toString());
         }
     }
-    public static File CreateOrOpenFolder(String folderName){
+    public static File createOrOpenFolder(String folderName){
         File folder = folderName.equals(ROOT_FOLDER) ? new File(getPath()) : new File(getPath(folderName));
         return folder.exists() || folder.mkdir() ? folder : null;
     }
-    public static void Copy(File src, File dst) throws IOException {
+    public static void copy(File src, File dst) throws IOException {
         try (InputStream in = new FileInputStream(src)) {
             try (OutputStream out = new FileOutputStream(dst)) {
                 // Transfer bytes from in to out
@@ -191,37 +193,27 @@ public class Helper {
             }
         }
     }
-    public static Uri GetFileUri(Context context, String path){
+    public static Uri getFileUri(Context context, String path){
         return FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(path));
     }
 
-    public static void Clear(){
+    public static void clear(){
         Settings.settings = new Settings();
         save();
     }
-    public static boolean Zip(String filename, File... files){
-        FileOutputStream dest = null;
-        try {
-            dest = new FileOutputStream(filename);
-        } catch (FileNotFoundException e) {
-            return false;
-        }
+    public static void zip(String filename, File... files) throws Exception {
+        FileOutputStream dest = new FileOutputStream(filename);
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
         for (File item: files){
             if (item.isDirectory())
                 for (File file: item.listFiles())
-                    AddZipFile(out, file, item.getName() + File.separator + file.getName());
+                    addZipFile(out, file, item.getName() + File.separator + file.getName());
             else
-                AddZipFile(out, item, item.getName());
+                addZipFile(out, item, item.getName());
         }
-        try {
-            out.close();
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
+        out.close();
     }
-    private static void AddZipFile(ZipOutputStream out, File file, String path){
+    private static void addZipFile(ZipOutputStream out, File file, String path){
         byte[] data = new byte[1024];
         FileInputStream in;
         try {
@@ -240,7 +232,7 @@ public class Helper {
             e.printStackTrace();
         }
     }
-    public static void Unzip(File zipFile, File targetDirectory) {
+    public static void unzip(File zipFile, File targetDirectory) throws Exception {
         try (FileInputStream fis = new FileInputStream(zipFile)) {
             try (BufferedInputStream bis = new BufferedInputStream(fis)) {
                 try (ZipInputStream zis = new ZipInputStream(bis)) {
@@ -261,12 +253,10 @@ public class Helper {
                     }
                 }
             }
-        } catch (Exception e) {
-            //handle exception
         }
     }
 
-    public static List<Tag> GuessTags(String food){
+    public static List<Tag> guessTags(String food){
         HashSet<Tag> tags = new HashSet<>();
         Settings.settings.AutoTagMap.entrySet().forEach(e -> {
             if (food.contains(e.getKey())){

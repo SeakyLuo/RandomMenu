@@ -59,7 +59,7 @@ public class ToEatActivity extends SwipeBackActivity {
     }
 
     public void SetTitle(){
-        titleText.setText(Tag.Format(this, R.string.to_eat, adapter.getData().count()));
+        titleText.setText(Tag.format(this, R.string.to_eat, adapter.getData().count()));
     }
 
     @Override

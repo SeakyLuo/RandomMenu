@@ -22,17 +22,18 @@ public class Tag implements Comparable<Tag>, Parcelable {
         this.Counter = counter;
     }
 
-    public Tag More() { ++Counter; return this; }
-    public Tag Less() { --Counter; return this; }
+    public Tag more() { ++Counter; return this; }
+    public Tag less() { --Counter; return this; }
+    public void setCounter(int counter) { Counter = counter; }
     public int getCounter() { return Counter; }
-    public boolean IsEmpty() { return Counter == 0; }
+    public boolean isEmpty() { return Counter == 0; }
 
     @Override
     public boolean equals(@Nullable Object obj) {
         return obj instanceof Tag && Name.equals(((Tag)obj).Name);
     }
 
-    public boolean IsAllCategoriesTag() { return equals(AllCategoriesTag); }
+    public boolean isAllCategoriesTag() { return equals(AllCategoriesTag); }
 
     @Override
     public int hashCode() {
@@ -42,14 +43,14 @@ public class Tag implements Comparable<Tag>, Parcelable {
     @NonNull
     @Override
     public String toString() { return Name + " " + Counter; }
-    public static String Format(Context context, String name, int count){
+    public static String format(Context context, String name, int count){
         return String.format(context.getString(R.string.tag_format), name, count);
     }
-    public static String Format(Context context, int resId, int count){
-        return Format(context, context.getString(resId), count);
+    public static String format(Context context, int resId, int count){
+        return format(context, context.getString(resId), count);
     }
-    public static String Format(Context context, Tag tag){
-        return Format(context, tag.Name, tag.Counter);
+    public static String format(Context context, Tag tag){
+        return format(context, tag.Name, tag.Counter);
     }
 
     protected Tag(Parcel in) {

@@ -17,6 +17,8 @@ public class LoadingDialog extends DialogFragment {
     public TextView loading_message;
     public ProgressBar loading_progress;
     private View.OnClickListener onViewCreatedListener;
+    private Integer message_res_id;
+    private String message;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -25,12 +27,20 @@ public class LoadingDialog extends DialogFragment {
         loading_message = view.findViewById(R.id.loading_message);
         loading_progress = view.findViewById(R.id.loading_progress);
         if (onViewCreatedListener != null) onViewCreatedListener.onClick(view);
+        if (message_res_id != null) setMessage(message_res_id);
+        else if (message != null) setMessage(message);
         return view;
     }
     public void setOnViewCreatedListener(View.OnClickListener listener) { onViewCreatedListener = listener; }
 
-    public void setMessage(String message) { loading_message.setText(message); }
-    public void setMessage(int resId) { loading_message.setText(resId); }
+    public void setMessage(String message) {
+        if (loading_message == null) this.message = message;
+        else loading_message.setText(message);
+    }
+    public void setMessage(int resId) {
+        if (loading_message == null) this.message_res_id = resId;
+        else loading_message.setText(resId);
+    }
     public void setIndeterminate(boolean indeterminate) { loading_progress.setIndeterminate(indeterminate); }
     public void setProgress(int progress) { loading_progress.setProgress(progress); }
     public void setMax(int max) { loading_progress.setMax(max); }

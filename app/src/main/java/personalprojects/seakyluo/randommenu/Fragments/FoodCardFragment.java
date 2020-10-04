@@ -117,18 +117,18 @@ public class FoodCardFragment extends Fragment {
                     case R.id.share_item:
                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                         shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.GetFileUri(getContext(), Helper.getImagePath(imageViewerFragment.getCurrentImage())));
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.getFileUri(getContext(), Helper.getImagePath(imageViewerFragment.getCurrentImage())));
                         shareIntent.setType("image/*");
                         startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;
                     case R.id.like_food_item:
                         SetFoodFavorite(CurrentFood.SetIsFavorite(true));
-                        Settings.settings.SetFavorite(CurrentFood, true);
+                        Settings.settings.setFavorite(CurrentFood, true);
                         if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
                     case R.id.dislike_food_item:
                         SetFoodFavorite(CurrentFood.SetIsFavorite(false));
-                        Settings.settings.SetFavorite(CurrentFood, false);
+                        Settings.settings.setFavorite(CurrentFood, false);
                         if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
                     case R.id.show_food_item:

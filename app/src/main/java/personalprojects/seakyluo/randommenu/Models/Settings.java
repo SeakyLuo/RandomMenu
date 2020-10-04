@@ -1,5 +1,7 @@
 package personalprojects.seakyluo.randommenu.models;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import java.util.LinkedHashMap;
@@ -24,31 +26,31 @@ public class Settings {
     public void putTagMapper(TagMapper tagMapper){
         AutoTagMap.put(tagMapper.key, tagMapper.value.stream().map(t -> t.Name).collect(Collectors.toList()));
     }
-    public void AddFood(Food food, int index){
+    public void addFood(Food food, int index){
         food.getTags().forEach(tag -> {
             int tag_index = Tags.indexOf(tag);
             if (tag_index == -1){
-                Tags.add(tag.More());
+                Tags.add(tag.more());
             }else{
-                tag.Counter = Tags.get(tag_index).More().Counter;
+                tag.Counter = Tags.get(tag_index).more().Counter;
             }
         });
         Foods.add(food, index);
-        SortTags();
+        sortTags();
         if (food.IsFavorite()){
             MyFavorites.add(food.Name, 0);
         }
     }
-    public void AddFood(Food food){ AddFood(food, 0); }
+    public void addFood(Food food){ addFood(food, 0); }
 
-    public void RemoveFood(Food food){
+    public void removeFood(Food food){
         Foods.remove(food);
-        Tags.removeAll(Tags.find(food::HasTag).forEach(Tag::Less).find(Tag::IsEmpty));
-        SortTags();
+        Tags.removeAll(Tags.find(food::hasTag).forEach(Tag::less).find(Tag::isEmpty));
+        sortTags();
         MyFavorites.remove(food.Name);
     }
 
-    public void SortTags(){ Tags.sort(Tag::compareTo).reverse(); }
+    public void sortTags(){ Tags.sort(Tag::compareTo).reverse(); }
 
     public void updateFood(Food before, Food after){
         int index = Foods.indexOf(before);
@@ -58,14 +60,14 @@ public class Settings {
                    add = a.setDifference(b), remove = b.setDifference(a);
         Tags.forEach(t -> {
             if (remove.contains(t))
-                t.Less();
-        }).remove(Tag::IsEmpty);
+                t.less();
+        }).remove(Tag::isEmpty);
         Tags.forEach(t -> {
             if (add.contains(t))
-                add.remove(t.More());
+                add.remove(t.more());
         });
-        Tags.addAll(add.forEach(Tag::More));
-        SortTags();
+        Tags.addAll(add.forEach(Tag::more));
+        sortTags();
         if (before.IsFavorite() && !after.IsFavorite()){
             MyFavorites.remove(before.Name);
         }
@@ -74,20 +76,20 @@ public class Settings {
         }
     }
 
-    public void SetFavorite(Food food, boolean favorite){
+    public void setFavorite(Food food, boolean favorite){
         Food target = Foods.first(food);
         target.SetIsFavorite(favorite);
         if (favorite) MyFavorites.add(target.Name, 0);
         else MyFavorites.remove(target.Name);
     }
 
-    public AList<Food> GetFavoriteFoods(){
+    public AList<Food> getFavoriteFoods(){
         AList<Food> list = new AList<>();
         MyFavorites.forEach(name -> list.add(Foods.first(f -> f.Name.equals(name))));
         return list;
     }
 
-    public static Settings FromJson(String json){
+    public static Settings fromJson(String json){
         Gson gson = new Gson();
         try{
             return gson.fromJson(json, Settings.class);
@@ -96,7 +98,9 @@ public class Settings {
         }
     }
 
-    public String ToJson(){
+    @NonNull
+    @Override
+    public String toString(){
         Gson gson = new Gson();
         return gson.toJson(this);
     }
@@ -105,6 +109,6 @@ public class Settings {
     public boolean equals(Object obj){
         if (obj == null) return false;
         if (!(obj instanceof Settings)) return false;
-        return ToJson().equals(((Settings)obj).ToJson());
+        return toString().equals(((Settings)obj).toString());
     }
 }

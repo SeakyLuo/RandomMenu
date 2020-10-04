@@ -61,7 +61,7 @@ public class TagListAdapter extends CustomAdapter<Tag> {
 
         @Override
         void setData(Tag data) {
-            tag_name.setText(Tag.Format(context, data));
+            tag_name.setText(Tag.format(context, data));
             SetCheckButtonVisibility(checked);
         }
 

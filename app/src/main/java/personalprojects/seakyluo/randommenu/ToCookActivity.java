@@ -64,7 +64,7 @@ public class ToCookActivity extends SwipeBackActivity {
     }
 
     public void SetTitle(){
-        titleText.setText(Tag.Format(this, R.string.to_cook, adapter.getData().count()));
+        titleText.setText(Tag.format(this, R.string.to_cook, adapter.getData().count()));
     }
 
     @Override

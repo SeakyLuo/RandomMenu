@@ -54,7 +54,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
     }
 
     public void Filter(Tag tag){
-        data.copyFrom(all.find(f -> f.HasTag(tag)));
+        data.copyFrom(all.find(f -> f.hasTag(tag)));
         notifyDataSetChanged();
     }
 

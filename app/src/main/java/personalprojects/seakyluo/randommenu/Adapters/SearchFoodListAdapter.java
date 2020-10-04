@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.adapters;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
@@ -64,7 +65,7 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
             tag_content.setText(tags);
             String note = data.Note;
             if (Helper.isNullOrEmpty(note)){
-                view.findViewById(R.id.note_row).setVisibility(View.GONE);
+                note_row.setVisibility(View.GONE);
             }else{
                 if (showNote){
                     note_row.setVisibility(View.VISIBLE);
@@ -79,30 +80,37 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
             if (showTags){
                 highlightText(tag_content, keyword);
             }
-            if (showNote){
-                if (Helper.contains(data.Note, keyword) && !highlightText(note_content, keyword)){
+            if (showNote && Helper.contains(data.Note, keyword)){
+                note_content.onPreDraw();
+                if (isOverflow(note_content)){
                     // 备注可能因为太长不展示，先取段落，如果段落还是太长就直接取substring
-                    reHighlightNoteContent();
+                    adjustNoteContent();
                 }
+                highlightText(note_content, keyword);
             }
         }
 
-        private void reHighlightNoteContent(){
+        private void adjustNoteContent(){
             for (String paragraph: data.Note.split("\n")){
                 if (!paragraph.contains(keyword)){
                     continue;
                 }
                 note_content.setText(paragraph);
-                if (!highlightText(note_content, keyword)){
-                    note_content.setText(data.Note.substring(data.Note.indexOf(keyword)));
-                    highlightText(note_content, keyword);
+                note_content.onPreDraw();
+                if (isOverflow(note_content)){
+                    int index = paragraph.indexOf(keyword);
+                    String substring = paragraph.substring(index);
+                    if (index == 0){
+                        note_content.setText(substring);
+                    }else{
+                        note_content.setText("..." + substring);
+                    }
                 }
                 break;
             }
         }
 
-        private boolean highlightText(TextView textView, String keyword){
-            boolean isHighlighted = false;
+        private void highlightText(TextView textView, String keyword){
             String content = textView.getText().toString();
             Spannable wordToSpan = new SpannableString(content);
             for (int start = 0, index; start < content.length(); start = index + 1) {
@@ -110,12 +118,14 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
                 if (index == -1)
                     break;
                 else {
-                    isHighlighted = true;
                     wordToSpan.setSpan(new ForegroundColorSpan(Color.RED), index, index + keyword.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
             textView.setText(wordToSpan, TextView.BufferType.SPANNABLE);
-            return isHighlighted;
         }
+    }
+
+    private static boolean isOverflow(TextView textView){
+        return textView.getLineCount() > textView.getMaxLines() || Helper.hasEllipSize(textView);
     }
 }

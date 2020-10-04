@@ -25,7 +25,7 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         setTitle();
 
         fragment = (FoodListFragment) getSupportFragmentManager().findFragmentById(R.id.food_list_fragment);
-        fragment.setData(Settings.settings.GetFavoriteFoods());
+        fragment.setData(Settings.settings.getFavoriteFoods());
         fragment.setShowLikeImage(false);
         fragment.setFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
@@ -40,13 +40,13 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         });
         fragment.setFoodRemovedListener((viewHolder, data) -> {
             int index = fragment.removeFood(data);
-            Settings.settings.SetFavorite(data, false);
+            Settings.settings.setFavorite(data, false);
             setTitle();
             setResult(RESULT_OK);
             Snackbar snackbar = Snackbar.make(findViewById(R.id.mf_toolbar), String.format(getString(R.string.item_removed), data.Name), Snackbar.LENGTH_LONG);
             snackbar.setAction(getString(R.string.undo), view -> {
                 fragment.cancelRemoval();
-                Settings.settings.SetFavorite(data, true);
+                Settings.settings.setFavorite(data, true);
                 Settings.settings.MyFavorites.move(0, index);
                 setTitle();
             });
@@ -54,5 +54,5 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         });
     }
 
-    private void setTitle() { title.setText(Tag.Format(this, R.string.my_favorites, Settings.settings.MyFavorites.count())); }
+    private void setTitle() { title.setText(Tag.format(this, R.string.my_favorites, Settings.settings.MyFavorites.count())); }
 }

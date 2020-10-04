@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.fragments;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Set;
 
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
@@ -29,6 +32,7 @@ import personalprojects.seakyluo.randommenu.ToEatActivity;
 import static android.app.Activity.RESULT_OK;
 
 public class SettingsFragment extends Fragment {
+    private static final int FILE_PICKER = 1;
     public static final String TAG = "SettingsFragment";
     @Nullable
     @Override
@@ -74,65 +78,67 @@ public class SettingsFragment extends Fragment {
                             if (!paths.contains(file.getName()))
                                 file.delete();
                     }
-                    // Removing non-existed images
+                    // Removing non-existent images
                     Set<String> files = new AList<>(Helper.ImageFolder.listFiles()).convert(File::getName).toSet();
                     Settings.settings.Foods.forEach(food -> {
                        food.Images.copy().forEach(image -> {
                            if (!files.contains(image)) food.Images.remove(image);
                        });
                     });
-                    for (File file: Helper.LogFolder.listFiles())
-                        file.delete();
-                    for (File file: Helper.TempFolder.listFiles())
-                        file.delete();
-                    new AList<>(Helper.ExportedDataFolder.listFiles()).after(0).forEach(File::delete);
-                    dialog.dismiss();
-                    getActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), R.string.clear_cache_msg, Toast.LENGTH_SHORT).show();
-                    });
+                    clearFolder(Helper.LogFolder);
+                    clearFolder(Helper.TempFolder);
+                    clearFolder(Helper.TempUnzipFolder);
+                    File[] exportedFiles = Helper.ExportedDataFolder.listFiles();
+                    if (exportedFiles != null && exportedFiles.length > 1){
+                        new AList<>(exportedFiles).after(0).forEach(File::delete);
+                    }
+                    showShortToast(dialog, R.string.clear_cache_msg);
                 }).start();
             });
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
         view.findViewById(R.id.import_data_button).setOnClickListener(v -> {
-            LoadingDialog dialog = new LoadingDialog();
-            dialog.setOnViewCreatedListener(d -> {
-                dialog.setMessage(getString(R.string.importing_data));
-                new Thread(() -> {
-                    getActivity().runOnUiThread(() -> {
-//                    Helper.Unzip(null, Helper.Root);
-//                    Helper.Init(getContext());
-//                    Helper.Save();
-                        dialog.dismiss();
-                        Toast.makeText(getContext(), R.string.import_data_msg, Toast.LENGTH_SHORT).show();
-                    });
-                }).start();
-            });
-            dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("*/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            try {
+                startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"), FILE_PICKER);
+            } catch (ActivityNotFoundException ex) {
+                // Potentially direct the user to the Market with a Dialog
+                Toast.makeText(getContext(), "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+            }
         });
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
             String filename = "RandomMenu" + Helper.Timestamp() + ".zip", path = Helper.ExportedDataFolder.getPath() + File.separator + filename;
             LoadingDialog dialog = new LoadingDialog();
             dialog.setOnViewCreatedListener(d -> {
-                dialog.setMessage(getString(R.string.exporting_data));
+                dialog.setMessage(R.string.exporting_data);
                 new Thread(() -> {
-                    if (Helper.Zip(path, Helper.ImageFolder, new File(Helper.getPath(Settings.FILENAME)))){
-                        getActivity().runOnUiThread(() -> {
-                            dialog.dismiss();
-                            Toast.makeText(getContext(), R.string.export_data_msg, Toast.LENGTH_SHORT).show();
-
-                            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            shareIntent.setType("*/*");
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.GetFileUri(getContext(), path));
-                            startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
-                        });
+                    try{
+                        Helper.zip(path, Helper.ImageFolder, new File(Helper.getPath(Settings.FILENAME)));
+                    }catch (FileNotFoundException e){
+                        showExceptionToast(dialog, R.string.file_not_found, e);
+                        return;
+                    } catch (Exception e) {
+                        showExceptionToast(dialog, R.string.export_data_failed, e);
+                        return;
                     }
+                    showShortToast(dialog, R.string.export_data_msg);
+                    // 分享导出文件
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    shareIntent.setType("*/*");
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.getFileUri(getContext(), path));
+                    startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
                 }).start();
             });
             dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
         });
         view.findViewById(R.id.save_data_button).setOnClickListener(v -> {
+            Settings.settings.Tags.forEach(t -> {
+                t.setCounter(Settings.settings.Foods.find(f -> f.hasTag(t)).count());
+            });
+            Settings.settings.sortTags();
             Helper.save();
             Toast.makeText(getContext(), R.string.data_saved, Toast.LENGTH_SHORT).show();
         });
@@ -142,7 +148,105 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MyFavoritesActivity.REQUEST_CODE && resultCode == RESULT_OK)
-            ((MainActivity)getActivity()).randomFragment.Refresh();
+        switch (requestCode){
+            case MyFavoritesActivity.REQUEST_CODE:
+                if (resultCode == RESULT_OK){
+                    ((MainActivity)getActivity()).randomFragment.Refresh();
+                }
+                break;
+            case FILE_PICKER:
+                if (data == null || data.getData() == null){
+                    return;
+                }
+                File file = new File(data.getData().getPath());
+                unzip(file);
+                break;
+        }
+    }
+
+    public void unzip(File file){
+        if (!file.getName().endsWith(".zip")){
+            Toast.makeText(getContext(), R.string.illegal_unzip_target, Toast.LENGTH_LONG).show();
+            return;
+        }
+        LoadingDialog dialog = new LoadingDialog();
+        dialog.setOnViewCreatedListener(d -> {
+            new Thread(() -> {
+                clearFolder(Helper.TempUnzipFolder);
+                try {
+                    Helper.unzip(file, Helper.TempUnzipFolder);
+                } catch (Exception e) {
+                    showExceptionToast(dialog, R.string.import_data_failed, e);
+                    return;
+                }
+                AList<File> files = new AList<>(Helper.TempUnzipFolder.listFiles());
+                File imageFolder = files.first(f -> f.getName().equals(Helper.ImageFolder.getName()));
+                if (imageFolder == null){
+                    showShortToast(dialog, R.string.no_import_image_folder);
+                }else{
+                    for (File image: imageFolder.listFiles()){
+                        try {
+                            Helper.copy(image, Helper.ImageFolder);
+                        } catch (IOException e) {
+                            showExceptionToast(dialog, R.string.import_data_failed, e);
+                            return;
+                        }
+                    }
+                }
+                File settings = files.first(f -> f.getName().equals(Settings.FILENAME));
+                if (settings == null){
+                    showShortToast(dialog, R.string.no_import_settings);
+                    return;
+                }else{
+                    try {
+                        Helper.copy(settings, Helper.ImageFolder);
+                    } catch (IOException e) {
+                        showExceptionToast(dialog, R.string.import_data_failed, e);
+                        return;
+                    }
+                }
+                Helper.init(getContext());
+                Helper.save();
+                clearFolder(Helper.TempUnzipFolder);
+            }).start();
+        });
+        dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
+        dialog.setMessage(R.string.importing_data);
+    }
+
+    private static void clearFolder(File folder){
+        for (File file: folder.listFiles()){
+            file.delete();
+        }
+    }
+
+    private void showExceptionToast(LoadingDialog dialog, int message, Exception e){
+        showToast(dialog, getString(message) + (e.getMessage() == null ? e.toString() : e.getMessage()), Toast.LENGTH_LONG);
+    }
+
+    private void showShortToast(LoadingDialog dialog, String message){
+        showToast(dialog, message, Toast.LENGTH_SHORT);
+    }
+
+    private void showLongToast(LoadingDialog dialog, int message){
+        showToast(dialog, message, Toast.LENGTH_LONG);
+    }
+
+    private void showShortToast(LoadingDialog dialog, int message){
+        showToast(dialog, message, Toast.LENGTH_SHORT);
+    }
+
+    private void showToast(LoadingDialog dialog, String message, int length){
+        getActivity().runOnUiThread(() -> {
+            dialog.dismiss();
+            Toast.makeText(getContext(), message, length).show();
+        });
+    }
+
+    private void showToast(LoadingDialog dialog, int message, int length){
+        getActivity().runOnUiThread(() -> {
+            dialog.dismiss();
+            Toast.makeText(getContext(), message, length).show();
+        });
     }
 }

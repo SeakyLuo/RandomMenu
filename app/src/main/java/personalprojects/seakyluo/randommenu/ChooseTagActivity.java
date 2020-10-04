@@ -6,7 +6,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -106,7 +105,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
 
         selected_tags.addAll(original_tags);
         if (Settings.settings.AutoTag && selected_tags.size() == 0 && guessFoodName != null){
-            for (Tag tag: Helper.GuessTags(guessFoodName)){
+            for (Tag tag: Helper.guessTags(guessFoodName)){
                 if (!selected_tags.contains(tag)){
                     selected_tags.add(tag);
                 }

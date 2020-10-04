@@ -62,7 +62,7 @@ public class NavigationFragment extends Fragment {
         selectTagAdapter.context = getContext();
         selectTagAdapter.setLongClickListener(((viewHolder, data) -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_tag_menu, getContext(), viewHolder.view);
-            if (data.IsAllCategoriesTag()){
+            if (data.isAllCategoriesTag()){
                 helper.removeItems(R.id.edit_tag_item);
                 helper.removeItems(R.id.delete_tag_item);
             }else{
@@ -149,13 +149,13 @@ public class NavigationFragment extends Fragment {
     }
 
     private void selectTag(Tag tag){
-        if (tag.IsAllCategoriesTag()){
+        if (tag.isAllCategoriesTag()){
             lastTag = Tag.AllCategoriesTag;
-            title_text_view.setText(Tag.Format(getContext(), R.string.all_categories, Settings.settings.Foods.count()));
+            title_text_view.setText(Tag.format(getContext(), R.string.all_categories, Settings.settings.Foods.count()));
             foodAdapter.Reset();
         }else{
             lastTag = Settings.settings.Tags.first(tag);
-            title_text_view.setText(Tag.Format(getContext(), lastTag));
+            title_text_view.setText(Tag.format(getContext(), lastTag));
             foodAdapter.Filter(lastTag);
         }
     }
@@ -173,7 +173,7 @@ public class NavigationFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) setData();
-        if (!lastTag.IsAllCategoriesTag() && !Settings.settings.Tags.contains(lastTag))
+        if (!lastTag.isAllCategoriesTag() && !Settings.settings.Tags.contains(lastTag))
             selectTagAdapter.HighlightTag(lastTag = Tag.AllCategoriesTag);
         selectTag(lastTag);
     }
