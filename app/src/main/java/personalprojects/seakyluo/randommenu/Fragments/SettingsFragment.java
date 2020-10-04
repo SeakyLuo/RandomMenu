@@ -184,13 +184,11 @@ public class SettingsFragment extends Fragment {
                 if (imageFolder == null){
                     showShortToast(dialog, R.string.no_import_image_folder);
                 }else{
-                    for (File image: imageFolder.listFiles()){
-                        try {
-                            Helper.copy(image, Helper.ImageFolder);
-                        } catch (IOException e) {
-                            showExceptionToast(dialog, R.string.import_data_failed, e);
-                            return;
-                        }
+                    try {
+                        Helper.copy(imageFolder, Helper.root);
+                    } catch (IOException e) {
+                        showExceptionToast(dialog, R.string.import_data_failed, e);
+                        return;
                     }
                 }
                 File settings = files.first(f -> f.getName().equals(Settings.FILENAME));
@@ -199,7 +197,7 @@ public class SettingsFragment extends Fragment {
                     return;
                 }else{
                     try {
-                        Helper.copy(settings, Helper.ImageFolder);
+                        Helper.copy(settings, Helper.root);
                     } catch (IOException e) {
                         showExceptionToast(dialog, R.string.import_data_failed, e);
                         return;

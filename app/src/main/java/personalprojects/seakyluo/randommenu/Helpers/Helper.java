@@ -48,7 +48,7 @@ import personalprojects.seakyluo.randommenu.R;
 
 public class Helper {
     public static final String ROOT_FOLDER = "RandomMenu";
-    public static File Root, SaveImageFolder, ImageFolder, TempFolder, TempUnzipFolder, ExportedDataFolder, LogFolder;
+    public static File root, SaveImageFolder, ImageFolder, TempFolder, TempUnzipFolder, ExportedDataFolder, LogFolder;
     public static Bitmap DefaultFoodImage;
     private static Random random = new Random();
 
@@ -72,7 +72,7 @@ public class Helper {
     public static int RandRange(int start, int end) { return random.nextInt((end - start)) + start; }
     public static void init(Context context){
         DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
-        Root = createOrOpenFolder(ROOT_FOLDER);
+        root = createOrOpenFolder(ROOT_FOLDER);
         ImageFolder = createOrOpenFolder("RandomMenuFood");
         SaveImageFolder = createOrOpenFolder("SavedImages");
         TempFolder = createOrOpenFolder("Temp");

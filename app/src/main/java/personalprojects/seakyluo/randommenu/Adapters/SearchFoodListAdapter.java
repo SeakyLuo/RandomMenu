@@ -1,6 +1,5 @@
 package personalprojects.seakyluo.randommenu.adapters;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
@@ -17,6 +16,8 @@ import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.models.Food;
 
 public class SearchFoodListAdapter extends BaseFoodListAdapter {
+    private static final String dots = "...";
+
     private boolean showTags, showNote;
     private String comma;
     private String keyword;
@@ -91,19 +92,25 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
         }
 
         private void adjustNoteContent(){
-            for (String paragraph: data.Note.split("\n")){
+            String[] paragraphs = data.Note.split("\n");
+            for (int i = 0; i < paragraphs.length; i++){
+                String paragraph = paragraphs[i];
                 if (!paragraph.contains(keyword)){
                     continue;
                 }
-                note_content.setText(paragraph);
+                if (i == 0){
+                    note_content.setText(paragraph);
+                }else{
+                    note_content.setText(dots + paragraph);
+                }
                 note_content.onPreDraw();
                 if (isOverflow(note_content)){
                     int index = paragraph.indexOf(keyword);
                     String substring = paragraph.substring(index);
-                    if (index == 0){
+                    if (i == 0 && index == 0){
                         note_content.setText(substring);
                     }else{
-                        note_content.setText("..." + substring);
+                        note_content.setText(dots + substring);
                     }
                 }
                 break;
