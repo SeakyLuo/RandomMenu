@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -31,6 +32,10 @@ public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
         });
     }
 
+    public void setContext(Context context){
+        this.context = context;
+    }
+
     public class BaseViewHolder extends CustomViewHolder {
         protected ImageView food_image, liked_image;
         protected TextView food_name;
@@ -41,7 +46,7 @@ public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
             food_name = view.findViewById(R.id.food_name);
             liked_image = view.findViewById(R.id.liked_image);
             food_image.setOnClickListener(v -> {
-                if (data.HasImage()){
+                if (data.hasImage()){
                     Intent intent = new Intent(context, FullScreenImageActivity.class);
                     intent.putExtra(FullScreenImageActivity.IMAGE, data.Images.toArrayList());
                     context.startActivity(intent);
@@ -55,7 +60,7 @@ public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
         void setData(Food data) {
             Helper.loadImage(Glide.with(view), data.getCover(), food_image);
             food_name.setText(data.Name);
-            liked_image.setVisibility(showLikeImage && data.IsFavorite() ? View.VISIBLE : View.GONE);
+            liked_image.setVisibility(showLikeImage && data.isFavorite() ? View.VISIBLE : View.GONE);
         }
     }
 }

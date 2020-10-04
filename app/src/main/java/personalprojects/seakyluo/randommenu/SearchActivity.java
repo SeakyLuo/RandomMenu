@@ -167,10 +167,10 @@ public class SearchActivity extends SwipeBackActivity {
                     all.add(new MatchFood(mf.food, mf.points + mf.bonus));
                 }
             });
-            CompletableFuture.runAsync(() -> allFragment.setData(sortFoods(all))).join();
-            CompletableFuture.runAsync(() -> foodFragment.setData(sortFoods(food))).join();
-            CompletableFuture.runAsync(() -> tagFragment.setData(sortFoods(tag))).join();
-            CompletableFuture.runAsync(() -> noteFragment.setData(sortFoods(note))).join();
+            allFragment.setData(sortFoods(all));
+            foodFragment.setData(sortFoods(food));
+            tagFragment.setData(sortFoods(tag));
+            noteFragment.setData(sortFoods(note));
         }
     }
 

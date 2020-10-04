@@ -87,7 +87,7 @@ public class NavigationFragment extends Fragment {
                             }else{
                                 Tag tag = Settings.settings.Tags.first(t -> t.Name.equals(data.Name));
                                 tag.Name = text;
-                                Settings.settings.Foods.forEach(f -> f.RenameTag(data.Name, text));
+                                Settings.settings.Foods.forEach(f -> f.renameTag(data.Name, text));
                                 selectTagAdapter.set(tag, selectTagAdapter.indexOf(t -> t.Name.equals(data.Name)));
                                 Helper.save();
                             }
@@ -101,7 +101,7 @@ public class NavigationFragment extends Fragment {
                             if (data.equals(lastTag)) lastTag = Tag.AllCategoriesTag;
                             selectTagAdapter.remove(data);
                             Settings.settings.Tags.remove(data);
-                            Settings.settings.Foods.forEach(food -> food.RemoveTag(data));
+                            Settings.settings.Foods.forEach(food -> food.removeTag(data));
                             Helper.save();
                         });
                         askDialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);

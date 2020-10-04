@@ -35,15 +35,15 @@ public class Food implements Parcelable {
         DateAdded = dateAdded;
     }
 
-    public Food Copy(){ return new Food(Name, Images.copy(), Tags.copy(), Note, IsFavorite, Cover, DateAdded); }
-    public boolean SetIsFavorite(boolean isFavorite){ return IsFavorite = isFavorite; }
-    public boolean IsFavorite() { return IsFavorite; }
+    public Food copy(){ return new Food(Name, Images.copy(), Tags.copy(), Note, IsFavorite, Cover, DateAdded); }
+    public boolean setIsFavorite(boolean isFavorite){ return IsFavorite = isFavorite; }
+    public boolean isFavorite() { return IsFavorite; }
 
-    public boolean HasImage() { return Images.count() > 0; }
+    public boolean hasImage() { return Images.count() > 0; }
     public boolean hasTag(Tag tag) { return Tags.contains(tag); }
     public boolean hasTag(String name) { return Tags.any(t -> t.Name.equals(name)); }
-    public void RenameTag(String oldName, String newName){ Tags.first(t -> t.Name.equals(oldName)).Name = newName; }
-    public Long GetDateAdded() { return DateAdded; }
+    public void renameTag(String oldName, String newName){ Tags.first(t -> t.Name.equals(oldName)).Name = newName; }
+    public Long getDateAdded() { return DateAdded; }
     public String GetDateAddedString(){
         Calendar date = Calendar.getInstance();
         date.setTimeInMillis(DateAdded);
@@ -59,7 +59,7 @@ public class Food implements Parcelable {
     public AList<Tag> getTags() { return Tags; }
     public void SetCover(String Cover) { this.Cover = Cover; }
     public String getCover() { return Cover; }
-    public void RemoveTag(Tag tag) { Tags.remove(tag); }
+    public void removeTag(Tag tag) { Tags.remove(tag); }
     public static boolean IsIncomplete(Food food) { return food == null || food.DateAdded == 0; }
 
     @Override

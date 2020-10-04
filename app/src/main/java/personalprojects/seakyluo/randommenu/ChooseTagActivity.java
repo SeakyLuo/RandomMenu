@@ -44,7 +44,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String tag = suggestionTagListAdapter.getItem(position);
-                ChooseTag(tagListAdapter.getData().first(t -> t.Name.equals(tag)));
+                chooseTag(tagListAdapter.getData().first(t -> t.Name.equals(tag)));
                 inputBox.setText("");
             }
 
@@ -88,7 +88,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 dialog.setMessage(R.string.ask_save);
                 dialog.setOnYesListener(view -> {
-                    FinishActivity();
+                    finishActivity();
                 });
                 dialog.setOnNoListener(view -> {
                     setResult(RESULT_CANCELED);
@@ -115,7 +115,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             }
         }
         tagListAdapter = new TagListAdapter(this, Settings.settings.Tags.removeAll(excluded_tags), selected_tags);
-        tagListAdapter.SetTagClickedListener((viewHolder, tag) -> ChooseTag(tag));
+        tagListAdapter.SetTagClickedListener((viewHolder, tag) -> chooseTag(tag));
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
         tag_recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -131,7 +131,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         tagsFragment.setTagClosedListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
     }
 
-    private void ChooseTag(Tag tag){
+    private void chooseTag(Tag tag){
         if (tagsFragment.GetAdapter().getItemCount() == Tag.MAX_TAGS){
             Toast.makeText(ChooseTagActivity.this, getString(R.string.tag_limit), Toast.LENGTH_SHORT).show();
         }else{
@@ -147,7 +147,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
     private void submitTag(){
         String tag_name = inputBox.getText().toString().trim();
         if (tag_name.length() == 0){
-            FinishActivity();
+            finishActivity();
         }else{
             Tag tag = new Tag(tag_name);
             int index = tagsFragment.indexOf(tag);
@@ -162,7 +162,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         }
     }
 
-    private void FinishActivity(){
+    private void finishActivity(){
         Intent intent = new Intent();
         AList<Tag> tags = tagsFragment.getData();
         intent.putExtra(SELECTED_TAGS, tags.toArrayList());

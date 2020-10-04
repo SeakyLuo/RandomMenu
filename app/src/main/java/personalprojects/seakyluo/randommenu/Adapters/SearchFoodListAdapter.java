@@ -1,13 +1,19 @@
 package personalprojects.seakyluo.randommenu.adapters;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,8 +31,13 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
     @NonNull
     @Override
     public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        comma = context.getResources().getString(R.string.comma);
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_listed_food_search, parent, false));
+    }
+
+    @Override
+    public void setContext(Context context){
+        super.setContext(context);
+        comma = context.getResources().getString(R.string.comma);
     }
 
     public void setShowTags(boolean showTags) {
@@ -64,75 +75,133 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
             super.setData(data);
             String tags = String.join(comma, data.getTags().convert(tag -> tag.Name).toArrayList());
             tag_content.setText(tags);
-            String note = data.Note;
-            if (Helper.isNullOrEmpty(note)){
+            note_content.setText(data.Note);
+
+            if (Helper.isNullOrEmpty(data.Note)){
                 note_row.setVisibility(View.GONE);
             }else{
                 if (showNote){
                     note_row.setVisibility(View.VISIBLE);
                 }
-                note_content.setText(note);
             }
-            highlight(keyword);
+            afterDrew(food_name);
         }
 
-        public void highlight(String keyword){
+        public void highlight(){
             highlightText(food_name, keyword);
             if (showTags){
                 highlightText(tag_content, keyword);
             }
-            if (showNote && Helper.contains(data.Note, keyword)){
-                note_content.onPreDraw();
-                if (isOverflow(note_content)){
-                    // 备注可能因为太长不展示，先取段落，如果段落还是太长就直接取substring
-                    adjustNoteContent();
-                }
+            if (showNote){
                 highlightText(note_content, keyword);
             }
         }
 
-        private void adjustNoteContent(){
-            String[] paragraphs = data.Note.split("\n");
-            for (int i = 0; i < paragraphs.length; i++){
-                String paragraph = paragraphs[i];
-                if (!paragraph.contains(keyword)){
-                    continue;
+        private void afterDrew(TextView textView){
+            ViewTreeObserver observer = textView.getViewTreeObserver();
+            observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    highlight();
+                    textView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                if (i == 0){
-                    note_content.setText(paragraph);
-                }else{
-                    note_content.setText(dots + paragraph);
-                }
-                note_content.onPreDraw();
-                if (isOverflow(note_content)){
-                    int index = paragraph.indexOf(keyword);
-                    String substring = paragraph.substring(index);
-                    if (i == 0 && index == 0){
-                        note_content.setText(substring);
-                    }else{
-                        note_content.setText(dots + substring);
-                    }
-                }
-                break;
-            }
-        }
-
-        private void highlightText(TextView textView, String keyword){
-            String content = textView.getText().toString();
-            Spannable wordToSpan = new SpannableString(content);
-            for (int start = 0, index; start < content.length(); start = index + 1) {
-                index = content.indexOf(keyword, start);
-                if (index == -1)
-                    break;
-                else {
-                    wordToSpan.setSpan(new ForegroundColorSpan(Color.RED), index, index + keyword.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-            }
-            textView.setText(wordToSpan, TextView.BufferType.SPANNABLE);
+            });
         }
     }
 
-    private static boolean isOverflow(TextView textView){
-        return textView.getLineCount() > textView.getMaxLines() || Helper.hasEllipSize(textView);
+    private static void highlightText(TextView textView, String keyword){
+        int maxLines = textView.getMaxLines();
+        adjustTextView(textView, keyword);
+        String content = getVisibleText(textView);
+        Spannable wordToSpan = new SpannableString(content);
+        for (int start = 0, index; start < content.length(); start = index + 1) {
+            index = content.indexOf(keyword, start);
+            if (index == -1)
+                break;
+            else {
+                wordToSpan.setSpan(new ForegroundColorSpan(Color.RED), index, index + keyword.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+        textView.setText(wordToSpan, TextView.BufferType.SPANNABLE);
+        textView.setEllipsize(TextUtils.TruncateAt.END);
+        textView.setMaxLines(maxLines);
+    }
+
+    /**
+     * 备注可能因为太长不展示，需要调整展示内容
+     */
+    private static void adjustTextView(TextView textView, String keyword){
+        if (Helper.contains(getVisibleText(textView), keyword)){
+            return;
+        }
+        // 找第一个带关键词的段落
+        String[] paragraphs = textView.getText().toString().split("\n");
+        for (int i = 0; i < paragraphs.length; i++){
+            String paragraph = paragraphs[i];
+            if (!paragraph.contains(keyword)){
+                continue;
+            }
+            if (i == 0){
+                textView.setText(paragraph);
+            }else{
+                // 如果不是第一段，开头加上省略号
+                textView.setText(dots + paragraph);
+            }
+            String visibleText;
+            // 如果关键词还是看不到
+            // 不停地重新计算可见范围（主要是针对else if）
+            while (!Helper.contains(visibleText = getVisibleText(textView), keyword)){
+                int index = paragraph.indexOf(keyword);
+                int start = Math.max(paragraph.length() - visibleText.length(), 0);
+                int end;
+                String subString;
+                // 如果在最后面的可见范围内
+                if (start <= index + keyword.length()){
+                    // 读取剩下的全部
+                    end = paragraph.length();
+                    // 如果关键词会被前面的省略号覆盖
+                    if (index - start < dots.length()){
+                        end -= dots.length();
+                    }
+                    // 如果关键词会被后面的省略号覆盖
+                    else if (index + keyword.length() + dots.length() > visibleText.length()){
+                        start += dots.length();
+                    }
+                    subString = paragraph.substring(start, end);
+                }else{
+                    // 可见范围为读取到关键词的
+                    end = index + keyword.length();
+                    start = end - visibleText.length();
+                    subString = paragraph.substring(start, end);
+                }
+                textView.setText(dots + subString);
+            }
+            break;
+        }
+    }
+
+    private static String getVisibleText(TextView textView) {
+        String text = textView.getText().toString();
+//        int maxLines = getMaxLines(textView);
+        int maxLines = textView.getMaxLines();
+        if (maxLines < 1 || maxLines > textView.getLineCount()){
+            return text;
+        }
+        Layout layout = textView.getLayout();
+        int end = layout.getLineEnd(maxLines - 1);
+        // 默认了 TextUtils.TruncateAt.END
+        int ellCount = layout.getEllipsisCount(maxLines - 1);
+        return text.substring(0, end - ellCount);
+    }
+
+    private static int getMaxLines(TextView textView){
+        int lineHeight = textView.getLineHeight();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            Rect bounds = new Rect();
+            textView.getLineBounds(0, bounds);
+            lineHeight = bounds.bottom - bounds.top;
+        }
+        if (lineHeight == 0) return 0;
+        return (int) textView.getHeight() / lineHeight;
     }
 }

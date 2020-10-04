@@ -40,7 +40,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
         });
     }
 
-    public void SetFoodLiked(Food food) { ((ViewHolder)viewHolders.first(vh -> vh.data.equals(food))).SetLiked(food.IsFavorite()); }
+    public void SetFoodLiked(Food food) { ((ViewHolder)viewHolders.first(vh -> vh.data.equals(food))).SetLiked(food.isFavorite()); }
 
     @Override
     public void setData(AList<Food> data){
@@ -76,7 +76,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
         void setData(Food data) {
             food_name.setText(data.Name);
             Helper.loadImage(Glide.with(view), data.getCover(), food_image);
-            SetLiked(data.IsFavorite());
+            SetLiked(data.isFavorite());
         }
 
         void SetLiked(boolean isFavorite) { liked.setVisibility(isFavorite ? View.VISIBLE : View.GONE); }

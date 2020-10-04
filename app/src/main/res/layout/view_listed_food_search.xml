@@ -77,7 +77,7 @@
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    android:text="PlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholder" />
+                    android:text="Placeholder" />
             </LinearLayout>
 
             <LinearLayout
@@ -93,13 +93,13 @@
                     android:layout_height="wrap_content"
                     android:text="@string/note_header" />
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/note_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="start"
+                    android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="PlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholderPlaceholder" />
+                    android:text="Placeholder" />
             </LinearLayout>
 
         </LinearLayout>

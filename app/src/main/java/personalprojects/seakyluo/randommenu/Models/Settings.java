@@ -37,7 +37,7 @@ public class Settings {
         });
         Foods.add(food, index);
         sortTags();
-        if (food.IsFavorite()){
+        if (food.isFavorite()){
             MyFavorites.add(food.Name, 0);
         }
     }
@@ -68,17 +68,17 @@ public class Settings {
         });
         Tags.addAll(add.forEach(Tag::more));
         sortTags();
-        if (before.IsFavorite() && !after.IsFavorite()){
+        if (before.isFavorite() && !after.isFavorite()){
             MyFavorites.remove(before.Name);
         }
-        else if (!before.IsFavorite() && after.IsFavorite()){
+        else if (!before.isFavorite() && after.isFavorite()){
             MyFavorites.add(after.Name, 0);
         }
     }
 
     public void setFavorite(Food food, boolean favorite){
         Food target = Foods.first(food);
-        target.SetIsFavorite(favorite);
+        target.setIsFavorite(favorite);
         if (favorite) MyFavorites.add(target.Name, 0);
         else MyFavorites.remove(target.Name);
     }

@@ -83,7 +83,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     imageChanged = currentFood == null ? images.count() > 0 : !images.equals(currentFood.Images),
                     tagChanged = currentFood == null ? tags.count() > 0 : !tags.equals(currentFood.getTags()),
                     noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note),
-                    likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.IsFavorite();
+                    likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.isFavorite();
             if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
@@ -115,7 +115,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     if (!Helper.isNullOrEmpty(food_cover)){
                         food.SetCover(food_cover);
                     }
-                    food.SetIsFavorite(food.IsFavorite() || like_toggle.isChecked());
+                    food.setIsFavorite(food.isFavorite() || like_toggle.isChecked());
                     food.AddTags(chooseTagFragment.GetData());
                     if (!Helper.isBlank(food.Note)){
                         food.Note = food.Note + '\n' + getNote();
@@ -246,12 +246,12 @@ public class EditFoodActivity extends AppCompatActivity {
     private void setFood(Food food){
         if (food == null) return;
         edit_food_name.setText(food.Name);
-        food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
+        food_image.setVisibility(food.hasImage() ? View.GONE : View.VISIBLE);
         imageViewerFragment.setImages(images.copyFrom(food.Images), food_cover = food.getCover());
         sources.copyFrom(new AList<>("", food.Images.count()));
         chooseTagFragment.SetData(food.getTags());
         edit_note.setText(food.Note);
-        like_toggle.setChecked(food.IsFavorite());
+        like_toggle.setChecked(food.isFavorite());
     }
 
     @Override

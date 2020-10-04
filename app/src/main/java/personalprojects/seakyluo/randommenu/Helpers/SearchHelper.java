@@ -27,7 +27,7 @@ public class SearchHelper {
         int bonus = 0;
         if (points > 0){
             bonus -= food.HideCount;
-            if (food.IsFavorite()) bonus += 10;
+            if (food.isFavorite()) bonus += 10;
         }
         return new MatchFood(food, points, bonus, namePoints, tagPoints, notePoints);
     }

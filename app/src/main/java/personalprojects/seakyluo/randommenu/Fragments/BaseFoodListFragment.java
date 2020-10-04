@@ -28,7 +28,7 @@ public abstract class BaseFoodListFragment<T extends BaseFoodListAdapter> extend
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linear_recycler_view, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
-        adapter.context = getContext();
+        adapter.setContext(getContext());
         recyclerView.setAdapter(adapter);
         return view;
     }

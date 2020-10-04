@@ -95,14 +95,14 @@ public class FoodCardFragment extends Fragment {
         food_note_back.setMovementMethod(new ScrollingMovementMethod());
         more_button.setOnClickListener(v -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
-            if (!CurrentFood.HasImage()) helper.removeItems(R.id.save_image_item, R.id.share_item);
+            if (!CurrentFood.hasImage()) helper.removeItems(R.id.save_image_item, R.id.share_item);
             if (Helper.isNullOrEmpty(CurrentFood.Note)) helper.removeItems(R.id.more_item);
             if (CurrentFood.HideCount == 0) helper.removeItems(R.id.show_food_item);
             else helper.removeItems(R.id.hide_food_item);
-            helper.removeItems(CurrentFood.IsFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
+            helper.removeItems(CurrentFood.isFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
             helper.setOnDismissListener(() -> ObjectAnimator.ofFloat(v, "rotation", 180, 360).start());
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
-                Food before = CurrentFood.Copy();
+                Food before = CurrentFood.copy();
                 switch (menuItem.getItemId()){
                     case R.id.edit_food_item:
                         Intent editFoodIntent = new Intent(getContext(), EditFoodActivity.class);
@@ -122,12 +122,12 @@ public class FoodCardFragment extends Fragment {
                         startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;
                     case R.id.like_food_item:
-                        SetFoodFavorite(CurrentFood.SetIsFavorite(true));
+                        SetFoodFavorite(CurrentFood.setIsFavorite(true));
                         Settings.settings.setFavorite(CurrentFood, true);
                         if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
                     case R.id.dislike_food_item:
-                        SetFoodFavorite(CurrentFood.SetIsFavorite(false));
+                        SetFoodFavorite(CurrentFood.setIsFavorite(false));
                         Settings.settings.setFavorite(CurrentFood, false);
                         if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
@@ -181,9 +181,9 @@ public class FoodCardFragment extends Fragment {
         food_name.setText(food.Name);
         food_note_back.setText(food.Note);
         SetFoodNote(food);
-        food_image.setVisibility(food.HasImage() ? View.GONE : View.VISIBLE);
+        food_image.setVisibility(food.hasImage() ? View.GONE : View.VISIBLE);
         imageViewerFragment.setImages(food.Images, food.getCover());
-        SetFoodFavorite(food.IsFavorite());
+        SetFoodFavorite(food.isFavorite());
         tagsFragment.setData(food.getTags());
     }
 

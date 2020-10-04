@@ -58,7 +58,7 @@ public class AList<T> extends IList<T> {
                     return false;
             return true;
         }else if (object instanceof Collection){
-            return equals(new AList<>((Collection)object));
+            return equals(new AList<>((Collection<T>)object));
         }else{
             return false;
         }
