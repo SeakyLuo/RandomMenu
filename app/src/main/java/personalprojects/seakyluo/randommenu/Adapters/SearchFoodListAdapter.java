@@ -151,12 +151,23 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
             // 不停地重新计算可见范围（用while主要是针对else if）
             while (true){
                 String visibleText = getVisibleText(textView);
-                if (Helper.contains(visibleText, keyword)){
+                int index = paragraph.indexOf(keyword);
+                int start, end;
+                if (visibleText.endsWith(keyword)){
+                    // 如果可见文本以关键词结尾，可能会存在最后一个字看不到的情况
+                    // 所以如果可能的话往后挪一点，不能的话就算了
+                    start = dots.length() + keyword.length();
+                    end = start + index;
+                    if (end <= paragraph.length()){
+                        textView.setText(dots + paragraph.substring(start, end));
+                    }else{
+                        break;
+                    }
+                }
+                if (visibleText.contains(keyword)){
                     break;
                 }
-                int index = paragraph.indexOf(keyword);
-                int start = Math.max(paragraph.length() - visibleText.length(), 0);
-                int end;
+                start = Math.max(paragraph.length() - visibleText.length(), 0);
                 String subString;
                 // 如果在最后面的可见范围内
                 if (start <= index + keyword.length()){
@@ -173,8 +184,8 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
                     subString = paragraph.substring(start, end);
                 }else{
                     // 可见范围取关键词在中间
-                    start = index - visibleText.length() / 2;
-                    end = index + keyword.length() + visibleText.length() / 2;
+                    start = Math.max(index - visibleText.length() / 2, 0);
+                    end = Math.min(index + keyword.length() + visibleText.length() / 2, paragraph.length());
                     subString = paragraph.substring(start, end);
                 }
                 textView.setText(dots + subString);
