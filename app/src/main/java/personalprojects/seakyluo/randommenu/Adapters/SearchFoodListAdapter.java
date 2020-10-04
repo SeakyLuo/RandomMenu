@@ -147,10 +147,13 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
                 // 如果不是第一段，开头加上省略号
                 textView.setText(dots + paragraph);
             }
-            String visibleText;
             // 如果关键词还是看不到
-            // 不停地重新计算可见范围（主要是针对else if）
-            while (!Helper.contains(visibleText = getVisibleText(textView), keyword)){
+            // 不停地重新计算可见范围（用while主要是针对else if）
+            while (true){
+                String visibleText = getVisibleText(textView);
+                if (Helper.contains(visibleText, keyword)){
+                    break;
+                }
                 int index = paragraph.indexOf(keyword);
                 int start = Math.max(paragraph.length() - visibleText.length(), 0);
                 int end;
@@ -169,9 +172,9 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
                     }
                     subString = paragraph.substring(start, end);
                 }else{
-                    // 可见范围为读取到关键词的
-                    end = index + keyword.length();
-                    start = end - visibleText.length();
+                    // 可见范围取关键词在中间
+                    start = index - visibleText.length() / 2;
+                    end = index + keyword.length() + visibleText.length() / 2;
                     subString = paragraph.substring(start, end);
                 }
                 textView.setText(dots + subString);
