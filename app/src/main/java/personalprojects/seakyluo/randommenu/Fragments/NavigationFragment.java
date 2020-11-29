@@ -45,7 +45,7 @@ public class NavigationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_navigation, container, false);
         title_text_view = view.findViewById(R.id.title_text_view);
         FloatingActionButton fab = view.findViewById(R.id.navi_fab);
-        fab.setOnClickListener(v -> editFood(null));
+        fab.setOnClickListener(v -> editFood(Settings.settings.FoodDraft, true));
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             setData();
@@ -122,7 +122,7 @@ public class NavigationFragment extends Fragment {
             dialog.setFoodLikedListener(((before, after) -> foodAdapter.SetFoodLiked(after)));
             dialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
         });
-        foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> editFood(food));
+        foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> editFood(food, false));
         detailView.setAdapter(foodAdapter);
         view.findViewById(R.id.navigation_toolbar).setOnClickListener(v -> detailView.smoothScrollToPosition(0));
 
@@ -160,12 +160,10 @@ public class NavigationFragment extends Fragment {
         }
     }
 
-    private void editFood(Food food){
+    private void editFood(Food food, boolean isDraft){
         Intent intent = new Intent(getContext(), EditFoodActivity.class);
-        if (food != null){
-            intent.putExtra(EditFoodActivity.FOOD, food);
-            intent.putExtra(EditFoodActivity.DELETE, true);
-        }
+        intent.putExtra(EditFoodActivity.FOOD, food);
+        intent.putExtra(EditFoodActivity.IS_DRAFT, isDraft);
         startActivityForResult(intent, EditFoodActivity.FOOD_CODE);
     }
 

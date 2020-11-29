@@ -107,7 +107,7 @@ public class FoodCardFragment extends Fragment {
                     case R.id.edit_food_item:
                         Intent editFoodIntent = new Intent(getContext(), EditFoodActivity.class);
                         editFoodIntent.putExtra(EditFoodActivity.FOOD, CurrentFood);
-                        editFoodIntent.putExtra(EditFoodActivity.DELETE, true);
+                        editFoodIntent.putExtra(EditFoodActivity.IS_DRAFT, true);
                         startActivityForResult(editFoodIntent, EDIT_FOOD);
                         return true;
                     case R.id.save_image_item:

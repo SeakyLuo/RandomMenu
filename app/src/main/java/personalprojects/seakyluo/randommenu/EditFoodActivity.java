@@ -38,7 +38,7 @@ import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class EditFoodActivity extends AppCompatActivity {
     public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
-    public static final String FOOD = "Food", DELETE = "Delete";
+    public static final String FOOD = "Food", IS_DRAFT = "IsDraft";
     private ImageButton camera_button;
     private EditText edit_food_name, edit_note;
     private ImageView food_image;
@@ -68,12 +68,13 @@ public class EditFoodActivity extends AppCompatActivity {
             chooseTagFragment = (ChooseTagFragment) fragmentManager.findFragmentById(R.id.choose_tag_fragment);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.findFragmentById(R.id.imageviewer_fragment);
             currentFood = getIntent().getParcelableExtra(FOOD);
+            isDraft = getIntent().getBooleanExtra(IS_DRAFT, false);
         }else{
             chooseTagFragment = (ChooseTagFragment) fragmentManager.getFragment(savedInstanceState, ChooseTagFragment.TAG);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
             currentFood = savedInstanceState.getParcelable(FOOD);
+            isDraft = savedInstanceState.getBoolean(FOOD);
         }
-        isDraft = Settings.settings.FoodDraft != null && Settings.settings.FoodDraft.equals(currentFood);
         setFood(currentFood);
 
         cancel_button.setOnClickListener(v -> {
@@ -160,7 +161,7 @@ public class EditFoodActivity extends AppCompatActivity {
             else
                 ShowMenuFlyout();
         });
-        delete_food_button.setVisibility(getIntent().getBooleanExtra(DELETE, false) ? View.VISIBLE : View.GONE);
+        delete_food_button.setVisibility(isDraft ? View.GONE : View.VISIBLE);
         delete_food_button.setOnClickListener(v -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.showNow(fragmentManager, AskYesNoDialog.TAG);

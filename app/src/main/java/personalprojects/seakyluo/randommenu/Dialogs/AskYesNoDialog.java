@@ -18,6 +18,7 @@ public class AskYesNoDialog extends DialogFragment {
     private TextView text_message;
     private Button yes;
     private Button no;
+    private Button cancel;
     private View.OnClickListener yesListener, noListener;
     private String message = "";
 
@@ -31,6 +32,7 @@ public class AskYesNoDialog extends DialogFragment {
         text_message = view.findViewById(R.id.ayn_message);
         yes = view.findViewById(R.id.ayn_yes);
         no = view.findViewById(R.id.ayn_no);
+        cancel = view.findViewById(R.id.ayn_cancel);
 
         text_message.setText(message);
         yes.setOnClickListener(v -> {
@@ -41,6 +43,7 @@ public class AskYesNoDialog extends DialogFragment {
             if (noListener != null) noListener.onClick(v);
             dismiss();
         });
+        cancel.setOnClickListener(v -> dismiss());
         return view;
     }
 
