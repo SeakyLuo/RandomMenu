@@ -203,7 +203,7 @@ public class SettingsFragment extends Fragment {
                         return;
                     }
                 }
-                Helper.init(getContext());
+                Helper.init(getActivity());
                 Helper.save();
                 clearFolder(Helper.TempUnzipFolder);
             }).start();

@@ -1,14 +1,18 @@
 package personalprojects.seakyluo.randommenu.helpers;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.text.Layout;
 import android.util.Log;
@@ -47,6 +51,7 @@ import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
 public class Helper {
+    public static final int READ_EXTERNAL_STORAGE_CODE = 1;
     public static final String ROOT_FOLDER = "RandomMenu";
     public static File root, SaveImageFolder, ImageFolder, TempFolder, TempUnzipFolder, ExportedDataFolder, LogFolder;
     public static Bitmap DefaultFoodImage;
@@ -70,8 +75,8 @@ public class Helper {
         return bitmap;
     }
     public static int RandRange(int start, int end) { return random.nextInt((end - start)) + start; }
-    public static void init(Context context){
-        DefaultFoodImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_image_place_holder);
+    public static void init(Activity activity){
+        DefaultFoodImage = BitmapFactory.decodeResource(activity.getResources(), R.drawable.food_image_place_holder);
         root = createOrOpenFolder(ROOT_FOLDER);
         ImageFolder = createOrOpenFolder("RandomMenuFood");
         SaveImageFolder = createOrOpenFolder("SavedImages");
@@ -79,7 +84,7 @@ public class Helper {
         TempUnzipFolder = createOrOpenFolder("TempUnzipFiles");
         ExportedDataFolder = createOrOpenFolder("ExportedData");
         LogFolder = createOrOpenFolder("Logs");
-        String settings = readFile(Settings.FILENAME);
+        String settings = readFile(activity, Settings.FILENAME);
         Settings.settings = isNullOrEmpty(settings) ? new Settings() : Settings.fromJson(settings);
         if (isNullOrEmpty(settings)) Log("Empty Settings Created");
     }
@@ -138,32 +143,52 @@ public class Helper {
         }
     }
     public static String getPath(String... paths) {
-        StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory().getPath() + File.separator + ROOT_FOLDER);
+        StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory().getPath()).append(File.separator).append(ROOT_FOLDER);
         for (String path: paths) sb.append(File.separator).append(path);
         return sb.toString();
     }
 
+    /**
+     *  It reads file under root folder
+     **/
     public static String readFile(String filename) {
-        /* It reads file under root folder */
-        return fread(getPath(filename));
+        return fread(null, getPath(filename));
     }
-    private static String fread(String filename){
-        String string = "";
+    public static String readFile(Activity activity, String filename) {
+        return fread(activity, getPath(filename));
+    }
+    private static String fread(Activity activity, String filename){
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             StringBuilder builder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null)
+            for (String line = reader.readLine(); line != null; line = reader.readLine()){
                 builder.append(line).append('\n');
+            }
             reader.close();
             return builder.toString();
         } catch (FileNotFoundException e) {
-            Log.e("fuck", "File not found: " + e.toString());
+            if (activity != null){
+                if (!checkAndRequestReadStoragePermission(activity)) {
+                    Log.e("fuck", "File not found: " + e);
+                }
+            }
         } catch (IOException e) {
-            Log.e("fuck", "Can not read file: " + e.toString());
+            Log.e("fuck", "Can not read file: " + e);
         }
-        return string;
+        return "";
     }
+    public static boolean checkAndRequestReadStoragePermission(Activity activity){
+        return checkAndRequestPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE_CODE);
+    }
+    public static boolean checkAndRequestPermission(Activity activity, String permission, int code){
+        if (ContextCompat.checkSelfPermission(activity.getApplicationContext(), permission) == PackageManager.PERMISSION_DENIED){
+            activity.requestPermissions(new String[]{ permission }, code);
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     public static void writeFile(String filename, String content){
         /* It writes file to root folder */
         fwrite(getPath(filename), content);
