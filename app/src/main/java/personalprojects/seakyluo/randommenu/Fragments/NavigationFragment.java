@@ -46,7 +46,7 @@ public class NavigationFragment extends Fragment {
         title_text_view = view.findViewById(R.id.title_text_view);
         FloatingActionButton fab = view.findViewById(R.id.navi_fab);
         fab.setOnClickListener(v -> editFood(Settings.settings.FoodDraft, true));
-        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             setData();
             selectTag(selectTagAdapter.GetSelectedTag());

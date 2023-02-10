@@ -47,6 +47,7 @@
         <activity android:name=".NoteActivity" android:label="NoteActivity" />
         <activity android:name=".MoreSettingsActivity" android:label="MoreSettingsActivity" />
         <activity android:name=".TagMapActivity" android:label="TagMapActivity" />
+        <activity android:name=".EditRestaurantActivity" android:label="EditRestaurantActivity" />
     </application>
 
 </manifest>

@@ -12,6 +12,11 @@
         android:title="@string/navigation" />
 
     <item
+        android:id="@+id/navigation_restaurants"
+        android:icon="@drawable/ic_restaurants_toggle"
+        android:title="@string/restaurants" />
+
+    <item
         android:id="@+id/navigation_settings"
         android:icon="@drawable/ic_settings_toggle"
         android:title="@string/settings" />

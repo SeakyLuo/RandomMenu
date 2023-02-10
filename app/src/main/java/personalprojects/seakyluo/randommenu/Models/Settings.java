@@ -8,6 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import personalprojects.seakyluo.randommenu.models.dao.RestaurantDAO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
+
 public class Settings {
     public static String FILENAME = "RandomMenuSettings.json";
     public static Settings settings;
@@ -18,6 +21,8 @@ public class Settings {
     public AList<String> ToEat = new AList<>();
     public AList<String> DislikeFood = new AList<>();
     public AList<String> SearchHistory = new AList<>();
+    public AList<FoodType> FoodTypes = new AList<>();
+    public AList<RestaurantDAO> Restaurants = new AList<>();
     public Food FoodDraft;
     public String Note = "";
     public boolean AutoTag = true;

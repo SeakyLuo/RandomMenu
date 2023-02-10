@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import personalprojects.seakyluo.randommenu.fragments.NavigationFragment;
 import personalprojects.seakyluo.randommenu.fragments.RandomFragment;
+import personalprojects.seakyluo.randommenu.fragments.RestaurantsFragment;
 import personalprojects.seakyluo.randommenu.fragments.SettingsFragment;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public RandomFragment randomFragment;
     public NavigationFragment navigationFragment;
     public SettingsFragment settingsFragment;
+    public RestaurantsFragment restaurantsFragment;
     private String lastTag;
     private BottomNavigationView bottomNavigationView;
 
@@ -53,6 +55,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                     ShowFragment(settingsFragment, SettingsFragment.TAG);
                     return true;
+                case R.id.navigation_restaurants:
+                    if (restaurantsFragment == null){
+                        restaurantsFragment = (RestaurantsFragment) fragmentManager.getFragment(savedInstanceState, RestaurantsFragment.TAG);
+                        if (restaurantsFragment == null) restaurantsFragment = new RestaurantsFragment();
+                    }
+                    ShowFragment(restaurantsFragment, RestaurantsFragment.TAG);
+                    return true;
             }
             return false;
         });
@@ -62,11 +71,13 @@ public class MainActivity extends AppCompatActivity {
             randomFragment = new RandomFragment();
             navigationFragment = new NavigationFragment();
             settingsFragment = new SettingsFragment();
+            restaurantsFragment = new RestaurantsFragment();
             bottomNavigationView.setSelectedItemId(R.id.navigation_random);
         } else {
             randomFragment = (RandomFragment) fragmentManager.getFragment(savedInstanceState, RandomFragment.TAG);
             navigationFragment = (NavigationFragment) fragmentManager.getFragment(savedInstanceState, NavigationFragment.TAG);
             settingsFragment = (SettingsFragment) fragmentManager.getFragment(savedInstanceState, SettingsFragment.TAG);
+            restaurantsFragment = (RestaurantsFragment) fragmentManager.getFragment(savedInstanceState, RestaurantsFragment.TAG);
         }
     }
 
