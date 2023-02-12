@@ -16,7 +16,6 @@ import com.jude.swipbackhelper.SwipeBackHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -98,8 +97,8 @@ public class SearchActivity extends SwipeBackActivity {
                 if (keyword.isEmpty()){
                     clear_button.setVisibility(View.GONE);
                 }else{
-                    Settings.settings.SearchHistory.remove(keyword);
-                    Search(Settings.settings.SearchHistory.add(keyword, 0));
+                    Settings.settings.SearchHistory.move(keyword, 0);
+                    Search(keyword);
                     clear_button.setVisibility(View.VISIBLE);
                 }
             }
@@ -143,7 +142,7 @@ public class SearchActivity extends SwipeBackActivity {
 
     public static String getKeyword(Editable s) { return s.toString().trim(); }
     public String getKeyword() { return getKeyword(search_bar.getText()); }
-    public Stream<SearchFoodListFragment> getSearchFragments() { return tabPagerAdapter.getFragments().after(0).getList().stream().map(f -> (SearchFoodListFragment)f); }
+    public Stream<SearchFoodListFragment> getSearchFragments() { return tabPagerAdapter.getFragments().after(0).stream().map(f -> (SearchFoodListFragment)f); }
 
     public void Search(String keyword){
         if (keyword.isEmpty()){
@@ -152,7 +151,7 @@ public class SearchActivity extends SwipeBackActivity {
             getSearchFragments().forEach(f -> f.setKeyword(keyword));
             if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
             List<MatchFood> food = new ArrayList<>(), tag = new ArrayList<>(), note = new ArrayList<>(), all = new ArrayList<>();
-            Settings.settings.Foods.forEach(f -> {
+            Settings.settings.Foods.ForEach(f -> {
                 MatchFood mf = SearchHelper.evalFood(f, keyword);
                 if (mf.namePoints > 0){
                     food.add(new MatchFood(mf.food, mf.namePoints + mf.bonus));

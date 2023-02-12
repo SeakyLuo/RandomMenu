@@ -122,12 +122,14 @@ public class FoodCardFragment extends Fragment {
                         startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;
                     case R.id.like_food_item:
-                        SetFoodFavorite(CurrentFood.setIsFavorite(true));
+                        CurrentFood.setIsFavorite(true);
+                        SetFoodFavorite(true);
                         Settings.settings.setFavorite(CurrentFood, true);
                         if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;
                     case R.id.dislike_food_item:
-                        SetFoodFavorite(CurrentFood.setIsFavorite(false));
+                        CurrentFood.setIsFavorite(false);
+                        SetFoodFavorite(false);
                         Settings.settings.setFavorite(CurrentFood, false);
                         if (foodLikedChangedListener != null) foodLikedChangedListener.FoodEdited(before, CurrentFood);
                         return true;

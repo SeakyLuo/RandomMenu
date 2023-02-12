@@ -4,23 +4,28 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.models.Food;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.stream.Collectors;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.Tag;
+
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class SearchFoodListAdapter extends BaseFoodListAdapter {
     private static final String dots = "...";
 
@@ -28,10 +33,9 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
     private String comma;
     private String keyword;
 
-    @NonNull
     @Override
-    public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_listed_food_search, parent, false));
+    public int getLayout(int viewType) {
+        return R.layout.view_listed_food_search;
     }
 
     @Override
@@ -40,75 +44,48 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
         comma = context.getResources().getString(R.string.comma);
     }
 
-    public void setShowTags(boolean showTags) {
-        this.showTags = showTags;
-    }
+    @Override
+    public void fillViewHolder(CustomViewHolder viewHolder, Food data, int position) {
+        super.fillViewHolder(viewHolder, data, position);
+        View view = viewHolder.getView();
 
-    public void setShowNote(boolean showNote) {
-        this.showNote = showNote;
-    }
+        TextView tagContent = view.findViewById(R.id.tag_content);
+        TextView noteContent = view.findViewById(R.id.note_content);
+        LinearLayout noteRow = view.findViewById(R.id.note_row);
+        TextView foodName = view.findViewById(R.id.food_name);
+        View tagRow = view.findViewById(R.id.tag_row);
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-
-    public class ViewHolder extends BaseViewHolder {
-        private TextView tag_content, note_content;
-        private LinearLayout note_row;
-
-        public ViewHolder(View view) {
-            super(view);
-            tag_content = view.findViewById(R.id.tag_content);
-            note_content = view.findViewById(R.id.note_content);
-            note_row = view.findViewById(R.id.note_row);
-
-            if (!showTags){
-                view.findViewById(R.id.tag_row).setVisibility(View.GONE);
-            }
-            if (!showNote){
-                note_row.setVisibility(View.GONE);
-            }
+        if (!showTags){
+            tagRow.setVisibility(View.GONE);
         }
-
-        @Override
-        public void setData(Food data) {
-            super.setData(data);
-            String tags = String.join(comma, data.getTags().convert(tag -> tag.Name).toArrayList());
-            tag_content.setText(tags);
-            note_content.setText(data.Note);
-
-            if (Helper.isNullOrEmpty(data.Note)){
-                note_row.setVisibility(View.GONE);
-            }else{
-                if (showNote){
-                    note_row.setVisibility(View.VISIBLE);
-                }
-            }
-            afterDrew(food_name);
+        if (!showNote){
+            noteRow.setVisibility(View.GONE);
         }
-
-        public void highlight(){
-            highlightText(food_name, keyword);
-            if (showTags){
-                highlightText(tag_content, keyword);
-            }
+        String tags = data.getTags().stream().map(Tag::getName).collect(Collectors.joining(comma));
+        tagContent.setText(tags);
+        noteContent.setText(data.Note);
+        if (StringUtils.isEmpty(data.Note)){
+            noteRow.setVisibility(View.GONE);
+        } else {
             if (showNote){
-                highlightText(note_content, keyword);
+                noteRow.setVisibility(View.VISIBLE);
             }
         }
 
-        private void afterDrew(TextView textView){
-            ViewTreeObserver observer = textView.getViewTreeObserver();
-            observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    highlight();
-                    textView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        foodName.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                highlightText(foodName, keyword);
+                if (showTags){
+                    highlightText(tagContent, keyword);
                 }
-            });
-        }
+                if (showNote){
+                    highlightText(noteContent, keyword);
+                }
+                foodName.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
-
     private static void highlightText(TextView textView, String keyword){
         int maxLines = textView.getMaxLines();
         adjustTextView(textView, keyword);

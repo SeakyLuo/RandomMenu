@@ -35,7 +35,7 @@ public class TagMapActivity extends SwipeBackActivity {
         findViewById(R.id.tm_toolbar).setOnClickListener(v -> tagMapRecyclerView.smoothScrollToPosition(0));
 
         tagMapAdapter.context = getApplicationContext();
-        tagMapAdapter.setOnItemClickListener((vh, data) -> showTagMapperDialog(data));
+        tagMapAdapter.setDataItemClickedListener((vh, data) -> showTagMapperDialog(data));
         tagMapAdapter.setMoreClickedListener((tm, more) -> {
             PopupMenuHelper helper = new PopupMenuHelper(R.menu.tag_mapper_menu, this, more);
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
@@ -99,9 +99,9 @@ public class TagMapActivity extends SwipeBackActivity {
         map.forEach((key, value) -> {
             TagMapper tagMapper = new TagMapper(key);
             tagMapper.setValue(value);
-            list.add(tagMapper, 0);
+            list.with(tagMapper, 0);
         });
-        list.add(null, 0);
+        list.add(0, null);
         return list;
     }
 

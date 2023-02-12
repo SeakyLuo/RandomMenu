@@ -47,7 +47,7 @@ public class DislikeActivity extends SwipeBackActivity {
             dialog.SetHint(getString(R.string.food_name));
             dialog.SetConfirmListener(text -> {
                 if (Settings.settings.DislikeFood.remove(text)) adapter.remove(text);
-                Settings.settings.DislikeFood.add(text, 0);
+                Settings.settings.DislikeFood.with(text, 0);
                 adapter.add(text, 0);
                 recyclerView.smoothScrollToPosition(0);
                 updated = true;

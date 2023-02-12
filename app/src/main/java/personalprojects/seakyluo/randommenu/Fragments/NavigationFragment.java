@@ -61,7 +61,7 @@ public class NavigationFragment extends Fragment {
         selectTagAdapter = new SelectTagAdapter((viewHolder, tag) -> selectTag(tag));
         selectTagAdapter.context = getContext();
         selectTagAdapter.setLongClickListener(((viewHolder, data) -> {
-            final PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_tag_menu, getContext(), viewHolder.view);
+            final PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_tag_menu, getContext(), viewHolder.getView());
             if (data.isAllCategoriesTag()){
                 helper.removeItems(R.id.edit_tag_item);
                 helper.removeItems(R.id.delete_tag_item);
@@ -72,10 +72,10 @@ public class NavigationFragment extends Fragment {
             helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
                 switch (menuItem.getItemId()){
                     case R.id.sort_by_default:
-                        selectTagAdapter.setTags(Settings.settings.Tags.sort(Tag::compareTo).reverse());
+                        selectTagAdapter.setTags(Settings.settings.Tags.sorted(Tag::compareTo).reverse());
                         return true;
                     case R.id.sort_by_name_item:
-                        selectTagAdapter.setTags(Settings.settings.Tags.sort((t1, t2) -> t1.Name.compareTo(t2.Name)));
+                        selectTagAdapter.setTags(Settings.settings.Tags.sorted((t1, t2) -> t1.Name.compareTo(t2.Name)));
                         return true;
                     case R.id.edit_tag_item:
                         InputDialog inputDialog = new InputDialog();
@@ -87,7 +87,7 @@ public class NavigationFragment extends Fragment {
                             }else{
                                 Tag tag = Settings.settings.Tags.first(t -> t.Name.equals(data.Name));
                                 tag.Name = text;
-                                Settings.settings.Foods.forEach(f -> f.renameTag(data.Name, text));
+                                Settings.settings.Foods.ForEach(f -> f.renameTag(data.Name, text));
                                 selectTagAdapter.set(tag, selectTagAdapter.indexOf(t -> t.Name.equals(data.Name)));
                                 Helper.save();
                             }
@@ -101,7 +101,7 @@ public class NavigationFragment extends Fragment {
                             if (data.equals(lastTag)) lastTag = Tag.AllCategoriesTag;
                             selectTagAdapter.remove(data);
                             Settings.settings.Tags.remove(data);
-                            Settings.settings.Foods.forEach(food -> food.removeTag(data));
+                            Settings.settings.Foods.ForEach(food -> food.removeTag(data));
                             Helper.save();
                         });
                         askDialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
@@ -119,7 +119,7 @@ public class NavigationFragment extends Fragment {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.setFood(food);
             dialog.setFoodEditedListener((before, after) -> setData());
-            dialog.setFoodLikedListener(((before, after) -> foodAdapter.SetFoodLiked(after)));
+            dialog.setFoodLikedListener(((before, after) -> foodAdapter.setFoodLiked(after)));
             dialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
         });
         foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> editFood(food, false));
@@ -130,7 +130,7 @@ public class NavigationFragment extends Fragment {
         setData();
         if (pendingTag == null) pendingTag = Tag.AllCategoriesTag;
         selectTag(pendingTag);
-        selectTagAdapter.HighlightTag(pendingTag);
+        selectTagAdapter.highlightTag(pendingTag);
         pendingTag = null;
         return view;
     }
@@ -145,7 +145,7 @@ public class NavigationFragment extends Fragment {
         pendingTag = tag;
         if (!IsLoaded) return;
         selectTag(tag);
-        selectTagAdapter.HighlightTag(tag);
+        selectTagAdapter.highlightTag(tag);
     }
 
     private void selectTag(Tag tag){
@@ -172,7 +172,7 @@ public class NavigationFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) setData();
         if (!lastTag.isAllCategoriesTag() && !Settings.settings.Tags.contains(lastTag))
-            selectTagAdapter.HighlightTag(lastTag = Tag.AllCategoriesTag);
+            selectTagAdapter.highlightTag(lastTag = Tag.AllCategoriesTag);
         selectTag(lastTag);
     }
 }

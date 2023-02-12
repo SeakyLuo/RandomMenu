@@ -13,8 +13,8 @@ import personalprojects.seakyluo.randommenu.models.Tag;
 public class RecalculateHelper {
     public static void RecalculateTags(){
         Map<String, Integer> map = new HashMap<>();
-        Settings.settings.Foods.forEach(f -> {
-            f.getTags().forEach(t -> {
+        Settings.settings.Foods.ForEach(f -> {
+            f.getTags().ForEach(t -> {
                 int count = map.getOrDefault( t.Name,0);
                 map.put(t.Name, ++count);
             });
@@ -25,7 +25,7 @@ public class RecalculateHelper {
     }
 
     public static void FindAbnormalFood(){
-        Settings.settings.Foods.forEach(f -> {
+        Settings.settings.Foods.ForEach(f -> {
             if (f.Images.count() > 10){
                 Log.d("fuck", f.Name);
             }

@@ -62,7 +62,9 @@ public class RandomFragment extends Fragment {
             foodCardFragment.SetFood(NextFood());
         });
         filterDialog.SetOnResetListener(v -> {
-            filterDialog.SetData(preferred_tags.clear(), excluded_tags.clear());
+            filterDialog.SetData(preferred_tags.copy(), excluded_tags.copy());
+            preferred_tags.clear();
+            excluded_tags.clear();
             Reset();
             foodCardFragment.SetFood(NextFood());
         });
@@ -81,10 +83,10 @@ public class RandomFragment extends Fragment {
         menuDialog.SetFoodRemovedListener((viewHolder, data) -> {
             menu.remove(data);
             SetMenuHeader();
-            food_pool.add(data, Helper.RandRange(0, food_pool.count()));
+            food_pool.with(data, Helper.RandRange(0, food_pool.count()));
         });
         menuDialog.SetOnClearListener(button -> {
-            food_pool.addAll(menu).shuffle();
+            food_pool.with(menu).shuffle();
             menu.clear();
             menuDialog.SetHeaderText(String.format(getString(R.string.food_count), 0));
             menuDialog.Clear();
@@ -113,9 +115,9 @@ public class RandomFragment extends Fragment {
     }
 
     private AList<Food> Reset(){
-        AList<Food> source = Settings.settings.Foods.forEach(f -> f.HideCount = Math.max(f.HideCount - 1, 0)).find(f -> !menu.contains(f) && f.HideCount == 0);
-        if (!preferred_tags.isEmpty()) source.remove(f -> !preferred_tags.any(f::hasTag));
-        if (!excluded_tags.isEmpty()) source.remove(f -> excluded_tags.any(f::hasTag));
+        AList<Food> source = Settings.settings.Foods.ForEach(f -> f.HideCount = Math.max(f.HideCount - 1, 0)).find(f -> !menu.contains(f) && f.HideCount == 0);
+        if (!preferred_tags.isEmpty()) source.removeIf(f -> !preferred_tags.any(f::hasTag));
+        if (!excluded_tags.isEmpty()) source.removeIf(f -> excluded_tags.any(f::hasTag));
         do source.shuffle();
         while (!food_pool.isEmpty() && food_pool.get(0).equals(source.get(0)));
         return food_pool.copyFrom(source);
@@ -142,7 +144,7 @@ public class RandomFragment extends Fragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                menu.add(foodCardFragment.GetFood(), 0);
+                menu.with(foodCardFragment.GetFood(), 0);
                 NextFood();
             }
 

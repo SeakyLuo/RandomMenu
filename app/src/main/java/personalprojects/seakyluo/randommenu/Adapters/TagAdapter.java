@@ -1,9 +1,6 @@
 package personalprojects.seakyluo.randommenu.adapters;
 
-import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -18,25 +15,29 @@ public class TagAdapter extends CustomAdapter<Tag> {
     public void SetCloseable(boolean closeable){ this.closeable = closeable; }
     private DataItemClickedListener<Tag> closeListener, tagListener;
     public void SetTagCloseListener(DataItemClickedListener<Tag> listener) { this.closeListener = listener; }
-    public void SetTagClickedListener(DataItemClickedListener<Tag> listener) { this.tagListener = listener; }
+    public void setTagClickedListener(DataItemClickedListener<Tag> listener) { this.tagListener = listener; }
 
-    @NonNull
+
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_tag, parent, false));
+    public int getLayout(int viewType) {
+        return R.layout.view_tag;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter<Tag>.CustomViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
-        Tag tag = data.get(position);
-        ((ViewHolder)holder).SetOnCloseClickedListener(v -> {
-            remove(tag);
-            if (closeListener != null) closeListener.click(holder, tag);
+    public void fillViewHolder(CustomViewHolder viewHolder, Tag data, int position) {
+        View view = viewHolder.getView();
+        TextView tagName = view.findViewById(R.id.tag_name);
+        ImageButton closeButton = view.findViewById(R.id.close_button);
+
+        closeButton.setOnClickListener(v -> {
+            remove(data);
+            if (closeListener != null) closeListener.click(viewHolder, data);
         });
-        holder.view.setOnClickListener(v -> {
-            if (tagListener != null) tagListener.click(holder, tag);
+        view.setOnClickListener(v -> {
+            if (tagListener != null) tagListener.click(viewHolder, data);
         });
+        tagName.setText(data.Name);
+        closeButton.setVisibility(closeable ? View.VISIBLE : View.GONE);
     }
 
     public void add(String tag){
@@ -46,24 +47,5 @@ public class TagAdapter extends CustomAdapter<Tag> {
     public void add(String tag, int index){
         add(new Tag(tag), index);
     }
-    
-    class ViewHolder extends CustomViewHolder {
-        TextView tag_name;
-        ImageButton close_button;
-        ViewHolder(View view) {
-            super(view);
-            tag_name = view.findViewById(R.id.tag_name);
-            close_button = view.findViewById(R.id.close_button);
-        }
 
-        @Override
-        void setData(Tag data) {
-            tag_name.setText(data.Name);
-            close_button.setVisibility(closeable ? View.VISIBLE : View.GONE);
-        }
-
-        void SetOnCloseClickedListener(View.OnClickListener listener){
-            close_button.setOnClickListener(listener);
-        }
-    }
 }

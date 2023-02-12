@@ -47,7 +47,7 @@ public class ToEatActivity extends SwipeBackActivity {
             dialog.SetHint(getString(R.string.food_name));
             dialog.SetConfirmListener(text -> {
                 if (Settings.settings.ToEat.remove(text)) adapter.remove(text);
-                Settings.settings.ToEat.add(text, 0);
+                Settings.settings.ToEat.with(text, 0);
                 adapter.add(text, 0);
                 recyclerView.smoothScrollToPosition(0);
                 updated = true;

@@ -33,12 +33,12 @@ public class ImageAdapter extends PagerAdapter {
     public void setContext(Context context) { this.context = context; }
     public void setOnDataChangedListener(OnDataChangedListener<AList<String>> listener) { dataChangedListener = listener; }
     public String Add(String image) {
-        images.add(image, 0);
+        images.with(image, 0);
         notifyDataSetChanged();
         return image;
     }
     public AList<String> Add(AList<String> images) {
-        this.images.addAll(images, 0);
+        this.images.with(images, 0);
         notifyDataSetChanged();
         return images;
     }

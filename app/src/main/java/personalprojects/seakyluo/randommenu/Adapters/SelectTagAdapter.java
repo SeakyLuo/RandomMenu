@@ -1,11 +1,8 @@
 package personalprojects.seakyluo.randommenu.adapters;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
@@ -19,52 +16,68 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
     public void setLongClickListener(DataItemClickedListener<Tag> longClickListener) { this.longClickListener = longClickListener; }
     private static int HighlightColor = Color.parseColor("#0078D7");
     private Tag pendingTag;
-    private ViewHolder lastTag;
+    private CustomViewHolder lastTag;
 
-    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_select_tag, parent, false));
+    public int getLayout(int viewType) {
+        return R.layout.view_select_tag;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.CustomViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
-        Tag tag = data.get(position);
-        ViewHolder viewHolder = (ViewHolder)holder;
-        viewHolder.view.setOnClickListener(v -> {
-            HighlightTag(viewHolder);
-            listener.click(holder, tag);
+    public void fillViewHolder(CustomViewHolder viewHolder, Tag data, int position) {
+        View view = viewHolder.getView();
+        TextView tagName = view.findViewById(R.id.tag_name);
+
+        tagName.setText(data.isAllCategoriesTag() ? context.getString(R.string.all_categories) : data.Name);
+        setHighlight(viewHolder,  false);
+
+        view.setOnClickListener(v -> {
+            highlightTag(viewHolder);
+            listener.click(viewHolder, data);
         });
-        viewHolder.view.setOnLongClickListener(v -> {
+        view.setOnLongClickListener(v -> {
             boolean success = longClickListener != null;
-            if (success) longClickListener.click(holder, tag);
+            if (success) longClickListener.click(viewHolder, data);
             return success;
         });
-        if (tag.equals(pendingTag) || (lastTag != null && lastTag.data.equals(tag))){
-            (lastTag = viewHolder).SetHighlight(true);
+        if (data.equals(pendingTag) || (lastTag != null && lastTag.getData().equals(data))){
+            setHighlight(lastTag = viewHolder, true);
             pendingTag = null;
         }
     }
 
-    public Tag GetSelectedTag() { return lastTag == null ? null : lastTag.data; }
+    public Tag GetSelectedTag() { return lastTag == null ? null : lastTag.getData(); }
 
-    public void HighlightTag(Tag tag){
-        if (tag == null || (lastTag != null && tag.equals(lastTag.data))) return;
-        ViewHolder viewHolder = (ViewHolder) viewHolders.first(vh -> vh.data.equals(tag));
+    public void highlightTag(Tag tag){
+        if (tag == null || (lastTag != null && tag.equals(lastTag.getData()))) return;
+        CustomViewHolder viewHolder = viewHolders.first(vh -> vh.getData().equals(tag));
         if (viewHolder == null) pendingTag = tag;
-        else HighlightTag(viewHolder);
+        else highlightTag(viewHolder);
     }
-    private void HighlightTag(ViewHolder viewHolder){
+
+    private void highlightTag(CustomViewHolder viewHolder){
         if (viewHolder == lastTag) return;
-        if (lastTag != null) lastTag.SetHighlight(false);
-        (lastTag = viewHolder).SetHighlight(true);
+        if (lastTag != null) setHighlight(lastTag, false);
+        setHighlight(lastTag = viewHolder, true);
+    }
+
+    private void setHighlight(CustomViewHolder viewHolder, boolean isHighlight){
+        View view = viewHolder.getView();
+        TextView tagName = view.findViewById(R.id.tag_name);
+        ConstraintLayout background = view.findViewById(R.id.select_tag_background);
+        if (isHighlight){
+            background.setBackgroundColor(HighlightColor);
+            tagName.setTextColor(Color.WHITE);
+        } else {
+            background.setBackgroundColor(Color.TRANSPARENT);
+            tagName.setTextColor(Color.BLACK);
+        }
     }
 
     public void setTags(AList<Tag> tags){
         if (data.isEmpty()){
             data.add(Tag.AllCategoriesTag);
-        }else{
+        } else {
             if (tags.equals(data.after(0))) return;
             data.clear(1);
         }
@@ -72,29 +85,4 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends CustomViewHolder {
-        TextView tag_name;
-        ConstraintLayout background;
-        ViewHolder(View view) {
-            super(view);
-            tag_name = view.findViewById(R.id.tag_name);
-            background = view.findViewById(R.id.select_tag_background);
-        }
-
-        @Override
-        void setData(Tag data) {
-            tag_name.setText(data.isAllCategoriesTag() ? context.getString(R.string.all_categories) : data.Name);
-            SetHighlight(false);
-        }
-
-        void SetHighlight(boolean isHighlight){
-            if (isHighlight){
-                background.setBackgroundColor(HighlightColor);
-                tag_name.setTextColor(Color.WHITE);
-            }else{
-                background.setBackgroundColor(Color.TRANSPARENT);
-                tag_name.setTextColor(Color.BLACK);
-            }
-        }
-    }
 }

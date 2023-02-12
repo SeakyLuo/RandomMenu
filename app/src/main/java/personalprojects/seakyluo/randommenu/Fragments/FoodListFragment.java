@@ -57,12 +57,13 @@ public class FoodListFragment extends BaseFoodListFragment<FoodListAdapter> {
         return removedIndex;
     }
     public void cancelRemoval(){
-        adapter.data.add(removedFood, removedIndex);
+        adapter.data.with(removedFood, removedIndex);
         adapter.notifyItemInserted(removedIndex);
     }
     public void unselectFood(String food){
-        ((FoodListAdapter.ViewHolder)adapter.viewHolders.first(vh -> ((FoodListAdapter.ViewHolder)vh).data.Name.equals(food))).setSelected(false);
-    }
+        CustomAdapter<Food>.CustomViewHolder viewHolder = adapter.viewHolders.first(vh -> vh.getData().Name.equals(food));
+        adapter.setSelected(viewHolder, false);
+}
     public void filter(String keyword){
         adapter.setData(data.find(f -> f.Name.contains(keyword)));
     }

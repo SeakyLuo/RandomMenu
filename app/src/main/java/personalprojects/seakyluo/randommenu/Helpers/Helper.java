@@ -138,7 +138,7 @@ public class Helper {
             writeFile("Temp/" + backupSettings + Timestamp() + ".json", settings);
             AList<File> temp_settings = new AList<>(TempFolder.listFiles()).find(f -> f.getName().startsWith(backupSettings));
             if (temp_settings.count() > 10){
-                temp_settings.sort((o1, o2) -> (int) (o2.lastModified() - o1.lastModified())).after(10).forEach(File::delete);
+                temp_settings.sorted((o1, o2) -> (int) (o2.lastModified() - o1.lastModified())).after(10).ForEach(File::delete);
             }
         }
     }

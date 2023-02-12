@@ -67,7 +67,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
-                suggestionTagListAdapter.addAll(tagListAdapter.getData().removeAll(tagsFragment.getData()).convert(t -> t.Name).toList());
+                suggestionTagListAdapter.addAll(tagListAdapter.getData().without(tagsFragment.getData()).convert(t -> t.Name).toList());
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -114,8 +114,8 @@ public class ChooseTagActivity extends SwipeBackActivity {
                 }
             }
         }
-        tagListAdapter = new TagListAdapter(this, Settings.settings.Tags.removeAll(excluded_tags), selected_tags);
-        tagListAdapter.SetTagClickedListener((viewHolder, tag) -> chooseTag(tag));
+        tagListAdapter = new TagListAdapter(this, Settings.settings.Tags.copy().without(excluded_tags), selected_tags);
+        tagListAdapter.setTagClickedListener((viewHolder, tag) -> chooseTag(tag));
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
         tag_recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -128,7 +128,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
         tagsFragment.setSpanCount(1);
         tagsFragment.SetCloseable(true);
         tagsFragment.setData(selected_tags);
-        tagsFragment.setTagClosedListener((viewHolder, tag) -> tagListAdapter.CheckTag(tag, false));
+        tagsFragment.setTagClosedListener((viewHolder, tag) -> tagListAdapter.checkTag(tag, false));
     }
 
     private void chooseTag(Tag tag){
@@ -153,7 +153,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             int index = tagsFragment.indexOf(tag);
             if (index == -1){
                 if (tagListAdapter.contains(tag))
-                    tagListAdapter.CheckTag(tag, true);
+                    tagListAdapter.checkTag(tag, true);
                 tagsFragment.add(tag, 0);
             }else{
                 tagsFragment.move(index, 0);

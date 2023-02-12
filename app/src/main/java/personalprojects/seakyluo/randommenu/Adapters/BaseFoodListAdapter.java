@@ -2,7 +2,6 @@ package personalprojects.seakyluo.randommenu.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,44 +22,36 @@ public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
     public void setShowLikeImage(boolean showLikeImage) { this.showLikeImage = showLikeImage; }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter<Food>.CustomViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
-        holder.view.setOnClickListener(v -> {
+    public void fillViewHolder(CustomViewHolder viewHolder, Food data, int position) {
+        View view = viewHolder.getView();
+        TextView foodName = view.findViewById(R.id.food_name);
+        ImageView foodImage = view.findViewById(R.id.food_image);
+        ImageView likedImage = view.findViewById(R.id.liked_image);
+
+        view.setOnClickListener(v -> {
             if (foodClickedListener != null){
-                foodClickedListener.click(holder, holder.data);
+                foodClickedListener.click(viewHolder, data);
             }
         });
+
+        foodName.setOnClickListener(v -> {
+            if (data.hasImage()){
+                Intent intent = new Intent(context, FullScreenImageActivity.class);
+                intent.putExtra(FullScreenImageActivity.IMAGE, data.Images.toArrayList());
+                context.startActivity(intent);
+            }else{
+                Toast.makeText(context, R.string.no_food_image, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Helper.loadImage(Glide.with(view), data.getCover(), foodImage);
+        foodName.setText(data.Name);
+        likedImage.setVisibility(showLikeImage && data.isFavorite() ? View.VISIBLE : View.GONE);
     }
+
 
     public void setContext(Context context){
         this.context = context;
     }
 
-    public class BaseViewHolder extends CustomViewHolder {
-        protected ImageView food_image, liked_image;
-        protected TextView food_name;
-
-        public BaseViewHolder(@NonNull View view) {
-            super(view);
-            food_image = view.findViewById(R.id.food_image);
-            food_name = view.findViewById(R.id.food_name);
-            liked_image = view.findViewById(R.id.liked_image);
-            food_image.setOnClickListener(v -> {
-                if (data.hasImage()){
-                    Intent intent = new Intent(context, FullScreenImageActivity.class);
-                    intent.putExtra(FullScreenImageActivity.IMAGE, data.Images.toArrayList());
-                    context.startActivity(intent);
-                }else{
-                    Toast.makeText(context, R.string.no_food_image, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-        @Override
-        void setData(Food data) {
-            Helper.loadImage(Glide.with(view), data.getCover(), food_image);
-            food_name.setText(data.Name);
-            liked_image.setVisibility(showLikeImage && data.isFavorite() ? View.VISIBLE : View.GONE);
-        }
-    }
 }

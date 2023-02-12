@@ -52,7 +52,7 @@ public class ToCookActivity extends SwipeBackActivity {
             dialog.SetHint(getString(R.string.food_name));
             dialog.SetConfirmListener(text -> {
                 if (Settings.settings.ToCook.remove(text)) adapter.remove(text);
-                Settings.settings.ToCook.add(text, 0);
+                Settings.settings.ToCook.with(text, 0);
                 adapter.add(text, 0);
                 recyclerView.smoothScrollToPosition(0);
                 updated = true;

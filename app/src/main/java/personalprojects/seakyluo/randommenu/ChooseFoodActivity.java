@@ -49,7 +49,7 @@ public class ChooseFoodActivity extends AppCompatActivity {
         foodListFragment.setData(Settings.settings.Foods);
         foodListFragment.setSelectedFood(foods);
         foodListFragment.setFoodSelectedListener((vh, selected) -> {
-            Tag food = new Tag(vh.data.Name);
+            Tag food = new Tag(vh.getData().Name);
             if (selected) tagsFragment.add(food);
             else tagsFragment.remove(food);
         });

@@ -3,14 +3,13 @@ package personalprojects.seakyluo.randommenu.adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.Objects;
 
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.interfaces.DataViewOperationListener;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
@@ -18,88 +17,48 @@ import personalprojects.seakyluo.randommenu.models.TagMapper;
 
 public class TagMapAdapter extends CustomAdapter<TagMapper> {
     public Context context;
+    @Setter
     private DataItemClickedListener<TagMapper> dataItemClickedListener;
+    @Setter
     private DataViewOperationListener<TagMapper> moreClickedListener;
     private static final int VIEW_TAG_MAPPER = 0;
     private static final int VIEW_HEADER = 1;
 
-    @NonNull
     @Override
-    public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == VIEW_HEADER)
-            return new HeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_text_view, parent, false));
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_tag_mapper, parent, false));
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull CustomAdapter<TagMapper>.CustomViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
-        if (position == 0){
-            ((HeaderViewHolder) holder).setText(R.string.tag_map_hint);
-        }
+    public int getLayout(int viewType) {
+        return viewType == VIEW_HEADER ? R.layout.view_text_view : R.layout.view_tag_mapper;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) return VIEW_HEADER;
-        return VIEW_TAG_MAPPER;
+        return position == 0 ? VIEW_HEADER : VIEW_TAG_MAPPER;
     }
 
-    public void setOnItemClickListener(DataItemClickedListener<TagMapper> listener){
-        dataItemClickedListener = listener;
-    }
+    @Override
+    public void fillViewHolder(CustomViewHolder viewHolder, TagMapper data, int position) {
+        View view = viewHolder.getView();
 
-    public void setMoreClickedListener(DataViewOperationListener<TagMapper> listener){
-        moreClickedListener = listener;
-    }
-
-    class ViewHolder extends CustomViewHolder {
-        private TextView keyword;
-        private TagAdapter adapter = new TagAdapter();
-        private ImageButton more;
-
-        ViewHolder(View view) {
-            super(view);
-            keyword = view.findViewById(R.id.keyword_content);
-            more = view.findViewById(R.id.more_button);
+        if (position == 0){
+            TextView textView = view.findViewById(R.id.textView);
+            textView.setText(R.string.tag_map_hint);
+        } else {
+            TextView keyword = view.findViewById(R.id.keyword_content);
+            ImageButton more = view.findViewById(R.id.more_button);
             RecyclerView recyclerView = view.findViewById(R.id.tags_recycler_view);
+            TagAdapter adapter = new TagAdapter();
             recyclerView.setAdapter(adapter);
             view.setOnClickListener(v -> {
-                dataItemClickedListener.click(this, data);
+                dataItemClickedListener.click(viewHolder, data);
             });
             if (moreClickedListener == null){
                 more.setVisibility(View.INVISIBLE);
             }else{
                 more.setOnClickListener(v -> moreClickedListener.operate(data, more));
             }
-        }
-
-        @Override
-        void setData(TagMapper data) {
-            this.data = data;
-            if (Objects.nonNull(data)){
+            if (data != null){
                 keyword.setText(data.key);
                 adapter.setData(data.value);
             }
-        }
-    }
-
-    class HeaderViewHolder extends CustomViewHolder{
-        private TextView textView;
-        public HeaderViewHolder(@NonNull View itemView) {
-            super(itemView);
-            textView = itemView.findViewById(R.id.textView);
-        }
-
-        @Override
-        void setData(TagMapper data) {}
-
-        public void setText(int resourceId){
-            textView.setText(resourceId);
-        }
-
-        public void setText(String text){
-            textView.setText(text);
         }
     }
 }

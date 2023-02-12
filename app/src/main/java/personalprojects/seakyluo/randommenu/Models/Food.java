@@ -8,6 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class Food implements Parcelable {
     public String Name;
     public AList<String> Images = new AList<>();
@@ -17,6 +22,7 @@ public class Food implements Parcelable {
     private String Cover = "";
     private Long DateAdded = 0L;
     public int HideCount = 0;
+    private transient boolean isSelected = false;
 
     public Food(String name){
         Name = name;
@@ -36,14 +42,12 @@ public class Food implements Parcelable {
     }
 
     public Food copy(){ return new Food(Name, Images.copy(), Tags.copy(), Note, IsFavorite, Cover, DateAdded); }
-    public boolean setIsFavorite(boolean isFavorite){ return IsFavorite = isFavorite; }
     public boolean isFavorite() { return IsFavorite; }
 
     public boolean hasImage() { return Images.count() > 0; }
     public boolean hasTag(Tag tag) { return Tags.contains(tag); }
     public boolean hasTag(String name) { return Tags.any(t -> t.Name.equals(name)); }
     public void renameTag(String oldName, String newName){ Tags.first(t -> t.Name.equals(oldName)).Name = newName; }
-    public Long getDateAdded() { return DateAdded; }
     public String GetDateAddedString(){
         Calendar date = Calendar.getInstance();
         date.setTimeInMillis(DateAdded);
@@ -51,16 +55,18 @@ public class Food implements Parcelable {
     }
     public void AddTags(AList<Tag> tags) {
         Tags.addAll(tags);
-        tags.forEach(tag -> {
+        tags.ForEach(tag -> {
             if (!Tags.contains(tag))
                 Tags.add(tag);
         });
     }
-    public AList<Tag> getTags() { return Tags; }
-    public void SetCover(String Cover) { this.Cover = Cover; }
-    public String getCover() { return Cover; }
     public void removeTag(Tag tag) { Tags.remove(tag); }
     public static boolean IsIncomplete(Food food) { return food == null || food.DateAdded == 0; }
+
+    @Override
+    public int hashCode() {
+        return Name.hashCode();
+    }
 
     @Override
     public boolean equals(@Nullable Object obj) {

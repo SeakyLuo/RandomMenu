@@ -1,7 +1,7 @@
 package personalprojects.seakyluo.randommenu.models;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import lombok.Data;
 
@@ -12,11 +12,21 @@ public class FoodType {
     private String code;
 
     public static String getNameByCode(String code){
-        if (FOOD_TYPE_MAP == null){
-            FOOD_TYPE_MAP = Settings.settings.FoodTypes.stream().collect(Collectors.toMap(FoodType::getCode, FoodType::getName));
-        }
-        return FOOD_TYPE_MAP.get(code);
+        return initFoodTypeMap().get(code);
     }
 
-    private static Map<String, String> FOOD_TYPE_MAP = null;
+    public static String getCodeByName(String name){
+        return initFoodTypeMap().inverse().get(name);
+    }
+
+    private static BiMap<String, String> initFoodTypeMap(){
+        if (FOOD_TYPE_MAP != null){
+            return FOOD_TYPE_MAP;
+        }
+        FOOD_TYPE_MAP = HashBiMap.create();
+        Settings.settings.FoodTypes.forEach(t -> FOOD_TYPE_MAP.put(t.getCode(), t.getName()));
+        return FOOD_TYPE_MAP;
+    }
+
+    private static BiMap<String, String> FOOD_TYPE_MAP = null;
 }

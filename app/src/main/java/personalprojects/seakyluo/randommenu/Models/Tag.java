@@ -6,14 +6,17 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import lombok.Data;
 import personalprojects.seakyluo.randommenu.R;
 
+@Data
 public class Tag implements Comparable<Tag>, Parcelable {
     public static String AllCategories = "All Categories";
     public static Tag AllCategoriesTag = new Tag(AllCategories);
     public static final int MAX_TAGS = 10;
     public String Name;
     protected int Counter = 0;
+    private transient boolean isSelected = false;
 
     protected Tag() {}
     public Tag(String name){ this.Name = name; }
@@ -24,8 +27,6 @@ public class Tag implements Comparable<Tag>, Parcelable {
 
     public Tag more() { ++Counter; return this; }
     public Tag less() { --Counter; return this; }
-    public void setCounter(int counter) { Counter = counter; }
-    public int getCounter() { return Counter; }
     public boolean isEmpty() { return Counter == 0; }
 
     @Override

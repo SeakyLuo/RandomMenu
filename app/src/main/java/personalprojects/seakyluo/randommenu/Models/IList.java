@@ -5,12 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class IList<T> {
-    protected List<T> list = new ArrayList<>();
+public class IList<T> extends ArrayList<T> {
     public IList() {}
-    public IList(T... collection) { list.addAll(Arrays.asList(collection)); }
-    public IList(Collection<T> collection) { list.addAll(collection); }
-    public IList(T element) { list.add(element); }
-    public IList(IList<T> collection) { list = collection.list; }
-    public List<T> getList() { return list; }
+    public IList(T... collection) { addAll(Arrays.asList(collection)); }
+    public IList(Collection<T> collection) { addAll(collection); }
+    public IList(T element) { add(element); }
+    public IList(IList<T> collection) { addAll(collection); }
+
 }

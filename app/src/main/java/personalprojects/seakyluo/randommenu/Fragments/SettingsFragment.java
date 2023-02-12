@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
 import personalprojects.seakyluo.randommenu.DislikeActivity;
@@ -34,7 +35,6 @@ import static android.app.Activity.RESULT_OK;
 public class SettingsFragment extends Fragment {
     private static final int FILE_PICKER = 1;
     public static final String TAG = "SettingsFragment";
-    private View.OnClickListener onClickListener;
 
     @Nullable
     @Override
@@ -75,15 +75,15 @@ public class SettingsFragment extends Fragment {
                 new Thread(() -> {
                     // Removing unused images
                     if (Settings.settings.Foods.count() > 0){
-                        Set<String> paths = Settings.settings.Foods.convert(f -> f.Images).reduce(AList::addAll).toSet();
+                        Set<String> paths = Settings.settings.Foods.stream().flatMap(f -> f.Images.stream()).collect(Collectors.toSet());
                         for (File file: Helper.ImageFolder.listFiles())
                             if (!paths.contains(file.getName()))
                                 file.delete();
                     }
                     // Removing non-existent images
                     Set<String> files = new AList<>(Helper.ImageFolder.listFiles()).convert(File::getName).toSet();
-                    Settings.settings.Foods.forEach(food -> {
-                       food.Images.copy().forEach(image -> {
+                    Settings.settings.Foods.ForEach(food -> {
+                       food.Images.copy().ForEach(image -> {
                            if (!files.contains(image)) food.Images.remove(image);
                        });
                     });
@@ -92,7 +92,7 @@ public class SettingsFragment extends Fragment {
                     clearFolder(Helper.TempUnzipFolder);
                     File[] exportedFiles = Helper.ExportedDataFolder.listFiles();
                     if (exportedFiles != null && exportedFiles.length > 1){
-                        new AList<>(exportedFiles).after(0).forEach(File::delete);
+                        new AList<>(exportedFiles).after(0).ForEach(File::delete);
                     }
                     showShortToast(dialog, R.string.clear_cache_msg);
                 }).start();
@@ -110,9 +110,34 @@ public class SettingsFragment extends Fragment {
                 Toast.makeText(getContext(), "Please install a File Manager.", Toast.LENGTH_SHORT).show();
             }
         });
-        view.findViewById(R.id.export_data_button).setOnClickListener(onClickListener);
+        view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
+            String filename = "RandomMenu" + Helper.Timestamp() + ".zip", path = Helper.ExportedDataFolder.getPath() + File.separator + filename;
+            LoadingDialog dialog = new LoadingDialog();
+            dialog.setOnViewCreatedListener(d -> {
+                dialog.setMessage(R.string.exporting_data);
+                new Thread(() -> {
+                    try{
+                        Helper.zip(path, Helper.ImageFolder, new File(Helper.getPath(Settings.FILENAME)));
+                    }catch (FileNotFoundException e){
+                        showExceptionToast(dialog, R.string.file_not_found, e);
+                        return;
+                    } catch (Exception e) {
+                        showExceptionToast(dialog, R.string.export_data_failed, e);
+                        return;
+                    }
+                    showShortToast(dialog, R.string.export_data_msg);
+                    // 分享导出文件
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    shareIntent.setType("*/*");
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.getFileUri(getContext(), path));
+                    startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
+                }).start();
+            });
+            dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
+        });
         view.findViewById(R.id.save_data_button).setOnClickListener(v -> {
-            Settings.settings.Tags.forEach(t -> {
+            Settings.settings.Tags.ForEach(t -> {
                 t.setCounter(Settings.settings.Foods.find(f -> f.hasTag(t)).count());
             });
             Settings.settings.sortTags();

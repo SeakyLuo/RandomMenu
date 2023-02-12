@@ -34,7 +34,7 @@ public class SearchHelper {
 
     public static int evalFoodTag(Food food, String keyword){
         int points = 0;
-        for (Tag t: food.getTags().getList()) {
+        for (Tag t: food.getTags()) {
             points = Math.max(points, evalString(t.Name, keyword) - 15);
             if (points == MAX_POINTS - 15){
                 break;

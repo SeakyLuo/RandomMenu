@@ -14,8 +14,8 @@ public class TabPagerAdapter<T extends Fragment> extends FragmentStatePagerAdapt
     }
 
     public void addFragment(T fragment){ fragmentList.add(fragment); }
-    public void AddFragments(AList<T> fragments){
-        fragments.forEach(this::addFragment);
+    public void addFragments(AList<T> fragments){
+        fragments.ForEach(this::addFragment);
     }
     public AList<T> getFragments() { return fragmentList; }
 

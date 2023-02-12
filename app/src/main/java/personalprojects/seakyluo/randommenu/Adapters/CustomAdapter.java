@@ -3,11 +3,15 @@ package personalprojects.seakyluo.randommenu.adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.Comparator;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.interfaces.BooleanLambda;
 import personalprojects.seakyluo.randommenu.models.AList;
 
@@ -17,9 +21,20 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     public Context context;
     public CustomAdapter() {}
 
+    @NonNull
+    @Override
+    public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+        return new CustomViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(getLayout(viewType), viewGroup, false));
+    }
+
+    public abstract int getLayout(int viewType);
+    public abstract void fillViewHolder(CustomViewHolder viewHolder, T data, int position);
+
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter<T>.CustomViewHolder holder, int position) {
-        holder.setData(holder.data = data.get(position));
+        T item = data.get(position);
+        holder.setData(item);
+        fillViewHolder(holder, item, position);
         if (viewHolders.count() >= position) viewHolders.add(holder);
         else viewHolders.set(holder, position);
     }
@@ -35,7 +50,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     private void addOne(T object){
         data.add(object);
     }
-    private void addOne(T object, int index) { data.add(object, index); }
+    private void addOne(T object, int index) { data.with(object, index); }
     public void add(List<T> list){
         int count = data.count();
         for (int i = 0; i < list.size(); i++) addOne(list.get(i));
@@ -47,7 +62,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         notifyItemRangeInserted(count, list.count());
     }
     public void add(AList<T> list, int index){
-        data.addAll(list, index);
+        data.with(list, index);
         notifyItemRangeInserted(index, getItemCount());
     }
     public void add(T object){
@@ -73,7 +88,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         notifyItemChanged(index);
     }
     public void sort(Comparator<? super T> comparator) {
-        data.sort(comparator);
+        data.sorted(comparator);
         notifyDataSetChanged();
     }
     public void set(T element, int index){
@@ -98,14 +113,18 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     @Override
     public int getItemCount() { return data.count(); }
 
-    public abstract class CustomViewHolder extends RecyclerView.ViewHolder{
-        public View view;
-        public T data;
-        public CustomViewHolder(@NonNull View view) {
-            super(view);
-            this.view = view;
-        }
+    public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        abstract void setData(T data);
+        @Getter
+        private View view;
+
+        @Getter
+        @Setter
+        private T data;
+
+        public CustomViewHolder(@NonNull View itemView) {
+            super(itemView);
+            view = itemView;
+        }
     }
 }

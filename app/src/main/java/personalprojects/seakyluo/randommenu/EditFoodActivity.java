@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -113,7 +112,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     Food food = Settings.settings.Foods.get(index);
                     food.Images.addAll(images);
                     if (!Helper.isNullOrEmpty(food_cover)){
-                        food.SetCover(food_cover);
+                        food.setCover(food_cover);
                     }
                     food.setIsFavorite(food.isFavorite() || like_toggle.isChecked());
                     food.AddTags(chooseTagFragment.GetData());
@@ -272,7 +271,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private String CurrentImage() { return Helper.getImagePath(images.get(imageViewerFragment.getCurrent())); }
     private boolean AddImage(Bitmap image, String filename){
         boolean success = Helper.saveImage(image, Helper.ImageFolder, filename);
-        if (success) images.add(imageViewerFragment.addImage(filename), 0);
+        if (success) images.with(imageViewerFragment.addImage(filename), 0);
         return success;
     }
     @Override
@@ -286,7 +285,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
                     if (AddImage(image, filename = camera_image_uri.getPath()))
-                        sources.add(filename, 0);
+                        sources.with(filename, 0);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;
@@ -305,7 +304,7 @@ public class EditFoodActivity extends AppCompatActivity {
                             sources.move(index, 0);
                             imageViewerFragment.moveImage(index, 0);
                         }else if (AddImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), Helper.NewImageFileName()))
-                            sources.add(uri.getPath(), 0);
+                            sources.with(uri.getPath(), 0);
                     }else{
                         ClipData clipData = data.getClipData();
                         int count = clipData.getItemCount();
@@ -322,12 +321,12 @@ public class EditFoodActivity extends AppCompatActivity {
                             }else if (Helper.saveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
                                                         Helper.ImageFolder,
                                                         filename = Helper.NewImageFileName(i))){
-                                files.add(filename, 0);
-                                paths.add(path, 0);
+                                files.with(filename, 0);
+                                paths.with(path, 0);
                             }
                         }
-                        images.addAll(imageViewerFragment.addImages(files), 0);
-                        sources.addAll(paths, 0);
+                        images.with(imageViewerFragment.addImages(files), 0);
+                        sources.with(paths, 0);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
