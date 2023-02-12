@@ -9,17 +9,23 @@ import android.view.ViewGroup;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import lombok.Getter;
 import lombok.Setter;
-import personalprojects.seakyluo.randommenu.interfaces.BooleanLambda;
 import personalprojects.seakyluo.randommenu.models.AList;
 
 public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapter<T>.CustomViewHolder> {
-    public AList<T> data = new AList<>();
-    public AList<CustomViewHolder> viewHolders = new AList<>();
-    public Context context;
-    public CustomAdapter() {}
+    @Getter
+    protected AList<T> data = new AList<>();
+    @Getter
+    protected AList<CustomViewHolder> viewHolders = new AList<>();
+    @Setter
+    protected Context context;
+
+    protected abstract int getLayout(int viewType);
+
+    protected abstract void fillViewHolder(CustomViewHolder viewHolder, T data, int position);
 
     @NonNull
     @Override
@@ -27,91 +33,94 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         return new CustomViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(getLayout(viewType), viewGroup, false));
     }
 
-    public abstract int getLayout(int viewType);
-    public abstract void fillViewHolder(CustomViewHolder viewHolder, T data, int position);
-
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter<T>.CustomViewHolder holder, int position) {
         T item = data.get(position);
         holder.setData(item);
         fillViewHolder(holder, item, position);
-        if (viewHolders.count() >= position) viewHolders.add(holder);
+        if (viewHolders.size() >= position) viewHolders.add(holder);
         else viewHolders.set(holder, position);
     }
 
-    public void setData(AList<T> list){
+    public void setData(List<T> list){
         this.data.copyFrom(list);
         notifyDataSetChanged();
     }
-    public void setData(List<T> list){
-        this.data = new AList<>(list);
-        notifyDataSetChanged();
-    }
-    private void addOne(T object){
-        data.add(object);
-    }
-    private void addOne(T object, int index) { data.with(object, index); }
+
     public void add(List<T> list){
-        int count = data.count();
-        for (int i = 0; i < list.size(); i++) addOne(list.get(i));
+        final int count = data.size();
+        data.addAll(list);
         notifyItemRangeInserted(count, list.size());
     }
-    public void add(AList<T> list){
-        int count = data.count();
-        for (int i = 0; i < list.count(); i++) addOne(list.get(i));
-        notifyItemRangeInserted(count, list.count());
-    }
-    public void add(AList<T> list, int index){
-        data.with(list, index);
+
+    public void add(List<T> list, int index){
+        data.addAll(index, list);
         notifyItemRangeInserted(index, getItemCount());
     }
+
     public void add(T object){
-        addOne(object);
-        notifyItemInserted(data.count() - 1);
+        data.add(object);
+        notifyItemInserted(data.size() - 1);
     }
+
     public void add(T object, int index){
-        addOne(object, index);
+        data.add(index, object);
         notifyItemInserted(index);
     }
+
     public void pop(int index){
         data.pop(index);
         notifyItemRemoved(index);
     }
+
     public void remove(T object){
         int index = data.indexOf(object);
-        if (data.remove(object)){
-            notifyItemRemoved(index);
-        }
+        removeAt(index);
     }
+
+    public void removeAt(int index){
+        data.remove(index);
+        notifyItemRemoved(index);
+    }
+
     public void update(T element, int index){
         data.set(element, index);
         notifyItemChanged(index);
     }
+
     public void sort(Comparator<? super T> comparator) {
         data.sorted(comparator);
         notifyDataSetChanged();
     }
+
     public void set(T element, int index){
         data.set(element, index);
         notifyItemChanged(index);
     }
+
     public void move(int from, int to){
         data.move(from, to);
         notifyItemMoved(from, to);
     }
+
     public int indexOf(T element) { return data.indexOf(element); }
-    public int indexOf(BooleanLambda<T> lambda) { return data.indexOf(lambda); }
-    public AList<T> getData(){ return data; }
-    public boolean isEmpty(){ return data.count() == 0; }
+
+    public int indexOf(Predicate<T> lambda) { return data.indexOf(lambda); }
+
+    public T getDataAt(int index) { return data.get(index); }
+
+    public boolean isEmpty(){ return data.size() == 0; }
+
     public boolean contains(T element) { return data.contains(element); }
+
     public void clear(){
-        final int size = data.count();
+        final int size = data.size();
         data.clear();
         notifyItemRangeRemoved(0, size);
     }
 
     @Override
-    public int getItemCount() { return data.count(); }
+    public int getItemCount() { return data.size(); }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 

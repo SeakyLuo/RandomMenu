@@ -44,7 +44,7 @@ public class Food implements Parcelable {
     public Food copy(){ return new Food(Name, Images.copy(), Tags.copy(), Note, IsFavorite, Cover, DateAdded); }
     public boolean isFavorite() { return IsFavorite; }
 
-    public boolean hasImage() { return Images.count() > 0; }
+    public boolean hasImage() { return Images.size() > 0; }
     public boolean hasTag(Tag tag) { return Tags.contains(tag); }
     public boolean hasTag(String name) { return Tags.any(t -> t.Name.equals(name)); }
     public void renameTag(String oldName, String newName){ Tags.first(t -> t.Name.equals(oldName)).Name = newName; }
@@ -112,8 +112,8 @@ public class Food implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(Name);
-        dest.writeStringList(Images.toList());
-        dest.writeTypedList(Tags.toList());
+        dest.writeStringList(Images);
+        dest.writeTypedList(Tags);
         dest.writeString(Note);
         dest.writeByte((byte) (IsFavorite ? 1 : 0));
         dest.writeString(Cover);

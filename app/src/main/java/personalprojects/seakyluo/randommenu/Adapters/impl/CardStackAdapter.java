@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.adapters;
+package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
@@ -38,7 +38,7 @@ public class CardStackAdapter extends BaseAdapter{
     }
 
     @Override
-    public int getCount() { return data.count(); }
+    public int getCount() { return data.size(); }
 
     @Override
     public Object getItem(int position) { return data.get(position); }

@@ -1,16 +1,14 @@
-package personalprojects.seakyluo.randommenu.adapters;
+package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.util.Objects;
-
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataViewOperationListener;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.TagMapper;
@@ -25,7 +23,7 @@ public class TagMapAdapter extends CustomAdapter<TagMapper> {
     private static final int VIEW_HEADER = 1;
 
     @Override
-    public int getLayout(int viewType) {
+    protected int getLayout(int viewType) {
         return viewType == VIEW_HEADER ? R.layout.view_text_view : R.layout.view_tag_mapper;
     }
 
@@ -35,7 +33,7 @@ public class TagMapAdapter extends CustomAdapter<TagMapper> {
     }
 
     @Override
-    public void fillViewHolder(CustomViewHolder viewHolder, TagMapper data, int position) {
+    protected void fillViewHolder(CustomViewHolder viewHolder, TagMapper data, int position) {
         View view = viewHolder.getView();
 
         if (position == 0){

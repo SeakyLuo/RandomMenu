@@ -46,21 +46,21 @@ public class ChooseTagFragment extends Fragment {
         if (!Helper.isNullOrEmpty(header)) header_text.setText(header);
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
         view.findViewById(R.id.tag_card_view).setOnClickListener(v -> {
-            if (tagsFragment.getData().count() < Tag.MAX_TAGS)
+            if (tagsFragment.getData().size() < Tag.MAX_TAGS)
                 LaunchChooseTagActivity();
         });
         return view;
     }
 
-    public void SetData(List<Tag> data) { tagsFragment.setData(data); }
-    public void SetData(AList<Tag> data) { tagsFragment.setData(data); }
-    public AList<Tag> GetData() { return tagsFragment.getData(); }
-    public void SetHeader(String text) { header = text; if (header_text != null) header_text.setText(text); }
-    public void SetChooseTagListener(OnLaunchActivityListener launchActivityListener) { chooseTagListener = launchActivityListener; }
+    public void setData(List<Tag> data) { tagsFragment.setData(data); }
+    public void setData(AList<Tag> data) { tagsFragment.setData(data); }
+    public AList<Tag> getData() { return tagsFragment.getData(); }
+    public void setHeader(String text) { header = text; if (header_text != null) header_text.setText(text); }
+    public void setChooseTagListener(OnLaunchActivityListener launchActivityListener) { chooseTagListener = launchActivityListener; }
 
     private void LaunchChooseTagActivity(){
         Intent intent = new Intent(getActivity(), ChooseTagActivity.class);
-        intent.putExtra(ChooseTagActivity.SELECTED_TAGS, tagsFragment.getData().toArrayList());
+        intent.putExtra(ChooseTagActivity.SELECTED_TAGS, tagsFragment.getData());
         if (chooseTagListener != null) chooseTagListener.Launch(intent);
         startActivityForResult(intent, CHOOSE_TAG_CODE);
         getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
@@ -71,7 +71,7 @@ public class ChooseTagFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.SELECTED_TAGS);
-        SetData(tags);
+        setData(tags);
         add_tag_button.setVisibility(tags.size() == Tag.MAX_TAGS ? View.GONE : View.VISIBLE);
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import personalprojects.seakyluo.randommenu.adapters.TagMapAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.TagMapAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.TagMapperDialog;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
@@ -46,7 +46,7 @@ public class TagMapActivity extends SwipeBackActivity {
                     case R.id.delete_item:
                         AskYesNoDialog dialog = new AskYesNoDialog();
                         dialog.setMessage(getString(R.string.ask_delete_keyword, tm.key));
-                        dialog.setOnYesListener(v -> {
+                        dialog.setYesListener(v -> {
                             tagMapAdapter.remove(tm);
                             Settings.settings.AutoTagMap.remove(tm.key);
                         });
@@ -68,10 +68,10 @@ public class TagMapActivity extends SwipeBackActivity {
             dialog.setTagMapper(tagMapper);
         }}
         dialog.setConfirmListener(tm -> {
-            int index = tagMapAdapter.data.indexOf(tm);
+            int index = tagMapAdapter.indexOf(tm);
             if (tagMapper == null){
                 if (index > 0){
-                    List<Tag> tags = tagMapAdapter.data.get(index).value.stream().filter(i -> !tm.value.contains(i)).collect(Collectors.toList());
+                    List<Tag> tags = tagMapAdapter.getDataAt(index).value.stream().filter(i -> !tm.value.contains(i)).collect(Collectors.toList());
                     tm.value.addAll(tags);
                     if (tm.value.size() > 10){
                         Toast.makeText(this, R.string.duplicate_tag_mapper_with_tag_overflow, Toast.LENGTH_SHORT).show();

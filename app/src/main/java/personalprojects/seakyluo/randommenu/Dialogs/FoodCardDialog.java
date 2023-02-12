@@ -14,6 +14,7 @@ import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.R;
 
 public class FoodCardDialog extends DialogFragment {
+    public static final String TAG = "FoodCardDialog";
     private FoodCardFragment foodCardFragment = new FoodCardFragment();
     private Food CurrentFood;
     @Nullable

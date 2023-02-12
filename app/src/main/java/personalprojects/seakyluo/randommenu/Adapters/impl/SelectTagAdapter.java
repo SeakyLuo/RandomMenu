@@ -1,10 +1,11 @@
-package personalprojects.seakyluo.randommenu.adapters;
+package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.TextView;
 
+import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;
@@ -19,12 +20,12 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
     private CustomViewHolder lastTag;
 
     @Override
-    public int getLayout(int viewType) {
+    protected int getLayout(int viewType) {
         return R.layout.view_select_tag;
     }
 
     @Override
-    public void fillViewHolder(CustomViewHolder viewHolder, Tag data, int position) {
+    protected void fillViewHolder(CustomViewHolder viewHolder, Tag data, int position) {
         View view = viewHolder.getView();
         TextView tagName = view.findViewById(R.id.tag_name);
 

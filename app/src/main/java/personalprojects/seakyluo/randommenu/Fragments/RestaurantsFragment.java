@@ -13,13 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.EditFoodActivity;
 import personalprojects.seakyluo.randommenu.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.adapters.RestaurantAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
 import personalprojects.seakyluo.randommenu.converters.RestaurantConverter;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 
@@ -50,7 +48,7 @@ public class RestaurantsFragment extends Fragment {
     }
 
     private void setData(AList<RestaurantVO> restaurants){
-        titleTextView.setText(restaurants.isEmpty() ? "探店" : String.format("探店（%d）", restaurants.count()));
+        titleTextView.setText(restaurants.isEmpty() ? "探店" : String.format("探店（%d）", restaurants.size()));
         restaurantAdapter.setData(restaurants);
     }
 

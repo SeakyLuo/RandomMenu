@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import personalprojects.seakyluo.randommenu.FullScreenImageActivity;
+import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.Food;
@@ -22,7 +23,7 @@ public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
     public void setShowLikeImage(boolean showLikeImage) { this.showLikeImage = showLikeImage; }
 
     @Override
-    public void fillViewHolder(CustomViewHolder viewHolder, Food data, int position) {
+    protected void fillViewHolder(CustomViewHolder viewHolder, Food data, int position) {
         View view = viewHolder.getView();
         TextView foodName = view.findViewById(R.id.food_name);
         ImageView foodImage = view.findViewById(R.id.food_image);
@@ -37,7 +38,7 @@ public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
         foodName.setOnClickListener(v -> {
             if (data.hasImage()){
                 Intent intent = new Intent(context, FullScreenImageActivity.class);
-                intent.putExtra(FullScreenImageActivity.IMAGE, data.Images.toArrayList());
+                intent.putExtra(FullScreenImageActivity.IMAGE, data.Images);
                 context.startActivity(intent);
             }else{
                 Toast.makeText(context, R.string.no_food_image, Toast.LENGTH_SHORT).show();

@@ -124,29 +124,24 @@
         </LinearLayout>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/address_placeholder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:elevation="2dp" >
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/address_placeholder"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="点击+来添加"
-                    android:paddingStart="16dp"
-                    android:textSize="16sp"
-                    android:gravity="center_vertical" />
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/address_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                android:layout_height="56dp"
+                android:text="点击+来添加"
+                android:paddingStart="16dp"
+                android:textSize="16sp"
+                android:gravity="center_vertical" />
         </android.support.v7.widget.CardView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/address_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"  />
 
         <TextView
             android:layout_width="wrap_content"
@@ -224,27 +219,23 @@
         </LinearLayout>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/consume_record_placeholder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:elevation="2dp" >
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/consume_record_placeholder"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="点击+来添加"
-                    android:paddingStart="16dp"
-                    android:textSize="16sp"
-                    android:gravity="center_vertical"/>
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/consume_record_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                android:layout_height="56dp"
+                android:text="点击+来添加"
+                android:paddingStart="16dp"
+                android:textSize="16sp"
+                android:gravity="center_vertical"/>
         </android.support.v7.widget.CardView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/consume_record_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"  />
     </LinearLayout>
 </ScrollView>

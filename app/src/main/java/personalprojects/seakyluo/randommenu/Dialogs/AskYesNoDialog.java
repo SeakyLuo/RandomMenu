@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 
 public class AskYesNoDialog extends DialogFragment {
@@ -19,20 +20,17 @@ public class AskYesNoDialog extends DialogFragment {
     private Button yes;
     private Button no;
     private Button cancel;
+    @Setter
     private View.OnClickListener yesListener, noListener;
     private String message = "";
-
-    public void setOnYesListener(View.OnClickListener listener) { yesListener = listener; }
-    public void setOnNoListener(View.OnClickListener listener) { noListener = listener; }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_ask_yes_no,container,false);
+        View view = inflater.inflate(R.layout.dialog_ask_yes_no, container, false);
         text_message = view.findViewById(R.id.ayn_message);
         yes = view.findViewById(R.id.ayn_yes);
         no = view.findViewById(R.id.ayn_no);
-        cancel = view.findViewById(R.id.ayn_cancel);
 
         text_message.setText(message);
         yes.setOnClickListener(v -> {
@@ -43,7 +41,6 @@ public class AskYesNoDialog extends DialogFragment {
             if (noListener != null) noListener.onClick(v);
             dismiss();
         });
-        cancel.setOnClickListener(v -> dismiss());
         return view;
     }
 

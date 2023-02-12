@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.jude.swipbackhelper.SwipeBackHelper;
 
-import personalprojects.seakyluo.randommenu.adapters.SimpleFoodListAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.SimpleFoodListAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
@@ -34,7 +34,7 @@ public class DislikeActivity extends SwipeBackActivity {
         adapter.SetOnDeletedClickedListener((viewHolder, data) -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.setMessage(getString(R.string.ask_delete, data));
-            dialog.setOnYesListener(dv -> {
+            dialog.setYesListener(dv -> {
                 Settings.settings.DislikeFood.remove(data);
                 adapter.remove(data);
                 SetTitle();
@@ -59,7 +59,7 @@ public class DislikeActivity extends SwipeBackActivity {
     }
 
     public void SetTitle(){
-        titleText.setText(Tag.format(this, R.string.dislike_food, adapter.getData().count()));
+        titleText.setText(Tag.format(this, R.string.dislike_food, adapter.getData().size()));
     }
 
     @Override

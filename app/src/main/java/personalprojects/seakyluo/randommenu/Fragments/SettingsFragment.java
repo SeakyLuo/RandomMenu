@@ -74,7 +74,7 @@ public class SettingsFragment extends Fragment {
                 dialog.setMessage(R.string.clearing_cache);
                 new Thread(() -> {
                     // Removing unused images
-                    if (Settings.settings.Foods.count() > 0){
+                    if (Settings.settings.Foods.size() > 0){
                         Set<String> paths = Settings.settings.Foods.stream().flatMap(f -> f.Images.stream()).collect(Collectors.toSet());
                         for (File file: Helper.ImageFolder.listFiles())
                             if (!paths.contains(file.getName()))
@@ -138,7 +138,7 @@ public class SettingsFragment extends Fragment {
         });
         view.findViewById(R.id.save_data_button).setOnClickListener(v -> {
             Settings.settings.Tags.ForEach(t -> {
-                t.setCounter(Settings.settings.Foods.find(f -> f.hasTag(t)).count());
+                t.setCounter(Settings.settings.Foods.find(f -> f.hasTag(t)).size());
             });
             Settings.settings.sortTags();
             Helper.save();

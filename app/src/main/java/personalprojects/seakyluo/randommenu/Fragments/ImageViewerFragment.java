@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import personalprojects.seakyluo.randommenu.adapters.ImageAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.ImageAdapter;
 import personalprojects.seakyluo.randommenu.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.R;
@@ -38,7 +38,7 @@ public class ImageViewerFragment extends Fragment {
         adapter.setContext(getContext());
         adapter.setOnImageClickedListener(v -> {
             Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
-            intent.putExtra(FullScreenImageActivity.IMAGE, adapter.GetData().toArrayList());
+            intent.putExtra(FullScreenImageActivity.IMAGE, adapter.GetData());
             intent.putExtra(FullScreenImageActivity.INDEX, current);
             startActivity(intent);
         });

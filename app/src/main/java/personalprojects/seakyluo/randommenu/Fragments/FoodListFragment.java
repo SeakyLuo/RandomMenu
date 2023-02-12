@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.adapters.FoodListAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.FoodListAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.CustomDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
@@ -50,18 +50,18 @@ public class FoodListFragment extends BaseFoodListFragment<FoodListAdapter> {
     public AList<Food> getSelectedFood(){ return adapter.selectedFood; }
     public void setSelectable(boolean selectable) { this.selectable = selectable; }
     public int removeFood(Food food) {
-        removedIndex = adapter.data.indexOf(removedFood = food);
+        removedIndex = adapter.indexOf(removedFood = food);
         data.pop(removedIndex);
-        adapter.data.pop(removedIndex);
+        adapter.pop(removedIndex);
         adapter.notifyItemRemoved(removedIndex);
         return removedIndex;
     }
     public void cancelRemoval(){
-        adapter.data.with(removedFood, removedIndex);
+        adapter.add(removedFood, removedIndex);
         adapter.notifyItemInserted(removedIndex);
     }
     public void unselectFood(String food){
-        CustomAdapter<Food>.CustomViewHolder viewHolder = adapter.viewHolders.first(vh -> vh.getData().Name.equals(food));
+        CustomAdapter<Food>.CustomViewHolder viewHolder = adapter.getViewHolders().first(vh -> vh.getData().Name.equals(food));
         adapter.setSelected(viewHolder, false);
 }
     public void filter(String keyword){
@@ -85,7 +85,7 @@ public class FoodListFragment extends BaseFoodListFragment<FoodListAdapter> {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
-                foodRemovedListener.click((CustomAdapter<Food>.CustomViewHolder)viewHolder, adapter.data.get(viewHolder.getAdapterPosition()));
+                foodRemovedListener.click((CustomAdapter<Food>.CustomViewHolder)viewHolder, adapter.getDataAt(viewHolder.getAdapterPosition()));
             }
 
             @Override

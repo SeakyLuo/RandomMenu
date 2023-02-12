@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.adapters;
+package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.adapters.BaseFoodListAdapter;
+import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
@@ -34,7 +36,7 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
     private String keyword;
 
     @Override
-    public int getLayout(int viewType) {
+    protected int getLayout(int viewType) {
         return R.layout.view_listed_food_search;
     }
 
@@ -45,7 +47,7 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
     }
 
     @Override
-    public void fillViewHolder(CustomViewHolder viewHolder, Food data, int position) {
+    protected void fillViewHolder(CustomAdapter.CustomViewHolder viewHolder, Food data, int position) {
         super.fillViewHolder(viewHolder, data, position);
         View view = viewHolder.getView();
 

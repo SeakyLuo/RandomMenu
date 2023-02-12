@@ -64,7 +64,7 @@ public class ChooseFoodActivity extends AppCompatActivity {
         });
         findViewById(R.id.confirm_button).setOnClickListener(v -> {
             Intent intent = new Intent();
-            intent.putExtra(TAG, foodListFragment.getSelectedFood().toArrayList());
+            intent.putExtra(TAG, foodListFragment.getSelectedFood());
             setResult(RESULT_OK, intent);
             finish();
         });

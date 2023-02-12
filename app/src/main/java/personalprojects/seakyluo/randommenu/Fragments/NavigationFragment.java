@@ -19,7 +19,7 @@ import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.EditFoodActivity;
-import personalprojects.seakyluo.randommenu.adapters.FoodAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.FoodAdapter;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.Food;
@@ -27,7 +27,7 @@ import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.SearchActivity;
-import personalprojects.seakyluo.randommenu.adapters.SelectTagAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.SelectTagAdapter;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -59,7 +59,7 @@ public class NavigationFragment extends Fragment {
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         selectTagAdapter = new SelectTagAdapter((viewHolder, tag) -> selectTag(tag));
-        selectTagAdapter.context = getContext();
+        selectTagAdapter.setContext(getContext());
         selectTagAdapter.setLongClickListener(((viewHolder, data) -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_tag_menu, getContext(), viewHolder.getView());
             if (data.isAllCategoriesTag()){
@@ -97,7 +97,7 @@ public class NavigationFragment extends Fragment {
                     case R.id.delete_tag_item:
                         AskYesNoDialog askDialog = new AskYesNoDialog();
                         askDialog.setMessage(String.format(getString(R.string.delete_tag), data.Name));
-                        askDialog.setOnYesListener(v -> {
+                        askDialog.setYesListener(v -> {
                             if (data.equals(lastTag)) lastTag = Tag.AllCategoriesTag;
                             selectTagAdapter.remove(data);
                             Settings.settings.Tags.remove(data);
@@ -115,14 +115,14 @@ public class NavigationFragment extends Fragment {
 
         RecyclerView detailView = view.findViewById(R.id.detailView);
         foodAdapter = new FoodAdapter();
-        foodAdapter.SetOnFoodClickedListener((viewHolder, food) -> {
+        foodAdapter.setFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.setFood(food);
             dialog.setFoodEditedListener((before, after) -> setData());
             dialog.setFoodLikedListener(((before, after) -> foodAdapter.setFoodLiked(after)));
-            dialog.showNow(getChildFragmentManager(), AskYesNoDialog.TAG);
+            dialog.showNow(getChildFragmentManager(), FoodCardDialog.TAG);
         });
-        foodAdapter.SetOnFoodLongClickListener((viewHolder, food) -> editFood(food, false));
+        foodAdapter.setFoodLongClickListener((viewHolder, food) -> editFood(food, false));
         detailView.setAdapter(foodAdapter);
         view.findViewById(R.id.navigation_toolbar).setOnClickListener(v -> detailView.smoothScrollToPosition(0));
 
@@ -151,12 +151,12 @@ public class NavigationFragment extends Fragment {
     private void selectTag(Tag tag){
         if (tag.isAllCategoriesTag()){
             lastTag = Tag.AllCategoriesTag;
-            title_text_view.setText(Tag.format(getContext(), R.string.all_categories, Settings.settings.Foods.count()));
-            foodAdapter.Reset();
+            title_text_view.setText(Tag.format(getContext(), R.string.all_categories, Settings.settings.Foods.size()));
+            foodAdapter.reset();
         }else{
             lastTag = Settings.settings.Tags.first(tag);
             title_text_view.setText(Tag.format(getContext(), lastTag));
-            foodAdapter.Filter(lastTag);
+            foodAdapter.filter(lastTag);
         }
     }
 

@@ -7,7 +7,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.adapters.SimpleFoodListAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.SimpleFoodListAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
@@ -39,7 +39,7 @@ public class ToCookActivity extends SwipeBackActivity {
         adapter.SetOnDeletedClickedListener((viewHolder, data) -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.setMessage(String.format(getString(R.string.ask_delete), data));
-            dialog.setOnYesListener(dv -> {
+            dialog.setYesListener(dv -> {
                 Settings.settings.ToCook.remove(data);
                 adapter.remove(data);
                 SetTitle();
@@ -64,7 +64,7 @@ public class ToCookActivity extends SwipeBackActivity {
     }
 
     public void SetTitle(){
-        titleText.setText(Tag.format(this, R.string.to_cook, adapter.getData().count()));
+        titleText.setText(Tag.format(this, R.string.to_cook, adapter.getData().size()));
     }
 
     @Override

@@ -83,7 +83,7 @@ public class RandomFragment extends Fragment {
         menuDialog.SetFoodRemovedListener((viewHolder, data) -> {
             menu.remove(data);
             SetMenuHeader();
-            food_pool.with(data, Helper.RandRange(0, food_pool.count()));
+            food_pool.with(data, Helper.RandRange(0, food_pool.size()));
         });
         menuDialog.SetOnClearListener(button -> {
             food_pool.with(menu).shuffle();
@@ -92,7 +92,7 @@ public class RandomFragment extends Fragment {
             menuDialog.Clear();
         });
         menuButton.setOnClickListener(v -> {
-            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.count()));
+            menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.size()));
             menuDialog.SetData(menu);
             menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });
@@ -101,7 +101,7 @@ public class RandomFragment extends Fragment {
         return view;
     }
 
-    private void SetMenuHeader() { menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.count())); }
+    private void SetMenuHeader() { menuDialog.SetHeaderText(String.format(getString(R.string.food_count), menu.size())); }
     private void GoodFood() { food_card.startAnimation(good_food); }
     private void BadFood() { food_card.startAnimation(bad_food); }
     private void ResetFood() { flip_in.setTarget(food_card); flip_in.start(); }
@@ -129,9 +129,9 @@ public class RandomFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         getChildFragmentManager().putFragment(outState, FoodCardFragment.TAG, foodCardFragment);
-        outState.putParcelableArrayList(TAG_MENU, menu.toArrayList());
-        outState.putParcelableArrayList(TAG_PREFERRED_TAGS, preferred_tags.toArrayList());
-        outState.putParcelableArrayList(TAG_EXCLUDED_TAGS, excluded_tags.toArrayList());
+        outState.putParcelableArrayList(TAG_MENU, menu);
+        outState.putParcelableArrayList(TAG_PREFERRED_TAGS, preferred_tags);
+        outState.putParcelableArrayList(TAG_EXCLUDED_TAGS, excluded_tags);
     }
 
     private void SetAnimations(){

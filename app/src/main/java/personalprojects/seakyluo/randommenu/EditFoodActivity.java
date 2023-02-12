@@ -77,21 +77,21 @@ public class EditFoodActivity extends AppCompatActivity {
 
         cancel_button.setOnClickListener(v -> {
             String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
-            AList<Tag> tags = chooseTagFragment.GetData();
+            AList<Tag> tags = chooseTagFragment.getData();
             boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
-                    imageChanged = currentFood == null ? images.count() > 0 : !images.equals(currentFood.Images),
-                    tagChanged = currentFood == null ? tags.count() > 0 : !tags.equals(currentFood.getTags()),
+                    imageChanged = currentFood == null ? images.size() > 0 : !images.equals(currentFood.Images),
+                    tagChanged = currentFood == null ? tags.size() > 0 : !tags.equals(currentFood.getTags()),
                     noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note),
                     likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.isFavorite();
             if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
                 dialog.setMessage(R.string.save_as_draft);
-                dialog.setOnYesListener(view -> {
+                dialog.setYesListener(view -> {
                     Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
                     finish();
                 });
-                dialog.setOnNoListener(view -> finish());
+                dialog.setNoListener(view -> finish());
             }else{
                 finish();
             }
@@ -107,7 +107,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 dialog.setMessage(R.string.duplicate_food_merge);
-                dialog.setOnYesListener(view -> {
+                dialog.setYesListener(view -> {
                     int index = Settings.settings.Foods.indexOf(f -> f.Name.equals(food_name));
                     Food food = Settings.settings.Foods.get(index);
                     food.Images.addAll(images);
@@ -115,23 +115,23 @@ public class EditFoodActivity extends AppCompatActivity {
                         food.setCover(food_cover);
                     }
                     food.setIsFavorite(food.isFavorite() || like_toggle.isChecked());
-                    food.AddTags(chooseTagFragment.GetData());
+                    food.AddTags(chooseTagFragment.getData());
                     if (!Helper.isBlank(food.Note)){
                         food.Note = food.Note + '\n' + getNote();
                     }
                     Settings.settings.Foods.move(index, 0);
                     FinishWithFood(food);
                 });
-                dialog.setOnNoListener(view -> {
+                dialog.setNoListener(view -> {
                     Toast.makeText(this, R.string.food_exists, Toast.LENGTH_SHORT).show();
                 });
                 return;
             }
-            AList<Tag> tags = chooseTagFragment.GetData();
+            AList<Tag> tags = chooseTagFragment.getData();
             if (tags.isEmpty()){
                 if (Settings.settings.AutoTag){
                     List<Tag> guessTags = Helper.guessTags(food_name);
-                    chooseTagFragment.SetData(guessTags);
+                    chooseTagFragment.setData(guessTags);
                     if (guessTags.size() > 0){
                         Toast.makeText(this, R.string.tag_auto_added, Toast.LENGTH_SHORT).show();
                     }else{
@@ -158,12 +158,12 @@ public class EditFoodActivity extends AppCompatActivity {
                 ShowMenuFlyout();
             }
         });
-        delete_food_button.setVisibility(isDraft ? View.GONE : View.VISIBLE);
+        delete_food_button.setVisibility(currentFood == null ? View.GONE : View.VISIBLE);
         delete_food_button.setOnClickListener(v -> {
             AskYesNoDialog dialog = new AskYesNoDialog();
             dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
             dialog.setMessage(R.string.ask_delete_food);
-            dialog.setOnYesListener(view -> {
+            dialog.setYesListener(view -> {
                 if (isDraft) Settings.settings.FoodDraft = null;
                 else Settings.settings.removeFood(currentFood);
                 setResult(RESULT_OK);
@@ -175,7 +175,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private void ShowMenuFlyout(){
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
         if (images.isEmpty()) helper.removeItems(R.id.edit_image_item, R.id.remove_image_item);
-        if (images.count() < 2 || imageViewerFragment.getCurrentImage().equals(food_cover)) helper.removeItems(R.id.set_cover_item);
+        if (images.size() < 2 || imageViewerFragment.getCurrentImage().equals(food_cover)) helper.removeItems(R.id.set_cover_item);
         if (images.isEmpty() || imageViewerFragment.getCurrent() == 0) helper.removeItems(R.id.move_to_first_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
@@ -244,8 +244,8 @@ public class EditFoodActivity extends AppCompatActivity {
         edit_food_name.setText(food.Name);
         food_image.setVisibility(food.hasImage() ? View.GONE : View.VISIBLE);
         imageViewerFragment.setImages(images.copyFrom(food.Images), food_cover = food.getCover());
-        sources.copyFrom(new AList<>("", food.Images.count()));
-        chooseTagFragment.SetData(food.getTags());
+        sources.copyFrom(new AList<>("", food.Images.size()));
+        chooseTagFragment.setData(food.getTags());
         edit_note.setText(food.Note);
         like_toggle.setChecked(food.isFavorite());
     }
@@ -359,7 +359,7 @@ public class EditFoodActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.putFragment(outState, ChooseTagFragment.TAG, chooseTagFragment);
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
-        outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.GetData(), getNote(), like_toggle.isChecked(), food_cover));
+        outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), food_cover));
     }
     public String getFoodName() { return edit_food_name.getText().toString().trim(); }
     private String getNote() { return edit_note.getText().toString().trim(); }

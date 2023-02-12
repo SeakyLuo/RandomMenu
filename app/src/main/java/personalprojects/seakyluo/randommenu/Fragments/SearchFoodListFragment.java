@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import personalprojects.seakyluo.randommenu.adapters.SearchFoodListAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.SearchFoodListAdapter;
 
 public class SearchFoodListFragment extends BaseFoodListFragment<SearchFoodListAdapter> {
     public static final String TAG = "SearchFoodListFragment";

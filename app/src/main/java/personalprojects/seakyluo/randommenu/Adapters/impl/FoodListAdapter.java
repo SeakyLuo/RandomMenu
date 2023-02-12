@@ -1,9 +1,10 @@
-package personalprojects.seakyluo.randommenu.adapters;
+package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
+import personalprojects.seakyluo.randommenu.adapters.BaseFoodListAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.CustomDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
@@ -21,12 +22,12 @@ public class FoodListAdapter extends BaseFoodListAdapter {
     public void setSelectable(boolean selectable) { this.selectable = selectable; }
 
     @Override
-    public int getLayout(int viewType) {
+    protected int getLayout(int viewType) {
         return R.layout.view_listed_food;
     }
 
     @Override
-    public void fillViewHolder(CustomViewHolder viewHolder, Food data, int position) {
+    protected void fillViewHolder(CustomViewHolder viewHolder, Food data, int position) {
         View view = viewHolder.getView();
         ImageView checkedImage = view.findViewById(R.id.checked_image);
         RecyclerView recyclerView = view.findViewById(R.id.tags_recycler_view);

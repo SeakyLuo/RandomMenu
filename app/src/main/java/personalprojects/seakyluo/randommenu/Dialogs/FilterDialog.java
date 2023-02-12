@@ -30,18 +30,18 @@ public class FilterDialog extends DialogFragment {
         Button reset_button = view.findViewById(R.id.reset_button);
 
         getChildFragmentManager().beginTransaction().add(R.id.prefer_tags, prefer).add(R.id.exclude_tags, exclude).commit();
-        prefer.SetHeader(getString(R.string.prefer_tags));
-        prefer.SetChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, exclude.GetData().toArrayList()));
-        exclude.SetHeader(getString(R.string.exclude_tags));
-        exclude.SetChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, prefer.GetData().toArrayList()));
-        confirm_button.setOnClickListener(v -> tagFilterListener.Filter(prefer.GetData(), exclude.GetData()));
+        prefer.setHeader(getString(R.string.prefer_tags));
+        prefer.setChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, exclude.getData()));
+        exclude.setHeader(getString(R.string.exclude_tags));
+        exclude.setChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, prefer.getData()));
+        confirm_button.setOnClickListener(v -> tagFilterListener.Filter(prefer.getData(), exclude.getData()));
         reset_button.setOnClickListener(resetListener);
         return view;
     }
 
     public void SetData(AList<Tag> preferred, AList<Tag> excluded){
-        prefer.SetData(preferred);
-        exclude.SetData(excluded);
+        prefer.setData(preferred);
+        exclude.setData(excluded);
     }
     public void SetTagFilterListener(TagFilterListener listener) { tagFilterListener = listener; }
     public void SetOnResetListener(View.OnClickListener listener) { resetListener = listener; }

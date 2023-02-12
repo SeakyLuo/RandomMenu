@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import personalprojects.seakyluo.randommenu.interfaces.ForLambda;
-import personalprojects.seakyluo.randommenu.interfaces.ObjectLambda;
 import personalprojects.seakyluo.randommenu.interfaces.ZipVoidLambda;
 
 public class AList<T> extends IList<T> {
@@ -31,7 +31,6 @@ public class AList<T> extends IList<T> {
     public AList(T element, int count) {
         IntStream.range(0, count + 1).forEach(i -> add(element)); }
 
-    public int count() { return size(); }
     public int count(Predicate<T> predicate){
         return (int) stream().filter(predicate).count();
     }
@@ -62,11 +61,13 @@ public class AList<T> extends IList<T> {
         return this;
     }
     public AList<T> without(Collection<T> collection) {
-        removeAll(collection);
+        if (CollectionUtils.isNotEmpty(collection)){
+            removeAll(collection);
+        }
         return this;
     }
     public AList<T> clear(int start) {
-        return clear(start, count());
+        return clear(start, size());
     }
     public AList<T> clear(int start, int end) {
         subList(modIndex(start), modIndex(end)).clear();
@@ -91,7 +92,7 @@ public class AList<T> extends IList<T> {
         return -1;
     }
     public AList<T> before(int index){ return sub(0, index); }
-    public AList<T> after(int index) { return sub(index + 1, count()); }
+    public AList<T> after(int index) { return sub(index + 1, size()); }
     public AList<T> sub(int start, int end){
         start = modIndex(start);
         end = modIndex(end);
@@ -108,42 +109,36 @@ public class AList<T> extends IList<T> {
     public T get(int index){ return super.get(modIndex(index)); }
     public T set(T element, int index) { super.set(modIndex(index), element); return element; }
     public AList<T> set(UnaryOperator<T> lambda) { replaceAll(lambda); return this; }
-    public T first() { return count() > 0 ? get(0) : null; }
+    public T first() { return size() > 0 ? get(0) : null; }
     public T first(T target){
         return stream().filter(target::equals).findFirst().orElse(null);
     }
     public T first(Predicate<T> lambda){
         return stream().filter(lambda).findFirst().orElse(null);
     }
-    public T last() { return count() > 0 ? get(count() - 1) : null; }
+    public T last() { return size() > 0 ? get(size() - 1) : null; }
     public T last(Predicate<T> lambda){ return reverse().first(lambda); }
     public AList<T> For(ForLambda lambda) {
-        for (int i = 0; i < count(); i++) lambda.operate(i);
+        for (int i = 0; i < size(); i++) lambda.operate(i);
         return this;
     }
     public AList<T> ForEach(Consumer<? super T> lambda){
         forEach(lambda);
         return this;
     }
-    public <A> AList<A> convert(ObjectLambda<T, A> lambda){
-        AList<A> collection = new AList<A>();
-        for (T element: this) collection.add(lambda.operate(element));
-        return collection;
+    public <A> AList<A> convert(Function<? super T, ? extends A> mapper){
+        return new AList<>(stream().map(mapper).collect(Collectors.toList()));
     }
     public AList<T> find(Predicate<T> lambda){
         return new AList<>(stream().filter(lambda).collect(Collectors.toList()));
     }
     public AList<T> reverse(){
-        int count = count();
+        int count = size();
         for (int i = 0; i < count / 2; i++) swap(i, count - 1 - i);
         return this;
     }
     public AList<T> swap(int item1, int item2){
-        item1 = modIndex(item1);
-        item2 = modIndex(item2);
-        T temp = get(item1);
-        set(item1, get(item2));
-        set(item2, temp);
+        Collections.swap(this, modIndex(item1), modIndex(item2));
         return this;
     }
     public AList<T> swap(T item1, T item2){ return swap(indexOf(item1), indexOf(item2)); }
@@ -169,21 +164,9 @@ public class AList<T> extends IList<T> {
         return diff;
     }
     public Set<T> toSet() { return new HashSet<>(this); }
-    public List<T> toList() { return toArrayList(); }
-    public ArrayList<T> toArrayList() { return new ArrayList<T>(this); }
     public AList<T> sorted(Comparator<? super T> comparator) {
         sort(comparator);
         return this;
-    }
-    public <A> HashMap<A, AList<T>> groupBy(ObjectLambda<T, A> lambda){
-        HashMap<A, AList<T>> hashMap = new HashMap<>();
-        for (T element: this){
-            A key = lambda.operate(element);
-            AList<T> group = hashMap.getOrDefault(key, new AList<>());
-            group.add(element);
-            hashMap.put(key, group);
-        }
-        return hashMap;
     }
     public Map<T, Integer> toCounter(){
         Map<T, Integer> map = new HashMap<>();
@@ -196,13 +179,13 @@ public class AList<T> extends IList<T> {
     }
     public <A> ZipList<T, A> zip(IList<A> zip){ return new ZipList<>(this, zip); }
     public AList<T> enumerate(ZipVoidLambda<Integer, T> lambda) {
-        for (int i = 0; i < count(); i++)
+        for (int i = 0; i < size(); i++)
             lambda.operate(i, get(i));
         return this;
     }
     private int modIndex(int index){
         if (index == 0) return 0;
-        int count = count();
+        int count = size();
         if (count == index) return index;
         if (count > 0) index = index % count;
         return index < 0 ? index + count : index;

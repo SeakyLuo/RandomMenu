@@ -54,5 +54,5 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         });
     }
 
-    private void setTitle() { title.setText(Tag.format(this, R.string.my_favorites, Settings.settings.MyFavorites.count())); }
+    private void setTitle() { title.setText(Tag.format(this, R.string.my_favorites, Settings.settings.MyFavorites.size())); }
 }

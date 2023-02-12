@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import personalprojects.seakyluo.randommenu.adapters.TagListAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.TagListAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.fragments.TagsFragment;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
@@ -67,7 +67,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
-                suggestionTagListAdapter.addAll(tagListAdapter.getData().without(tagsFragment.getData()).convert(t -> t.Name).toList());
+                suggestionTagListAdapter.addAll(tagListAdapter.getData().without(tagsFragment.getData()).convert(t -> t.Name));
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -87,10 +87,10 @@ public class ChooseTagActivity extends SwipeBackActivity {
                 AskYesNoDialog dialog = new AskYesNoDialog();
                 dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
                 dialog.setMessage(R.string.ask_save);
-                dialog.setOnYesListener(view -> {
+                dialog.setYesListener(view -> {
                     finishActivity();
                 });
-                dialog.setOnNoListener(view -> {
+                dialog.setNoListener(view -> {
                     setResult(RESULT_CANCELED);
                     finish();
                 });
@@ -165,7 +165,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
     private void finishActivity(){
         Intent intent = new Intent();
         AList<Tag> tags = tagsFragment.getData();
-        intent.putExtra(SELECTED_TAGS, tags.toArrayList());
+        intent.putExtra(SELECTED_TAGS, tags);
         if (tags.equals(original_tags)) setResult(RESULT_CANCELED);
         else setResult(RESULT_OK, intent);
         finish();

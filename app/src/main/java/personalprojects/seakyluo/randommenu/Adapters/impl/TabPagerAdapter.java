@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.adapters;
+package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,5 +23,5 @@ public class TabPagerAdapter<T extends Fragment> extends FragmentStatePagerAdapt
     public Fragment getItem(int i) { return fragmentList.get(i); }
 
     @Override
-    public int getCount() { return fragmentList.count(); }
+    public int getCount() { return fragmentList.size(); }
 }

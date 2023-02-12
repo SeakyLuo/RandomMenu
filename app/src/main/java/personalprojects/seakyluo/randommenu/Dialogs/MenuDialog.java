@@ -49,7 +49,7 @@ public class MenuDialog extends DialogFragment {
         }
         add_button.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ChooseFoodActivity.class);
-            intent.putExtra(ChooseFoodActivity.TAG, fragment.getData().toArrayList());
+            intent.putExtra(ChooseFoodActivity.TAG, fragment.getData());
             startActivityForResult(intent, ChooseFoodActivity.CODE);
         });
         clear_button.setOnClickListener(clearListener);

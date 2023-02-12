@@ -26,7 +26,7 @@ public class RecalculateHelper {
 
     public static void FindAbnormalFood(){
         Settings.settings.Foods.ForEach(f -> {
-            if (f.Images.count() > 10){
+            if (f.Images.size() > 10){
                 Log.d("fuck", f.Name);
             }
         });

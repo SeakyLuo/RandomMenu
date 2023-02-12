@@ -12,13 +12,20 @@ public class Address implements Parcelable {
 
     private String province;
     private String city;
-    private String district;
+    private String county;
     private String address;
+
+    public void copyFrom(Address src){
+        province = src.province;
+        city = src.city;
+        county = src.county;
+        address = src.address;
+    }
 
     protected Address(Parcel in) {
         province = in.readString();
         city = in.readString();
-        district = in.readString();
+        county = in.readString();
         address = in.readString();
     }
 
@@ -43,7 +50,7 @@ public class Address implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(province);
         dest.writeString(city);
-        dest.writeString(district);
+        dest.writeString(county);
         dest.writeString(address);
     }
 }

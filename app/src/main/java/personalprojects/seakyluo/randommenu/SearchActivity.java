@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import personalprojects.seakyluo.randommenu.adapters.TabPagerAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.TabPagerAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.fragments.BaseFoodListFragment;

@@ -22,7 +22,7 @@ import android.widget.Toast;
 import java.util.Objects;
 
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.adapters.TagAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.TagAdapter;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.SearchHelper;
 import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
@@ -99,11 +99,11 @@ public class TagMapperDialog extends DialogFragment {
                 Toast.makeText(getContext(), R.string.empty_keyword, Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (adapter.getData().count() == 0){
+            if (adapter.getData().size() == 0){
                 Toast.makeText(getContext(), R.string.keyword_at_least_one_tag, Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (confirmListener != null) confirmListener.operate(new TagMapper(keyword, adapter.getData().toList()));
+            if (confirmListener != null) confirmListener.operate(new TagMapper(keyword, adapter.getData()));
             dismiss();
         });
         cancel.setOnClickListener(v -> dismiss());
@@ -129,7 +129,7 @@ public class TagMapperDialog extends DialogFragment {
         if (Helper.isNullOrEmpty(tag)){
             return;
         }
-        int index = adapter.data.indexOf(t -> t.Name.equals(tag));
+        int index = adapter.indexOf(t -> t.Name.equals(tag));
         if (index == -1){
             adapter.add(tag, 0);
         }else{

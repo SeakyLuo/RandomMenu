@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.adapters;
+package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -82,7 +82,7 @@ public class ImageAdapter extends PagerAdapter {
     public int getItemPosition(Object object) { return POSITION_NONE; }
 
     @Override
-    public int getCount() { return images.count(); }
+    public int getCount() { return images.size(); }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
