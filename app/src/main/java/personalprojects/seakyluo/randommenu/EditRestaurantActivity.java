@@ -81,6 +81,7 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
         addressPlaceholder.setOnClickListener(this::showAddressDialog);
         addAddressButton.setOnClickListener(this::showAddressDialog);
         addConsumeRecordButton.setOnClickListener(v -> showEditConsumeRecordActivity(null));
+        consumeRecordAdapter.setOnClickListener((vh, data) -> showEditConsumeRecordActivity(data));
     }
 
     private void onCancel(View view){

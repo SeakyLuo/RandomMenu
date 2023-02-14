@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -13,12 +14,14 @@ import android.widget.TextView;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
-import personalprojects.seakyluo.randommenu.adapters.impl.SimpleAddressAdapter;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
@@ -35,8 +38,8 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
     private EditText editFriends;
     private View consumeFoodPlaceholder;
     private ConsumeFoodAdapter foodAdapter;
-    private SimpleAddressAdapter addressAdapter;
     private ItemTouchHelper dragHelper;
+    private List<Address> addressList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,25 +49,26 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         ImageButton cancelButton = findViewById(R.id.cancel_button);
         ImageButton confirmButton = findViewById(R.id.confirm_button);
         consumeTimeText = findViewById(R.id.consume_time_text);
+        // TODO 只有1个地址的时候不用Spinner直接TextView即可
         addressSpinner = findViewById(R.id.address_spinner);
         editFriends = findViewById(R.id.edit_friends);
         consumeFoodPlaceholder = findViewById(R.id.consume_food_placeholder);
         ImageButton addConsumeFoodButton = findViewById(R.id.add_consume_food_button);
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
         foodAdapter = new ConsumeFoodAdapter();
-        addressAdapter = new SimpleAddressAdapter();
 
         ConsumeRecordVO data;
-        List<Address> addressList;
         if (savedInstanceState == null){
-            data = getIntent().getParcelableExtra(DATA);
-            addressList = getIntent().getParcelableExtra(ADDRESS_LIST);
+            Intent intent = getIntent();
+            data = intent.getParcelableExtra(DATA);
+            addressList = intent.getParcelableArrayListExtra(ADDRESS_LIST);
         } else {
             data = savedInstanceState.getParcelable(DATA);
             addressList = savedInstanceState.getParcelable(ADDRESS_LIST);
         }
 
-        addressAdapter.setData(addressList);
+        List<String> addressSelections = Optional.ofNullable(addressList).orElse(new ArrayList<>()).stream().map(Address::getAddress).collect(Collectors.toList());
+        addressSpinner.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, addressSelections));
         setData(data);
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(foodAdapter));
         dragHelper.attachToRecyclerView(consumeRecordRecyclerView);
@@ -73,7 +77,7 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         cancelButton.setOnClickListener(this::onCancel);
         confirmButton.setOnClickListener(this::onConfirm);
         consumeTimeText.setOnClickListener(v -> {
-
+            // TODO
         });
         addConsumeFoodButton.setOnClickListener(v -> {
             // TODO
@@ -115,7 +119,7 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         if (CollectionUtils.isNotEmpty(eaters)){
             editFriends.setText(String.join(EATER_DELIMITER, eaters));
         }
-        addressSpinner.setSelection(addressAdapter.indexOf(src.getAddress()));
+        addressSpinner.setSelection(addressList.indexOf(src.getAddress()));
         foodAdapter.setData(src.getFoods());
         if (CollectionUtils.isEmpty(src.getFoods())){
             consumeFoodPlaceholder.setVisibility(View.VISIBLE);

@@ -76,7 +76,9 @@ public class AList<T> extends IList<T> {
     public AList<T> copy(){ return new AList<>(this); }
     public AList<T> copyFrom(Collection<T> collection){
         clear();
-        addAll(collection);
+        if (CollectionUtils.isNotEmpty(collection)){
+            addAll(collection);
+        }
         return this;
     }
     public int indexOf(Predicate<T> lambda){
