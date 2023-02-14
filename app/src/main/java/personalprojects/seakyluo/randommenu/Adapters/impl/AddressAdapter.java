@@ -1,7 +1,6 @@
 package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.support.v4.app.FragmentActivity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -42,12 +41,7 @@ public class AddressAdapter extends DraggableAdapter<Address> {
             dialog.showNow(((FragmentActivity)context).getSupportFragmentManager(), AddressDialog.TAG);
         });
         // TODO 只有一个项目的时候不需要排序
-        reorderButton.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (startDragListener != null) startDragListener.requestDrag(viewHolder);
-            }
-            return false;
-        });
+        reorderButton.setOnTouchListener((v, event) -> dragStart(viewHolder, event));
     }
 
     private void fillAddress(TextView textDistrict, TextView textAddress, Address data){

@@ -70,7 +70,7 @@ public class DragDropCallback<T> extends ItemTouchHelper.Callback {
         void onRowClear(CustomAdapter<T>.CustomViewHolder myViewHolder);
     }
 
-    public interface StartDragListener<T> {
+    public interface DragStartListener<T> {
         void requestDrag(CustomAdapter<T>.CustomViewHolder viewHolder);
     }
 

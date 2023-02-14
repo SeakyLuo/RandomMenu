@@ -3,13 +3,13 @@ package personalprojects.seakyluo.randommenu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -24,9 +24,11 @@ import personalprojects.seakyluo.randommenu.helpers.SwipeToDeleteCallback;
 import personalprojects.seakyluo.randommenu.interfaces.AddressOperateListener;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.FoodType;
+import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
+import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
-public class EditRestaurantActivity extends SwipeBackActivity implements DragDropCallback.StartDragListener<Address>, AddressOperateListener {
+public class EditRestaurantActivity extends SwipeBackActivity implements DragDropCallback.DragStartListener<Address>, AddressOperateListener {
     public static int CODE = 1;
     public static final String DATA = "RESTAURANT", IS_DRAFT = "IsDraft";
     private boolean isDraft;
@@ -41,6 +43,7 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_restaurant);
+
         ImageButton cancelButton = findViewById(R.id.cancel_button);
         ImageButton confirmButton = findViewById(R.id.confirm_button);
         editName = findViewById(R.id.edit_name);
@@ -56,7 +59,6 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
         ImageButton addAddressButton = findViewById(R.id.add_address_button);
         ImageButton addConsumeRecordButton = findViewById(R.id.add_consume_record_button);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
         RestaurantVO restaurant;
         if (savedInstanceState == null){
             restaurant = getIntent().getParcelableExtra(DATA);
@@ -66,35 +68,19 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
         }
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(addressAdapter));
         dragHelper.attachToRecyclerView(addressRecyclerView);
-        enableSwipeToDeleteAndUndo(addressRecyclerView);
-
+        SwipeToDeleteUtils.apply(addressRecyclerView, this, this::removeAddress, this::addAddress, Address::getAddress);
         addressAdapter.setContext(this);
-        addressAdapter.setStartDragListener(this);
+        addressAdapter.setDragStartListener(this);
         addressAdapter.setAddressOperateListener(this);
         addressRecyclerView.setAdapter(addressAdapter);
         consumeRecordRecyclerView.setAdapter(consumeRecordAdapter);
 
-        setRestaurant(restaurant);
+        setData(restaurant);
         cancelButton.setOnClickListener(this::onCancel);
         confirmButton.setOnClickListener(this::onConfirm);
         addressPlaceholder.setOnClickListener(this::showAddressDialog);
         addAddressButton.setOnClickListener(this::showAddressDialog);
-    }
-
-    private void enableSwipeToDeleteAndUndo(RecyclerView recyclerView) {
-        new ItemTouchHelper(new SwipeToDeleteCallback(this) {
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                int position = viewHolder.getAdapterPosition();
-                Address item = removeAddress(position);
-                Snackbar snackbar = Snackbar.make(recyclerView, String.format("地址\"%s\"已被删除", item.getAddress()), Snackbar.LENGTH_LONG);
-                snackbar.setAction("撤销", view -> {
-                    addAddress(item);
-                    recyclerView.scrollToPosition(position);
-                });
-                snackbar.show();
-            }
-        }).attachToRecyclerView(recyclerView);
+        addConsumeRecordButton.setOnClickListener(v -> showEditConsumeRecordActivity(null));
     }
 
     private void onCancel(View view){
@@ -102,7 +88,7 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
     }
 
     private void onConfirm(View view){
-        finishWithRestaurant(buildRestaurant());
+        finishWithData(buildData());
     }
 
     private void showAddressDialog(View view) {
@@ -125,29 +111,40 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
         return item;
     }
 
-    private void setRestaurant(RestaurantVO r){
-        if (r == null){
+    private void showEditConsumeRecordActivity(ConsumeRecordVO data){
+        if (addressAdapter.isEmpty()){
+            Toast.makeText(this, "请先添加地址！", Toast.LENGTH_SHORT).show();
             return;
         }
-        editName.setText(r.getName());
-        addressAdapter.setData(r.getAddressList());
-        if (CollectionUtils.isEmpty(r.getAddressList())){
+        Intent intent = new Intent(this, EditConsumeRecordActivity.class);
+        intent.putExtra(EditConsumeRecordActivity.DATA, data);
+        intent.putExtra(EditConsumeRecordActivity.ADDRESS_LIST, addressAdapter.getData());
+        startActivityForResult(intent, EditConsumeRecordActivity.CODE);
+    }
+
+    private void setData(RestaurantVO src){
+        if (src == null){
+            return;
+        }
+        editName.setText(src.getName());
+        addressAdapter.setData(src.getAddressList());
+        if (CollectionUtils.isEmpty(src.getAddressList())){
             addressPlaceholder.setVisibility(View.VISIBLE);
         } else {
             addressPlaceholder.setVisibility(View.GONE);
         }
-        editFoodType.setText(r.getFoodTypeName());
-        editComment.setText(r.getComment());
-        editLink.setText(r.getLink());
-        consumeRecordAdapter.setData(r.getRecords());
-        if (CollectionUtils.isEmpty(r.getRecords())){
+        editFoodType.setText(src.getFoodTypeName());
+        editComment.setText(src.getComment());
+        editLink.setText(src.getLink());
+        consumeRecordAdapter.setData(src.getRecords());
+        if (CollectionUtils.isEmpty(src.getRecords())){
             consumeRecordPlaceholder.setVisibility(View.VISIBLE);
         } else {
             consumeRecordPlaceholder.setVisibility(View.GONE);
         }
     }
 
-    private RestaurantVO buildRestaurant(){
+    private RestaurantVO buildData(){
         RestaurantVO i = new RestaurantVO();
         i.setName(editName.getText().toString());
         i.setAddressList(addressAdapter.getData());
@@ -163,7 +160,7 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(DATA, buildRestaurant());
+        outState.putParcelable(DATA, buildData());
     }
 
     @Override
@@ -172,7 +169,7 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
         super.finish();
     }
 
-    private void finishWithRestaurant(RestaurantVO data){
+    private void finishWithData(RestaurantVO data){
         Intent intent = new Intent();
         intent.putExtra(DATA, data);
         setResult(RESULT_OK, intent);

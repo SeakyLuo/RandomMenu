@@ -41,6 +41,7 @@
                 android:layout_marginHorizontal="8dp"
                 />
         </LinearLayout>
+
         <ImageButton
             android:id="@+id/reorder_button"
             android:layout_width="wrap_content"

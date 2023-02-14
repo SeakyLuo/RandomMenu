@@ -12,13 +12,13 @@ public class RestaurantFoodVO implements Parcelable {
 
     private String name;
     private String pictureUri;
-    private String description;
-    private double price;
+    private String comment;
+    private Double price;
 
     protected RestaurantFoodVO(Parcel in) {
         name = in.readString();
         pictureUri = in.readString();
-        description = in.readString();
+        comment = in.readString();
         price = in.readDouble();
     }
 
@@ -43,7 +43,7 @@ public class RestaurantFoodVO implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(pictureUri);
-        dest.writeString(description);
+        dest.writeString(comment);
         dest.writeDouble(price);
     }
 }
