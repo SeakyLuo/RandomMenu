@@ -1,7 +1,7 @@
 package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.Toast;
 
 import java.util.LinkedHashMap;

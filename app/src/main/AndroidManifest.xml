@@ -19,7 +19,7 @@
         android:windowSoftInputMode="stateAlwaysHidden"
         tools:ignore="GoogleAppIndexingWarning">
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="personalprojects.seakyluo.randommenu.provider"
             android:exported="false"
             android:grantUriPermissions="true">

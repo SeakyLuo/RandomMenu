@@ -1,7 +1,7 @@
 package personalprojects.seakyluo.randommenu;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import com.google.android.material.snackbar.Snackbar;
 import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;

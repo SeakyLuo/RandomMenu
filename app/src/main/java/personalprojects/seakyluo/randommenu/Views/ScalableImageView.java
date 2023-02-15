@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
-public class ScalableImageView extends android.support.v7.widget.AppCompatImageView {
+public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageView {
     private float mScaleFactor = 1.0f;
     private ScaleGestureDetector scaler;
     private boolean pinching = false;

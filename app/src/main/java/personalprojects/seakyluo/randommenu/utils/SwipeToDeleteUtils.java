@@ -1,9 +1,9 @@
 package personalprojects.seakyluo.randommenu.utils;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

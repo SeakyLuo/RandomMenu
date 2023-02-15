@@ -2,8 +2,8 @@ package personalprojects.seakyluo.randommenu;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -12,14 +12,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loper7.date_time_picker.dialog.CardDatePickerDialog;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
@@ -80,7 +80,10 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         cancelButton.setOnClickListener(this::onCancel);
         confirmButton.setOnClickListener(this::onConfirm);
         consumeTimeText.setOnClickListener(v -> {
-            // TODO
+            new CardDatePickerDialog.Builder(this)
+                    .setLabelText("年","月","日","时","分")
+                    .setOnChoose("选择", millisecond -> consumeTime = millisecond)
+                    .build().show();
         });
         addConsumeFoodButton.setOnClickListener(v -> {
             // TODO
@@ -106,6 +109,15 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
     }
 
     private void onConfirm(View view){
+        String totalCost = editTotalCost.getText().toString();
+        if (!NumberUtils.isParsable(totalCost)){
+            Toast.makeText(this, "总金额不合法！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (foodAdapter.isEmpty()){
+            Toast.makeText(this, "菜品不能为空！", Toast.LENGTH_SHORT).show();
+            return;
+        }
         finishWithData(buildData());
     }
 
@@ -165,10 +177,6 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         return dst;
     }
 
-    public static void main(String[] args) {
-        System.out.println(NumberUtils.isParsable("0.0"));
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -181,6 +189,12 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         intent.putExtra(DATA, data);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.push_down_out, 0);
     }
 
     @Override

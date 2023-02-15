@@ -2,8 +2,8 @@ package personalprojects.seakyluo.randommenu.helpers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.MenuPopupHelper;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;

@@ -1,7 +1,7 @@
 package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.graphics.Color;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.View;
 import android.widget.TextView;
 

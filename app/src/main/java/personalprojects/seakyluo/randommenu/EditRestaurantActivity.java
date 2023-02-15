@@ -2,9 +2,9 @@ package personalprojects.seakyluo.randommenu;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -13,14 +13,12 @@ import android.widget.Toast;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import lombok.NonNull;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.AddressAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.helpers.SwipeToDeleteCallback;
 import personalprojects.seakyluo.randommenu.interfaces.AddressOperateListener;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.FoodType;
@@ -82,6 +80,7 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
         addAddressButton.setOnClickListener(this::showAddressDialog);
         addConsumeRecordButton.setOnClickListener(v -> showEditConsumeRecordActivity(null));
         consumeRecordAdapter.setOnClickListener((vh, data) -> showEditConsumeRecordActivity(data));
+        consumeRecordPlaceholder.setOnClickListener(v -> showEditConsumeRecordActivity(null));
     }
 
     private void onCancel(View view){
@@ -121,6 +120,7 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
         intent.putExtra(EditConsumeRecordActivity.DATA, data);
         intent.putExtra(EditConsumeRecordActivity.ADDRESS_LIST, addressAdapter.getData());
         startActivityForResult(intent, EditConsumeRecordActivity.CODE);
+        overridePendingTransition(R.anim.push_down_in, 0);
     }
 
     private void setData(RestaurantVO src){
@@ -168,6 +168,7 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
     public void finish() {
         Helper.save();
         super.finish();
+        overridePendingTransition(R.anim.push_down_out, 0);
     }
 
     private void finishWithData(RestaurantVO data){

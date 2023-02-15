@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/search_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                     app:srcCompat="@drawable/ic_search" />
             </LinearLayout>
 
-            <android.support.design.widget.TabLayout
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/search_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,40 +75,40 @@
                 app:tabSelectedTextColor="@android:color/holo_red_light"
                 app:tabTextAppearance="@style/TextAppearance.AppCompat.Body2">
 
-                <android.support.design.widget.TabItem
+                <com.google.android.material.tabs.TabItem
                     android:id="@+id/search_history_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/history" />
 
-                <android.support.design.widget.TabItem
+                <com.google.android.material.tabs.TabItem
                     android:id="@+id/search_all_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/all" />
 
-                <android.support.design.widget.TabItem
+                <com.google.android.material.tabs.TabItem
                     android:id="@+id/search_food_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/food" />
 
-                <android.support.design.widget.TabItem
+                <com.google.android.material.tabs.TabItem
                     android:id="@+id/search_tag_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/tag" />
 
-                <android.support.design.widget.TabItem
+                <com.google.android.material.tabs.TabItem
                     android:id="@+id/search_note_history"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/note" />
-            </android.support.design.widget.TabLayout>
+            </com.google.android.material.tabs.TabLayout>
         </LinearLayout>
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/search_viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -116,4 +116,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_toolbar" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

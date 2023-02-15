@@ -27,7 +27,7 @@
             app:srcCompat="@drawable/ic_add_dark" />
     </LinearLayout>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/tag_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,5 +40,5 @@
             android:layout_margin="4dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

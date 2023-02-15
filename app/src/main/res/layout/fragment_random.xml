@@ -7,14 +7,14 @@
     android:orientation="vertical"
     android:background="@color/whiteSmoke">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/colorBackgroundFloating"
         android:elevation="2dp">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -49,10 +49,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_menu" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v7.widget.Toolbar>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/food_card_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -67,7 +67,7 @@
             android:id="@+id/food_card_frame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <LinearLayout
         android:layout_width="match_parent"
