@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
@@ -25,7 +26,7 @@ import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
-public class EditRestaurantActivity extends SwipeBackActivity implements DragDropCallback.DragStartListener<Address> {
+public class EditRestaurantActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<Address> {
     public static int CODE = 1;
     public static final String DATA = "RESTAURANT", IS_DRAFT = "IsDraft";
     private boolean isDraft;

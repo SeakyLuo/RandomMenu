@@ -2,6 +2,8 @@ package personalprojects.seakyluo.randommenu;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
@@ -18,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +35,9 @@ import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
-public class EditConsumeRecordActivity extends SwipeBackActivity implements DragDropCallback.DragStartListener<ConsumeRecordVO> {
+public class EditConsumeRecordActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<ConsumeRecordVO> {
     public static int CODE = 1;
-    public static final String DATA = "CONSUME_RECORD", ADDRESS_LIST = "ADDRESS_LIST";
+    public static final String DATA = "CONSUME_RECORD", ADDRESS_LIST = "ADDRESS_LIST", CONSUME_TIME = "CONSUME_TIME";
     private static final String EATER_DELIMITER = "，", CONSUME_TIME_FORMAT = "yyyy-MM-dd HH:mm";
     private Long consumeTime;
     private TextView consumeTimeText, addressText;
@@ -43,7 +46,7 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
     private View consumeFoodPlaceholder;
     private ConsumeFoodAdapter foodAdapter;
     private ItemTouchHelper dragHelper;
-    private List<Address> addressList;
+    private ArrayList<Address> addressList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +73,8 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
             addressList = intent.getParcelableArrayListExtra(ADDRESS_LIST);
         } else {
             data = savedInstanceState.getParcelable(DATA);
-            addressList = savedInstanceState.getParcelable(ADDRESS_LIST);
+            addressList = savedInstanceState.getParcelableArrayList(ADDRESS_LIST);
+            consumeTime = savedInstanceState.getLong(CONSUME_TIME);
         }
 
         setAddress(addressList);
@@ -195,7 +199,8 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(DATA, buildData());
-        outState.putParcelable(ADDRESS_LIST, buildData());
+        outState.putParcelableArrayList(ADDRESS_LIST, addressList);
+        outState.putLong(CONSUME_TIME, consumeTime);
     }
 
     private void finishWithData(ConsumeRecordVO data){
