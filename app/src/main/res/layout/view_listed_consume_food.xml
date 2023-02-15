@@ -36,6 +36,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_marginVertical="8dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="3dp"
             android:layout_weight="1">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -54,7 +56,7 @@
                     android:id="@+id/food_price"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="￥100.00" />
+                    android:text="￥100.00"/>
 
             </LinearLayout>
 
@@ -73,7 +75,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_reorder"
             android:background="@null"
-            android:layout_margin="2dp"
+            android:layout_marginEnd="2dp"
             android:layout_gravity="center_vertical"/>
 
     </LinearLayout>

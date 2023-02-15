@@ -65,10 +65,7 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
 
     private void fillFood(RestaurantFoodVO data, TextView foodName, TextView foodPrice, TextView foodComment, ImageView foodImage){
         foodName.setText(data.getName());
-        Double price = data.getPrice();
-        if (price != null){
-            foodPrice.setText("￥" + price);
-        }
+        foodPrice.setText("￥" + data.getPrice());
         foodComment.setText(data.getComment());
         Helper.loadImage(Glide.with(context), data.getPictureUri(), foodImage);
     }
