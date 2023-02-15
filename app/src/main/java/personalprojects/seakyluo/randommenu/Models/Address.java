@@ -22,6 +22,28 @@ public class Address implements Parcelable {
         address = src.address;
     }
 
+    public String buildDistrict(){
+        StringBuilder district = new StringBuilder(province);
+        if (!province.equals(city)){
+            district.append(city);
+        }
+        district.append(" ");
+        district.append(county);
+        return district.toString();
+    }
+
+    public String buildFullAddress(){
+        StringBuilder sb = new StringBuilder(province);
+        if (!province.equals(city)){
+            sb.append(city);
+        }
+        return sb.append(county).append(address).toString();
+    }
+
+    public String buildSimpleAddress(){
+        return county.endsWith("区") ? county + " " + address : address;
+    }
+
     protected Address(Parcel in) {
         province = in.readString();
         city = in.readString();

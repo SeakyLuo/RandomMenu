@@ -17,6 +17,8 @@ public class ConsumeRecordVO implements Parcelable {
     private Long consumeTime;
     private Address address;
     private List<String> eaters;
+    private double totalCost;
+    private String comment;
     private List<RestaurantFoodVO> foods;
 
     protected ConsumeRecordVO(Parcel in) {
@@ -27,6 +29,8 @@ public class ConsumeRecordVO implements Parcelable {
         }
         address = in.readParcelable(Address.class.getClassLoader());
         eaters = in.createStringArrayList();
+        totalCost = in.readDouble();
+        comment = in.readString();
         foods = in.createTypedArrayList(RestaurantFoodVO.CREATOR);
     }
 
@@ -57,6 +61,8 @@ public class ConsumeRecordVO implements Parcelable {
         }
         dest.writeParcelable(address, flags);
         dest.writeStringList(eaters);
+        dest.writeDouble(totalCost);
+        dest.writeString(comment);
         dest.writeTypedList(foods);
     }
 }

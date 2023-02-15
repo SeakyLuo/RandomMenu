@@ -27,6 +27,8 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
 
     protected abstract void fillViewHolder(CustomViewHolder viewHolder, T data, int position);
 
+    protected void dataSizeChanged(){}
+
     @NonNull
     @Override
     public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
@@ -44,32 +46,38 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
 
     public void setData(List<T> list){
         this.data.copyFrom(list);
+        dataSizeChanged();
         notifyDataSetChanged();
     }
 
     public void add(List<T> list){
         final int count = data.size();
         data.addAll(list);
+        dataSizeChanged();
         notifyItemRangeInserted(count, list.size());
     }
 
     public void add(List<T> list, int index){
         data.addAll(index, list);
+        dataSizeChanged();
         notifyItemRangeInserted(index, getItemCount());
     }
 
     public void add(T object){
         data.add(object);
+        dataSizeChanged();
         notifyItemInserted(data.size() - 1);
     }
 
     public void add(T object, int index){
         data.add(index, object);
+        dataSizeChanged();
         notifyItemInserted(index);
     }
 
     public void pop(int index){
         data.pop(index);
+        dataSizeChanged();
         notifyItemRemoved(index);
     }
 
@@ -80,6 +88,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
 
     public void removeAt(int index){
         data.remove(index);
+        dataSizeChanged();
         notifyItemRemoved(index);
     }
 
@@ -116,6 +125,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     public void clear(){
         final int size = data.size();
         data.clear();
+        dataSizeChanged();
         notifyItemRangeRemoved(0, size);
     }
 

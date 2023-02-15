@@ -10,8 +10,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.util.ArrayList;
@@ -33,9 +35,9 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
     public static final String DATA = "CONSUME_RECORD", ADDRESS_LIST = "ADDRESS_LIST";
     private static final String EATER_DELIMITER = "，";
     private Long consumeTime;
-    private TextView consumeTimeText;
+    private TextView consumeTimeText, addressText;
     private Spinner addressSpinner;
-    private EditText editFriends;
+    private EditText editFriends, editComment, editTotalCost;
     private View consumeFoodPlaceholder;
     private ConsumeFoodAdapter foodAdapter;
     private ItemTouchHelper dragHelper;
@@ -49,9 +51,11 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         ImageButton cancelButton = findViewById(R.id.cancel_button);
         ImageButton confirmButton = findViewById(R.id.confirm_button);
         consumeTimeText = findViewById(R.id.consume_time_text);
-        // TODO 只有1个地址的时候不用Spinner直接TextView即可
+        addressText = findViewById(R.id.address_text);
         addressSpinner = findViewById(R.id.address_spinner);
         editFriends = findViewById(R.id.edit_friends);
+        editComment = findViewById(R.id.edit_comment);
+        editTotalCost = findViewById(R.id.edit_total_cost_text);
         consumeFoodPlaceholder = findViewById(R.id.consume_food_placeholder);
         ImageButton addConsumeFoodButton = findViewById(R.id.add_consume_food_button);
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
@@ -67,8 +71,7 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
             addressList = savedInstanceState.getParcelable(ADDRESS_LIST);
         }
 
-        List<String> addressSelections = Optional.ofNullable(addressList).orElse(new ArrayList<>()).stream().map(Address::getAddress).collect(Collectors.toList());
-        addressSpinner.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, addressSelections));
+        setAddress(addressList);
         setData(data);
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(foodAdapter));
         dragHelper.attachToRecyclerView(consumeRecordRecyclerView);
@@ -109,6 +112,7 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
     private void setData(ConsumeRecordVO src){
         if (src == null){
             addressSpinner.setSelection(0);
+            editTotalCost.setText("0.0");
             return;
         }
         consumeTime = src.getConsumeTime();
@@ -120,6 +124,8 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
             editFriends.setText(String.join(EATER_DELIMITER, eaters));
         }
         addressSpinner.setSelection(addressList.indexOf(src.getAddress()));
+        editComment.setText(src.getComment());
+        editTotalCost.setText(String.valueOf(src.getTotalCost()));
         foodAdapter.setData(src.getFoods());
         if (CollectionUtils.isEmpty(src.getFoods())){
             consumeFoodPlaceholder.setVisibility(View.VISIBLE);
@@ -128,13 +134,39 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         }
     }
 
+    private void setAddress(List<Address> addressList){
+        if (CollectionUtils.isEmpty(addressList)){
+            return;
+        }
+        if (addressList.size() == 1){
+            Address address = addressList.get(0);
+            addressText.setText(address.buildSimpleAddress());
+            addressText.setVisibility(View.VISIBLE);
+            addressSpinner.setVisibility(View.GONE);
+        } else {
+            List<String> addressSelections = addressList.stream().map(Address::buildSimpleAddress).collect(Collectors.toList());
+            addressSpinner.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, addressSelections));
+            addressText.setVisibility(View.GONE);
+            addressSpinner.setVisibility(View.VISIBLE);
+        }
+    }
+
     private ConsumeRecordVO buildData(){
         ConsumeRecordVO dst = new ConsumeRecordVO();
         dst.setConsumeTime(consumeTime);
-        dst.setAddress((Address) addressSpinner.getSelectedItem());
+        dst.setAddress(addressList.size() == 1 ? addressList.get(0) : (Address) addressSpinner.getSelectedItem());
         dst.setEaters(Arrays.asList(editFriends.getText().toString().split(EATER_DELIMITER)));
+        String totalCost = editTotalCost.getText().toString();
+        if (NumberUtils.isParsable(totalCost)){
+            dst.setTotalCost(Double.parseDouble(totalCost));
+        }
+        dst.setComment(editComment.getText().toString());
         dst.setFoods(foodAdapter.getData());
         return dst;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(NumberUtils.isParsable("0.0"));
     }
 
     @Override

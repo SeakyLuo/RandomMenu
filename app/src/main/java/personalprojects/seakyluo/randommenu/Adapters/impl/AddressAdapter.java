@@ -40,12 +40,21 @@ public class AddressAdapter extends DraggableAdapter<Address> {
             });
             dialog.showNow(((FragmentActivity)context).getSupportFragmentManager(), AddressDialog.TAG);
         });
-        // TODO 只有一个项目的时候不需要排序
+        if (getData().size() == 1){
+            reorderButton.setVisibility(View.GONE);
+        }
         reorderButton.setOnTouchListener((v, event) -> dragStart(viewHolder, event));
     }
 
+    @Override
+    protected void dataSizeChanged() {
+        for (CustomViewHolder viewHolder : viewHolders){
+            viewHolder.getView().findViewById(R.id.reorder_button).setVisibility(data.size() == 1 ? View.GONE : View.VISIBLE);
+        }
+    }
+
     private void fillAddress(TextView textDistrict, TextView textAddress, Address data){
-        textDistrict.setText(data.getProvince() + " " + data.getCity() + " " + data.getCounty());
+        textDistrict.setText(data.buildDistrict());
         textAddress.setText(data.getAddress());
     }
 
