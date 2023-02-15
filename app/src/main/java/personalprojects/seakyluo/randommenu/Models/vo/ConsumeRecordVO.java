@@ -14,7 +14,7 @@ import personalprojects.seakyluo.randommenu.models.Address;
 @Data
 public class ConsumeRecordVO implements Parcelable {
 
-    private Long consumeTime;
+    private long consumeTime;
     private Address address;
     private List<String> eaters;
     private double totalCost;
@@ -22,11 +22,7 @@ public class ConsumeRecordVO implements Parcelable {
     private List<RestaurantFoodVO> foods;
 
     protected ConsumeRecordVO(Parcel in) {
-        if (in.readByte() == 0) {
-            consumeTime = null;
-        } else {
-            consumeTime = in.readLong();
-        }
+        consumeTime = in.readLong();
         address = in.readParcelable(Address.class.getClassLoader());
         eaters = in.createStringArrayList();
         totalCost = in.readDouble();
@@ -53,12 +49,7 @@ public class ConsumeRecordVO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if (consumeTime == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(consumeTime);
-        }
+        dest.writeLong(consumeTime);
         dest.writeParcelable(address, flags);
         dest.writeStringList(eaters);
         dest.writeDouble(totalCost);

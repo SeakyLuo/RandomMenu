@@ -19,14 +19,13 @@ import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.interfaces.AddressOperateListener;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
-public class EditRestaurantActivity extends SwipeBackActivity implements DragDropCallback.DragStartListener<Address>, AddressOperateListener {
+public class EditRestaurantActivity extends SwipeBackActivity implements DragDropCallback.DragStartListener<Address> {
     public static int CODE = 1;
     public static final String DATA = "RESTAURANT", IS_DRAFT = "IsDraft";
     private boolean isDraft;
@@ -69,7 +68,7 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
         SwipeToDeleteUtils.apply(addressRecyclerView, this, this::removeAddress, this::addAddress, Address::getAddress);
         addressAdapter.setContext(this);
         addressAdapter.setDragStartListener(this);
-        addressAdapter.setAddressOperateListener(this);
+        addressAdapter.setClickedListener((viewHolder, data) -> addressAdapter.set(data, viewHolder.getAdapterPosition()));
         addressRecyclerView.setAdapter(addressAdapter);
         consumeRecordRecyclerView.setAdapter(consumeRecordAdapter);
 
@@ -181,10 +180,5 @@ public class EditRestaurantActivity extends SwipeBackActivity implements DragDro
     @Override
     public void requestDrag(CustomAdapter<Address>.CustomViewHolder viewHolder) {
         dragHelper.startDrag(viewHolder);
-    }
-
-    @Override
-    public void edited(Address address, int index) {
-        addressAdapter.set(address, index);
     }
 }

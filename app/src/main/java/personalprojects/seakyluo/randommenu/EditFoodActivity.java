@@ -33,6 +33,7 @@ import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
+import personalprojects.seakyluo.randommenu.utils.FoodImageUtils;
 
 public class EditFoodActivity extends AppCompatActivity {
     public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
@@ -155,7 +156,7 @@ public class EditFoodActivity extends AppCompatActivity {
         });
         camera_button.setOnClickListener(v -> {
             if (Helper.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_STORAGE)){
-                ShowMenuFlyout();
+                showMenuFlyout();
             }
         });
         delete_food_button.setVisibility(currentFood == null ? View.GONE : View.VISIBLE);
@@ -172,7 +173,7 @@ public class EditFoodActivity extends AppCompatActivity {
         });
     }
 
-    private void ShowMenuFlyout(){
+    private void showMenuFlyout(){
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
         if (images.isEmpty()) helper.removeItems(R.id.edit_image_item, R.id.remove_image_item);
         if (images.size() < 2 || imageViewerFragment.getCurrentImage().equals(food_cover)) helper.removeItems(R.id.set_cover_item);
@@ -180,17 +181,14 @@ public class EditFoodActivity extends AppCompatActivity {
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.open_camera_item:
-                    if (Helper.checkAndRequestPermission(this, Manifest.permission.CAMERA, CAMERA_CODE)){
-                        OpenCamera();
-                    }
-                    return true;
+                    crop_image_uri = FoodImageUtils.OpenCamera(this);
+                    return crop_image_uri != null;
                 case R.id.open_gallery_item:
-                    if (Helper.checkAndRequestReadStoragePermission(this)){
-                        OpenGallery();
-                    }
+                    FoodImageUtils.OpenGallery(this);
                     return true;
                 case R.id.edit_image_item:
-                    return CropImage();
+                    crop_image_uri = FoodImageUtils.CropImage(this, CurrentImage());
+                    return crop_image_uri != null;
                 case R.id.remove_image_item:
                     String image = images.pop(imageViewerFragment.removeCurrentImage());
                     if (image.equals(food_cover)) food_cover = images.isEmpty() ? "" : images.first();
@@ -207,36 +205,6 @@ public class EditFoodActivity extends AppCompatActivity {
             return false;
         });
         helper.show();
-    }
-
-    private boolean CropImage(){
-        try {
-            Intent intent = new Intent("com.android.camera.action.CROP");
-            intent.setDataAndType(Uri.parse(CurrentImage()), "image/*");
-            crop_image_uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", Helper.TempFolder));
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, crop_image_uri);
-            startActivityForResult(intent, CROP_CODE);
-            return true;
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "Whoops - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private void OpenCamera(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camera_image_uri = Helper.getFileUri(this, Helper.NewImageFileName());
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, camera_image_uri);
-        startActivityForResult(intent, CAMERA_CODE);
-    }
-
-    private void OpenGallery(){
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(Intent.createChooser(intent, getString(R.string.select_image)), GALLERY_CODE);
     }
 
     private void setFood(Food food){
@@ -257,13 +225,13 @@ public class EditFoodActivity extends AppCompatActivity {
             return;
         switch (requestCode){
             case WRITE_STORAGE:
-                ShowMenuFlyout();
+                showMenuFlyout();
                 break;
             case CAMERA_CODE:
-                OpenCamera();
+                FoodImageUtils.OpenCamera(this);
                 break;
             case Helper.READ_EXTERNAL_STORAGE_CODE:
-                OpenGallery();
+                FoodImageUtils.OpenGallery(this);
                 break;
         }
     }

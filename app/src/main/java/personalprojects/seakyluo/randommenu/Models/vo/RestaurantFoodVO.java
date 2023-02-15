@@ -13,7 +13,14 @@ public class RestaurantFoodVO implements Parcelable {
     private String name;
     private String pictureUri;
     private String comment;
-    private Double price;
+    private double price;
+
+    public void copyFrom(RestaurantFoodVO src){
+        name = src.name;
+        pictureUri = src.pictureUri;
+        comment = src.comment;
+        price = src.price;
+    }
 
     protected RestaurantFoodVO(Parcel in) {
         name = in.readString();

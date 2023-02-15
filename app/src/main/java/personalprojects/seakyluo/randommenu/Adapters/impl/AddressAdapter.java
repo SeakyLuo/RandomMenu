@@ -1,21 +1,22 @@
 package personalprojects.seakyluo.randommenu.adapters.impl;
 
-import androidx.fragment.app.FragmentActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.fragment.app.FragmentActivity;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
-import personalprojects.seakyluo.randommenu.interfaces.AddressOperateListener;
+import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.Address;
 
 public class AddressAdapter extends DraggableAdapter<Address> {
 
     @Setter
-    private AddressOperateListener addressOperateListener;
+    private DataItemClickedListener<Address> clickedListener;
 
     @Override
     protected int getLayout(int viewType) {
@@ -29,14 +30,14 @@ public class AddressAdapter extends DraggableAdapter<Address> {
         TextView textAddress = view.findViewById(R.id.text_address);
         ImageButton reorderButton = view.findViewById(R.id.reorder_button);
 
-        fillAddress(textDistrict, textAddress, data);
+        fillAddress(data, textDistrict, textAddress);
         view.setOnClickListener(v -> {
             AddressDialog dialog = new AddressDialog();
             dialog.setAddress(data);
             dialog.setConfirmListener(address -> {
                 data.copyFrom(address);
-                fillAddress(textDistrict, textAddress, address);
-                addressOperateListener.edited(address, position);
+                fillAddress(data, textDistrict, textAddress);
+                clickedListener.click(viewHolder, data);
             });
             dialog.showNow(((FragmentActivity)context).getSupportFragmentManager(), AddressDialog.TAG);
         });
@@ -53,7 +54,7 @@ public class AddressAdapter extends DraggableAdapter<Address> {
         }
     }
 
-    private void fillAddress(TextView textDistrict, TextView textAddress, Address data){
+    private void fillAddress(Address data, TextView textDistrict, TextView textAddress){
         textDistrict.setText(data.buildDistrict());
         textAddress.setText(data.getAddress());
     }

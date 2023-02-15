@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
+import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
+import personalprojects.seakyluo.randommenu.dialogs.RestaurantFoodDialog;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
@@ -33,7 +35,7 @@ import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 public class EditConsumeRecordActivity extends SwipeBackActivity implements DragDropCallback.DragStartListener<ConsumeRecordVO> {
     public static int CODE = 1;
     public static final String DATA = "CONSUME_RECORD", ADDRESS_LIST = "ADDRESS_LIST";
-    private static final String EATER_DELIMITER = "，";
+    private static final String EATER_DELIMITER = "，", CONSUME_TIME_FORMAT = "yyyy-MM-dd HH:mm";
     private Long consumeTime;
     private TextView consumeTimeText, addressText;
     private Spinner addressSpinner;
@@ -82,12 +84,21 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         consumeTimeText.setOnClickListener(v -> {
             new CardDatePickerDialog.Builder(this)
                     .setLabelText("年","月","日","时","分")
-                    .setOnChoose("选择", millisecond -> consumeTime = millisecond)
+                    .setOnChoose("选择", this::setConsumeTime)
+                    .showBackNow(true)
                     .build().show();
         });
-        addConsumeFoodButton.setOnClickListener(v -> {
-            // TODO
-        });
+        addConsumeFoodButton.setOnClickListener(v -> showFoodDialog(null));
+        consumeFoodPlaceholder.setOnClickListener(v -> showFoodDialog(null));
+        foodAdapter.setContext(this);
+        foodAdapter.setClickedListener((v, d) -> foodAdapter.set(d, v.getAdapterPosition()));
+    }
+
+    private void showFoodDialog(RestaurantFoodVO data) {
+        RestaurantFoodDialog dialog = new RestaurantFoodDialog();
+        dialog.setConfirmListener(this::addFood);
+        dialog.setFood(data);
+        dialog.showNow(getSupportFragmentManager(), AddressDialog.TAG);
     }
 
     private void addFood(RestaurantFoodVO item){
@@ -123,14 +134,12 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
 
     private void setData(ConsumeRecordVO src){
         if (src == null){
+            setConsumeTime(System.currentTimeMillis());
             addressSpinner.setSelection(0);
             editTotalCost.setText("0.0");
             return;
         }
-        consumeTime = src.getConsumeTime();
-        if (consumeTime != null){
-            consumeTimeText.setText(DateFormatUtils.format(consumeTime, "yyyy-MM-dd HH:mm"));
-        }
+        setConsumeTime(src.getConsumeTime());
         List<String> eaters = src.getEaters();
         if (CollectionUtils.isNotEmpty(eaters)){
             editFriends.setText(String.join(EATER_DELIMITER, eaters));
@@ -144,6 +153,11 @@ public class EditConsumeRecordActivity extends SwipeBackActivity implements Drag
         } else {
             consumeFoodPlaceholder.setVisibility(View.GONE);
         }
+    }
+
+    private void setConsumeTime(long time){
+        consumeTime = time;
+        consumeTimeText.setText(DateFormatUtils.format(time, CONSUME_TIME_FORMAT));
     }
 
     private void setAddress(List<Address> addressList){
