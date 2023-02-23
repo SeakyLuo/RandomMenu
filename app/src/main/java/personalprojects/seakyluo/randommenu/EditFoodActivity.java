@@ -263,7 +263,8 @@ public class EditFoodActivity extends AppCompatActivity {
                 try {
                     Uri uri;
                     int index;
-                    if (data.getClipData() == null) {
+                    ClipData clipData = data.getClipData();
+                    if (clipData == null) {
                         uri = data.getData();
                         index = sources.indexOf(uri.getPath());
                         // Avoid re-adding images
@@ -274,7 +275,6 @@ public class EditFoodActivity extends AppCompatActivity {
                         }else if (AddImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), Helper.NewImageFileName()))
                             sources.with(uri.getPath(), 0);
                     }else{
-                        ClipData clipData = data.getClipData();
                         int count = clipData.getItemCount();
                         AList<String> files = new AList<>(), paths = new AList<>();
                         String path;

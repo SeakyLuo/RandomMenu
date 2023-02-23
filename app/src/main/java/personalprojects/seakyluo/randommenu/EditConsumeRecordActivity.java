@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -38,7 +39,7 @@ import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 public class EditConsumeRecordActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<ConsumeRecordVO> {
     public static int CODE = 1;
     public static final String DATA = "CONSUME_RECORD", ADDRESS_LIST = "ADDRESS_LIST", CONSUME_TIME = "CONSUME_TIME";
-    private static final String EATER_DELIMITER = "，", CONSUME_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+    public static final String EATER_DELIMITER = "，";
     private Long consumeTime;
     private TextView consumeTimeText, addressText;
     private Spinner addressSpinner;
@@ -99,10 +100,10 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     }
 
     private void showFoodDialog(RestaurantFoodVO data) {
-        RestaurantFoodDialog dialog = new RestaurantFoodDialog();
-        dialog.setConfirmListener(this::addFood);
-        dialog.setFood(data);
-        dialog.showNow(getSupportFragmentManager(), AddressDialog.TAG);
+        Intent intent = new Intent(this, EditRestaurantFoodActivity.class);
+        intent.putExtra(EditConsumeRecordActivity.DATA, data);
+        startActivityForResult(intent, EditRestaurantFoodActivity.CODE);
+        overridePendingTransition(R.anim.push_down_in, 0);
     }
 
     private void addFood(RestaurantFoodVO item){
@@ -161,7 +162,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
 
     private void setConsumeTime(long time){
         consumeTime = time;
-        consumeTimeText.setText(DateFormatUtils.format(time, CONSUME_TIME_FORMAT));
+        consumeTimeText.setText(DateFormatUtils.format(time, ConsumeRecordVO.CONSUME_TIME_FORMAT));
     }
 
     private void setAddress(List<Address> addressList){
@@ -219,5 +220,18 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     @Override
     public void requestDrag(CustomAdapter<ConsumeRecordVO>.CustomViewHolder viewHolder) {
         dragHelper.startDrag(viewHolder);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) return;
+        RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
+        int index = foodAdapter.getData().indexOf(f -> f.getName().equals(food.getName()));
+        if (index == -1){
+            addFood(food);
+        } else {
+            foodAdapter.getData().set(food, index);
+        }
     }
 }

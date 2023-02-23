@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu.models.vo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
@@ -20,7 +21,6 @@ public class RestaurantVO implements Parcelable {
     private String comment;
     private String link;
     private List<ConsumeRecordVO> records;
-    private List<RestaurantFoodVO> foods;
 
     protected RestaurantVO(Parcel in) {
         name = in.readString();
@@ -30,7 +30,14 @@ public class RestaurantVO implements Parcelable {
         comment = in.readString();
         link = in.readString();
         records = in.createTypedArrayList(ConsumeRecordVO.CREATOR);
-        foods = in.createTypedArrayList(RestaurantFoodVO.CREATOR);
+    }
+
+    public double computeAveragePrice(){
+        return 0;
+    }
+
+    public List<RestaurantFoodVO> computeFoodsToShow(){
+        return records.isEmpty() ? new ArrayList<>() : records.get(0).getFoods();
     }
 
     public static final Creator<RestaurantVO> CREATOR = new Creator<RestaurantVO>() {
@@ -59,6 +66,5 @@ public class RestaurantVO implements Parcelable {
         dest.writeString(comment);
         dest.writeString(link);
         dest.writeTypedList(records);
-        dest.writeTypedList(foods);
     }
 }

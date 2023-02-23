@@ -3,6 +3,8 @@ package personalprojects.seakyluo.randommenu.models.vo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -14,12 +16,19 @@ import personalprojects.seakyluo.randommenu.models.Address;
 @Data
 public class ConsumeRecordVO implements Parcelable {
 
+    public static final String CONSUME_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+
     private long consumeTime;
     private Address address;
     private List<String> eaters;
     private double totalCost;
     private String comment;
     private List<RestaurantFoodVO> foods;
+    private int index = -1;
+
+    public String formatConsumeTime(){
+        return DateFormatUtils.format(consumeTime, CONSUME_TIME_FORMAT);
+    }
 
     protected ConsumeRecordVO(Parcel in) {
         consumeTime = in.readLong();
@@ -28,6 +37,7 @@ public class ConsumeRecordVO implements Parcelable {
         totalCost = in.readDouble();
         comment = in.readString();
         foods = in.createTypedArrayList(RestaurantFoodVO.CREATOR);
+        index = in.readInt();
     }
 
     public static final Creator<ConsumeRecordVO> CREATOR = new Creator<ConsumeRecordVO>() {
@@ -55,5 +65,6 @@ public class ConsumeRecordVO implements Parcelable {
         dest.writeDouble(totalCost);
         dest.writeString(comment);
         dest.writeTypedList(foods);
+        dest.writeInt(index);
     }
 }

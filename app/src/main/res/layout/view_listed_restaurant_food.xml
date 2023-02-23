@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_marginVertical="2dp"
+    android:layout_marginHorizontal="4dp">
+
+    <ImageView
+        android:id="@+id/food_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="6dp"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/food_image_place_holder" />
+
+    <TextView
+        android:id="@+id/food_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Food Name"
+        android:maxLines="1"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/food_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="￥100.00"/>
+
+</LinearLayout>

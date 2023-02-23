@@ -3,9 +3,12 @@ package personalprojects.seakyluo.randommenu;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -13,6 +16,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.apache.commons.collections.CollectionUtils;
+
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.AddressAdapter;
@@ -67,6 +73,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(addressAdapter));
         dragHelper.attachToRecyclerView(addressRecyclerView);
         SwipeToDeleteUtils.apply(addressRecyclerView, this, this::removeAddress, this::addAddress, Address::getAddress);
+        SwipeToDeleteUtils.apply(consumeRecordRecyclerView, this, this::removeConsumeRecord, this::addConsumeRecord, r -> r.formatConsumeTime() + "的记录");
         addressAdapter.setContext(this);
         addressAdapter.setDragStartListener(this);
         addressAdapter.setClickedListener((viewHolder, data) -> addressAdapter.set(data, viewHolder.getAdapterPosition()));
@@ -79,6 +86,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         addressPlaceholder.setOnClickListener(this::showAddressDialog);
         addAddressButton.setOnClickListener(this::showAddressDialog);
         addConsumeRecordButton.setOnClickListener(v -> showEditConsumeRecordActivity(null));
+        consumeRecordAdapter.setContext(this);
         consumeRecordAdapter.setOnClickListener((vh, data) -> showEditConsumeRecordActivity(data));
         consumeRecordPlaceholder.setOnClickListener(v -> showEditConsumeRecordActivity(null));
     }
@@ -88,6 +96,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     }
 
     private void onConfirm(View view){
+        // TODO check fields
         finishWithData(buildData());
     }
 
@@ -137,7 +146,9 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         editFoodType.setText(src.getFoodTypeName());
         editComment.setText(src.getComment());
         editLink.setText(src.getLink());
-        consumeRecordAdapter.setData(src.getRecords());
+        consumeRecordAdapter.setData(src.getRecords().stream()
+                .sorted(Comparator.comparing(ConsumeRecordVO::getConsumeTime).reversed())
+                .collect(Collectors.toList()));
         if (CollectionUtils.isEmpty(src.getRecords())){
             consumeRecordPlaceholder.setVisibility(View.VISIBLE);
         } else {
@@ -156,6 +167,26 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         i.setLink(editLink.getText().toString());
         i.setRecords(consumeRecordAdapter.getData());
         return i;
+    }
+
+    private void addConsumeRecord(ConsumeRecordVO record){
+        consumeRecordAdapter.add(record, 0);
+        consumeRecordPlaceholder.setVisibility(View.GONE);
+        resetRecordIndex(0);
+    }
+
+    private void updateConsumeRecord(ConsumeRecordVO record){
+        consumeRecordAdapter.set(record, record.getIndex());
+    }
+
+    private ConsumeRecordVO removeConsumeRecord(int index){
+        ConsumeRecordVO item = consumeRecordAdapter.getDataAt(index);
+        consumeRecordAdapter.removeAt(index);
+        resetRecordIndex(index);
+        if (consumeRecordAdapter.isEmpty()){
+            consumeRecordPlaceholder.setVisibility(View.VISIBLE);
+        }
+        return item;
     }
 
     @Override
@@ -181,5 +212,23 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     @Override
     public void requestDrag(CustomAdapter<Address>.CustomViewHolder viewHolder) {
         dragHelper.startDrag(viewHolder);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) return;
+        ConsumeRecordVO record = data.getParcelableExtra(EditConsumeRecordActivity.DATA);
+        if (record.getIndex() == -1){
+            addConsumeRecord(record);
+        } else {
+            updateConsumeRecord(record);
+        }
+    }
+
+    private void resetRecordIndex(int start){
+        for (int i = start; i < consumeRecordAdapter.getItemCount(); i++){
+            consumeRecordAdapter.getDataAt(i).setIndex(i);
+        }
     }
 }

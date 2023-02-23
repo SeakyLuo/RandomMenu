@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="2dp"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            >
+
+            <TextView
+                android:id="@+id/consume_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2023-01-01 20:00"
+                android:layout_gravity="center_vertical"
+                android:layout_marginVertical="2dp"
+                />
+
+            <TextView
+                android:id="@+id/consume_total_cost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="￥2000.00"
+                android:layout_gravity="center_vertical"
+                android:layout_marginVertical="2dp"
+                />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/food_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

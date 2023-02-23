@@ -1,5 +1,7 @@
 package personalprojects.seakyluo.randommenu.adapters.impl;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -10,6 +12,8 @@ import androidx.fragment.app.FragmentActivity;
 import com.bumptech.glide.Glide;
 
 import lombok.Setter;
+import personalprojects.seakyluo.randommenu.EditConsumeRecordActivity;
+import personalprojects.seakyluo.randommenu.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
@@ -39,16 +43,11 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
 
         fillFood(data, foodName, foodPrice, foodComment, foodImage);
         view.setOnClickListener(v -> {
-            RestaurantFoodDialog dialog = new RestaurantFoodDialog();
-            dialog.setFood(data);
-            dialog.setConfirmListener(food -> {
-                data.copyFrom(food);
-                fillFood(data, foodName, foodPrice, foodComment, foodImage);
-                if (clickedListener != null){
-                    clickedListener.click(viewHolder, data);
-                }
-            });
-            dialog.showNow(((FragmentActivity)context).getSupportFragmentManager(), RestaurantFoodDialog.TAG);
+            Activity activity = (Activity) context;
+            Intent intent = new Intent(context, EditRestaurantFoodActivity.class);
+            intent.putExtra(EditConsumeRecordActivity.DATA, data);
+            activity.startActivityForResult(intent, EditRestaurantFoodActivity.CODE);
+            activity.overridePendingTransition(R.anim.push_down_in, 0);
         });
         if (getData().size() == 1){
             reorderButton.setVisibility(View.GONE);
