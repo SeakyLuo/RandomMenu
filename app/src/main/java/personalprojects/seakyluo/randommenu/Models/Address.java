@@ -3,19 +3,27 @@ package personalprojects.seakyluo.randommenu.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
+@Builder
+@EqualsAndHashCode(of = {"province", "city", "county", "address"})
 public class Address implements Parcelable {
 
+    private int id;
     private String province;
     private String city;
     private String county;
     private String address;
 
     public void copyFrom(Address src){
+        id = src.id;
         province = src.province;
         city = src.city;
         county = src.county;
@@ -45,6 +53,7 @@ public class Address implements Parcelable {
     }
 
     protected Address(Parcel in) {
+        id = in.readInt();
         province = in.readString();
         city = in.readString();
         county = in.readString();
@@ -70,6 +79,7 @@ public class Address implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(province);
         dest.writeString(city);
         dest.writeString(county);

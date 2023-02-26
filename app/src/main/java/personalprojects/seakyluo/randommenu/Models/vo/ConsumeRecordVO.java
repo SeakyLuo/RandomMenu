@@ -18,6 +18,7 @@ public class ConsumeRecordVO implements Parcelable {
 
     public static final String CONSUME_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
+    private int id;
     private long consumeTime;
     private Address address;
     private List<String> eaters;

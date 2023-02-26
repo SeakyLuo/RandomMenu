@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.AddressAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordAdapter;
+import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
@@ -42,6 +44,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     private ConsumeRecordAdapter consumeRecordAdapter;
     private AutoCompleteTextView editFoodType;
     private ItemTouchHelper dragHelper;
+    private RestaurantVO restaurant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,6 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         ImageButton addAddressButton = findViewById(R.id.add_address_button);
         ImageButton addConsumeRecordButton = findViewById(R.id.add_consume_record_button);
 
-        RestaurantVO restaurant;
         if (savedInstanceState == null){
             restaurant = getIntent().getParcelableExtra(DATA);
             isDraft = getIntent().getBooleanExtra(IS_DRAFT, false);
@@ -96,8 +98,33 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     }
 
     private void onConfirm(View view){
-        // TODO check fields
+        if (StringUtils.isBlank(editName.getText().toString())){
+            Toast.makeText(this, "店名不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (StringUtils.isBlank(editFoodType.getText().toString())){
+            Toast.makeText(this, "菜系不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (CollectionUtils.isEmpty(addressAdapter.getData())){
+            Toast.makeText(this, "地址不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
         finishWithData(buildData());
+    }
+
+    private RestaurantVO buildData(){
+        RestaurantVO i = new RestaurantVO();
+        i.setId(restaurant == null ? 0 : restaurant.getId());
+        i.setName(editName.getText().toString().trim());
+        i.setAddressList(addressAdapter.getData());
+        String foodTypeName = editFoodType.getText().toString().trim();
+        i.setFoodTypeName(foodTypeName);
+        i.setFoodTypeCode(FoodType.getCodeByName(foodTypeName));
+        i.setComment(editComment.getText().toString().trim());
+        i.setLink(editLink.getText().toString().trim());
+        i.setRecords(consumeRecordAdapter.getData());
+        return i;
     }
 
     private void showAddressDialog(View view) {
@@ -156,19 +183,6 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         }
     }
 
-    private RestaurantVO buildData(){
-        RestaurantVO i = new RestaurantVO();
-        i.setName(editName.getText().toString());
-        i.setAddressList(addressAdapter.getData());
-        String foodTypeName = editFoodType.getText().toString();
-        i.setFoodTypeName(foodTypeName);
-        i.setFoodTypeCode(FoodType.getCodeByName(foodTypeName));
-        i.setComment(editComment.getText().toString());
-        i.setLink(editLink.getText().toString());
-        i.setRecords(consumeRecordAdapter.getData());
-        return i;
-    }
-
     private void addConsumeRecord(ConsumeRecordVO record){
         consumeRecordAdapter.add(record, 0);
         consumeRecordPlaceholder.setVisibility(View.GONE);
@@ -197,12 +211,12 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
 
     @Override
     public void finish() {
-        Helper.save();
         super.finish();
         overridePendingTransition(R.anim.push_down_out, 0);
     }
 
     private void finishWithData(RestaurantVO data){
+        RestaurantDaoService.save(data);
         Intent intent = new Intent();
         intent.putExtra(DATA, data);
         setResult(RESULT_OK, intent);

@@ -53,6 +53,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         editPrice = findViewById(R.id.edit_price);
         editComment = findViewById(R.id.edit_comment);
         ImageButton confirmButton = findViewById(R.id.confirm_button);
+        ImageButton cancelButton = findViewById(R.id.cancel_button);
 
         RestaurantFoodVO food;
         if (savedInstanceState == null){
@@ -67,8 +68,8 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
             }
         });
         confirmButton.setOnClickListener(this::onConfirm);
+        cancelButton.setOnClickListener(v -> finish());
     }
-
 
     private void fillFood(RestaurantFoodVO food){
         if (food == null){

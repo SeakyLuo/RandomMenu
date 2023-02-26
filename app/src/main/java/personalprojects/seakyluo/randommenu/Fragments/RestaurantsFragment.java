@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.fragment.app.Fragment;
+import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,10 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import personalprojects.seakyluo.randommenu.EditRestaurantActivity;
+import personalprojects.seakyluo.randommenu.MainActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
 import personalprojects.seakyluo.randommenu.converters.RestaurantConverter;
+import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
+import personalprojects.seakyluo.randommenu.database.services.RestaurantFoodDaoService;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Settings;
@@ -49,11 +55,11 @@ public class RestaurantsFragment extends Fragment {
         restaurantAdapter.setContext(getActivity());
         restaurantRecyclerView.setAdapter(restaurantAdapter);
 
-        setData(Settings.settings.Restaurants.convert(RestaurantConverter::convert));
+        setData(RestaurantDaoService.selectByPage(1, 20));
         return view;
     }
 
-    private void setData(AList<RestaurantVO> restaurants){
+    private void setData(List<RestaurantVO> restaurants){
         titleTextView.setText(restaurants.isEmpty() ? "探店" : String.format("探店（%d）", restaurants.size()));
         restaurantAdapter.setData(restaurants);
     }
@@ -69,7 +75,11 @@ public class RestaurantsFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         RestaurantVO restaurant = data.getParcelableExtra(EditRestaurantActivity.DATA);
-        restaurantAdapter.add(restaurant);
+        if (restaurant.getId() == 0){
+            restaurantAdapter.add(restaurant, 0);
+        } else {
+            restaurantAdapter.update(restaurant, restaurantAdapter.indexOf(i -> i.getId() == restaurant.getId()));
+        }
     }
 
 }

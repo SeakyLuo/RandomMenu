@@ -8,6 +8,8 @@ import android.widget.TextView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import personalprojects.seakyluo.randommenu.EditConsumeRecordActivity;
 import personalprojects.seakyluo.randommenu.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.EditRestaurantFoodActivity;
@@ -25,10 +27,10 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
     @Override
     protected void fillViewHolder(CustomViewHolder viewHolder, RestaurantVO data, int position) {
         View view = viewHolder.getView();
-        RecyclerView restaurantFoodList = view.findViewById(R.id.restaurant_food_list_recycler_view);
+        RecyclerView restaurantFoodRecyclerView = view.findViewById(R.id.restaurant_food_list_recycler_view);
         RestaurantFoodAdapter foodAdapter = new RestaurantFoodAdapter();
 
-        restaurantFoodList.setAdapter(foodAdapter);
+        restaurantFoodRecyclerView.setAdapter(foodAdapter);
         fillWithData(view, foodAdapter, data);
         view.setOnClickListener(v -> {
             Activity activity = (Activity) context;
@@ -49,10 +51,14 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         restaurantName.setText(data.getName());
         foodType.setText(data.getFoodTypeName());
         averagePrice.setText("人均￥" + data.computeAveragePrice());
-        address.setText(data.getAddressList().get(0).buildFullAddress());
+        address.setText(data.getAddressList().get(0).buildSimpleAddress());
         String comment = data.getComment();
-        commentTextView.setText(comment);
+        if (StringUtils.isBlank(comment)){
+            commentTextView.setVisibility(View.GONE);
+        } else {
+            commentTextView.setVisibility(View.VISIBLE);
+            commentTextView.setText(comment);
+        }
         foodAdapter.setData(data.computeFoodsToShow());
-
     }
 }

@@ -14,6 +14,7 @@ import personalprojects.seakyluo.randommenu.models.Address;
 @Data
 public class RestaurantVO implements Parcelable {
 
+    private int id;
     private String name;
     private List<Address> addressList;
     private String foodTypeCode;
@@ -23,6 +24,7 @@ public class RestaurantVO implements Parcelable {
     private List<ConsumeRecordVO> records;
 
     protected RestaurantVO(Parcel in) {
+        id = in.readInt();
         name = in.readString();
         addressList = in.createTypedArrayList(Address.CREATOR);
         foodTypeCode = in.readString();
@@ -59,6 +61,7 @@ public class RestaurantVO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(name);
         dest.writeTypedList(addressList);
         dest.writeString(foodTypeCode);
