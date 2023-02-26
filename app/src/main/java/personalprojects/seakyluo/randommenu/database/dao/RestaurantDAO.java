@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.database.dao;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -10,10 +11,14 @@ import lombok.Data;
 public class RestaurantDAO {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
     private String name;
-    private String foodTypeCode;
+    @ColumnInfo(index = true)
+    private long foodTypeId;
     private String comment;
     private String link;
+    private double averageCost;
+    private long firstVisitTime;
+    private long lastVisitTime;
 
 }

@@ -18,7 +18,7 @@ public class ConsumeRecordVO implements Parcelable {
 
     public static final String CONSUME_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
-    private int id;
+    private long id;
     private long consumeTime;
     private Address address;
     private List<String> eaters;
@@ -32,6 +32,7 @@ public class ConsumeRecordVO implements Parcelable {
     }
 
     protected ConsumeRecordVO(Parcel in) {
+        id = in.readLong();
         consumeTime = in.readLong();
         address = in.readParcelable(Address.class.getClassLoader());
         eaters = in.createStringArrayList();
@@ -60,6 +61,7 @@ public class ConsumeRecordVO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeLong(consumeTime);
         dest.writeParcelable(address, flags);
         dest.writeStringList(eaters);

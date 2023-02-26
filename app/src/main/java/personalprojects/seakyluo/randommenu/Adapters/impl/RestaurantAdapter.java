@@ -10,11 +10,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 import personalprojects.seakyluo.randommenu.EditConsumeRecordActivity;
 import personalprojects.seakyluo.randommenu.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
+import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 
 public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
@@ -34,8 +38,8 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         fillWithData(view, foodAdapter, data);
         view.setOnClickListener(v -> {
             Activity activity = (Activity) context;
-            Intent intent = new Intent(context, EditRestaurantActivity.class);
-            intent.putExtra(EditRestaurantActivity.DATA, data);
+            Intent intent = new Intent(activity, EditRestaurantActivity.class);
+            intent.putExtra(EditRestaurantActivity.DATA, data.getId());
             activity.startActivityForResult(intent, EditRestaurantActivity.CODE);
             activity.overridePendingTransition(R.anim.push_down_in, 0);
         });
@@ -43,15 +47,27 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
 
     private void fillWithData(View view, RestaurantFoodAdapter foodAdapter, RestaurantVO data){
         TextView restaurantName = view.findViewById(R.id.restaurant_name);
-        TextView foodType = view.findViewById(R.id.food_type);
+        TextView foodTypeTextView = view.findViewById(R.id.food_type);
         TextView averagePrice = view.findViewById(R.id.average_price);
-        TextView address = view.findViewById(R.id.address);
+        TextView addressTextView = view.findViewById(R.id.address);
         TextView commentTextView = view.findViewById(R.id.comment);
 
         restaurantName.setText(data.getName());
-        foodType.setText(data.getFoodTypeName());
-        averagePrice.setText("人均￥" + data.computeAveragePrice());
-        address.setText(data.getAddressList().get(0).buildSimpleAddress());
+        FoodType foodType = data.getFoodType();
+        if (foodType == null){
+            foodTypeTextView.setVisibility(View.GONE);
+        } else {
+            foodTypeTextView.setVisibility(View.VISIBLE);
+            foodTypeTextView.setText(foodType.getName());
+        }
+        averagePrice.setText("人均￥" + data.getAverageCost());
+        List<Address> addressList = data.getAddressList();
+        if (addressList.isEmpty()){
+            addressTextView.setVisibility(View.GONE);
+        } else {
+            addressTextView.setVisibility(View.VISIBLE);
+            addressTextView.setText(addressList.get(0).buildSimpleAddress());
+        }
         String comment = data.getComment();
         if (StringUtils.isBlank(comment)){
             commentTextView.setVisibility(View.GONE);

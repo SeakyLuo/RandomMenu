@@ -6,11 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.fragment.app.Fragment;
-import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,20 +17,15 @@ import android.widget.TextView;
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.EditRestaurantActivity;
-import personalprojects.seakyluo.randommenu.MainActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
-import personalprojects.seakyluo.randommenu.converters.RestaurantConverter;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
-import personalprojects.seakyluo.randommenu.database.services.RestaurantFoodDaoService;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Settings;
+import personalprojects.seakyluo.randommenu.interfaces.RestaurantListener;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 
 import static android.app.Activity.RESULT_OK;
 
-public class RestaurantsFragment extends Fragment {
+public class RestaurantsFragment extends Fragment implements RestaurantListener {
     public static final String TAG = "RestaurantsFragment";
     private TextView titleTextView;
     private boolean isLoaded = false;
@@ -48,11 +41,13 @@ public class RestaurantsFragment extends Fragment {
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         RecyclerView restaurantRecyclerView = view.findViewById(R.id.restaurant_recycler_view);
 
+        RestaurantDaoService.addListener(this);
         fab.setOnClickListener(v -> createRestaurant());
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(false);
+            setData(RestaurantDaoService.selectByPage(1, 20));
         });
-        restaurantAdapter.setContext(getActivity());
+        restaurantAdapter.setContext(getContext());
         restaurantRecyclerView.setAdapter(restaurantAdapter);
 
         setData(RestaurantDaoService.selectByPage(1, 20));
@@ -60,8 +55,8 @@ public class RestaurantsFragment extends Fragment {
     }
 
     private void setData(List<RestaurantVO> restaurants){
-        titleTextView.setText(restaurants.isEmpty() ? "探店" : String.format("探店（%d）", restaurants.size()));
         restaurantAdapter.setData(restaurants);
+        setTitle();
     }
 
     private void createRestaurant(){
@@ -75,11 +70,20 @@ public class RestaurantsFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         RestaurantVO restaurant = data.getParcelableExtra(EditRestaurantActivity.DATA);
-        if (restaurant.getId() == 0){
-            restaurantAdapter.add(restaurant, 0);
-        } else {
-            restaurantAdapter.update(restaurant, restaurantAdapter.indexOf(i -> i.getId() == restaurant.getId()));
-        }
+        restaurantAdapter.add(restaurant, 0);
+        setTitle();
     }
 
+    private void setTitle(){
+        List<RestaurantVO> restaurants = restaurantAdapter.getData();
+        titleTextView.setText(restaurants.isEmpty() ? "探店" : String.format("探店（%d）", restaurants.size()));
+    }
+
+    @Override
+    public void onUpdate(RestaurantVO data) {
+        int index = restaurantAdapter.indexOf(i -> i.getId() == data.getId());
+        if (index != -1){
+            restaurantAdapter.set(data, index);
+        }
+    }
 }

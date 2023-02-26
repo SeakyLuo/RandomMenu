@@ -1,32 +1,46 @@
 package personalprojects.seakyluo.randommenu.models;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class FoodType {
+public class FoodType implements Parcelable {
 
+    private long id;
     private String name;
-    private String code;
 
-    public static String getNameByCode(String code){
-        return initFoodTypeMap().get(code);
+    protected FoodType(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
     }
 
-    public static String getCodeByName(String name){
-        return initFoodTypeMap().inverse().get(name);
-    }
-
-    private static BiMap<String, String> initFoodTypeMap(){
-        if (FOOD_TYPE_MAP != null){
-            return FOOD_TYPE_MAP;
+    public static final Creator<FoodType> CREATOR = new Creator<FoodType>() {
+        @Override
+        public FoodType createFromParcel(Parcel in) {
+            return new FoodType(in);
         }
-        FOOD_TYPE_MAP = HashBiMap.create();
-        Settings.settings.FoodTypes.forEach(t -> FOOD_TYPE_MAP.put(t.getCode(), t.getName()));
-        return FOOD_TYPE_MAP;
+
+        @Override
+        public FoodType[] newArray(int size) {
+            return new FoodType[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    private static BiMap<String, String> FOOD_TYPE_MAP = null;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+    }
+
 }

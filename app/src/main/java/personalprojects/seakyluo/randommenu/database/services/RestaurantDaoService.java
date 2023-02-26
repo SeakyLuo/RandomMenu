@@ -1,15 +1,26 @@
 package personalprojects.seakyluo.randommenu.database.services;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
+import personalprojects.seakyluo.randommenu.interfaces.RestaurantListener;
+import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.FoodType;
+import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
+import personalprojects.seakyluo.randommenu.services.FoodTypeService;
 
 public class RestaurantDaoService {
+
+    private static List<RestaurantListener> listeners = new ArrayList<>();
+    public static void addListener(RestaurantListener listener){
+        listeners.add(listener);
+    }
 
     public static void save(RestaurantVO vo){
         if (vo.getId() == 0){
@@ -21,17 +32,50 @@ public class RestaurantDaoService {
 
     public static void insert(RestaurantVO vo){
         RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
-        RestaurantDAO dao = convert(vo);
-        mapper.insert(dao);
-        int id = dao.getId();
-        vo.setId(id);
-        AddressDaoService.insert(vo.getAddressList(), id);
-        ConsumeRecordDaoService.insert(vo.getRecords(), id, vo.getAddressList());
+        AppDatabase.instance.runInTransaction(() -> {
+            FoodTypeService.save(vo.getFoodType());
+            RestaurantDAO dao = convert(vo);
+            long id = mapper.insert(dao);
+            vo.setId(id);
+            List<Address> addressList = vo.getAddressList();
+            AddressDaoService.insert(addressList, id);
+            ConsumeRecordDaoService.insert(vo.getRecords(), id, addressList);
+        });
     }
 
     public static void update(RestaurantVO vo){
         RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
-        mapper.update(convert(vo));
+        long id = vo.getId();
+        RestaurantVO existed = selectById(id);
+        if (existed == null){
+            insert(vo);
+            return;
+        }
+        AppDatabase.instance.runInTransaction(() -> {
+            FoodTypeService.save(vo.getFoodType());
+            FoodType existedFoodType = existed.getFoodType();
+            if (existedFoodType != null && mapper.countByFoodType(existedFoodType.getId()) == 0){
+                FoodTypeService.delete(existedFoodType);
+            }
+
+            mapper.update(convert(vo));
+            List<Address> addressList = vo.getAddressList();
+            AddressDaoService.update(addressList, id);
+            ConsumeRecordDaoService.update(vo.getRecords(), id, addressList);
+        });
+        listeners.forEach(l -> l.onUpdate(vo));
+    }
+
+    public static RestaurantVO selectById(long id){
+        RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
+        RestaurantDAO dao = mapper.selectById(id);
+        if (dao == null){
+            return null;
+        }
+        RestaurantVO vo = convert(dao);
+        vo.setAddressList(AddressDaoService.selectByRestaurant(id));
+        vo.setRecords(ConsumeRecordDaoService.selectByRestaurant(id));
+        return vo;
     }
 
     public static List<RestaurantVO> selectByPage(int pageNum, int pageSize){
@@ -39,9 +83,8 @@ public class RestaurantDaoService {
         List<RestaurantDAO> daoList = mapper.selectByPage(pageNum, pageSize);
         List<RestaurantVO> voList = daoList.stream().map(RestaurantDaoService::convert).collect(Collectors.toList());
         for (RestaurantVO vo : voList){
-            int restaurantId = vo.getId();
+            long restaurantId = vo.getId();
             vo.setAddressList(AddressDaoService.selectByRestaurant(restaurantId));
-            vo.setRecords(ConsumeRecordDaoService.selectByRestaurant(restaurantId));
         }
         return voList;
     }
@@ -53,11 +96,11 @@ public class RestaurantDaoService {
         RestaurantVO dst = new RestaurantVO();
         dst.setId(src.getId());
         dst.setName(src.getName());
-        String foodTypeCode = src.getFoodTypeCode();
-        dst.setFoodTypeCode(foodTypeCode);
-        dst.setFoodTypeName(FoodType.getNameByCode(foodTypeCode));
+        long foodTypeId = src.getFoodTypeId();
+        dst.setFoodType(new FoodType(foodTypeId, FoodTypeService.getNameById(foodTypeId)));
         dst.setComment(src.getComment());
         dst.setLink(src.getLink());
+        dst.setAverageCost(src.getAverageCost());
         return dst;
     }
 
@@ -68,9 +111,15 @@ public class RestaurantDaoService {
         RestaurantDAO dst = new RestaurantDAO();
         dst.setId(src.getId());
         dst.setName(src.getName());
-        dst.setFoodTypeCode(src.getFoodTypeCode());
+        dst.setFoodTypeId(src.getFoodType().getId());
         dst.setComment(src.getComment());
         dst.setLink(src.getLink());
+        double averageCost = src.computeAverageCost();
+        src.setAverageCost(averageCost);
+        dst.setAverageCost(averageCost);
+        List<ConsumeRecordVO> records = src.getRecords();
+        dst.setFirstVisitTime(records.stream().min(Comparator.comparing(ConsumeRecordVO::getConsumeTime)).map(ConsumeRecordVO::getConsumeTime).orElse(System.currentTimeMillis()));
+        dst.setLastVisitTime(records.stream().max(Comparator.comparing(ConsumeRecordVO::getConsumeTime)).map(ConsumeRecordVO::getConsumeTime).orElse(System.currentTimeMillis()));
         return dst;
     }
 

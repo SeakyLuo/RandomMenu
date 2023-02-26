@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -15,13 +16,21 @@ public interface RestaurantFoodMapper {
     @Insert
     void insert(List<RestaurantFoodDAO> list);
 
+    @Update
+    void update(RestaurantFoodDAO dao);
+
     @Delete
     int delete(RestaurantFoodDAO dao);
 
     @Query("select * from restaurant_food where restaurantId = :restaurantId")
-    List<RestaurantFoodDAO> selectByRestaurant(int restaurantId);
+    List<RestaurantFoodDAO> selectByRestaurant(long restaurantId);
+
+    @Query("delete from restaurant_food where restaurantId = :restaurantId")
+    void deleteByRestaurant(long restaurantId);
 
     @Query("select * from restaurant_food where consumeRecordId = :consumeRecordId order by `order`")
-    List<RestaurantFoodDAO> selectByConsumeRecord(int consumeRecordId);
+    List<RestaurantFoodDAO> selectByConsumeRecord(long consumeRecordId);
 
+    @Query("delete from restaurant_food where consumeRecordId = :consumeRecordId")
+    void deleteByConsumeRecord(long consumeRecordId);
 }

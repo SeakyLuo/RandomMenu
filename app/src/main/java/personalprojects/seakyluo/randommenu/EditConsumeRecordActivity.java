@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.loper7.date_time_picker.dialog.CardDatePickerDialog;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
@@ -96,7 +97,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         addConsumeFoodButton.setOnClickListener(v -> showFoodDialog(null));
         consumeFoodPlaceholder.setOnClickListener(v -> showFoodDialog(null));
         foodAdapter.setContext(this);
-        foodAdapter.setClickedListener((v, d) -> foodAdapter.set(d, v.getAdapterPosition()));
+        foodAdapter.setClickedListener((v, d) -> foodAdapter.set(d, v.getBindingAdapterPosition()));
     }
 
     private void showFoodDialog(RestaurantFoodVO data) {
@@ -186,7 +187,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         ConsumeRecordVO dst = new ConsumeRecordVO();
         dst.setConsumeTime(consumeTime);
         dst.setAddress(addressList.size() == 1 ? addressList.get(0) : (Address) addressSpinner.getSelectedItem());
-        dst.setEaters(Arrays.asList(editFriends.getText().toString().split(EATER_DELIMITER)));
+        dst.setEaters(Arrays.stream(editFriends.getText().toString().trim().split(EATER_DELIMITER)).filter(StringUtils::isNoneBlank).collect(Collectors.toList()));
         String totalCost = editTotalCost.getText().toString();
         if (NumberUtils.isParsable(totalCost)){
             dst.setTotalCost(Double.parseDouble(totalCost));
@@ -227,11 +228,11 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
-        int index = foodAdapter.getData().indexOf(f -> f.getName().equals(food.getName()));
+        int index = foodAdapter.indexOf(f -> f.getName().equals(food.getName()));
         if (index == -1){
             addFood(food);
         } else {
-            foodAdapter.getData().set(food, index);
+            foodAdapter.set(food, index);
         }
     }
 }

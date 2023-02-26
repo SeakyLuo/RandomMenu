@@ -14,7 +14,7 @@ import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 public interface RestaurantMapper {
 
     @Insert
-    void insert(RestaurantDAO dao);
+    long insert(RestaurantDAO dao);
 
     @Update
     void update(RestaurantDAO dao);
@@ -22,6 +22,12 @@ public interface RestaurantMapper {
     @Delete
     int delete(RestaurantDAO dao);
 
-    @Query("SELECT * FROM restaurant order by id desc limit :pageSize offset (:pageNum * :pageSize)")
+    @Query("SELECT * FROM restaurant where id = :id")
+    RestaurantDAO selectById(long id);
+
+    @Query("SELECT * FROM restaurant order by lastVisitTime desc limit :pageSize offset ((:pageNum - 1) * :pageSize)")
     List<RestaurantDAO> selectByPage(int pageNum, int pageSize);
+
+    @Query("SELECT count(0) FROM restaurant where foodTypeId = :foodTypeId")
+    long countByFoodType(long foodTypeId);
 }

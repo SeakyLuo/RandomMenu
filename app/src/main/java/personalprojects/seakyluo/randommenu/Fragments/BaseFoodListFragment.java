@@ -37,7 +37,7 @@ public abstract class BaseFoodListFragment<T extends BaseFoodListAdapter> extend
     public void updateFood(Food before, Food after){
         int index = adapter.getData().indexOf(before);
         if (index > -1){
-            adapter.update(after, index);
+            adapter.set(after, index);
         }
     }
     public void clear() { this.data.clear(); adapter.clear(); }

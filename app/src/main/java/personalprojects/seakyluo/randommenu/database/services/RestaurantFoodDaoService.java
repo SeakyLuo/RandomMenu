@@ -11,7 +11,7 @@ import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 
 public class RestaurantFoodDaoService {
 
-    public static void insert(List<RestaurantFoodVO> voList, int restaurantId, int consumeRecordId){
+    public static void insert(List<RestaurantFoodVO> voList, long restaurantId, long consumeRecordId){
         RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
         List<RestaurantFoodDAO> daoList = voList.stream().map(RestaurantFoodDaoService::convert).peek(v -> {
             v.setRestaurantId(restaurantId);
@@ -20,7 +20,12 @@ public class RestaurantFoodDaoService {
         mapper.insert(daoList);
     }
 
-    public static List<RestaurantFoodVO> selectByRestaurantId(int restaurantId){
+    public static void deleteByRestaurant(long restaurantId){
+        RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
+        mapper.deleteByRestaurant(restaurantId);
+    }
+
+    public static List<RestaurantFoodVO> selectByRestaurantId(long restaurantId){
         RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
         return mapper.selectByRestaurant(restaurantId).stream()
                 .sorted(Comparator.comparing(RestaurantFoodDAO::getOrder))

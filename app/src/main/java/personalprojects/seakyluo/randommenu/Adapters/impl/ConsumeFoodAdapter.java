@@ -45,7 +45,7 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
         view.setOnClickListener(v -> {
             Activity activity = (Activity) context;
             Intent intent = new Intent(context, EditRestaurantFoodActivity.class);
-            intent.putExtra(EditConsumeRecordActivity.DATA, data);
+            intent.putExtra(EditRestaurantFoodActivity.DATA, data);
             activity.startActivityForResult(intent, EditRestaurantFoodActivity.CODE);
             activity.overridePendingTransition(R.anim.push_down_in, 0);
         });

@@ -8,15 +8,17 @@ import androidx.room.RoomDatabase;
 
 import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
 import personalprojects.seakyluo.randommenu.database.dao.ConsumeRecordDAO;
+import personalprojects.seakyluo.randommenu.database.dao.FoodTypeDAO;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantFoodDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.AddressMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.ConsumeRecordMapper;
+import personalprojects.seakyluo.randommenu.database.mappers.FoodTypeMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantFoodMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 
-@Database(entities = {RestaurantDAO.class, AddressDAO.class, ConsumeRecordDAO.class, RestaurantFoodDAO.class},
-        version = 1,
+@Database(entities = {RestaurantDAO.class, AddressDAO.class, ConsumeRecordDAO.class, RestaurantFoodDAO.class, FoodTypeDAO.class},
+        version = 3,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -26,10 +28,12 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract AddressMapper addressMapper();
     public abstract ConsumeRecordMapper consumeRecordMapper();
     public abstract RestaurantFoodMapper restaurantFoodMapper();
+    public abstract FoodTypeMapper foodTypeMapper();
 
     public static void createInstance(Context context){
         instance = Room.databaseBuilder(context, AppDatabase.class, "randomMenu.db")
                 .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
                 .build();
     }
 }

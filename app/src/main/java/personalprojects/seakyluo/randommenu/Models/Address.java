@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(of = {"province", "city", "county", "address"})
 public class Address implements Parcelable {
 
-    private int id;
+    private long id;
     private String province;
     private String city;
     private String county;
@@ -53,7 +53,7 @@ public class Address implements Parcelable {
     }
 
     protected Address(Parcel in) {
-        id = in.readInt();
+        id = in.readLong();
         province = in.readString();
         city = in.readString();
         county = in.readString();
@@ -79,7 +79,7 @@ public class Address implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeLong(id);
         dest.writeString(province);
         dest.writeString(city);
         dest.writeString(county);

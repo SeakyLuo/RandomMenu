@@ -10,9 +10,9 @@ import lombok.Data;
 @Entity(tableName = "address")
 public class AddressDAO {
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
     @ColumnInfo(index = true)
-    private int restaurantId;
+    private long restaurantId;
     private String province;
     private String city;
     private String county;

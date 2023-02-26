@@ -21,7 +21,6 @@ public class Settings {
     public AList<String> DislikeFood = new AList<>();
     public AList<String> SearchHistory = new AList<>();
     public AList<FoodType> FoodTypes = new AList<>();
-    public AList<RestaurantDAO> Restaurants = new AList<>();
     public Food FoodDraft;
     public String Note = "";
     public boolean AutoTag = true;

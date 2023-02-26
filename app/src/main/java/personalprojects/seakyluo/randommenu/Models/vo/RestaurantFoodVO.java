@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class RestaurantFoodVO implements Parcelable {
 
-    private int id;
-    private int consumeRecordId;
+    private long id;
+    private long consumeRecordId;
     private String name;
     private String pictureUri;
     private String comment;
@@ -27,8 +27,8 @@ public class RestaurantFoodVO implements Parcelable {
     }
 
     protected RestaurantFoodVO(Parcel in) {
-        id = in.readInt();
-        consumeRecordId = in.readInt();
+        id = in.readLong();
+        consumeRecordId = in.readLong();
         name = in.readString();
         pictureUri = in.readString();
         comment = in.readString();
@@ -54,8 +54,8 @@ public class RestaurantFoodVO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeInt(consumeRecordId);
+        dest.writeLong(id);
+        dest.writeLong(consumeRecordId);
         dest.writeString(name);
         dest.writeString(pictureUri);
         dest.writeString(comment);

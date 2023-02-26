@@ -12,11 +12,11 @@ import lombok.Data;
 public class ConsumeRecordDAO {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
     @ColumnInfo(index = true)
-    private int restaurantId;
+    private long restaurantId;
     private long consumeTime;
-    private int addressId;
+    private long addressId;
     private String eaters;
     private double totalCost;
     private String comment;

@@ -45,6 +45,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
@@ -78,6 +79,7 @@ public class Helper {
     public static void init(Activity activity){
         DefaultFoodImage = BitmapFactory.decodeResource(activity.getResources(), R.drawable.food_image_place_holder);
         root = createOrOpenFolder(ROOT_FOLDER);
+        AppDatabase.createInstance(activity);
         ImageFolder = createOrOpenFolder("RandomMenuFood");
         SaveImageFolder = createOrOpenFolder("SavedImages");
         TempFolder = createOrOpenFolder("Temp");
