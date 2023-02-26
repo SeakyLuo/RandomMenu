@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.adapters.impl;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -16,10 +17,13 @@ import personalprojects.seakyluo.randommenu.dialogs.RestaurantFoodDialog;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
 public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
-    @Setter
-    private DataItemClickedListener<RestaurantFoodVO> clickedListener;
+
+    public RestaurantFoodAdapter(Context context){
+        this.context = context;
+    }
 
     @Override
     protected int getLayout(int viewType) {
@@ -50,7 +54,7 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
 
     private void fillFood(RestaurantFoodVO data, TextView foodName, TextView foodNote, ImageView foodImage){
         foodName.setText(data.getName());
-        foodNote.setText("￥" + data.getPrice());
+        foodNote.setText("￥" + DoubleUtils.truncateZero(data.getPrice()));
         Helper.loadImage(Glide.with(context), data.getPictureUri(), foodImage);
     }
 

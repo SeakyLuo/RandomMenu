@@ -31,6 +31,7 @@ import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 import personalprojects.seakyluo.randommenu.utils.FoodImageUtils;
 
 public class EditRestaurantFoodActivity extends AppCompatActivity {
@@ -73,12 +74,11 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
 
     private void fillFood(RestaurantFoodVO food){
         if (food == null){
-            editPrice.setText("0.0");
             return;
         }
         Helper.loadImage(Glide.with(this), food.getPictureUri(), foodImage);
         editName.setText(food.getName());
-        editPrice.setText(String.valueOf(food.getPrice()));
+        editPrice.setText(DoubleUtils.truncateZero(food.getPrice()));
         editComment.setText(food.getComment());
     }
 
@@ -87,7 +87,11 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
             Toast.makeText(this, "名称不合法！", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!NumberUtils.isParsable(editPrice.getText().toString())){
+        String price = editPrice.getText().toString();
+        if (StringUtils.isEmpty(price)){
+            editPrice.setText("0");
+        }
+        else if (!NumberUtils.isParsable(price)){
             Toast.makeText(this, "价格不合法！", Toast.LENGTH_SHORT).show();
             return;
         }

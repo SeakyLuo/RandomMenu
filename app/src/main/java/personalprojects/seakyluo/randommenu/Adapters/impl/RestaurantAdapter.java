@@ -1,6 +1,7 @@
 package personalprojects.seakyluo.randommenu.adapters.impl;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
@@ -11,17 +12,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.EditConsumeRecordActivity;
 import personalprojects.seakyluo.randommenu.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
+import personalprojects.seakyluo.randommenu.helpers.SpacesItemDecoration;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
+import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
 public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
+
+    public RestaurantAdapter(Context context){
+        this.context = context;
+    }
 
     @Override
     protected int getLayout(int viewType) {
@@ -32,7 +40,7 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
     protected void fillViewHolder(CustomViewHolder viewHolder, RestaurantVO data, int position) {
         View view = viewHolder.getView();
         RecyclerView restaurantFoodRecyclerView = view.findViewById(R.id.restaurant_food_list_recycler_view);
-        RestaurantFoodAdapter foodAdapter = new RestaurantFoodAdapter();
+        RestaurantFoodAdapter foodAdapter = new RestaurantFoodAdapter(context);
 
         restaurantFoodRecyclerView.setAdapter(foodAdapter);
         fillWithData(view, foodAdapter, data);
@@ -60,13 +68,13 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
             foodTypeTextView.setVisibility(View.VISIBLE);
             foodTypeTextView.setText(foodType.getName());
         }
-        averagePrice.setText("人均￥" + data.getAverageCost());
+        averagePrice.setText("人均￥" + DoubleUtils.truncateZero(data.getAverageCost()));
         List<Address> addressList = data.getAddressList();
         if (addressList.isEmpty()){
             addressTextView.setVisibility(View.GONE);
         } else {
             addressTextView.setVisibility(View.VISIBLE);
-            addressTextView.setText(addressList.get(0).buildSimpleAddress());
+            addressTextView.setText(addressList.stream().map(Address::buildSimpleAddress).collect(Collectors.joining("\n")));
         }
         String comment = data.getComment();
         if (StringUtils.isBlank(comment)){
@@ -75,6 +83,6 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
             commentTextView.setVisibility(View.VISIBLE);
             commentTextView.setText(comment);
         }
-        foodAdapter.setData(data.computeFoodsToShow());
+        foodAdapter.setData(data.getFoods());
     }
 }

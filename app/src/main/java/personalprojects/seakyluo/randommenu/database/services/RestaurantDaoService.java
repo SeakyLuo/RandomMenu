@@ -12,6 +12,7 @@ import personalprojects.seakyluo.randommenu.interfaces.RestaurantListener;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.FoodTypeService;
 
@@ -85,8 +86,22 @@ public class RestaurantDaoService {
         for (RestaurantVO vo : voList){
             long restaurantId = vo.getId();
             vo.setAddressList(AddressDaoService.selectByRestaurant(restaurantId));
+            vo.setFoods(RestaurantFoodDaoService.selectByRestaurantId(restaurantId).stream().filter(RestaurantFoodVO::isShowInList).collect(Collectors.toList()));
         }
         return voList;
+    }
+
+    public static RestaurantVO selectPagedView(long id){
+        RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
+        RestaurantDAO dao = mapper.selectById(id);
+        if (dao == null){
+            return null;
+        }
+        RestaurantVO vo = convert(dao);
+        long restaurantId = vo.getId();
+        vo.setAddressList(AddressDaoService.selectByRestaurant(restaurantId));
+        vo.setFoods(RestaurantFoodDaoService.selectByRestaurantId(restaurantId).stream().filter(RestaurantFoodVO::isShowInList).collect(Collectors.toList()));
+        return vo;
     }
 
     private static RestaurantVO convert(RestaurantDAO src){

@@ -36,6 +36,7 @@ import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 import personalprojects.seakyluo.randommenu.utils.FoodImageUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -81,7 +82,7 @@ public class RestaurantFoodDialog extends DialogFragment {
         }
         Helper.loadImage(Glide.with(getContext()), food.getPictureUri(), foodImage);
         editName.setText(food.getName());
-        editPrice.setText(String.valueOf(food.getPrice()));
+        editPrice.setText(DoubleUtils.truncateZero(food.getPrice()));
         editComment.setText(food.getComment());
     }
 

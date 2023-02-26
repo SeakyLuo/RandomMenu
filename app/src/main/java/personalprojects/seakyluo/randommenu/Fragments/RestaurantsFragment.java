@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,12 +25,15 @@ import personalprojects.seakyluo.randommenu.interfaces.RestaurantListener;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 
 import static android.app.Activity.RESULT_OK;
+import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 
 public class RestaurantsFragment extends Fragment implements RestaurantListener {
     public static final String TAG = "RestaurantsFragment";
+    private static final int PAGE_SIZE = 20;
     private TextView titleTextView;
-    private boolean isLoaded = false;
     private RestaurantAdapter restaurantAdapter;
+    private int currentPage = 1;
+    private int lastItemPosition;
 
     @Nullable
     @Override
@@ -37,7 +41,7 @@ public class RestaurantsFragment extends Fragment implements RestaurantListener 
         View view = inflater.inflate(R.layout.fragment_restaurants, container, false);
         titleTextView = view.findViewById(R.id.title_text_view);
         FloatingActionButton fab = view.findViewById(R.id.restaurant_fab);
-        restaurantAdapter = new RestaurantAdapter();
+        restaurantAdapter = new RestaurantAdapter(getContext());
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         RecyclerView restaurantRecyclerView = view.findViewById(R.id.restaurant_recycler_view);
 
@@ -45,12 +49,30 @@ public class RestaurantsFragment extends Fragment implements RestaurantListener 
         fab.setOnClickListener(v -> createRestaurant());
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(false);
-            setData(RestaurantDaoService.selectByPage(1, 20));
+            setData(RestaurantDaoService.selectByPage(currentPage = 1, PAGE_SIZE));
         });
-        restaurantAdapter.setContext(getContext());
         restaurantRecyclerView.setAdapter(restaurantAdapter);
+        restaurantRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (newState == SCROLL_STATE_IDLE && lastItemPosition == restaurantAdapter.getItemCount()){
+                    restaurantAdapter.add(RestaurantDaoService.selectByPage(++currentPage, PAGE_SIZE));
+                }
+            }
 
-        setData(RestaurantDaoService.selectByPage(1, 20));
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                if (layoutManager instanceof LinearLayoutManager){
+                    LinearLayoutManager manager = (LinearLayoutManager) layoutManager;
+                    int firstItem = manager.findFirstVisibleItemPosition();
+                    int lastItem = manager.findLastCompletelyVisibleItemPosition();
+                    lastItemPosition = firstItem + (lastItem - firstItem) + 1;
+                }
+            }
+        });
+
+        setData(RestaurantDaoService.selectByPage(currentPage = 1, PAGE_SIZE));
         return view;
     }
 
@@ -81,9 +103,10 @@ public class RestaurantsFragment extends Fragment implements RestaurantListener 
 
     @Override
     public void onUpdate(RestaurantVO data) {
-        int index = restaurantAdapter.indexOf(i -> i.getId() == data.getId());
+        long id = data.getId();
+        int index = restaurantAdapter.indexOf(i -> i.getId() == id);
         if (index != -1){
-            restaurantAdapter.set(data, index);
+            restaurantAdapter.set(RestaurantDaoService.selectPagedView(id), index);
         }
     }
 }

@@ -20,13 +20,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.AddressAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordAdapter;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
-import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.FoodType;
@@ -61,8 +59,8 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         consumeRecordPlaceholder = findViewById(R.id.consume_record_placeholder);
         RecyclerView addressRecyclerView = findViewById(R.id.address_recycler_view);
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
-        addressAdapter = new AddressAdapter();
-        consumeRecordAdapter = new ConsumeRecordAdapter();
+        addressAdapter = new AddressAdapter(this);
+        consumeRecordAdapter = new ConsumeRecordAdapter(this);
         ImageButton addAddressButton = findViewById(R.id.add_address_button);
         ImageButton addConsumeRecordButton = findViewById(R.id.add_consume_record_button);
 
@@ -77,26 +75,18 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(addressAdapter));
         dragHelper.attachToRecyclerView(addressRecyclerView);
         SwipeToDeleteUtils.apply(addressRecyclerView, this, this::removeAddress, this::addAddress, Address::getAddress);
-        SwipeToDeleteUtils.apply(consumeRecordRecyclerView, this, this::removeConsumeRecord, this::addConsumeRecord, r -> r.formatConsumeTime() + "的记录");
-        addressAdapter.setContext(this);
         addressAdapter.setDragStartListener(this);
-        addressAdapter.setClickedListener((viewHolder, data) -> addressAdapter.set(data, viewHolder.getBindingAdapterPosition()));
         addressRecyclerView.setAdapter(addressAdapter);
         consumeRecordRecyclerView.setAdapter(consumeRecordAdapter);
 
         setData(restaurant);
-        cancelButton.setOnClickListener(this::onCancel);
+        cancelButton.setOnClickListener(v -> finish());
         confirmButton.setOnClickListener(this::onConfirm);
-        addressPlaceholder.setOnClickListener(this::showAddressDialog);
-        addAddressButton.setOnClickListener(this::showAddressDialog);
+        addAddressButton.setOnClickListener(this::addAddressRow);
+        addressPlaceholder.setOnClickListener(this::addAddressRow);
         addConsumeRecordButton.setOnClickListener(v -> showEditConsumeRecordActivity(null));
-        consumeRecordAdapter.setContext(this);
         consumeRecordAdapter.setOnClickListener((vh, data) -> showEditConsumeRecordActivity(data));
         consumeRecordPlaceholder.setOnClickListener(v -> showEditConsumeRecordActivity(null));
-    }
-
-    private void onCancel(View view){
-        finish();
     }
 
     private void onConfirm(View view){
@@ -108,8 +98,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
             Toast.makeText(this, "菜系不能为空", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (CollectionUtils.isEmpty(addressAdapter.getData())){
-            Toast.makeText(this, "地址不能为空", Toast.LENGTH_SHORT).show();
+        if (isBadAddress()){
             return;
         }
         finishWithData(buildData());
@@ -128,10 +117,9 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         return i;
     }
 
-    private void showAddressDialog(View view) {
-        AddressDialog dialog = new AddressDialog();
-        dialog.setConfirmListener(this::addAddress);
-        dialog.showNow(getSupportFragmentManager(), AddressDialog.TAG);
+    private void addAddressRow(View view) {
+        addressAdapter.add(new Address(), 0);
+        addressPlaceholder.setVisibility(View.GONE);
     }
 
     private void addAddress(Address address) {
@@ -149,10 +137,6 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     }
 
     private void showEditConsumeRecordActivity(ConsumeRecordVO data){
-        if (addressAdapter.isEmpty()){
-            Toast.makeText(this, "请先添加地址！", Toast.LENGTH_SHORT).show();
-            return;
-        }
         Intent intent = new Intent(this, EditConsumeRecordActivity.class);
         intent.putExtra(EditConsumeRecordActivity.DATA, data);
         intent.putExtra(EditConsumeRecordActivity.ADDRESS_LIST, addressAdapter.getData());
@@ -160,22 +144,36 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         overridePendingTransition(R.anim.push_down_in, 0);
     }
 
+    private boolean isBadAddress(){
+        if (addressAdapter.isEmpty()){
+            Toast.makeText(this, "地址不能为空", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (addressAdapter.getData().any(Address::isEmpty)){
+            Toast.makeText(this, "地址没有填写完整", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+
     private void setData(RestaurantVO src){
         if (src == null){
+            addressAdapter.add(new Address());
             return;
         }
         editName.setText(src.getName());
-        addressAdapter.setData(src.getAddressList());
-        if (CollectionUtils.isEmpty(src.getAddressList())){
-            addressPlaceholder.setVisibility(View.VISIBLE);
+        List<Address> addressList = src.getAddressList();
+        if (CollectionUtils.isEmpty(addressList)){
+            addressAdapter.add(new Address());
         } else {
-            addressPlaceholder.setVisibility(View.GONE);
+            addressAdapter.setData(addressList);
         }
+        addressPlaceholder.setVisibility(View.GONE);
         editFoodType.setText(src.getFoodType().getName());
         editComment.setText(src.getComment());
         editLink.setText(src.getLink());
-        consumeRecordAdapter.setData(setRecords(src.getRecords()));
-        if (CollectionUtils.isEmpty(src.getRecords())){
+        setRecords(src.getRecords());
+        if (consumeRecordAdapter.isEmpty()){
             consumeRecordPlaceholder.setVisibility(View.VISIBLE);
         } else {
             consumeRecordPlaceholder.setVisibility(View.GONE);
@@ -184,9 +182,8 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
 
     private List<ConsumeRecordVO> setRecords(List<ConsumeRecordVO> records){
         records.sort(Comparator.comparing(ConsumeRecordVO::getConsumeTime).reversed());
-        for (int i = 0; i < records.size(); i++){
-            records.get(i).setIndex(i);
-        }
+        consumeRecordAdapter.setData(records);
+        resetRecordIndex(0);
         return records;
     }
 

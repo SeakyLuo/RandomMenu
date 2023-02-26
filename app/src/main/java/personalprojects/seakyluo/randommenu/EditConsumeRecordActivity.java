@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -25,6 +26,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
@@ -35,6 +37,8 @@ import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
+import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
 public class EditConsumeRecordActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<ConsumeRecordVO> {
@@ -49,6 +53,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     private ConsumeFoodAdapter foodAdapter;
     private ItemTouchHelper dragHelper;
     private ArrayList<Address> addressList;
+    private ConsumeRecordVO currentRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,21 +71,20 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         consumeFoodPlaceholder = findViewById(R.id.consume_food_placeholder);
         ImageButton addConsumeFoodButton = findViewById(R.id.add_consume_food_button);
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
-        foodAdapter = new ConsumeFoodAdapter();
+        foodAdapter = new ConsumeFoodAdapter(this);
 
-        ConsumeRecordVO data;
         if (savedInstanceState == null){
             Intent intent = getIntent();
-            data = intent.getParcelableExtra(DATA);
+            currentRecord = intent.getParcelableExtra(DATA);
             addressList = intent.getParcelableArrayListExtra(ADDRESS_LIST);
         } else {
-            data = savedInstanceState.getParcelable(DATA);
+            currentRecord = savedInstanceState.getParcelable(DATA);
             addressList = savedInstanceState.getParcelableArrayList(ADDRESS_LIST);
             consumeTime = savedInstanceState.getLong(CONSUME_TIME);
         }
 
         setAddress(addressList);
-        setData(data);
+        setData(currentRecord);
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(foodAdapter));
         dragHelper.attachToRecyclerView(consumeRecordRecyclerView);
         SwipeToDeleteUtils.apply(consumeRecordRecyclerView, this, this::removeFood, this::addFood, RestaurantFoodVO::getName);
@@ -91,12 +95,12 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             new CardDatePickerDialog.Builder(this)
                     .setLabelText("年","月","日","时","分")
                     .setOnChoose("选择", this::setConsumeTime)
+                    .setDefaultTime(Optional.ofNullable(consumeTime).orElse(System.currentTimeMillis()))
                     .showBackNow(true)
                     .build().show();
         });
         addConsumeFoodButton.setOnClickListener(v -> showFoodDialog(null));
         consumeFoodPlaceholder.setOnClickListener(v -> showFoodDialog(null));
-        foodAdapter.setContext(this);
         foodAdapter.setClickedListener((v, d) -> foodAdapter.set(d, v.getBindingAdapterPosition()));
     }
 
@@ -127,6 +131,9 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
 
     private void onConfirm(View view){
         String totalCost = editTotalCost.getText().toString();
+        if (StringUtils.isEmpty(totalCost)){
+            editTotalCost.setText("0");
+        }
         if (!NumberUtils.isParsable(totalCost)){
             Toast.makeText(this, "总金额不合法！", Toast.LENGTH_SHORT).show();
             return;
@@ -142,7 +149,6 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (src == null){
             setConsumeTime(System.currentTimeMillis());
             addressSpinner.setSelection(0);
-            editTotalCost.setText("0.0");
             return;
         }
         setConsumeTime(src.getConsumeTime());
@@ -152,7 +158,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         }
         addressSpinner.setSelection(addressList.indexOf(src.getAddress()));
         editComment.setText(src.getComment());
-        editTotalCost.setText(String.valueOf(src.getTotalCost()));
+        editTotalCost.setText(DoubleUtils.truncateZero(src.getTotalCost()));
         foodAdapter.setData(src.getFoods());
         if (CollectionUtils.isEmpty(src.getFoods())){
             consumeFoodPlaceholder.setVisibility(View.VISIBLE);
@@ -184,9 +190,9 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     }
 
     private ConsumeRecordVO buildData(){
-        ConsumeRecordVO dst = new ConsumeRecordVO();
+        ConsumeRecordVO dst = currentRecord == null ? new ConsumeRecordVO() : JsonUtils.copy(currentRecord);
         dst.setConsumeTime(consumeTime);
-        dst.setAddress(addressList.size() == 1 ? addressList.get(0) : (Address) addressSpinner.getSelectedItem());
+        dst.setAddress(addressList.get(addressSpinner.getSelectedItemPosition()));
         dst.setEaters(Arrays.stream(editFriends.getText().toString().trim().split(EATER_DELIMITER)).filter(StringUtils::isNoneBlank).collect(Collectors.toList()));
         String totalCost = editTotalCost.getText().toString();
         if (NumberUtils.isParsable(totalCost)){

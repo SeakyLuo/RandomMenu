@@ -2,9 +2,12 @@ package personalprojects.seakyluo.randommenu.database;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
 import personalprojects.seakyluo.randommenu.database.dao.ConsumeRecordDAO;
@@ -18,7 +21,7 @@ import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 
 @Database(entities = {RestaurantDAO.class, AddressDAO.class, ConsumeRecordDAO.class, RestaurantFoodDAO.class, FoodTypeDAO.class},
-        version = 3,
+        version = 5,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 

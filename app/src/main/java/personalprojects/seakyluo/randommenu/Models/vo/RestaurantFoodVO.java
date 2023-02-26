@@ -11,28 +11,38 @@ import lombok.NoArgsConstructor;
 public class RestaurantFoodVO implements Parcelable {
 
     private long id;
+    private long restaurantId;
     private long consumeRecordId;
     private String name;
     private String pictureUri;
     private String comment;
     private double price;
+    private boolean showInList;
 
     public void copyFrom(RestaurantFoodVO src){
         id = src.id;
+        restaurantId = src.restaurantId;
         consumeRecordId = src.consumeRecordId;
         name = src.name;
         pictureUri = src.pictureUri;
         comment = src.comment;
         price = src.price;
+        showInList = src.showInList;
+    }
+
+    public void setShowInList(Boolean bool){
+        showInList = bool != null && bool;
     }
 
     protected RestaurantFoodVO(Parcel in) {
         id = in.readLong();
+        restaurantId = in.readLong();
         consumeRecordId = in.readLong();
         name = in.readString();
         pictureUri = in.readString();
         comment = in.readString();
         price = in.readDouble();
+        showInList = in.readByte() != 0;
     }
 
     public static final Creator<RestaurantFoodVO> CREATOR = new Creator<RestaurantFoodVO>() {
@@ -55,10 +65,12 @@ public class RestaurantFoodVO implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
+        dest.writeLong(restaurantId);
         dest.writeLong(consumeRecordId);
         dest.writeString(name);
         dest.writeString(pictureUri);
         dest.writeString(comment);
         dest.writeDouble(price);
+        dest.writeByte((byte) (showInList ? 1 : 0));
     }
 }

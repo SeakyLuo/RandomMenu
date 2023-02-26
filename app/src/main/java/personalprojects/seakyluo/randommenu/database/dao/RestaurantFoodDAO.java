@@ -21,5 +21,6 @@ public class RestaurantFoodDAO {
     private String comment;
     private double price;
     private int order;
+    private Boolean showInList = false;
 
 }

@@ -20,6 +20,5 @@ public class ConsumeRecordDAO {
     private String eaters;
     private double totalCost;
     private String comment;
-    private int order;
 
 }

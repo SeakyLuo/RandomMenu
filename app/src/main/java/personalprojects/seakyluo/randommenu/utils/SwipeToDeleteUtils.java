@@ -5,6 +5,8 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -21,9 +23,13 @@ public class SwipeToDeleteUtils {
         new ItemTouchHelper(new SwipeToDeleteCallback(context) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getBindingAdapterPosition();
                 T item = remove.apply(position);
-                Snackbar snackbar = Snackbar.make(recyclerView, String.format("\"%s\"已被删除", getName.apply(item)), Snackbar.LENGTH_LONG);
+                String name = getName.apply(item);
+                if (StringUtils.isEmpty(name)){
+                    return;
+                }
+                Snackbar snackbar = Snackbar.make(recyclerView, String.format("\"%s\"已被删除", name), Snackbar.LENGTH_LONG);
                 snackbar.setAction("撤销", view -> {
                     add.accept(item);
                     recyclerView.scrollToPosition(position);

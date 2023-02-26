@@ -70,10 +70,12 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/restaurant_food_list_recycler_view"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="4dp"
             android:orientation="horizontal"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

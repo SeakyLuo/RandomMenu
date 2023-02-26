@@ -139,7 +139,7 @@
                 android:ems="10"
                 android:background="@null"
                 android:maxLines="1"
-                android:inputType="numberSigned"
+                android:inputType="numberDecimal"
                 android:importantForAutofill="no" />
         </androidx.cardview.widget.CardView>
 

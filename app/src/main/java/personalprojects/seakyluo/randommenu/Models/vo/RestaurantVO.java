@@ -25,16 +25,13 @@ public class RestaurantVO implements Parcelable {
     private String comment;
     private String link;
     private List<ConsumeRecordVO> records;
+    private List<RestaurantFoodVO> foods;
 
     public double computeAverageCost(){
         if (CollectionUtils.isEmpty(records)) return 0;
         double total = records.stream().mapToDouble(ConsumeRecordVO::getTotalCost).sum();
         double eaterCount = records.stream().mapToInt(r -> r.getEaters().size() + 1).sum();
         return total / eaterCount;
-    }
-
-    public List<RestaurantFoodVO> computeFoodsToShow(){
-        return records.isEmpty() ? new ArrayList<>() : records.get(0).getFoods();
     }
 
     protected RestaurantVO(Parcel in) {
@@ -46,6 +43,7 @@ public class RestaurantVO implements Parcelable {
         comment = in.readString();
         link = in.readString();
         records = in.createTypedArrayList(ConsumeRecordVO.CREATOR);
+        foods = in.createTypedArrayList(RestaurantFoodVO.CREATOR);
     }
 
     public static final Creator<RestaurantVO> CREATOR = new Creator<RestaurantVO>() {
@@ -75,5 +73,6 @@ public class RestaurantVO implements Parcelable {
         dest.writeString(comment);
         dest.writeString(link);
         dest.writeTypedList(records);
+        dest.writeTypedList(foods);
     }
 }

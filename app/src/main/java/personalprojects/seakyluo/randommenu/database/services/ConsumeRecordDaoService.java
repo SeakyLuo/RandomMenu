@@ -4,6 +4,8 @@ import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -30,14 +32,56 @@ public class ConsumeRecordDaoService {
             ConsumeRecordDAO dao = daoList.get(i);
             dao.setRestaurantId(restaurantId);
             dao.setAddressId(addressList.stream().filter(a -> a.equals(vo.getAddress())).findFirst().map(Address::getId).get());
-            dao.setOrder(i);
         }
         List<Long> ids = mapper.insert(daoList);
-        for (int i = 0; i < daoList.size(); i++){
+        setRestaurantIdAndRecordId(voList, restaurantId, ids);
+        computeShowFood(voList);
+        RestaurantFoodDaoService.insert(voList.stream().flatMap(vo -> vo.getFoods().stream()).collect(Collectors.toList()));
+    }
+
+    private static void setRestaurantIdAndRecordId(List<ConsumeRecordVO> voList, long restaurantId, List<Long> ids){
+        for (int i = 0; i < voList.size(); i++){
             ConsumeRecordVO vo = voList.get(i);
             long id = ids.get(i);
             vo.setId(id);
-            RestaurantFoodDaoService.insert(vo.getFoods(), restaurantId, id);
+            for (RestaurantFoodVO food : vo.getFoods()){
+                food.setRestaurantId(restaurantId);
+                food.setConsumeRecordId(id);
+            }
+        }
+    }
+
+    private static final int MAX_FOOD_SHOW = 3;
+    /**
+     * 点的最多的+最后消费的
+     * */
+    private static void computeShowFood(List<ConsumeRecordVO> records){
+        Map<Long, ConsumeRecordVO> recordMap = records.stream().collect(Collectors.toMap(ConsumeRecordVO::getId, Function.identity()));
+        List<RestaurantFoodVO> foods = records.stream().flatMap(r -> r.getFoods().stream()).collect(Collectors.toList());
+        Map<String, Integer> counter = new HashMap<>();
+        for (RestaurantFoodVO food : foods){
+            String name = food.getName();
+            counter.put(name, counter.getOrDefault(name, 0) + 1);
+        }
+        foods.sort((f1, f2) -> {
+            int diff = counter.get(f2.getName()) - counter.get(f1.getName());
+            if (diff != 0) return diff;
+            ConsumeRecordVO r1 = recordMap.get(f1.getConsumeRecordId());
+            ConsumeRecordVO r2 = recordMap.get(f2.getConsumeRecordId());
+            diff = Long.compare(r2.getConsumeTime(), r1.getConsumeTime());
+            if (diff != 0) return diff;
+            return r2.getFoods().indexOf(f1) - r1.getFoods().indexOf(f2);
+        });
+        int showCounter = 0;
+        for (int i = 0; i < foods.size(); i++){
+            RestaurantFoodVO curr = foods.get(i);
+            // 避免重名菜
+            if (i == 0 || (showCounter < MAX_FOOD_SHOW && !foods.get(i - 1).getName().equals(curr.getName()))){
+                curr.setShowInList(true);
+                showCounter++;
+            } else {
+                curr.setShowInList(false);
+            }
         }
     }
 

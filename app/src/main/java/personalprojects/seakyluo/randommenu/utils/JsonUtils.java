@@ -35,4 +35,10 @@ public class JsonUtils {
             return null;
         }
     }
+
+    public static <T> T copy(T obj){
+        if (obj == null) return null;
+        String json = toJson(obj);
+        return fromJson(json, (Class<T>) obj.getClass());
+    }
 }

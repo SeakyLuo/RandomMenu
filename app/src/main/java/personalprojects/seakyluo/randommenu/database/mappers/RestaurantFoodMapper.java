@@ -14,7 +14,7 @@ import personalprojects.seakyluo.randommenu.database.dao.RestaurantFoodDAO;
 public interface RestaurantFoodMapper {
 
     @Insert
-    void insert(List<RestaurantFoodDAO> list);
+    List<Long> insert(List<RestaurantFoodDAO> list);
 
     @Update
     void update(RestaurantFoodDAO dao);

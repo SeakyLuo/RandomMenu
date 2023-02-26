@@ -1,10 +1,21 @@
 package personalprojects.seakyluo.randommenu.adapters.impl;
 
+import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
+
+import com.lljjcoder.Interface.OnCityItemClickListener;
+import com.lljjcoder.bean.CityBean;
+import com.lljjcoder.bean.DistrictBean;
+import com.lljjcoder.bean.ProvinceBean;
+import com.lljjcoder.style.citypickerview.CityPickerView;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
@@ -12,11 +23,13 @@ import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.utils.CityPickerUtils;
 
 public class AddressAdapter extends DraggableAdapter<Address> {
 
-    @Setter
-    private DataItemClickedListener<Address> clickedListener;
+    public AddressAdapter(Context context){
+        this.context = context;
+    }
 
     @Override
     protected int getLayout(int viewType) {
@@ -27,20 +40,45 @@ public class AddressAdapter extends DraggableAdapter<Address> {
     protected void fillViewHolder(CustomViewHolder viewHolder, Address data, int position) {
         View view = viewHolder.getView();
         TextView textDistrict = view.findViewById(R.id.text_district);
-        TextView textAddress = view.findViewById(R.id.text_address);
+        EditText textAddress = view.findViewById(R.id.text_address);
         ImageButton reorderButton = view.findViewById(R.id.reorder_button);
+        CityPickerView cityPickerView = new CityPickerView();
 
-        fillAddress(data, textDistrict, textAddress);
-        view.setOnClickListener(v -> {
-            AddressDialog dialog = new AddressDialog();
-            dialog.setAddress(data);
-            dialog.setConfirmListener(address -> {
-                data.copyFrom(address);
-                fillAddress(data, textDistrict, textAddress);
-                clickedListener.click(viewHolder, data);
-            });
-            dialog.showNow(((FragmentActivity)context).getSupportFragmentManager(), AddressDialog.TAG);
+        cityPickerView.init(context);
+        cityPickerView.setOnCityItemClickListener(new OnCityItemClickListener() {
+            @Override
+            public void onSelected(ProvinceBean province, CityBean city, DistrictBean district) {
+                String provinceName = province.getName();
+                data.setProvince(provinceName);
+                if (provinceName.endsWith("市")){
+                    data.setCity(provinceName);
+                } else {
+                    data.setCity(city.getName());
+                }
+                data.setCounty(district.getName());
+                textDistrict.setText(data.buildDistrict());
+            }
         });
+        textDistrict.setOnClickListener(v -> {
+            cityPickerView.setConfig(CityPickerUtils.buildConfig(data));
+            cityPickerView.showCityPicker();
+        });
+        textAddress.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                data.setAddress(textAddress.getText().toString());
+            }
+        });
+        fillAddress(data, textDistrict, textAddress);
         if (getData().size() == 1){
             reorderButton.setVisibility(View.GONE);
         }

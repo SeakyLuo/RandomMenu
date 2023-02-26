@@ -26,6 +26,6 @@ public interface ConsumeRecordMapper {
     void deleteByRestaurant(long restaurantId);
 
 
-    @Query("select * from consume_record where restaurantId = :restaurantId order by `order`")
+    @Query("select * from consume_record where restaurantId = :restaurantId order by consumeTime desc")
     List<ConsumeRecordDAO> selectByRestaurant(long restaurantId);
 }

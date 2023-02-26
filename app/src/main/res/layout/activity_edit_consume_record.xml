@@ -169,7 +169,7 @@
                 android:paddingHorizontal="16dp"
                 android:textSize="16sp"
                 android:background="@null"
-                android:inputType="numberSigned" />
+                android:inputType="numberDecimal" />
         </androidx.cardview.widget.CardView>
 
         <TextView
@@ -237,11 +237,18 @@
                 android:gravity="center_vertical"/>
         </androidx.cardview.widget.CardView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/consume_record_recycler_view"
+        <!--        加了RelativeLayout才会显示全。。。-->
+        <RelativeLayout
+            android:descendantFocusability="blocksDescendants"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"  />
+            android:layout_marginBottom="16dp">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/consume_record_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"  />
+        </RelativeLayout>
     </LinearLayout>
 </ScrollView>

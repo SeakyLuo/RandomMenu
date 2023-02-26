@@ -3,6 +3,8 @@ package personalprojects.seakyluo.randommenu.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +24,10 @@ public class Address implements Parcelable {
     private String county;
     private String address;
 
+    public boolean isEmpty(){
+        return StringUtils.isEmpty(province) || StringUtils.isEmpty(city) || StringUtils.isEmpty(city) || StringUtils.isEmpty(address);
+    }
+
     public void copyFrom(Address src){
         id = src.id;
         province = src.province;
@@ -31,6 +37,9 @@ public class Address implements Parcelable {
     }
 
     public String buildDistrict(){
+        if (province == null){
+            return null;
+        }
         StringBuilder district = new StringBuilder(province);
         if (!province.equals(city)){
             district.append(city);
