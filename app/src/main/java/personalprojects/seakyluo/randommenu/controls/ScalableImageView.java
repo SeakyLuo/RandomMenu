@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.views;
+package personalprojects.seakyluo.randommenu.controls;
 
 import android.content.Context;
 import android.util.Log;

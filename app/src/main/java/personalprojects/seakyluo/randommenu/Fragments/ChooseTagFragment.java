@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class ChooseTagFragment extends Fragment {
 
         tagsFragment.SetCloseable(true);
         getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
-        if (!Helper.isNullOrEmpty(header)) header_text.setText(header);
+        if (StringUtils.isNotEmpty(header)) header_text.setText(header);
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
         view.findViewById(R.id.tag_card_view).setOnClickListener(v -> {
             if (tagsFragment.getData().size() < Tag.MAX_TAGS)

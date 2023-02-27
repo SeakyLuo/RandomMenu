@@ -29,6 +29,7 @@ import personalprojects.seakyluo.randommenu.NoteActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.ToCookActivity;
 import personalprojects.seakyluo.randommenu.ToEatActivity;
+import personalprojects.seakyluo.randommenu.utils.FileUtils;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -111,13 +112,13 @@ public class SettingsFragment extends Fragment {
             }
         });
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> {
-            String filename = "RandomMenu" + Helper.Timestamp() + ".zip", path = Helper.ExportedDataFolder.getPath() + File.separator + filename;
+            String filename = "RandomMenu" + Helper.formatCurrentTimestamp() + ".zip", path = Helper.ExportedDataFolder.getPath() + File.separator + filename;
             LoadingDialog dialog = new LoadingDialog();
             dialog.setOnViewCreatedListener(d -> {
                 dialog.setMessage(R.string.exporting_data);
                 new Thread(() -> {
                     try{
-                        Helper.zip(path, Helper.ImageFolder, new File(Helper.getPath(Settings.FILENAME)));
+                        FileUtils.zip(path, Helper.ImageFolder, new File(FileUtils.getPath(Settings.FILENAME)));
                     }catch (FileNotFoundException e){
                         showExceptionToast(dialog, R.string.file_not_found, e);
                         return;
@@ -130,7 +131,7 @@ public class SettingsFragment extends Fragment {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     shareIntent.setType("*/*");
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.getFileUri(getContext(), path));
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, FileUtils.getFileUri(getContext(), path));
                     startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
                 }).start();
             });
@@ -176,7 +177,7 @@ public class SettingsFragment extends Fragment {
             new Thread(() -> {
                 clearFolder(Helper.TempUnzipFolder);
                 try {
-                    Helper.unzip(file, Helper.TempUnzipFolder);
+                    FileUtils.unzip(file, Helper.TempUnzipFolder);
                 } catch (Exception e) {
                     showExceptionToast(dialog, R.string.import_data_failed, e);
                     return;
@@ -187,7 +188,7 @@ public class SettingsFragment extends Fragment {
                     showShortToast(dialog, R.string.no_import_image_folder);
                 }else{
                     try {
-                        Helper.copy(imageFolder, Helper.root);
+                        FileUtils.copy(imageFolder, Helper.root);
                     } catch (IOException e) {
                         showExceptionToast(dialog, R.string.import_data_failed, e);
                         return;
@@ -199,7 +200,7 @@ public class SettingsFragment extends Fragment {
                     return;
                 }else{
                     try {
-                        Helper.copy(settings, Helper.root);
+                        FileUtils.copy(settings, Helper.root);
                     } catch (IOException e) {
                         showExceptionToast(dialog, R.string.import_data_failed, e);
                         return;

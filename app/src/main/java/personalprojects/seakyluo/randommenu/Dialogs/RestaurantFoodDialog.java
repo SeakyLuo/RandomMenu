@@ -2,13 +2,10 @@ package personalprojects.seakyluo.randommenu.dialogs;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,22 +19,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.bumptech.glide.Glide;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-
-import java.io.IOException;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
-import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
-import personalprojects.seakyluo.randommenu.utils.FoodImageUtils;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
+import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -67,7 +60,7 @@ public class RestaurantFoodDialog extends DialogFragment {
 
         fillFood(food);
         cameraButton.setOnClickListener(v -> {
-            if (Helper.checkAndRequestPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, FoodImageUtils.WRITE_STORAGE)){
+            if (PermissionUtils.checkAndRequestPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, ImageUtils.WRITE_STORAGE)){
                 showMenuFlyout();
             }
         });
@@ -80,7 +73,7 @@ public class RestaurantFoodDialog extends DialogFragment {
             editPrice.setText("0.0");
             return;
         }
-        Helper.loadImage(Glide.with(getContext()), food.getPictureUri(), foodImage);
+        ImageUtils.loadImage(getContext(), food.getPictureUri(), foodImage);
         editName.setText(food.getName());
         editPrice.setText(DoubleUtils.truncateZero(food.getPrice()));
         editComment.setText(food.getComment());
@@ -121,13 +114,13 @@ public class RestaurantFoodDialog extends DialogFragment {
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.open_camera_item:
-                    foodImageUri = FoodImageUtils.OpenCamera(activity);
+                    foodImageUri = ImageUtils.openCamera(activity);
                     return foodImageUri != null;
                 case R.id.open_gallery_item:
-                    FoodImageUtils.OpenGallery(activity);
+                    ImageUtils.openGallery(activity);
                     return true;
                 case R.id.edit_image_item:
-                    foodImageUri = FoodImageUtils.CropImage(activity, foodImageUri.getPath());
+                    foodImageUri = ImageUtils.cropImage(activity, foodImageUri.getPath());
                     return foodImageUri != null;
             }
             return false;
@@ -141,14 +134,14 @@ public class RestaurantFoodDialog extends DialogFragment {
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)
             return;
         switch (requestCode){
-            case FoodImageUtils.WRITE_STORAGE:
+            case ImageUtils.WRITE_STORAGE:
                 showMenuFlyout();
                 break;
-            case FoodImageUtils.CAMERA_CODE:
-                FoodImageUtils.OpenCamera(getActivity());
+            case ImageUtils.CAMERA_CODE:
+                ImageUtils.openCamera(getActivity());
                 break;
             case Helper.READ_EXTERNAL_STORAGE_CODE:
-                FoodImageUtils.OpenGallery(getActivity());
+                ImageUtils.openGallery(getActivity());
                 break;
         }
     }
@@ -158,11 +151,11 @@ public class RestaurantFoodDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         switch (requestCode){
-            case FoodImageUtils.CAMERA_CODE:
+            case ImageUtils.CAMERA_CODE:
                 break;
-            case FoodImageUtils.GALLERY_CODE:
+            case ImageUtils.GALLERY_CODE:
                 break;
-            case FoodImageUtils.CROP_CODE:
+            case ImageUtils.CROP_CODE:
                 break;
         }
     }

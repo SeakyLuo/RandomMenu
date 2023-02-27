@@ -16,6 +16,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.RandomUtils;
+
 import personalprojects.seakyluo.randommenu.dialogs.FilterDialog;
 import personalprojects.seakyluo.randommenu.dialogs.MenuDialog;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
@@ -83,7 +85,7 @@ public class RandomFragment extends Fragment {
         menuDialog.SetFoodRemovedListener((viewHolder, data) -> {
             menu.remove(data);
             SetMenuHeader();
-            food_pool.with(data, Helper.RandRange(0, food_pool.size()));
+            food_pool.with(data, RandomUtils.nextInt(0, food_pool.size()));
         });
         menuDialog.SetOnClearListener(button -> {
             food_pool.with(menu).shuffle();

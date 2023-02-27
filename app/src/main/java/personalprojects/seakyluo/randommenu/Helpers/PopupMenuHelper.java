@@ -70,7 +70,7 @@ public class PopupMenuHelper {
         menuHelper.show();
     }
 
-    public static interface onItemSelectListener{
-        public boolean onItemSelected(MenuBuilder menuBuilder, MenuItem menuItem);
+    public interface onItemSelectListener{
+        boolean onItemSelected(MenuBuilder menuBuilder, MenuItem menuItem);
     }
 }

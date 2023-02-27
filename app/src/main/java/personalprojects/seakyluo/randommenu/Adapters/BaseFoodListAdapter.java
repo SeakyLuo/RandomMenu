@@ -15,6 +15,7 @@ import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
     protected DataItemClickedListener<Food> foodClickedListener;
@@ -45,7 +46,7 @@ public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
             }
         });
 
-        Helper.loadImage(Glide.with(view), data.getCover(), foodImage);
+        ImageUtils.loadImage(view, data.getCover(), foodImage);
         foodName.setText(data.Name);
         likedImage.setVisibility(showLikeImage && data.isFavorite() ? View.VISIBLE : View.GONE);
     }

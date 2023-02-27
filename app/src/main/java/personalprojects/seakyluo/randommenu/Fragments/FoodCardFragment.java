@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.StringUtils;
+
 import personalprojects.seakyluo.randommenu.EditFoodActivity;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
@@ -29,6 +31,9 @@ import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.utils.ClipboardUtils;
+import personalprojects.seakyluo.randommenu.utils.FileUtils;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -75,7 +80,7 @@ public class FoodCardFragment extends Fragment {
         food_note_back.setCameraDistance(scale);
 
         food_name.setOnLongClickListener(v -> {
-            Helper.CopyToClipboard(getContext(), CurrentFood.Name);
+            ClipboardUtils.copy(getContext(), CurrentFood.Name);
             Toast.makeText(getContext(), R.string.name_copied, Toast.LENGTH_SHORT).show();
             return true;
         });
@@ -96,7 +101,7 @@ public class FoodCardFragment extends Fragment {
         more_button.setOnClickListener(v -> {
             final PopupMenuHelper helper = new PopupMenuHelper(R.menu.food_card_menu, getContext(), more_button);
             if (!CurrentFood.hasImage()) helper.removeItems(R.id.save_image_item, R.id.share_item);
-            if (Helper.isNullOrEmpty(CurrentFood.Note)) helper.removeItems(R.id.more_item);
+            if (StringUtils.isEmpty(CurrentFood.Note)) helper.removeItems(R.id.more_item);
             if (CurrentFood.HideCount == 0) helper.removeItems(R.id.show_food_item);
             else helper.removeItems(R.id.hide_food_item);
             helper.removeItems(CurrentFood.isFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
@@ -111,13 +116,13 @@ public class FoodCardFragment extends Fragment {
                         startActivityForResult(editFoodIntent, EDIT_FOOD);
                         return true;
                     case R.id.save_image_item:
-                        Helper.saveImage(Helper.getFoodBitmap(imageViewerFragment.getCurrentImage()), Helper.SaveImageFolder, Helper.NewImageFileName());
+                        ImageUtils.saveImage(ImageUtils.getFoodBitmap(imageViewerFragment.getCurrentImage()), Helper.ImageFolder, ImageUtils.newImageFileName());
                         Toast.makeText(getContext(), R.string.save_image_msg, Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.share_item:
                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                         shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, Helper.getFileUri(getContext(), Helper.getImagePath(imageViewerFragment.getCurrentImage())));
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, FileUtils.getFileUri(getContext(), ImageUtils.getImagePath(imageViewerFragment.getCurrentImage())));
                         shareIntent.setType("image/*");
                         startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), before.Name)));
                         return true;
@@ -154,8 +159,8 @@ public class FoodCardFragment extends Fragment {
             ObjectAnimator.ofFloat(v, "rotation", 0, 180).start();
             helper.show();
         });
-        food_note_front.setOnClickListener(v -> { if (!Helper.isNullOrEmpty(CurrentFood.Note)) Flip(); });
-        food_note_back.setOnClickListener(v -> { if (!Helper.isNullOrEmpty(CurrentFood.Note)) Flip(); });
+        food_note_front.setOnClickListener(v -> { if (!StringUtils.isEmpty(CurrentFood.Note)) Flip(); });
+        food_note_back.setOnClickListener(v -> { if (!StringUtils.isEmpty(CurrentFood.Note)) Flip(); });
         if (CurrentFood != null) setFood(CurrentFood);
         return view;
     }
@@ -194,7 +199,7 @@ public class FoodCardFragment extends Fragment {
     public void SetFoodNote(Food food){
         String food_info = String.format(getString(R.string.created_at), food.GetDateAddedString()) + "\n";
         if (food.HideCount > 0) food_info += String.format(getString(R.string.hide_recent), food.HideCount);
-        if (Helper.isNullOrEmpty(food.Note)){
+        if (StringUtils.isEmpty(food.Note)){
             food_note_front.setText(food_info);
             food_note_back.setText(food.Note);
             food_note_front.setOnLongClickListener(null);
@@ -202,7 +207,7 @@ public class FoodCardFragment extends Fragment {
             food_note_front.setText(food.Note);
             food_note_back.setText(food_info);
             food_note_front.setOnLongClickListener(v -> {
-                Helper.CopyToClipboard(getContext(), food.Note);
+                ClipboardUtils.copy(getContext(), food.Note);
                 Toast.makeText(getContext(), R.string.note_copied, Toast.LENGTH_SHORT).show();
                 return true;
             });

@@ -1,4 +1,6 @@
-package personalprojects.seakyluo.randommenu.helpers;
+package personalprojects.seakyluo.randommenu.utils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +11,7 @@ import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.MatchFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
-public class SearchHelper {
+public class SearchUtils {
     public static final int MAX_POINTS = 100, SECOND_MAX_POINTS = 95, THIRD_MAX_POINTS = 90, FOURTH_MAX_POINTS = 85;
 
     public static int evalString(String text, String keyword){
@@ -44,16 +46,16 @@ public class SearchHelper {
     }
 
     public static int evalFoodNote(Food food, String keyword){
-        if (Helper.isBlank(food.Note)) return 0;
+        if (StringUtils.isBlank(food.Note)) return 0;
         int points = evalString(food.Note, keyword);
         return points == MAX_POINTS ? 120 : Math.max(points - 30, 0);
     }
 
     public static List<String> searchTags(Stream<Tag> tags, String keyword){
-        if (Helper.isNullOrEmpty(keyword)) return new ArrayList<>();
+        if (StringUtils.isEmpty(keyword)) return new ArrayList<>();
         return tags.filter(t -> t.Name.contains(keyword))
                     .sorted((t1, t2) -> {
-                        int res = SearchHelper.evalString(t1.Name, keyword) - SearchHelper.evalString(t2.Name, keyword);
+                        int res = SearchUtils.evalString(t1.Name, keyword) - SearchUtils.evalString(t2.Name, keyword);
                         return res == 0 ? t2.getCounter() - t1.getCounter() : res;
                     })
                     .map(t -> t.Name)

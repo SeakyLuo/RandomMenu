@@ -16,6 +16,7 @@ import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 public class FoodAdapter extends CustomAdapter<Food> {
     @Setter
@@ -34,7 +35,7 @@ public class FoodAdapter extends CustomAdapter<Food> {
         ImageView food_image = view.findViewById(R.id.food_image);
 
         food_name.setText(data.Name);
-        Helper.loadImage(Glide.with(view), data.getCover(), food_image);
+        ImageUtils.loadImage(view, data.getCover(), food_image);
         setLiked(view, data.isFavorite());
         view.setOnClickListener(v -> {
             if (foodClickedListener != null) foodClickedListener.click(viewHolder, data);

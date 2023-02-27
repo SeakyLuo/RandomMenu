@@ -6,12 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-
-import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.interfaces.OnDataChangedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.views.ScalableImageView;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
+import personalprojects.seakyluo.randommenu.controls.ScalableImageView;
 
 public class ImageAdapter extends PagerAdapter {
     private Context context;
@@ -58,7 +56,7 @@ public class ImageAdapter extends PagerAdapter {
 //        if (container != null){
 //            int count = container.getChildCount();
 //            for (int i = 0; i < count; i++)
-//                Helper.LoadImage(Glide.with(context), images.Get(i), (ImageView) container.getChildAt(i));
+//                ImageUtils.loadImage(Glide.with(context), images.Get(i), (ImageView) container.getChildAt(i));
 //        }
         notifyDataSetChanged();
         return this.images;
@@ -98,7 +96,7 @@ public class ImageAdapter extends PagerAdapter {
             imageView = new ImageView(context);
         imageView.setScaleType(scaleType);
         imageView.setOnClickListener(clickListener);
-        Helper.loadImage(Glide.with(context), images.get(position), imageView);
+        ImageUtils.loadImage(context, images.get(position), imageView);
         container.addView(imageView);
         return imageView;
     }

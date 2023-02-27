@@ -59,7 +59,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
-    <personalprojects.seakyluo.randommenu.views.MovableFloatingActionButton
+    <personalprojects.seakyluo.randommenu.controls.MovableFloatingActionButton
         android:id="@+id/restaurant_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

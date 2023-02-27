@@ -7,9 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -18,29 +16,25 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import java.io.IOException;
-
-import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
-import personalprojects.seakyluo.randommenu.utils.FoodImageUtils;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
+import personalprojects.seakyluo.randommenu.utils.JsonUtils;
+import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
 
 public class EditRestaurantFoodActivity extends AppCompatActivity {
     public static int CODE = 1;
-    public static final String DATA = "RESTAURANT_FOOD", IS_DRAFT = "IsDraft";
+    public static final String DATA = "RESTAURANT_FOOD";
 
     private ImageView foodImage;
     private ImageButton cameraButton;
     private EditText editName, editPrice, editComment;
+    private RestaurantFoodVO currentFood;
     private Uri foodImageUri;
 
     @Override
@@ -56,18 +50,16 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         ImageButton confirmButton = findViewById(R.id.confirm_button);
         ImageButton cancelButton = findViewById(R.id.cancel_button);
 
-        RestaurantFoodVO food;
         if (savedInstanceState == null){
-            food = getIntent().getParcelableExtra(DATA);
+            currentFood = getIntent().getParcelableExtra(DATA);
         } else {
-            food = savedInstanceState.getParcelable(DATA);
+            currentFood = savedInstanceState.getParcelable(DATA);
         }
-        fillFood(food);
-        cameraButton.setOnClickListener(v -> {
-            if (Helper.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, FoodImageUtils.WRITE_STORAGE)){
-                showMenuFlyout();
-            }
-        });
+        fillFood(currentFood);
+        if (currentFood == null){
+            currentFood = new RestaurantFoodVO();
+        }
+        cameraButton.setOnClickListener(v -> showMenuFlyout());
         confirmButton.setOnClickListener(this::onConfirm);
         cancelButton.setOnClickListener(v -> finish());
     }
@@ -76,7 +68,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         if (food == null){
             return;
         }
-        Helper.loadImage(Glide.with(this), food.getPictureUri(), foodImage);
+        ImageUtils.loadImage(this, food.getPictureUri(), foodImage);
         editName.setText(food.getName());
         editPrice.setText(DoubleUtils.truncateZero(food.getPrice()));
         editComment.setText(food.getComment());
@@ -99,10 +91,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
     }
 
     private RestaurantFoodVO buildFood(){
-        RestaurantFoodVO dst = new RestaurantFoodVO();
-        if (foodImageUri != null){
-            dst.setPictureUri(foodImageUri.getPath());
-        }
+        RestaurantFoodVO dst = JsonUtils.copy(currentFood);
         dst.setName(editName.getText().toString());
         String price = editPrice.getText().toString();
         if (NumberUtils.isParsable(price)){
@@ -113,19 +102,22 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
     }
 
     private void showMenuFlyout(){
+        if (!PermissionUtils.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, ImageUtils.WRITE_STORAGE)){
+            return;
+        }
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, cameraButton);
         if (foodImageUri == null) helper.removeItems(R.id.edit_image_item);
         helper.removeItems(R.id.set_cover_item, R.id.move_to_first_item, R.id.remove_image_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.open_camera_item:
-                    foodImageUri = FoodImageUtils.OpenCamera(this);
+                    foodImageUri = ImageUtils.openCamera(this);
                     return foodImageUri != null;
                 case R.id.open_gallery_item:
-                    FoodImageUtils.OpenGallery(this);
+                    ImageUtils.openGallery(this);
                     return true;
                 case R.id.edit_image_item:
-                    foodImageUri = FoodImageUtils.CropImage(this, foodImageUri.getPath());
+                    foodImageUri = ImageUtils.cropImage(this, foodImageUri.getPath());
                     return foodImageUri != null;
             }
             return false;
@@ -145,14 +137,14 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)
             return;
         switch (requestCode){
-            case FoodImageUtils.WRITE_STORAGE:
+            case ImageUtils.WRITE_STORAGE:
                 showMenuFlyout();
                 break;
-            case FoodImageUtils.CAMERA_CODE:
-                FoodImageUtils.OpenCamera(this);
+            case ImageUtils.CAMERA_CODE:
+                ImageUtils.openCamera(this);
                 break;
             case Helper.READ_EXTERNAL_STORAGE_CODE:
-                FoodImageUtils.OpenGallery(this);
+                ImageUtils.openGallery(this, false);
                 break;
         }
     }
@@ -162,40 +154,27 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         Bitmap image;
+        String pictureUri;
         switch (requestCode){
-            case FoodImageUtils.CAMERA_CODE:
-                try {
-                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), foodImageUri);
-                    Helper.saveImage(image, Helper.ImageFolder, foodImageUri.getPath());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
+            case ImageUtils.CAMERA_CODE:
+                image = ImageUtils.saveImage(this, foodImageUri, pictureUri = foodImageUri.getPath());
                 break;
-            case FoodImageUtils.GALLERY_CODE:
-                try {
-                    Uri uri;
-                    ClipData clipData = data.getClipData();
-                    if (clipData == null) {
-                        uri = data.getData();
-                        image = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                        Helper.saveImage(image, Helper.ImageFolder, foodImageUri.getPath());
-                    }else{
-                        int count = clipData.getItemCount();
-                        for (int i = 0; i < count; i++){
-                            uri = clipData.getItemAt(i).getUri();
-                            if (Helper.saveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
-                                    Helper.ImageFolder,
-                                    Helper.NewImageFileName(i))){
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
+            case ImageUtils.GALLERY_CODE:
+                ClipData clipData = data.getClipData();
+                if (clipData == null) {
+                    foodImageUri = data.getData();
+                } else {
+                    int count = clipData.getItemCount();
+                    if (count == 0) return;
+                    foodImageUri = clipData.getItemAt(0).getUri();
                 }
+                image = ImageUtils.saveImage(this, foodImageUri, pictureUri = ImageUtils.newImageFileName());
                 break;
+            default:
+                return;
         }
+        foodImage.setImageBitmap(image);
+        currentFood.setPictureUri(pictureUri);
     }
 
     private void finishWithData(RestaurantFoodVO data){

@@ -26,7 +26,7 @@ import personalprojects.seakyluo.randommenu.fragments.BaseFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.SearchFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.StringListFragment;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.helpers.SearchHelper;
+import personalprojects.seakyluo.randommenu.utils.SearchUtils;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.MatchFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
@@ -152,7 +152,7 @@ public class SearchActivity extends SwipeBackActivity {
             if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
             List<MatchFood> food = new ArrayList<>(), tag = new ArrayList<>(), note = new ArrayList<>(), all = new ArrayList<>();
             Settings.settings.Foods.ForEach(f -> {
-                MatchFood mf = SearchHelper.evalFood(f, keyword);
+                MatchFood mf = SearchUtils.evalFood(f, keyword);
                 if (mf.namePoints > 0){
                     food.add(new MatchFood(mf.food, mf.namePoints + mf.bonus));
                 }

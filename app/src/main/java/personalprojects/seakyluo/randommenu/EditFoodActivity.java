@@ -1,7 +1,6 @@
 package personalprojects.seakyluo.randommenu;
 
 import android.Manifest;
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,7 +19,8 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.io.File;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -33,7 +33,8 @@ import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
-import personalprojects.seakyluo.randommenu.utils.FoodImageUtils;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
+import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
 
 public class EditFoodActivity extends AppCompatActivity {
     public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
@@ -112,12 +113,12 @@ public class EditFoodActivity extends AppCompatActivity {
                     int index = Settings.settings.Foods.indexOf(f -> f.Name.equals(food_name));
                     Food food = Settings.settings.Foods.get(index);
                     food.Images.addAll(images);
-                    if (!Helper.isNullOrEmpty(food_cover)){
+                    if (!StringUtils.isEmpty(food_cover)){
                         food.setCover(food_cover);
                     }
                     food.setIsFavorite(food.isFavorite() || like_toggle.isChecked());
                     food.AddTags(chooseTagFragment.getData());
-                    if (!Helper.isBlank(food.Note)){
+                    if (!StringUtils.isBlank(food.Note)){
                         food.Note = food.Note + '\n' + getNote();
                     }
                     Settings.settings.Foods.move(index, 0);
@@ -155,7 +156,7 @@ public class EditFoodActivity extends AppCompatActivity {
             FinishWithFood(food);
         });
         camera_button.setOnClickListener(v -> {
-            if (Helper.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_STORAGE)){
+            if (PermissionUtils.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_STORAGE)){
                 showMenuFlyout();
             }
         });
@@ -181,13 +182,13 @@ public class EditFoodActivity extends AppCompatActivity {
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.open_camera_item:
-                    crop_image_uri = FoodImageUtils.OpenCamera(this);
+                    crop_image_uri = ImageUtils.openCamera(this);
                     return crop_image_uri != null;
                 case R.id.open_gallery_item:
-                    FoodImageUtils.OpenGallery(this);
+                    ImageUtils.openGallery(this);
                     return true;
                 case R.id.edit_image_item:
-                    crop_image_uri = FoodImageUtils.CropImage(this, CurrentImage());
+                    crop_image_uri = ImageUtils.cropImage(this, CurrentImage());
                     return crop_image_uri != null;
                 case R.id.remove_image_item:
                     String image = images.pop(imageViewerFragment.removeCurrentImage());
@@ -228,17 +229,17 @@ public class EditFoodActivity extends AppCompatActivity {
                 showMenuFlyout();
                 break;
             case CAMERA_CODE:
-                FoodImageUtils.OpenCamera(this);
+                ImageUtils.openCamera(this);
                 break;
             case Helper.READ_EXTERNAL_STORAGE_CODE:
-                FoodImageUtils.OpenGallery(this);
+                ImageUtils.openGallery(this);
                 break;
         }
     }
 
-    private String CurrentImage() { return Helper.getImagePath(images.get(imageViewerFragment.getCurrent())); }
+    private String CurrentImage() { return ImageUtils.getImagePath(images.get(imageViewerFragment.getCurrent())); }
     private boolean AddImage(Bitmap image, String filename){
-        boolean success = Helper.saveImage(image, Helper.ImageFolder, filename);
+        boolean success = ImageUtils.saveImage(image, Helper.ImageFolder, filename);
         if (success) images.with(imageViewerFragment.addImage(filename), 0);
         return success;
     }
@@ -272,7 +273,7 @@ public class EditFoodActivity extends AppCompatActivity {
                             images.move(index, 0);
                             sources.move(index, 0);
                             imageViewerFragment.moveImage(index, 0);
-                        }else if (AddImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), Helper.NewImageFileName()))
+                        }else if (AddImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), ImageUtils.newImageFileName()))
                             sources.with(uri.getPath(), 0);
                     }else{
                         int count = clipData.getItemCount();
@@ -286,9 +287,9 @@ public class EditFoodActivity extends AppCompatActivity {
                                 images.pop(index);
                                 sources.pop(index);
                                 imageViewerFragment.removeImage(index);
-                            }else if (Helper.saveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
+                            }else if (ImageUtils.saveImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
                                                         Helper.ImageFolder,
-                                                        filename = Helper.NewImageFileName(i))){
+                                                        filename = ImageUtils.newImageFileName(i))){
                                 files.with(filename, 0);
                                 paths.with(path, 0);
                             }
@@ -304,7 +305,7 @@ public class EditFoodActivity extends AppCompatActivity {
             case CROP_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
-                    if (!Helper.saveImage(image, Helper.ImageFolder, filename = Helper.NewImageFileName())) return;
+                    if (!ImageUtils.saveImage(image, Helper.ImageFolder, filename = ImageUtils.newImageFileName())) return;
                     int current = imageViewerFragment.getCurrent();
                     if (images.get(current).equals(food_cover)) food_cover = filename;
                     images.set(imageViewerFragment.setCurrentImage(filename), current);
@@ -318,7 +319,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
         }
         food_image.setVisibility(View.GONE);
-        if (Helper.isNullOrEmpty(food_cover)) food_cover = images.first();
+        if (StringUtils.isEmpty(food_cover)) food_cover = images.first();
     }
 
     @Override

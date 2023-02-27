@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.helpers;
+package personalprojects.seakyluo.randommenu.controls;
 
 import android.content.Context;
 import androidx.core.view.ViewCompat;

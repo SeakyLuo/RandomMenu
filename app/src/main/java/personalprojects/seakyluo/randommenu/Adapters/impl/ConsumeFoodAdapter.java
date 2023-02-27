@@ -24,6 +24,7 @@ import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
     @Setter
@@ -72,7 +73,7 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
         foodName.setText(data.getName());
         foodPrice.setText("￥" + DoubleUtils.truncateZero(data.getPrice()));
         foodComment.setText(data.getComment());
-        Helper.loadImage(Glide.with(context), data.getPictureUri(), foodImage);
+        ImageUtils.loadImage(context, data.getPictureUri(), foodImage);
     }
 
 }

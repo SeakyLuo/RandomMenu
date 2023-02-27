@@ -54,7 +54,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tm_toolbar"/>
 
-    <personalprojects.seakyluo.randommenu.views.MovableFloatingActionButton
+    <personalprojects.seakyluo.randommenu.controls.MovableFloatingActionButton
         android:id="@+id/tm_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -23,7 +23,8 @@
             android:layout_height="wrap_content"
             android:text="店名"
             android:textSize="24dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginTop="4dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,14 +48,23 @@
                 />
         </LinearLayout>
 
-        <TextView
+        <com.ms.square.android.expandabletextview.ExpandableTextView
             android:id="@+id/address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="2dp"
-            android:maxLines="1"
-            android:text="地址"
-            android:textSize="14dp" />
+            app:maxCollapsedLines="1">
+            <TextView
+                android:id="@id/expandable_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+            <ImageButton
+                android:id="@id/expand_collapse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"/>
+        </com.ms.square.android.expandabletextview.ExpandableTextView>
 
         <TextView
             android:id="@+id/comment"

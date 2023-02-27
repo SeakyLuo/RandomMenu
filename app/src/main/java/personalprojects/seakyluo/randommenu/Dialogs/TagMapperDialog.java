@@ -19,12 +19,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Objects;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.impl.TagAdapter;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.helpers.SearchHelper;
+import personalprojects.seakyluo.randommenu.utils.SearchUtils;
 import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.TagMapper;
@@ -82,7 +83,7 @@ public class TagMapperDialog extends DialogFragment {
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
                 String keyword = s.toString().trim();
-                suggestionTagListAdapter.addAll(SearchHelper.searchTags(Settings.settings.Tags.stream(), keyword));
+                suggestionTagListAdapter.addAll(SearchUtils.searchTags(Settings.settings.Tags.stream(), keyword));
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -95,7 +96,7 @@ public class TagMapperDialog extends DialogFragment {
         });
         confirm.setOnClickListener(v -> {
             String keyword = keyword_content.getText().toString().trim();
-            if (Helper.isNullOrEmpty(keyword)){
+            if (StringUtils.isEmpty(keyword)){
                 Toast.makeText(getContext(), R.string.empty_keyword, Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -126,7 +127,7 @@ public class TagMapperDialog extends DialogFragment {
             return;
         }
         String tag = tag_content.getText().toString().trim();
-        if (Helper.isNullOrEmpty(tag)){
+        if (StringUtils.isEmpty(tag)){
             return;
         }
         int index = adapter.indexOf(t -> t.Name.equals(tag));
