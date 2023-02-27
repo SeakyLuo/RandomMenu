@@ -16,8 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import personalprojects.seakyluo.randommenu.ChooseTagActivity;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.activities.impl.ChooseTagActivity;
 import personalprojects.seakyluo.randommenu.interfaces.OnLaunchActivityListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;

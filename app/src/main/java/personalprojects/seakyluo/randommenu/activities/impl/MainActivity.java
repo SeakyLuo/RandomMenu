@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,12 +11,15 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.fragments.NavigationFragment;
 import personalprojects.seakyluo.randommenu.fragments.RandomFragment;
 import personalprojects.seakyluo.randommenu.fragments.RestaurantsFragment;
 import personalprojects.seakyluo.randommenu.fragments.SettingsFragment;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
 
 public class MainActivity extends AppCompatActivity {
     public RandomFragment randomFragment;
@@ -159,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        if (requestCode == Helper.READ_EXTERNAL_STORAGE_CODE) {
+        if (requestCode == ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE) {
             Helper.init(this);
         }
     }
@@ -169,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)
             return;
-        if (requestCode == Helper.READ_EXTERNAL_STORAGE_CODE) {
+        if (requestCode == ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE) {
             Helper.init(this);
         }
     }

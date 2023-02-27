@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.Manifest;
 import android.content.ClipData;
@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -102,7 +104,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
     }
 
     private void showMenuFlyout(){
-        if (!PermissionUtils.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, ImageUtils.WRITE_STORAGE)){
+        if (!PermissionUtils.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, ActivityCodeConstant.WRITE_STORAGE)){
             return;
         }
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, cameraButton);
@@ -137,13 +139,13 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)
             return;
         switch (requestCode){
-            case ImageUtils.WRITE_STORAGE:
+            case ActivityCodeConstant.WRITE_STORAGE:
                 showMenuFlyout();
                 break;
-            case ImageUtils.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA_CODE:
                 ImageUtils.openCamera(this);
                 break;
-            case Helper.READ_EXTERNAL_STORAGE_CODE:
+            case ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE:
                 ImageUtils.openGallery(this, false);
                 break;
         }
@@ -156,10 +158,10 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         Bitmap image;
         String pictureUri;
         switch (requestCode){
-            case ImageUtils.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA_CODE:
                 image = ImageUtils.saveImage(this, foodImageUri, pictureUri = foodImageUri.getPath());
                 break;
-            case ImageUtils.GALLERY_CODE:
+            case ActivityCodeConstant.GALLERY_CODE:
                 ClipData clipData = data.getClipData();
                 if (clipData == null) {
                     foodImageUri = data.getData();

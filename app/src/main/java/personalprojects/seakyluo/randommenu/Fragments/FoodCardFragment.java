@@ -21,12 +21,12 @@ import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
 
-import personalprojects.seakyluo.randommenu.EditFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.EditFoodActivity;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.interfaces.FoodEditedListener;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
-import personalprojects.seakyluo.randommenu.MainActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.MainActivity;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;

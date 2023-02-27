@@ -7,11 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
-import personalprojects.seakyluo.randommenu.FullScreenImageActivity;
-import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.activities.impl.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.R;

@@ -26,10 +26,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 
 public class ImageUtils {
-    public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
     public static Bitmap DEFAULT_FOOD_IMAGE;
 
     public static void init(Activity activity){
@@ -98,7 +98,7 @@ public class ImageUtils {
             intent.setDataAndType(Uri.parse(imagePath), "image/*");
             Uri uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", Helper.TempFolder));
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-            activity.startActivityForResult(intent, CROP_CODE);
+            activity.startActivityForResult(intent, ActivityCodeConstant.CROP_CODE);
             return uri;
         } catch (ActivityNotFoundException e) {
             Toast.makeText(activity, "Whoops - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show();
@@ -109,14 +109,14 @@ public class ImageUtils {
     }
 
     public static Uri openCamera(Activity activity){
-        if (!PermissionUtils.checkAndRequestPermission(activity, Manifest.permission.CAMERA, CAMERA_CODE)){
+        if (!PermissionUtils.checkAndRequestPermission(activity, Manifest.permission.CAMERA, ActivityCodeConstant.CAMERA_CODE)){
             Toast.makeText(activity, "没有权限使用摄像头", Toast.LENGTH_SHORT).show();
             return null;
         }
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         Uri uri = FileUtils.getFileUri(activity, ImageUtils.newImageFileName());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        activity.startActivityForResult(intent, CAMERA_CODE);
+        activity.startActivityForResult(intent, ActivityCodeConstant.CAMERA_CODE);
         return uri;
     }
 
@@ -131,6 +131,6 @@ public class ImageUtils {
         }
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, allowMultiple);
-        activity.startActivityForResult(Intent.createChooser(intent, activity.getString(R.string.select_image)), GALLERY_CODE);
+        activity.startActivityForResult(Intent.createChooser(intent, activity.getString(R.string.select_image)), ActivityCodeConstant.GALLERY_CODE);
     }
 }

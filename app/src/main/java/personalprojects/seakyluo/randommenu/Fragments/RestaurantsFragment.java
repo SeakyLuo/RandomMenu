@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import personalprojects.seakyluo.randommenu.EditRestaurantActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;

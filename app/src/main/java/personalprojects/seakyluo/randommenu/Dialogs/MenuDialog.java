@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import personalprojects.seakyluo.randommenu.ChooseFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.ChooseFoodActivity;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;

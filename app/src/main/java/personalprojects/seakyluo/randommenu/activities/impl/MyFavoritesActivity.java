@@ -1,9 +1,11 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
 import android.widget.TextView;
 
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;

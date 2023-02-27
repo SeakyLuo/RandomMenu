@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,10 +29,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
-import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
-import personalprojects.seakyluo.randommenu.dialogs.RestaurantFoodDialog;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;

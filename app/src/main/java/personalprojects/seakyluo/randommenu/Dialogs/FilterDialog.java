@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import personalprojects.seakyluo.randommenu.ChooseTagActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.ChooseTagActivity;
 import personalprojects.seakyluo.randommenu.fragments.ChooseTagFragment;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;

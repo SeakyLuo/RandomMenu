@@ -15,10 +15,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
-import personalprojects.seakyluo.randommenu.EditFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.EditFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.FoodAdapter;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
@@ -26,7 +27,7 @@ import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.SearchActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.SearchActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.SelectTagAdapter;
 
 import static android.app.Activity.RESULT_OK;
@@ -164,7 +165,7 @@ public class NavigationFragment extends Fragment {
         Intent intent = new Intent(getContext(), EditFoodActivity.class);
         intent.putExtra(EditFoodActivity.FOOD, food);
         intent.putExtra(EditFoodActivity.IS_DRAFT, isDraft);
-        startActivityForResult(intent, EditFoodActivity.FOOD_CODE);
+        startActivityForResult(intent, ActivityCodeConstant.FOOD_CODE);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.Manifest;
 import android.content.ClipData;
@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.List;
 
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.fragments.ChooseTagFragment;
 import personalprojects.seakyluo.randommenu.fragments.ImageViewerFragment;
@@ -37,7 +39,6 @@ import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
 
 public class EditFoodActivity extends AppCompatActivity {
-    public static final int CAMERA_CODE = 0, GALLERY_CODE = 1, WRITE_STORAGE = 3, FOOD_CODE = 4, CROP_CODE = 5;
     public static final String FOOD = "Food", IS_DRAFT = "IsDraft";
     private ImageButton camera_button;
     private EditText edit_food_name, edit_note;
@@ -156,7 +157,7 @@ public class EditFoodActivity extends AppCompatActivity {
             FinishWithFood(food);
         });
         camera_button.setOnClickListener(v -> {
-            if (PermissionUtils.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_STORAGE)){
+            if (PermissionUtils.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, ActivityCodeConstant.WRITE_STORAGE)){
                 showMenuFlyout();
             }
         });
@@ -225,13 +226,13 @@ public class EditFoodActivity extends AppCompatActivity {
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)
             return;
         switch (requestCode){
-            case WRITE_STORAGE:
+            case ActivityCodeConstant.WRITE_STORAGE:
                 showMenuFlyout();
                 break;
-            case CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA_CODE:
                 ImageUtils.openCamera(this);
                 break;
-            case Helper.READ_EXTERNAL_STORAGE_CODE:
+            case ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE:
                 ImageUtils.openGallery(this);
                 break;
         }
@@ -250,7 +251,7 @@ public class EditFoodActivity extends AppCompatActivity {
         Bitmap image;
         String filename = "";
         switch (requestCode){
-            case CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
                     if (AddImage(image, filename = camera_image_uri.getPath()))
@@ -260,7 +261,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     return;
                 }
                 break;
-            case GALLERY_CODE:
+            case ActivityCodeConstant.GALLERY_CODE:
                 try {
                     Uri uri;
                     int index;
@@ -302,7 +303,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     return;
                 }
                 break;
-            case CROP_CODE:
+            case ActivityCodeConstant.CROP_CODE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
                     if (!ImageUtils.saveImage(image, Helper.ImageFolder, filename = ImageUtils.newImageFileName())) return;

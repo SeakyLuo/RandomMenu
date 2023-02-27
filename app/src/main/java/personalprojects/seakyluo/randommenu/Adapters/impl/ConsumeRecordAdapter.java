@@ -6,10 +6,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-
 import lombok.Setter;
-import personalprojects.seakyluo.randommenu.EditConsumeRecordActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;

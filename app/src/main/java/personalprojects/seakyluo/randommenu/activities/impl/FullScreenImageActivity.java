@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.impl.ImageAdapter;
 import personalprojects.seakyluo.randommenu.models.AList;
 

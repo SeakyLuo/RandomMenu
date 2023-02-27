@@ -24,6 +24,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
@@ -60,7 +61,7 @@ public class RestaurantFoodDialog extends DialogFragment {
 
         fillFood(food);
         cameraButton.setOnClickListener(v -> {
-            if (PermissionUtils.checkAndRequestPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, ImageUtils.WRITE_STORAGE)){
+            if (PermissionUtils.checkAndRequestPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, ActivityCodeConstant.WRITE_STORAGE)){
                 showMenuFlyout();
             }
         });
@@ -134,13 +135,13 @@ public class RestaurantFoodDialog extends DialogFragment {
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)
             return;
         switch (requestCode){
-            case ImageUtils.WRITE_STORAGE:
+            case ActivityCodeConstant.WRITE_STORAGE:
                 showMenuFlyout();
                 break;
-            case ImageUtils.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA_CODE:
                 ImageUtils.openCamera(getActivity());
                 break;
-            case Helper.READ_EXTERNAL_STORAGE_CODE:
+            case ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE:
                 ImageUtils.openGallery(getActivity());
                 break;
         }
@@ -151,11 +152,11 @@ public class RestaurantFoodDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         switch (requestCode){
-            case ImageUtils.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA_CODE:
                 break;
-            case ImageUtils.GALLERY_CODE:
+            case ActivityCodeConstant.GALLERY_CODE:
                 break;
-            case ImageUtils.CROP_CODE:
+            case ActivityCodeConstant.CROP_CODE:
                 break;
         }
     }

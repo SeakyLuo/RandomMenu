@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Comparator;
 import java.util.List;
 
+import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.AddressAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordAdapter;

@@ -1,9 +1,11 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Switch;
 
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.models.Settings;
 

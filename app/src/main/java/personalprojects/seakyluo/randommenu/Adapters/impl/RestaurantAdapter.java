@@ -3,16 +3,7 @@ package personalprojects.seakyluo.randommenu.adapters.impl;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.text.Layout;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,8 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lombok.NonNull;
-import personalprojects.seakyluo.randommenu.EditRestaurantActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.models.Address;

@@ -1,9 +1,6 @@
 package personalprojects.seakyluo.randommenu.helpers;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.text.Layout;
 import android.widget.TextView;
 
@@ -16,7 +13,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.models.AList;
@@ -26,7 +22,6 @@ import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 public class Helper {
-    public static final int READ_EXTERNAL_STORAGE_CODE = 1;
     public static final String ROOT_FOLDER = "RandomMenu";
     public static File root, SaveImageFolder, ImageFolder, TempFolder, TempUnzipFolder, ExportedDataFolder, LogFolder;
 

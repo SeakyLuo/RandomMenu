@@ -1,9 +1,11 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.jude.swipbackhelper.SwipeBackHelper;
+
+import personalprojects.seakyluo.randommenu.R;
 
 public class SwipeBackActivity extends AppCompatActivity {
     @Override

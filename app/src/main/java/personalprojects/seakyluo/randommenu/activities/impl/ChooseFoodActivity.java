@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 
+import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.TagsFragment;
 import personalprojects.seakyluo.randommenu.models.AList;

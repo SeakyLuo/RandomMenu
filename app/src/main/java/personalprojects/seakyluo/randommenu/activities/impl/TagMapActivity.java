@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu;
+package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.os.Bundle;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.TagMapAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.TagMapperDialog;

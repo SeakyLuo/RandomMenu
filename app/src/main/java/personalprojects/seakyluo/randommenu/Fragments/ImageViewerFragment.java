@@ -13,7 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import personalprojects.seakyluo.randommenu.adapters.impl.ImageAdapter;
-import personalprojects.seakyluo.randommenu.FullScreenImageActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.R;
 

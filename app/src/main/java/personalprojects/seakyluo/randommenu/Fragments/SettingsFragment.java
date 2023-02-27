@@ -18,17 +18,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
-import personalprojects.seakyluo.randommenu.DislikeActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.DislikeActivity;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.MainActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.MainActivity;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Settings;
-import personalprojects.seakyluo.randommenu.MoreSettingsActivity;
-import personalprojects.seakyluo.randommenu.MyFavoritesActivity;
-import personalprojects.seakyluo.randommenu.NoteActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.MoreSettingsActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.MyFavoritesActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.NoteActivity;
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.ToCookActivity;
-import personalprojects.seakyluo.randommenu.ToEatActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.ToCookActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.ToEatActivity;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
 
 import static android.app.Activity.RESULT_OK;
