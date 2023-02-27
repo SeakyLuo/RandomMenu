@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu.database.services;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -51,9 +52,9 @@ public class ConsumeRecordDaoService {
         }
     }
 
-    private static final int MAX_FOOD_SHOW = 3;
+    private static final int MAX_FOOD_SHOW = 5;
     /**
-     * 点的最多的+最后消费的
+     * 点的最多的+有图片+有评论+最后消费的
      * */
     private static void computeShowFood(List<ConsumeRecordVO> records){
         Map<Long, ConsumeRecordVO> recordMap = records.stream().collect(Collectors.toMap(ConsumeRecordVO::getId, Function.identity()));
@@ -65,6 +66,10 @@ public class ConsumeRecordDaoService {
         }
         foods.sort((f1, f2) -> {
             int diff = counter.get(f2.getName()) - counter.get(f1.getName());
+            if (diff != 0) return diff;
+            diff = Boolean.compare(StringUtils.isNotEmpty(f2.getPictureUri()), StringUtils.isNotEmpty(f1.getPictureUri()));
+            if (diff != 0) return diff;
+            diff = Boolean.compare(StringUtils.isNotEmpty(f2.getComment()), StringUtils.isNotEmpty(f1.getComment()));
             if (diff != 0) return diff;
             ConsumeRecordVO r1 = recordMap.get(f1.getConsumeRecordId());
             ConsumeRecordVO r2 = recordMap.get(f2.getConsumeRecordId());

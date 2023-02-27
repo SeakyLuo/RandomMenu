@@ -155,11 +155,12 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        Bitmap image;
         String pictureUri;
         switch (requestCode){
             case ActivityCodeConstant.CAMERA_CODE:
-                image = ImageUtils.saveImage(this, foodImageUri, pictureUri = foodImageUri.getPath());
+                if (!ImageUtils.saveImage(this, foodImageUri, pictureUri = foodImageUri.getPath())){
+                    return;
+                }
                 break;
             case ActivityCodeConstant.GALLERY_CODE:
                 ClipData clipData = data.getClipData();
@@ -168,14 +169,17 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
                 } else {
                     int count = clipData.getItemCount();
                     if (count == 0) return;
+                    if (count > 1) Toast.makeText(this, "只会使用第一张图哦", Toast.LENGTH_SHORT).show();
                     foodImageUri = clipData.getItemAt(0).getUri();
                 }
-                image = ImageUtils.saveImage(this, foodImageUri, pictureUri = ImageUtils.newImageFileName());
+                if (!ImageUtils.saveImage(this, foodImageUri, pictureUri = ImageUtils.newImageFileName())){
+                    return;
+                }
                 break;
             default:
                 return;
         }
-        foodImage.setImageBitmap(image);
+        ImageUtils.loadImage(this, pictureUri, foodImage);
         currentFood.setPictureUri(pictureUri);
     }
 

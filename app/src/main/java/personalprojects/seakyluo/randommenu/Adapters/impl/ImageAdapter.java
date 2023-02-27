@@ -30,28 +30,28 @@ public class ImageAdapter extends PagerAdapter {
     }
     public void setContext(Context context) { this.context = context; }
     public void setOnDataChangedListener(OnDataChangedListener<AList<String>> listener) { dataChangedListener = listener; }
-    public String Add(String image) {
+    public String add(String image) {
         images.with(image, 0);
         notifyDataSetChanged();
         return image;
     }
-    public AList<String> Add(AList<String> images) {
+    public AList<String> add(AList<String> images) {
         this.images.with(images, 0);
         notifyDataSetChanged();
         return images;
     }
-    public int Remove(int index) {
+    public int remove(int index) {
         images.pop(index);
         notifyDataSetChanged();
         return index;
     }
-    public String Set(String image, int index){
+    public String set(String image, int index){
         images.set(image, index);
         notifyDataSetChanged();
         return image;
     }
-    public int IndexOf(String image) { return images.indexOf(image); }
-    public AList<String> SetData(AList<String> images){
+    public int indexOf(String image) { return images.indexOf(image); }
+    public AList<String> setData(AList<String> images){
         this.images.copyFrom(images);
 //        if (container != null){
 //            int count = container.getChildCount();
@@ -61,9 +61,9 @@ public class ImageAdapter extends PagerAdapter {
         notifyDataSetChanged();
         return this.images;
     }
-    public AList<String> GetData() { return images; }
-    public String Get(int index) { return images.get(index); }
-    public void Move(int from, int to) {
+    public AList<String> getData() { return images; }
+    public String get(int index) { return images.get(index); }
+    public void move(int from, int to) {
         images.move(from, to);
         notifyDataSetChanged();
     }

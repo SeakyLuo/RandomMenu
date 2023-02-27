@@ -70,14 +70,13 @@ public class ImageUtils {
     public static Bitmap getFoodBitmap(String path) { return BitmapFactory.decodeFile(getImagePath(path)); }
     public static Bitmap getFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
 
-    public static Bitmap saveImage(Context context, Uri uri, String filename){
+    public static boolean saveImage(Context context, Uri uri, String filename){
         try {
             Bitmap image = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-            ImageUtils.saveImage(image, Helper.ImageFolder, filename);
-            return image;
+            return ImageUtils.saveImage(image, Helper.ImageFolder, filename);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
     public static boolean saveImage(Bitmap image, File folder, String filename){

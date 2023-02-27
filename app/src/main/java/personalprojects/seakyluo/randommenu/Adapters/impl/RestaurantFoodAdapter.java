@@ -10,6 +10,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
@@ -34,11 +36,7 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
     @Override
     protected void fillViewHolder(CustomViewHolder viewHolder, RestaurantFoodVO data, int position) {
         View view = viewHolder.getView();
-        TextView foodName = view.findViewById(R.id.food_name);
-        TextView foodNote = view.findViewById(R.id.food_note);
-        ImageView foodImage = view.findViewById(R.id.food_image);
-
-        fillFood(data, foodName, foodNote, foodImage);
+        fillFood(view, data);
         view.setOnClickListener(v -> {
 //            RestaurantFoodDialog dialog = new RestaurantFoodDialog();
 //            dialog.setFood(data);
@@ -53,10 +51,28 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
         });
     }
 
-    private void fillFood(RestaurantFoodVO data, TextView foodName, TextView foodNote, ImageView foodImage){
+    private void fillFood(View view, RestaurantFoodVO data){
+        TextView foodName = view.findViewById(R.id.food_name);
+        TextView foodNote = view.findViewById(R.id.food_note);
+        ImageView foodImage = view.findViewById(R.id.food_image);
+        ImageView defaultFoodImage = view.findViewById(R.id.default_food_image);
+
         foodName.setText(data.getName());
-        foodNote.setText("￥" + DoubleUtils.truncateZero(data.getPrice()));
-        ImageUtils.loadImage(context, data.getPictureUri(), foodImage);
+        String comment = data.getComment();
+        if (StringUtils.isEmpty(comment)){
+            foodNote.setText("￥" + DoubleUtils.truncateZero(data.getPrice()));
+        } else {
+            foodNote.setText("“" + comment + "”");
+        }
+        String pictureUri = data.getPictureUri();
+        if (StringUtils.isEmpty(pictureUri)){
+            foodImage.setVisibility(View.GONE);
+            defaultFoodImage.setVisibility(View.VISIBLE);
+        } else {
+            foodImage.setVisibility(View.VISIBLE);
+            defaultFoodImage.setVisibility(View.GONE);
+            ImageUtils.loadImage(context, pictureUri, foodImage);
+        }
     }
 
 }

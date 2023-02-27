@@ -38,7 +38,7 @@ public class ImageViewerFragment extends Fragment {
         adapter.setContext(getContext());
         adapter.setOnImageClickedListener(v -> {
             Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
-            intent.putExtra(FullScreenImageActivity.IMAGE, adapter.GetData());
+            intent.putExtra(FullScreenImageActivity.IMAGE, adapter.getData());
             intent.putExtra(FullScreenImageActivity.INDEX, current);
             startActivity(intent);
         });
@@ -70,36 +70,36 @@ public class ImageViewerFragment extends Fragment {
     }
     public void setImages(AList<String> images, String cover) {
         current = images.indexOf(cover);
-        adapter.SetData(images);
+        adapter.setData(images);
         if (viewPager != null){
             scrollTo(current);
             setButtonVisibility(current);
         }
     }
     public int getCurrent() { return current; }
-    public String getCurrentImage() { return adapter.Get(current); }
-    public String setCurrentImage(String image) { return adapter.Set(image, current); }
+    public String getCurrentImage() { return adapter.get(current); }
+    public String setCurrentImage(String image) { return adapter.set(image, current); }
     public int removeCurrentImage() {
-        int index = adapter.Remove(current--);
+        int index = adapter.remove(current--);
         if (current != -1) scrollTo(current);
         return index;
     }
     public int removeImage(int index) {
-        return adapter.Remove(index);
+        return adapter.remove(index);
     }
-    public void moveImage(int from, int to) { adapter.Move(from, to); }
+    public void moveImage(int from, int to) { adapter.move(from, to); }
     public AList<String> addImages(AList<String> data) {
-        adapter.Add(data);
+        adapter.add(data);
         scrollTo(current = 0);
         return data;
     }
     public String addImage(String data) {
-        adapter.Add(data);
+        adapter.add(data);
         scrollTo(current = 0);
         return data;
     }
     public void Move(int from, int to) {
-        adapter.Move(from, to);
+        adapter.move(from, to);
         if (current == from){
             current = to;
             scrollTo(to);
