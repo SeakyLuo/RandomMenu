@@ -31,6 +31,15 @@ public class RestaurantDaoService {
         }
     }
 
+    public static void insert(List<RestaurantVO> restaurants){
+        RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
+        AppDatabase.instance.runInTransaction(() -> {
+            for (RestaurantVO vo : restaurants){
+                insert(vo);
+            }
+        });
+    }
+
     public static void insert(RestaurantVO vo){
         RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
         AppDatabase.instance.runInTransaction(() -> {
@@ -86,7 +95,21 @@ public class RestaurantDaoService {
         for (RestaurantVO vo : voList){
             long restaurantId = vo.getId();
             vo.setAddressList(AddressDaoService.selectByRestaurant(restaurantId));
-            vo.setFoods(RestaurantFoodDaoService.selectByRestaurantId(restaurantId).stream().filter(RestaurantFoodVO::isShowInList).collect(Collectors.toList()));
+            vo.setFoods(RestaurantFoodDaoService.selectByRestaurantHome(restaurantId));
+        }
+        return voList;
+    }
+
+    public static List<RestaurantVO> selectAll(){
+        RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
+        List<RestaurantVO> voList = new ArrayList<>();
+        int currentPage = 1, pageSize = 20;
+        while (true){
+            List<RestaurantDAO> daoList = mapper.selectByPage(currentPage++, pageSize);
+            voList.addAll(daoList.stream().map(dao -> selectById(dao.getId())).collect(Collectors.toList()));
+            if (daoList.size() < pageSize){
+                break;
+            }
         }
         return voList;
     }
@@ -100,7 +123,7 @@ public class RestaurantDaoService {
         RestaurantVO vo = convert(dao);
         long restaurantId = vo.getId();
         vo.setAddressList(AddressDaoService.selectByRestaurant(restaurantId));
-        vo.setFoods(RestaurantFoodDaoService.selectByRestaurantId(restaurantId).stream().filter(RestaurantFoodVO::isShowInList).collect(Collectors.toList()));
+        vo.setFoods(RestaurantFoodDaoService.selectByRestaurantHome(restaurantId));
         return vo;
     }
 

@@ -1,7 +1,9 @@
 package personalprojects.seakyluo.randommenu.database.services;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
@@ -33,6 +35,18 @@ public class RestaurantFoodDaoService {
                 .collect(Collectors.toList());
     }
 
+    public static List<RestaurantFoodVO> selectByRestaurantHome(long restaurantId){
+        RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
+        return mapper.selectByRestaurantHome(restaurantId).stream()
+                .map(RestaurantFoodDaoService::convert)
+                .collect(Collectors.toList());
+    }
+
+    public static Set<String> selectPaths(){
+        RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
+        return new HashSet<>(mapper.selectPaths());
+    }
+
     private static RestaurantFoodDAO convert(RestaurantFoodVO src){
         if (src == null){
             return null;
@@ -45,7 +59,7 @@ public class RestaurantFoodDaoService {
         dst.setName(src.getName());
         dst.setComment(src.getComment());
         dst.setPrice(src.getPrice());
-        dst.setShowInList(src.isShowInList());
+        dst.setOrderInHome(src.getOrderInHome());
         return dst;
     }
 
@@ -60,7 +74,7 @@ public class RestaurantFoodDaoService {
         dst.setName(src.getName());
         dst.setComment(src.getComment());
         dst.setPrice(src.getPrice());
-        dst.setShowInList(src.getShowInList());
+        dst.setOrderInHome(src.getOrderInHome());
         return dst;
     }
 

@@ -25,6 +25,9 @@ public interface RestaurantFoodMapper {
     @Query("select * from restaurant_food where restaurantId = :restaurantId")
     List<RestaurantFoodDAO> selectByRestaurant(long restaurantId);
 
+    @Query("select * from restaurant_food where restaurantId = :restaurantId and orderInHome != -1 order by orderInHome")
+    List<RestaurantFoodDAO> selectByRestaurantHome(long restaurantId);
+
     @Query("delete from restaurant_food where restaurantId = :restaurantId")
     void deleteByRestaurant(long restaurantId);
 
@@ -33,4 +36,7 @@ public interface RestaurantFoodMapper {
 
     @Query("delete from restaurant_food where consumeRecordId = :consumeRecordId")
     void deleteByConsumeRecord(long consumeRecordId);
+
+    @Query("select distinct pictureUri from restaurant_food")
+    List<String> selectPaths();
 }

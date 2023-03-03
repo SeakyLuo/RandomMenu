@@ -22,5 +22,6 @@ public class RestaurantFoodDAO {
     private double price;
     private int order;
     private Boolean showInList = false;
+    private Integer orderInHome = -1;
 
 }

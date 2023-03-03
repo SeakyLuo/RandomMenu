@@ -33,6 +33,7 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
+import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Address;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -133,7 +134,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (StringUtils.isEmpty(totalCost)){
             editTotalCost.setText("0");
         }
-        if (!NumberUtils.isParsable(totalCost)){
+        else if (!NumberUtils.isParsable(totalCost)){
             Toast.makeText(this, "总金额不合法！", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -155,7 +156,9 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (CollectionUtils.isNotEmpty(eaters)){
             editFriends.setText(String.join(EATER_DELIMITER, eaters));
         }
-        addressSpinner.setSelection(addressList.indexOf(src.getAddress()));
+        Address address = src.getAddress();
+        int addressIndex = new AList<>(addressList).indexOf(a -> a.getId() == address.getId() || a.buildFullAddress().equals(address.buildFullAddress()));
+        addressSpinner.setSelection(addressIndex);
         editComment.setText(src.getComment());
         editTotalCost.setText(DoubleUtils.truncateZero(src.getTotalCost()));
         foodAdapter.setData(src.getFoods());
@@ -233,7 +236,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
-        int index = foodAdapter.indexOf(f -> f.getName().equals(food.getName()));
+        int index = foodAdapter.indexOf(f -> f.getName().equals(food.getName()) || (f.getId() != 0 &&  f.getId() == food.getId()));
         if (index == -1){
             addFood(food);
         } else {

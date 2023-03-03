@@ -35,6 +35,10 @@ public class FileUtils {
         return sb.toString();
     }
 
+    public static File getFile(String path){
+        return new File(getPath(path));
+    }
+
     /**
      *  It reads file under root folder
      **/
@@ -45,13 +49,11 @@ public class FileUtils {
         return fread(activity, getPath(filename));
     }
     private static String fread(Activity activity, String filename){
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             StringBuilder builder = new StringBuilder();
             for (String line = reader.readLine(); line != null; line = reader.readLine()){
                 builder.append(line).append('\n');
             }
-            reader.close();
             return builder.toString();
         } catch (FileNotFoundException e) {
             if (activity != null){
@@ -72,10 +74,8 @@ public class FileUtils {
         fwrite(getPath(filename), content);
     }
     private static void fwrite(String filename, String content){
-        try {
-            FileOutputStream out = new FileOutputStream(filename);
+        try (FileOutputStream out = new FileOutputStream(filename);) {
             out.write(content.getBytes());
-            out.close();
         } catch (IOException e) {
             Log.e("fuck", "File write failed: " + e.toString());
         }

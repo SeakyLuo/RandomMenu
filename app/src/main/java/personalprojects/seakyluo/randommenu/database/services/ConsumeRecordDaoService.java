@@ -32,7 +32,8 @@ public class ConsumeRecordDaoService {
             ConsumeRecordVO vo = voList.get(i);
             ConsumeRecordDAO dao = daoList.get(i);
             dao.setRestaurantId(restaurantId);
-            dao.setAddressId(addressList.stream().filter(a -> a.equals(vo.getAddress())).findFirst().map(Address::getId).get());
+            Address address = vo.getAddress();
+            dao.setAddressId(addressList.stream().filter(a -> a.getId() == address.getId() || a.equals(address)).findFirst().map(Address::getId).get());
         }
         List<Long> ids = mapper.insert(daoList);
         setRestaurantIdAndRecordId(voList, restaurantId, ids);
@@ -82,10 +83,9 @@ public class ConsumeRecordDaoService {
             RestaurantFoodVO curr = foods.get(i);
             // 避免重名菜
             if (i == 0 || (showCounter < MAX_FOOD_SHOW && !foods.get(i - 1).getName().equals(curr.getName()))){
-                curr.setShowInList(true);
-                showCounter++;
+                curr.setOrderInHome(showCounter++);
             } else {
-                curr.setShowInList(false);
+                curr.setOrderInHome(-1);
             }
         }
     }

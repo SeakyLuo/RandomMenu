@@ -16,6 +16,9 @@ public interface RestaurantMapper {
     @Insert
     long insert(RestaurantDAO dao);
 
+    @Insert
+    List<Long> insert(List<RestaurantDAO> daoList);
+
     @Update
     void update(RestaurantDAO dao);
 

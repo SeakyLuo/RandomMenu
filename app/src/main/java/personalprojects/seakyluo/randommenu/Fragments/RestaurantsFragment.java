@@ -92,7 +92,7 @@ public class RestaurantsFragment extends Fragment implements RestaurantListener 
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         RestaurantVO restaurant = data.getParcelableExtra(EditRestaurantActivity.DATA);
-        restaurantAdapter.add(restaurant, 0);
+        restaurantAdapter.add(RestaurantDaoService.selectPagedView(restaurant.getId()), 0);
         setTitle();
     }
 

@@ -30,7 +30,7 @@ public class FoodTypeService {
     }
 
     public static void save(FoodType item){
-        if (item.getId() != 0){
+        if (FoodTypeDaoService.selectById(item.getId()) != null){
             return;
         }
         FoodTypeDaoService.insert(item);

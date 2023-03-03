@@ -17,7 +17,7 @@ public class RestaurantFoodVO implements Parcelable {
     private String pictureUri;
     private String comment;
     private double price;
-    private boolean showInList;
+    private int orderInHome = -1;
 
     public void copyFrom(RestaurantFoodVO src){
         id = src.id;
@@ -27,11 +27,7 @@ public class RestaurantFoodVO implements Parcelable {
         pictureUri = src.pictureUri;
         comment = src.comment;
         price = src.price;
-        showInList = src.showInList;
-    }
-
-    public void setShowInList(Boolean bool){
-        showInList = bool != null && bool;
+        orderInHome = src.orderInHome;
     }
 
     protected RestaurantFoodVO(Parcel in) {
@@ -42,7 +38,7 @@ public class RestaurantFoodVO implements Parcelable {
         pictureUri = in.readString();
         comment = in.readString();
         price = in.readDouble();
-        showInList = in.readByte() != 0;
+        orderInHome = in.readInt();
     }
 
     public static final Creator<RestaurantFoodVO> CREATOR = new Creator<RestaurantFoodVO>() {
@@ -71,6 +67,6 @@ public class RestaurantFoodVO implements Parcelable {
         dest.writeString(pictureUri);
         dest.writeString(comment);
         dest.writeDouble(price);
-        dest.writeByte((byte) (showInList ? 1 : 0));
+        dest.writeInt(orderInHome);
     }
 }

@@ -21,10 +21,11 @@ import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 
 @Database(entities = {RestaurantDAO.class, AddressDAO.class, ConsumeRecordDAO.class, RestaurantFoodDAO.class, FoodTypeDAO.class},
-        version = 5,
+        version = 6,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
+    public static final String DB_NAME = "randomMenu.db";
     public static AppDatabase instance;
 
     public abstract RestaurantMapper restaurantMapper();
@@ -34,9 +35,14 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract FoodTypeMapper foodTypeMapper();
 
     public static void createInstance(Context context){
-        instance = Room.databaseBuilder(context, AppDatabase.class, "randomMenu.db")
+        instance = Room.databaseBuilder(context, AppDatabase.class, DB_NAME)
                 .allowMainThreadQueries()
-                .fallbackToDestructiveMigration()
+                .addMigrations(new Migration(5, 6) {
+                    @Override
+                    public void migrate(@NonNull SupportSQLiteDatabase database) {
+                        database.execSQL("alter table restaurant_food add column orderInHome INTEGER DEFAULT -1");
+                    }
+                })
                 .build();
     }
 }
