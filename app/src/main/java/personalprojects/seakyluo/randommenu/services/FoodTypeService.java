@@ -42,7 +42,7 @@ public class FoodTypeService {
         // 暂时不从ID_NAME_MAP删除
     }
 
-    public static List<String> selectAllNames(){
+    public static ArrayList<String> selectAllNames(){
         return new ArrayList<>(getIdNameMap().values());
     }
 

@@ -30,25 +30,16 @@ public class AddressUtils {
             return null;
         }
         Address address = locationList.get(0);
-        String countryName = address.getCountryName();
-        String countryCode = address.getCountryCode();
-        String adminArea = address.getAdminArea();
-        String locality = address.getLocality();
-        String subAdminArea = address.getSubLocality();
-        String featureName = address.getFeatureName();
-        for (int i = 0; address.getAddressLine(i) != null; i++) {
-            String addressLine = address.getAddressLine(i);
-            System.out.println("addressLine=====" + addressLine);
-        }
-               /* String currentPosition = "countryName == " + countryName
-                        + "\n" + "countryCode == " + countryCode
-                        + "\n" + "adminArea == " + adminArea
-                        + "\n" + "locality ==" + locality
-                        + "\n" + "subAdminArea == " + subAdminArea
-                        + "\n" + "featureName == " + featureName;
-                System.out.println(currentPosition);*/
+        return convertAddress(address);
+    }
+
+    private static AddressVO convertAddress(Address src){
         AddressVO dst = new AddressVO();
-        return null;
+        dst.setProvince(src.getAdminArea());
+        dst.setCity(src.getLocality());
+        dst.setCounty(src.getSubLocality());
+        dst.setAddress(src.getThoroughfare());
+        return dst;
     }
 
     private static double convertRationalLatLon(String rationalString, String ref) {

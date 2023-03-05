@@ -2,22 +2,21 @@ package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +25,8 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.AddressAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.EditSpinnerAdapter;
+import personalprojects.seakyluo.randommenu.controls.EditSpinner;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
@@ -41,7 +42,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     private View addressPlaceholder, consumeRecordPlaceholder;
     private AddressAdapter addressAdapter;
     private ConsumeRecordAdapter consumeRecordAdapter;
-    private AutoCompleteTextView editFoodType;
+    private EditSpinner editFoodType;
     private ItemTouchHelper dragHelper;
     private RestaurantVO restaurant;
 
@@ -74,7 +75,8 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
             restaurant = savedInstanceState.getParcelable(DATA);
         }
         restaurant = Optional.ofNullable(restaurant).orElse(RestaurantDaoService.selectById(restaurantId));
-        editFoodType.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, FoodTypeService.selectAllNames()));
+        ArrayList<String> foodTypes = FoodTypeService.selectAllNames();
+        editFoodType.setAdapter(new EditSpinnerAdapter(this, foodTypes));
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(addressAdapter));
         dragHelper.attachToRecyclerView(addressRecyclerView);
         SwipeToDeleteUtils.apply(addressRecyclerView, this, this::removeAddress, this::addAddress, AddressVO::getAddress);
@@ -112,7 +114,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         i.setId(restaurant == null ? 0 : restaurant.getId());
         i.setName(editName.getText().toString().trim());
         i.setAddressList(addressAdapter.getData());
-        String foodTypeName = editFoodType.getText().toString().trim();
+        String foodTypeName = editFoodType.getText().trim();
         i.setFoodType(new FoodType(FoodTypeService.getIdByName(foodTypeName), foodTypeName));
         i.setComment(editComment.getText().toString().trim());
         i.setLink(editLink.getText().toString().trim());

@@ -22,10 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +37,6 @@ import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.interfaces.RestaurantListener;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -132,14 +131,12 @@ public class RestaurantsFragment extends Fragment {
         if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT) {
             RestaurantVO restaurant = data.getParcelableExtra(EditRestaurantActivity.DATA);
             long id = restaurant.getId();
-            if (id == 0){
-                restaurantAdapter.add(RestaurantDaoService.selectPagedView(restaurant.getId()), 0);
-                setTitle();
+            RestaurantVO vo = RestaurantDaoService.selectPagedView(id);
+            int index = restaurantAdapter.indexOf(i -> i.getId() == id);
+            if (index == -1){
+                restaurantAdapter.add(vo, 0);
             } else {
-                int index = restaurantAdapter.indexOf(i -> i.getId() == id);
-                if (index != -1){
-                    restaurantAdapter.set(RestaurantDaoService.selectPagedView(id), index);
-                }
+                restaurantAdapter.set(vo, index);
             }
         }
         else if (requestCode == ActivityCodeConstant.GALLERY) {
@@ -164,7 +161,7 @@ public class RestaurantsFragment extends Fragment {
             RestaurantFoodVO food = new RestaurantFoodVO();
             foods.add(food);
             food.setPictureUri(fileName);
-            String path = ImageUtils.getImagePath(fileName);
+            String path = FileUtils.getPath(context, uri);
             ExifInterface exifInterface;
             try {
                 exifInterface = new ExifInterface(path);
@@ -176,14 +173,17 @@ public class RestaurantsFragment extends Fragment {
                 String dateTime = exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
                 long consumeTime;
                 if (dateTime == null){
-                    consumeTime = Files.readAttributes(Paths.get(FileUtils.getPath(path)), BasicFileAttributes.class).creationTime().toMillis();;
+                    consumeTime = Files.readAttributes(Paths.get(path), BasicFileAttributes.class).creationTime().toMillis();;
                 } else {
-                    consumeTime = Long.parseLong(dateTime);
+                    consumeTime = new SimpleDateFormat("yyyy:MM:dd hh:mm:ss").parse(dateTime).getTime();
                 }
-                record.setConsumeTime(Math.min(record.getConsumeTime(), consumeTime));
+                if (record.getConsumeTime() == 0){
+                    record.setConsumeTime(consumeTime);
+                } else {
+                    record.setConsumeTime(Math.min(record.getConsumeTime(), consumeTime));
+                }
             } catch (Exception e){
                 Log.w("buildRestaurantFromImages", "consumeTime", e);
-                continue;
             }
             String latValue = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
             String lonValue = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);

@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
-import personalprojects.seakyluo.randommenu.interfaces.RestaurantListener;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
@@ -16,11 +15,6 @@ import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.FoodTypeService;
 
 public class RestaurantDaoService {
-
-    private static List<RestaurantListener> listeners = new ArrayList<>();
-    public static void addListener(RestaurantListener listener){
-        listeners.add(listener);
-    }
 
     public static void save(RestaurantVO vo){
         if (vo.getId() == 0){
@@ -72,7 +66,6 @@ public class RestaurantDaoService {
             AddressDaoService.update(addressList, id);
             ConsumeRecordDaoService.update(vo.getRecords(), id, addressList);
         });
-        listeners.forEach(l -> l.onUpdate(vo));
     }
 
     public static RestaurantVO selectById(long id){

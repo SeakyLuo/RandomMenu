@@ -60,8 +60,14 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
         foodName.setText(data.getName());
         String comment = data.getComment();
         if (StringUtils.isEmpty(comment)){
-            foodNote.setText("￥" + DoubleUtils.truncateZero(data.getPrice()));
+            if (data.getPrice() == 0){
+                foodNote.setVisibility(View.GONE);
+            } else {
+                foodNote.setVisibility(View.VISIBLE);
+                foodNote.setText("￥" + DoubleUtils.truncateZero(data.getPrice()));
+            }
         } else {
+            foodNote.setVisibility(View.VISIBLE);
             foodNote.setText("“" + comment + "”");
         }
         String pictureUri = data.getPictureUri();
