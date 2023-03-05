@@ -34,7 +34,7 @@ import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
@@ -52,7 +52,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     private View consumeFoodPlaceholder;
     private ConsumeFoodAdapter foodAdapter;
     private ItemTouchHelper dragHelper;
-    private ArrayList<Address> addressList;
+    private ArrayList<AddressVO> addressList;
     private ConsumeRecordVO currentRecord;
 
     @Override
@@ -112,6 +112,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     }
 
     private void addFood(RestaurantFoodVO item){
+        item.setIndex(foodAdapter.getItemCount());
         foodAdapter.add(item);
         consumeFoodPlaceholder.setVisibility(View.GONE);
     }
@@ -119,6 +120,9 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     private RestaurantFoodVO removeFood(int index){
         RestaurantFoodVO item = foodAdapter.getDataAt(index);
         foodAdapter.removeAt(index);
+        for (int i = index; i < foodAdapter.getItemCount(); i++) {
+            foodAdapter.getDataAt(i).setIndex(i);
+        }
         if (foodAdapter.isEmpty()){
             consumeFoodPlaceholder.setVisibility(View.VISIBLE);
         }
@@ -156,12 +160,17 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (CollectionUtils.isNotEmpty(eaters)){
             editFriends.setText(String.join(EATER_DELIMITER, eaters));
         }
-        Address address = src.getAddress();
-        int addressIndex = new AList<>(addressList).indexOf(a -> a.getId() == address.getId() || a.buildFullAddress().equals(address.buildFullAddress()));
-        addressSpinner.setSelection(addressIndex);
+        AddressVO address = src.getAddress();
+        if (address == null){
+            addressSpinner.setSelection(0);
+        } else {
+            int addressIndex = new AList<>(addressList).indexOf(a -> a.getId() == address.getId() || StringUtils.equals(a.buildFullAddress(), address.buildFullAddress()));
+            addressSpinner.setSelection(addressIndex);
+        }
         editComment.setText(src.getComment());
         editTotalCost.setText(DoubleUtils.truncateZero(src.getTotalCost()));
         foodAdapter.setData(src.getFoods());
+        foodAdapter.getData().For(i -> foodAdapter.getDataAt(i).setIndex(i));
         if (CollectionUtils.isEmpty(src.getFoods())){
             consumeFoodPlaceholder.setVisibility(View.VISIBLE);
         } else {
@@ -174,17 +183,17 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         consumeTimeText.setText(DateFormatUtils.format(time, ConsumeRecordVO.CONSUME_TIME_FORMAT));
     }
 
-    private void setAddress(List<Address> addressList){
+    private void setAddress(List<AddressVO> addressList){
         if (CollectionUtils.isEmpty(addressList)){
             return;
         }
         if (addressList.size() == 1){
-            Address address = addressList.get(0);
+            AddressVO address = addressList.get(0);
             addressText.setText(address.buildSimpleAddress());
             addressText.setVisibility(View.VISIBLE);
             addressSpinner.setVisibility(View.GONE);
         } else {
-            List<String> addressSelections = addressList.stream().map(Address::buildSimpleAddress).collect(Collectors.toList());
+            List<String> addressSelections = addressList.stream().map(AddressVO::buildSimpleAddress).collect(Collectors.toList());
             addressSpinner.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, addressSelections));
             addressText.setVisibility(View.GONE);
             addressSpinner.setVisibility(View.VISIBLE);
@@ -236,7 +245,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
-        int index = foodAdapter.indexOf(f -> f.getName().equals(food.getName()) || (f.getId() != 0 &&  f.getId() == food.getId()));
+        int index = food.getIndex();
         if (index == -1){
             addFood(food);
         } else {

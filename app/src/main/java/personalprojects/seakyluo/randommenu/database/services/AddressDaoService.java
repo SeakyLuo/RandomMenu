@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.AddressMapper;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 
 public class AddressDaoService {
 
-    public static void insert(List<Address> addressList, long restaurantId){
+    public static void insert(List<AddressVO> addressList, long restaurantId){
         AddressMapper mapper = AppDatabase.instance.addressMapper();
         List<AddressDAO> daoList = convert(addressList, restaurantId);
         List<Long> ids = mapper.insert(daoList);
@@ -20,23 +20,23 @@ public class AddressDaoService {
         }
     }
 
-    public static void update(List<Address> addressList, long restaurantId){
+    public static void update(List<AddressVO> addressList, long restaurantId){
         AddressMapper mapper = AppDatabase.instance.addressMapper();
         mapper.deleteByRestaurant(restaurantId);
         insert(addressList, restaurantId);
     }
 
-    public static void update(Address address){
+    public static void update(AddressVO address){
         AddressMapper mapper = AppDatabase.instance.addressMapper();
         mapper.update(convert(address));
     }
 
-    public static List<Address> selectByRestaurant(long restaurantId){
+    public static List<AddressVO> selectByRestaurant(long restaurantId){
         AddressMapper mapper = AppDatabase.instance.addressMapper();
         return mapper.selectByRestaurant(restaurantId).stream().map(AddressDaoService::convert).collect(Collectors.toList());
     }
 
-    private static List<AddressDAO> convert(List<Address> addressList, long restaurantId){
+    private static List<AddressDAO> convert(List<AddressVO> addressList, long restaurantId){
         List<AddressDAO> daoList = addressList.stream().map(AddressDaoService::convert).collect(Collectors.toList());
         for (int i = 0; i < daoList.size(); i++){
             AddressDAO dao = daoList.get(i);
@@ -46,11 +46,11 @@ public class AddressDaoService {
         return daoList;
     }
 
-    private static Address convert(AddressDAO src){
+    private static AddressVO convert(AddressDAO src){
         if (src == null){
             return null;
         }
-        Address dst = new Address();
+        AddressVO dst = new AddressVO();
         dst.setId(src.getId());
         dst.setProvince(src.getProvince());
         dst.setCity(src.getCity());
@@ -59,7 +59,7 @@ public class AddressDaoService {
         return dst;
     }
 
-    private static AddressDAO convert(Address src){
+    private static AddressDAO convert(AddressVO src){
         if (src == null){
             return null;
         }

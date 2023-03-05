@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @EqualsAndHashCode(of = {"province", "city", "county", "address"})
-public class Address implements Parcelable {
+public class AddressVO implements Parcelable {
 
     private long id;
     private String province;
@@ -28,7 +28,7 @@ public class Address implements Parcelable {
         return StringUtils.isEmpty(province) || StringUtils.isEmpty(city) || StringUtils.isEmpty(city) || StringUtils.isEmpty(address);
     }
 
-    public void copyFrom(Address src){
+    public void copyFrom(AddressVO src){
         id = src.id;
         province = src.province;
         city = src.city;
@@ -58,10 +58,11 @@ public class Address implements Parcelable {
     }
 
     public String buildSimpleAddress(){
+        if (county == null || address == null) return null;
         return county.endsWith("区") ? county + " " + address : address;
     }
 
-    protected Address(Parcel in) {
+    protected AddressVO(Parcel in) {
         id = in.readLong();
         province = in.readString();
         city = in.readString();
@@ -69,15 +70,15 @@ public class Address implements Parcelable {
         address = in.readString();
     }
 
-    public static final Creator<Address> CREATOR = new Creator<Address>() {
+    public static final Creator<AddressVO> CREATOR = new Creator<AddressVO>() {
         @Override
-        public Address createFromParcel(Parcel in) {
-            return new Address(in);
+        public AddressVO createFromParcel(Parcel in) {
+            return new AddressVO(in);
         }
 
         @Override
-        public Address[] newArray(int size) {
-            return new Address[size];
+        public AddressVO[] newArray(int size) {
+            return new AddressVO[size];
         }
     };
 

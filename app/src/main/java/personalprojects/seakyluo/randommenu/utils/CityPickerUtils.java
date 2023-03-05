@@ -4,11 +4,11 @@ import com.lljjcoder.citywheel.CityConfig;
 
 import java.util.Optional;
 
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 
 public class CityPickerUtils {
 
-    public static CityConfig buildConfig(Address address){
+    public static CityConfig buildConfig(AddressVO address){
         return buildCommon(address.getProvince(), address.getCity(), address.getCounty());
     }
 

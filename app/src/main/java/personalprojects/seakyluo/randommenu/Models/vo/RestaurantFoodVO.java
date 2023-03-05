@@ -17,6 +17,7 @@ public class RestaurantFoodVO implements Parcelable {
     private String pictureUri;
     private String comment;
     private double price;
+    private int index = -1;
     private int orderInHome = -1;
 
     public void copyFrom(RestaurantFoodVO src){
@@ -27,6 +28,7 @@ public class RestaurantFoodVO implements Parcelable {
         pictureUri = src.pictureUri;
         comment = src.comment;
         price = src.price;
+        index = src.index;
         orderInHome = src.orderInHome;
     }
 
@@ -38,6 +40,7 @@ public class RestaurantFoodVO implements Parcelable {
         pictureUri = in.readString();
         comment = in.readString();
         price = in.readDouble();
+        index = in.readInt();
         orderInHome = in.readInt();
     }
 
@@ -67,6 +70,7 @@ public class RestaurantFoodVO implements Parcelable {
         dest.writeString(pictureUri);
         dest.writeString(comment);
         dest.writeDouble(price);
+        dest.writeInt(index);
         dest.writeInt(orderInHome);
     }
 }

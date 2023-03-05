@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
@@ -55,8 +56,8 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
     private void editRestaurant(RestaurantVO data){
         Activity activity = (Activity) context;
         Intent intent = new Intent(activity, EditRestaurantActivity.class);
-        intent.putExtra(EditRestaurantActivity.DATA, data.getId());
-        activity.startActivityForResult(intent, EditRestaurantActivity.CODE);
+        intent.putExtra(EditRestaurantActivity.DATA_ID, data.getId());
+        activity.startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT);
         activity.overridePendingTransition(R.anim.push_down_in, 0);
     }
 
@@ -76,12 +77,12 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
             foodTypeTextView.setText(foodType.getName());
         }
         averagePrice.setText("人均￥" + DoubleUtils.truncateZero(data.getAverageCost()));
-        List<Address> addressList = data.getAddressList();
+        List<AddressVO> addressList = data.getAddressList();
         if (addressList.isEmpty()){
             addressTextView.setVisibility(View.GONE);
         } else {
             addressTextView.setVisibility(View.VISIBLE);
-            String address = addressList.stream().map(Address::buildSimpleAddress).collect(Collectors.joining("\n"));
+            String address = addressList.stream().map(AddressVO::buildSimpleAddress).collect(Collectors.joining("\n"));
             addressTextView.setText(address);
         }
         String comment = data.getComment();

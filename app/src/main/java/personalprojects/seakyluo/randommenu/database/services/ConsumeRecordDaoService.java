@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +14,14 @@ import java.util.stream.Collectors;
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.ConsumeRecordDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.ConsumeRecordMapper;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
 public class ConsumeRecordDaoService {
 
-    public static void insert(List<ConsumeRecordVO> voList, long restaurantId, List<Address> addressList){
+    public static void insert(List<ConsumeRecordVO> voList, long restaurantId, List<AddressVO> addressList){
         if (CollectionUtils.isEmpty(voList)){
             return;
         }
@@ -32,8 +31,8 @@ public class ConsumeRecordDaoService {
             ConsumeRecordVO vo = voList.get(i);
             ConsumeRecordDAO dao = daoList.get(i);
             dao.setRestaurantId(restaurantId);
-            Address address = vo.getAddress();
-            dao.setAddressId(addressList.stream().filter(a -> a.getId() == address.getId() || a.equals(address)).findFirst().map(Address::getId).get());
+            AddressVO address = vo.getAddress();
+            dao.setAddressId(addressList.stream().filter(a -> a.getId() == address.getId() || a.equals(address)).findFirst().map(AddressVO::getId).get());
         }
         List<Long> ids = mapper.insert(daoList);
         setRestaurantIdAndRecordId(voList, restaurantId, ids);
@@ -90,17 +89,17 @@ public class ConsumeRecordDaoService {
         }
     }
 
-    public static void update(List<ConsumeRecordVO> voList, long restaurantId, List<Address> addressList){
+    public static void update(List<ConsumeRecordVO> voList, long restaurantId, List<AddressVO> addressList){
         ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
         mapper.deleteByRestaurant(restaurantId);
         RestaurantFoodDaoService.deleteByRestaurant(restaurantId);
         insert(voList, restaurantId, addressList);
     }
 
-    public static void update(ConsumeRecordVO vo, List<Address> addressList){
+    public static void update(ConsumeRecordVO vo, List<AddressVO> addressList){
         ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
         ConsumeRecordDAO dao = convert(vo);
-        dao.setAddressId(addressList.stream().filter(a -> a.equals(vo.getAddress())).findFirst().map(Address::getId).get());
+        dao.setAddressId(addressList.stream().filter(a -> a.equals(vo.getAddress())).findFirst().map(AddressVO::getId).get());
         mapper.update(dao);
     }
 
@@ -111,7 +110,7 @@ public class ConsumeRecordDaoService {
             return records;
         }
         Map<Long, List<RestaurantFoodVO>> foodMap = RestaurantFoodDaoService.selectByRestaurantId(restaurantId).stream().collect(Collectors.groupingBy(RestaurantFoodVO::getConsumeRecordId));
-        Map<Long, Address> addressMap = AddressDaoService.selectByRestaurant(restaurantId).stream().collect(Collectors.toMap(Address::getId, Function.identity()));
+        Map<Long, AddressVO> addressMap = AddressDaoService.selectByRestaurant(restaurantId).stream().collect(Collectors.toMap(AddressVO::getId, Function.identity()));
         for (ConsumeRecordVO record : records){
             record.setAddress(addressMap.getOrDefault(record.getAddress().getId(), record.getAddress()));
             record.setFoods(foodMap.get(record.getId()));
@@ -141,7 +140,7 @@ public class ConsumeRecordDaoService {
         ConsumeRecordVO dst = new ConsumeRecordVO();
         dst.setId(src.getId());
         dst.setConsumeTime(src.getConsumeTime());
-        dst.setAddress(Address.builder().id(src.getAddressId()).build());
+        dst.setAddress(AddressVO.builder().id(src.getAddressId()).build());
         dst.setEaters(JsonUtils.fromJson(src.getEaters(), new TypeToken<List<String>>(){}));
         dst.setComment(src.getComment());
         dst.setTotalCost(src.getTotalCost());

@@ -25,7 +25,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -138,7 +137,7 @@ public class RestaurantFoodDialog extends DialogFragment {
             case ActivityCodeConstant.WRITE_STORAGE:
                 showMenuFlyout();
                 break;
-            case ActivityCodeConstant.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA:
                 ImageUtils.openCamera(getActivity());
                 break;
             case ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE:
@@ -152,11 +151,11 @@ public class RestaurantFoodDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         switch (requestCode){
-            case ActivityCodeConstant.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA:
                 break;
-            case ActivityCodeConstant.GALLERY_CODE:
+            case ActivityCodeConstant.GALLERY:
                 break;
-            case ActivityCodeConstant.CROP_CODE:
+            case ActivityCodeConstant.CROP_IMAGE:
                 break;
         }
     }

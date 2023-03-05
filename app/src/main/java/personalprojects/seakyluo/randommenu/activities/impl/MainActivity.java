@@ -9,17 +9,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.fragments.NavigationFragment;
 import personalprojects.seakyluo.randommenu.fragments.RandomFragment;
 import personalprojects.seakyluo.randommenu.fragments.RestaurantsFragment;
 import personalprojects.seakyluo.randommenu.fragments.SettingsFragment;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
 
 public class MainActivity extends AppCompatActivity {
     public RandomFragment randomFragment;
@@ -44,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                         randomFragment = (RandomFragment) fragmentManager.getFragment(savedInstanceState, RandomFragment.TAG);
                         if (randomFragment == null) randomFragment = new RandomFragment();
                     }
-                    ShowFragment(randomFragment, RandomFragment.TAG);
+                    showFragment(randomFragment, RandomFragment.TAG);
                     return true;
                 case R.id.navigation_navigation:
                     if (navigationFragment == null) {
@@ -52,21 +49,21 @@ public class MainActivity extends AppCompatActivity {
                         if (navigationFragment == null)
                             navigationFragment = new NavigationFragment();
                     }
-                    ShowFragment(navigationFragment, NavigationFragment.TAG);
+                    showFragment(navigationFragment, NavigationFragment.TAG);
                     return true;
                 case R.id.navigation_settings:
                     if (settingsFragment == null) {
                         settingsFragment = (SettingsFragment) fragmentManager.getFragment(savedInstanceState, SettingsFragment.TAG);
                         if (settingsFragment == null) settingsFragment = new SettingsFragment();
                     }
-                    ShowFragment(settingsFragment, SettingsFragment.TAG);
+                    showFragment(settingsFragment, SettingsFragment.TAG);
                     return true;
                 case R.id.navigation_restaurants:
                     if (restaurantsFragment == null){
                         restaurantsFragment = (RestaurantsFragment) fragmentManager.getFragment(savedInstanceState, RestaurantsFragment.TAG);
                         if (restaurantsFragment == null) restaurantsFragment = new RestaurantsFragment();
                     }
-                    ShowFragment(restaurantsFragment, RestaurantsFragment.TAG);
+                    showFragment(restaurantsFragment, RestaurantsFragment.TAG);
                     return true;
             }
             return false;
@@ -113,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected void ShowFragment(Fragment fragment, String tag) {
+    protected void showFragment(Fragment fragment, String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
@@ -131,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public void ShowFragment(String tag) {
+    public void showFragment(String tag) {
         switch (tag) {
             case RandomFragment.TAG:
                 bottomNavigationView.setSelectedItemId(R.id.navigation_random);
@@ -145,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public Fragment GetCurrentFragment() {
+    public Fragment getCurrentFragment() {
         switch (lastTag) {
             case RandomFragment.TAG:
                 return randomFragment;
@@ -161,10 +158,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) return;
-        if (requestCode == ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE) {
-            Helper.init(this);
+        if (resultCode == RESULT_OK){
+            if (requestCode == ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE) {
+                Helper.init(this);
+            }
         }
+        getSupportFragmentManager().getFragments().forEach(f -> f.onActivityResult(requestCode, resultCode, data));
     }
 
     @Override

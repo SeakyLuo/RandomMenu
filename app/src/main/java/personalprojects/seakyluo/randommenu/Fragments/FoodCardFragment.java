@@ -90,8 +90,8 @@ public class FoodCardFragment extends Fragment {
                 FragmentActivity currentActivity = getActivity();
                 if (!(currentActivity instanceof MainActivity)) currentActivity.finish();
                 MainActivity activity = (MainActivity) getActivity();
-                activity.ShowFragment(NavigationFragment.TAG);
-                NavigationFragment navigationFragment = (NavigationFragment) activity.GetCurrentFragment();
+                activity.showFragment(NavigationFragment.TAG);
+                NavigationFragment navigationFragment = (NavigationFragment) activity.getCurrentFragment();
                 navigationFragment.SelectTag(tag);
             }else{
                 tagClickedListener.click(viewHolder, tag);

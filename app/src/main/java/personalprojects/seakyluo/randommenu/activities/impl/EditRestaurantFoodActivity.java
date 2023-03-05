@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -21,7 +20,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
@@ -142,7 +140,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
             case ActivityCodeConstant.WRITE_STORAGE:
                 showMenuFlyout();
                 break;
-            case ActivityCodeConstant.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA:
                 ImageUtils.openCamera(this);
                 break;
             case ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE:
@@ -157,12 +155,12 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         if (resultCode != RESULT_OK) return;
         String pictureUri;
         switch (requestCode){
-            case ActivityCodeConstant.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA:
                 if (!ImageUtils.saveImage(this, foodImageUri, pictureUri = foodImageUri.getPath())){
                     return;
                 }
                 break;
-            case ActivityCodeConstant.GALLERY_CODE:
+            case ActivityCodeConstant.GALLERY:
                 ClipData clipData = data.getClipData();
                 if (clipData == null) {
                     foodImageUri = data.getData();

@@ -3,13 +3,10 @@ package personalprojects.seakyluo.randommenu.adapters.impl;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import androidx.fragment.app.FragmentActivity;
 
 import com.lljjcoder.Interface.OnCityItemClickListener;
 import com.lljjcoder.bean.CityBean;
@@ -17,15 +14,12 @@ import com.lljjcoder.bean.DistrictBean;
 import com.lljjcoder.bean.ProvinceBean;
 import com.lljjcoder.style.citypickerview.CityPickerView;
 
-import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
-import personalprojects.seakyluo.randommenu.dialogs.AddressDialog;
-import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.utils.CityPickerUtils;
 
-public class AddressAdapter extends DraggableAdapter<Address> {
+public class AddressAdapter extends DraggableAdapter<AddressVO> {
 
     public AddressAdapter(Context context){
         this.context = context;
@@ -37,7 +31,7 @@ public class AddressAdapter extends DraggableAdapter<Address> {
     }
 
     @Override
-    protected void fillViewHolder(CustomViewHolder viewHolder, Address data, int position) {
+    protected void fillViewHolder(CustomViewHolder viewHolder, AddressVO data, int position) {
         View view = viewHolder.getView();
         TextView textDistrict = view.findViewById(R.id.text_district);
         EditText textAddress = view.findViewById(R.id.text_address);
@@ -92,7 +86,7 @@ public class AddressAdapter extends DraggableAdapter<Address> {
         }
     }
 
-    private void fillAddress(Address data, TextView textDistrict, TextView textAddress){
+    private void fillAddress(AddressVO data, TextView textDistrict, TextView textAddress){
         textDistrict.setText(data.buildDistrict());
         textAddress.setText(data.getAddress());
     }

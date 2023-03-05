@@ -5,12 +5,11 @@ import android.os.Parcelable;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 
 @NoArgsConstructor
@@ -19,7 +18,7 @@ public class RestaurantVO implements Parcelable {
 
     private long id;
     private String name;
-    private List<Address> addressList;
+    private List<AddressVO> addressList;
     private FoodType foodType;
     private double averageCost;
     private String comment;
@@ -37,7 +36,7 @@ public class RestaurantVO implements Parcelable {
     protected RestaurantVO(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        addressList = in.createTypedArrayList(Address.CREATOR);
+        addressList = in.createTypedArrayList(AddressVO.CREATOR);
         foodType = in.readParcelable(FoodType.class.getClassLoader());
         averageCost = in.readDouble();
         comment = in.readString();

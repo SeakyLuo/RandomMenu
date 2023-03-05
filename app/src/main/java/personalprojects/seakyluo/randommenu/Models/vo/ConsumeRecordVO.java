@@ -5,12 +5,11 @@ import android.os.Parcelable;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 
 @NoArgsConstructor
 @Data
@@ -20,7 +19,7 @@ public class ConsumeRecordVO implements Parcelable {
 
     private long id;
     private long consumeTime;
-    private Address address;
+    private AddressVO address;
     private List<String> eaters;
     private double totalCost;
     private String comment;
@@ -34,7 +33,7 @@ public class ConsumeRecordVO implements Parcelable {
     protected ConsumeRecordVO(Parcel in) {
         id = in.readLong();
         consumeTime = in.readLong();
-        address = in.readParcelable(Address.class.getClassLoader());
+        address = in.readParcelable(AddressVO.class.getClassLoader());
         eaters = in.createStringArrayList();
         totalCost = in.readDouble();
         comment = in.readString();

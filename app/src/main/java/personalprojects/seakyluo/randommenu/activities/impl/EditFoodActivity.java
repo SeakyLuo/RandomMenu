@@ -229,7 +229,7 @@ public class EditFoodActivity extends AppCompatActivity {
             case ActivityCodeConstant.WRITE_STORAGE:
                 showMenuFlyout();
                 break;
-            case ActivityCodeConstant.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA:
                 ImageUtils.openCamera(this);
                 break;
             case ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE:
@@ -251,7 +251,7 @@ public class EditFoodActivity extends AppCompatActivity {
         Bitmap image;
         String filename = "";
         switch (requestCode){
-            case ActivityCodeConstant.CAMERA_CODE:
+            case ActivityCodeConstant.CAMERA:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
                     if (AddImage(image, filename = camera_image_uri.getPath()))
@@ -261,7 +261,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     return;
                 }
                 break;
-            case ActivityCodeConstant.GALLERY_CODE:
+            case ActivityCodeConstant.GALLERY:
                 try {
                     Uri uri;
                     int index;
@@ -303,7 +303,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     return;
                 }
                 break;
-            case ActivityCodeConstant.CROP_CODE:
+            case ActivityCodeConstant.CROP_IMAGE:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
                     if (!ImageUtils.saveImage(image, Helper.ImageFolder, filename = ImageUtils.newImageFileName())) return;

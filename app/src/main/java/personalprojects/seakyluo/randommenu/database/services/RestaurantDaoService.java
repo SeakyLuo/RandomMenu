@@ -9,10 +9,9 @@ import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
 import personalprojects.seakyluo.randommenu.interfaces.RestaurantListener;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
-import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.FoodTypeService;
 
@@ -47,7 +46,7 @@ public class RestaurantDaoService {
             RestaurantDAO dao = convert(vo);
             long id = mapper.insert(dao);
             vo.setId(id);
-            List<Address> addressList = vo.getAddressList();
+            List<AddressVO> addressList = vo.getAddressList();
             AddressDaoService.insert(addressList, id);
             ConsumeRecordDaoService.insert(vo.getRecords(), id, addressList);
         });
@@ -69,7 +68,7 @@ public class RestaurantDaoService {
             }
 
             mapper.update(convert(vo));
-            List<Address> addressList = vo.getAddressList();
+            List<AddressVO> addressList = vo.getAddressList();
             AddressDaoService.update(addressList, id);
             ConsumeRecordDaoService.update(vo.getRecords(), id, addressList);
         });

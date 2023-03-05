@@ -14,15 +14,15 @@ import android.widget.Toast;
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 
 public class AddressDialog extends DialogFragment {
     public static final String TAG = "AddressDialog";
 
     @Setter
-    private Address address;
+    private AddressVO address;
     @Setter
-    private DataOperationListener<Address> confirmListener;
+    private DataOperationListener<AddressVO> confirmListener;
 
     private EditText editProvince, editCity, editCounty, editAddress;
 
@@ -41,7 +41,7 @@ public class AddressDialog extends DialogFragment {
         return view;
     }
 
-    private void fillAddress(Address address){
+    private void fillAddress(AddressVO address){
         if (address == null){
             return;
         }
@@ -51,8 +51,8 @@ public class AddressDialog extends DialogFragment {
         editAddress.setText(address.getAddress());
     }
 
-    private Address buildAddress(){
-        Address data = new Address();
+    private AddressVO buildAddress(){
+        AddressVO data = new AddressVO();
         data.setProvince(editProvince.getText().toString());
         data.setCity(editCity.getText().toString());
         data.setCounty(editCounty.getText().toString());

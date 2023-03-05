@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
@@ -27,16 +28,15 @@ import personalprojects.seakyluo.randommenu.adapters.impl.AddressAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordAdapter;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
-import personalprojects.seakyluo.randommenu.models.Address;
+import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.FoodTypeService;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
-public class EditRestaurantActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<Address> {
-    public static int CODE = 1;
-    public static final String DATA = "RESTAURANT";
+public class EditRestaurantActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<AddressVO> {
+    public static final String DATA_ID = "RESTAURANT_ID", DATA = "RESTAURANT";
     private EditText editName, editComment, editLink;
     private View addressPlaceholder, consumeRecordPlaceholder;
     private AddressAdapter addressAdapter;
@@ -67,15 +67,17 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
 
         long restaurantId;
         if (savedInstanceState == null){
-            restaurantId = getIntent().getLongExtra(DATA, 0);
+            restaurantId = getIntent().getLongExtra(DATA_ID, 0);
+            restaurant = getIntent().getParcelableExtra(DATA);
         } else {
-            restaurantId = savedInstanceState.getLong(DATA, 0);
+            restaurantId = savedInstanceState.getLong(DATA_ID, 0);
+            restaurant = savedInstanceState.getParcelable(DATA);
         }
-        restaurant = RestaurantDaoService.selectById(restaurantId);
+        restaurant = Optional.ofNullable(restaurant).orElse(RestaurantDaoService.selectById(restaurantId));
         editFoodType.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, FoodTypeService.selectAllNames()));
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(addressAdapter));
         dragHelper.attachToRecyclerView(addressRecyclerView);
-        SwipeToDeleteUtils.apply(addressRecyclerView, this, this::removeAddress, this::addAddress, Address::getAddress);
+        SwipeToDeleteUtils.apply(addressRecyclerView, this, this::removeAddress, this::addAddress, AddressVO::getAddress);
         addressAdapter.setDragStartListener(this);
         addressRecyclerView.setAdapter(addressAdapter);
         consumeRecordRecyclerView.setAdapter(consumeRecordAdapter);
@@ -119,17 +121,17 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     }
 
     private void addAddressRow(View view) {
-        addressAdapter.add(new Address(), 0);
+        addressAdapter.add(new AddressVO(), 0);
         addressPlaceholder.setVisibility(View.GONE);
     }
 
-    private void addAddress(Address address) {
+    private void addAddress(AddressVO address) {
         addressAdapter.add(address);
         addressPlaceholder.setVisibility(View.GONE);
     }
 
-    private Address removeAddress(int index) {
-        Address item = addressAdapter.getDataAt(index);
+    private AddressVO removeAddress(int index) {
+        AddressVO item = addressAdapter.getDataAt(index);
         addressAdapter.removeAt(index);
         if (addressAdapter.isEmpty()){
             addressPlaceholder.setVisibility(View.VISIBLE);
@@ -138,6 +140,9 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     }
 
     private void showEditConsumeRecordActivity(ConsumeRecordVO data){
+        if (isBadAddress()){
+            return;
+        }
         Intent intent = new Intent(this, EditConsumeRecordActivity.class);
         intent.putExtra(EditConsumeRecordActivity.DATA, data);
         intent.putExtra(EditConsumeRecordActivity.ADDRESS_LIST, addressAdapter.getData());
@@ -150,7 +155,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
             Toast.makeText(this, "地址不能为空", Toast.LENGTH_SHORT).show();
             return true;
         }
-        if (addressAdapter.getData().any(Address::isEmpty)){
+        if (addressAdapter.getData().any(AddressVO::isEmpty)){
             Toast.makeText(this, "地址没有填写完整", Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -159,18 +164,21 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
 
     private void setData(RestaurantVO src){
         if (src == null){
-            addressAdapter.add(new Address());
+            addressAdapter.add(new AddressVO());
             return;
         }
         editName.setText(src.getName());
-        List<Address> addressList = src.getAddressList();
+        List<AddressVO> addressList = src.getAddressList();
         if (CollectionUtils.isEmpty(addressList)){
-            addressAdapter.add(new Address());
+            addressAdapter.add(new AddressVO());
         } else {
             addressAdapter.setData(addressList);
         }
         addressPlaceholder.setVisibility(View.GONE);
-        editFoodType.setText(src.getFoodType().getName());
+        FoodType foodType = src.getFoodType();
+        if (foodType != null){
+            editFoodType.setText(foodType.getName());
+        }
         editComment.setText(src.getComment());
         editLink.setText(src.getLink());
         setRecords(src.getRecords());
@@ -229,7 +237,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     }
 
     @Override
-    public void requestDrag(CustomAdapter<Address>.CustomViewHolder viewHolder) {
+    public void requestDrag(CustomAdapter<AddressVO>.CustomViewHolder viewHolder) {
         dragHelper.startDrag(viewHolder);
     }
 
