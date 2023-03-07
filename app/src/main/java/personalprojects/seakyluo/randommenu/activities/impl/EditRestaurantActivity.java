@@ -29,12 +29,15 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.controls.EditSpinner;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
+import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.FoodTypeService;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
+import personalprojects.seakyluo.randommenu.utils.RestaurantUtils;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
 public class EditRestaurantActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<AddressVO> {
@@ -80,7 +83,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         editFoodType.setItemData(FoodTypeService.selectAllNames());
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(addressAdapter));
         dragHelper.attachToRecyclerView(addressRecyclerView);
-        SwipeToDeleteUtils.apply(addressRecyclerView, this, this::removeAddress, this::addAddress, AddressVO::getAddress);
+        SwipeToDeleteUtils.apply(addressRecyclerView, this, this::checkAddressBeforeRemoval, this::removeAddress, this::addAddress, AddressVO::getAddress);
         addressAdapter.setDragStartListener(this);
         addressRecyclerView.setAdapter(addressAdapter);
         consumeRecordRecyclerView.setAdapter(consumeRecordAdapter);
@@ -136,6 +139,11 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         addressPlaceholder.setVisibility(View.GONE);
     }
 
+    private boolean checkAddressBeforeRemoval(int index){
+        AddressVO item = addressAdapter.getDataAt(index);
+        return consumeRecordAdapter.getData().any(i -> StringUtils.equals(item.buildFullAddress(), i.getAddress().buildFullAddress()));
+    }
+
     private AddressVO removeAddress(int index) {
         AddressVO item = addressAdapter.getDataAt(index);
         addressAdapter.removeAt(index);
@@ -149,6 +157,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         if (isBadAddress()){
             return false;
         }
+        ImageUtils.openGallery(this);
         return true;
     }
 
@@ -283,6 +292,22 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
             RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
             consumeRecordAdapter.setFood(food);
         }
+        else if (requestCode == ActivityCodeConstant.GALLERY){
+            RestaurantVO restaurant = RestaurantUtils.buildFromImages(this, data.getClipData());
+            if (restaurant == null){
+                return;
+            }
+            List<AddressVO> addressList = restaurant.getAddressList();
+            AList<AddressVO> existing = addressAdapter.getData();
+            for (AddressVO address : addressList){
+                if (existing.none(i -> StringUtils.equals(address.buildFullAddress(), i.buildFullAddress()))){
+                    addressAdapter.add(address);
+                }
+            }
+            for (ConsumeRecordVO record : restaurant.getRecords()){
+                addConsumeRecord(record, 0);
+            }
+        }
     }
 
     private void resetRecordIndex(int start){
@@ -290,4 +315,5 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
             consumeRecordAdapter.getDataAt(i).setIndex(i);
         }
     }
+
 }

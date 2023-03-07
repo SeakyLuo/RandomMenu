@@ -40,8 +40,8 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         T item = data.get(position);
         holder.setData(item);
         fillViewHolder(holder, item, position);
-        if (viewHolders.size() >= position) viewHolders.add(holder);
-        else viewHolders.set(holder, position);
+        if (viewHolders.size() < position) viewHolders.add(holder);
+        else viewHolders.add(position, holder);
     }
 
     public void setData(List<T> list){

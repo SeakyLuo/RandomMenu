@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
 
+import java.util.function.Function;
+
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 
 public abstract class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
@@ -36,7 +39,6 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
         intrinsicWidth = deleteDrawable.getIntrinsicWidth();
         intrinsicHeight = deleteDrawable.getIntrinsicHeight();
     }
-
 
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
@@ -85,6 +87,6 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 
     @Override
     public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
-        return 0.7f;
+        return 0.8f;
     }
 }

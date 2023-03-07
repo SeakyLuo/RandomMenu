@@ -72,10 +72,14 @@ public class ConsumeRecordAdapter extends CustomAdapter<ConsumeRecordVO> {
     }
 
     public void setFood(RestaurantFoodVO food){
-        CustomViewHolder viewHolder = viewHolders.get(food.getConsumeRecordIndex());
+        int consumeRecordIndex = food.getConsumeRecordIndex();
+        CustomViewHolder viewHolder = viewHolders.get(consumeRecordIndex);
+        ConsumeRecordVO record = data.get(consumeRecordIndex);
         RecyclerView recyclerView = viewHolder.getView().findViewById(R.id.food_recycler_view);
         RestaurantFoodAdapter adapter = (RestaurantFoodAdapter) recyclerView.getAdapter();
-        adapter.set(food, food.getIndex());
+        int index = food.getIndex();
+        adapter.set(food, index);
+        record.getFoods().set(index, food);
     }
 
 }

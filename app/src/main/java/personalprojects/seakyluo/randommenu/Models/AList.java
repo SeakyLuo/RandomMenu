@@ -40,6 +40,9 @@ public class AList<T> extends IList<T> {
     public boolean all(Predicate<T> predicate){
         return stream().allMatch(predicate);
     }
+    public boolean none(Predicate<T> predicate){
+        return stream().noneMatch(predicate);
+    }
     @Override
     public boolean equals(Object object){
         if (!(object instanceof Collection)) return false;

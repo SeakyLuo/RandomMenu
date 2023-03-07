@@ -1,6 +1,8 @@
 package personalprojects.seakyluo.randommenu.utils;
 
 import android.content.Context;
+import android.widget.Toast;
+
 import com.google.android.material.snackbar.Snackbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -20,13 +22,29 @@ public class SwipeToDeleteUtils {
                                  Function<Integer, T> remove,
                                  Consumer<T> add,
                                  Function<T, String> getName) {
-        new ItemTouchHelper(new SwipeToDeleteCallback(context) {
+        apply(recyclerView, context, null, remove, add, getName);
+    }
+
+    public static <T> void apply(RecyclerView recyclerView,
+                                 Context context,
+                                 Function<Integer, Boolean> check,
+                                 Function<Integer, T> remove,
+                                 Consumer<T> add,
+                                 Function<T, String> getName) {
+        SwipeToDeleteCallback callback = new SwipeToDeleteCallback(context) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
                 int position = viewHolder.getBindingAdapterPosition();
+                boolean shouldNotBeDeleted = check != null && check.apply(position);
                 T item = remove.apply(position);
                 String name = getName.apply(item);
-                if (StringUtils.isEmpty(name)){
+                if (shouldNotBeDeleted){
+                    Toast.makeText(context, String.format("\"%s\"正在使用中，无法删除", name), Toast.LENGTH_SHORT).show();
+                    add.accept(item);
+                    recyclerView.scrollToPosition(position);
+                    return;
+                }
+                if (StringUtils.isEmpty(name)) {
                     return;
                 }
                 Snackbar snackbar = Snackbar.make(recyclerView, String.format("\"%s\"已被删除", name), Snackbar.LENGTH_LONG);
@@ -36,7 +54,7 @@ public class SwipeToDeleteUtils {
                 });
                 snackbar.show();
             }
-        }).attachToRecyclerView(recyclerView);
+        };
+        new ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
     }
-
 }
