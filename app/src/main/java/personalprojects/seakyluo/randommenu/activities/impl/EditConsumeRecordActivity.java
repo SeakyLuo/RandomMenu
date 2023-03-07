@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
@@ -43,7 +44,6 @@ import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
 public class EditConsumeRecordActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<ConsumeRecordVO> {
-    public static int CODE = 1;
     public static final String DATA = "CONSUME_RECORD", ADDRESS_LIST = "ADDRESS_LIST", CONSUME_TIME = "CONSUME_TIME";
     public static final String EATER_DELIMITER = "，";
     private Long consumeTime;
@@ -108,7 +108,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     private void showFoodDialog(RestaurantFoodVO data) {
         Intent intent = new Intent(this, EditRestaurantFoodActivity.class);
         intent.putExtra(EditConsumeRecordActivity.DATA, data);
-        startActivityForResult(intent, EditRestaurantFoodActivity.CODE);
+        startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
         overridePendingTransition(R.anim.push_down_in, 0);
     }
 

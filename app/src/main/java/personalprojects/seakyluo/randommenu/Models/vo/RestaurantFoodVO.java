@@ -13,6 +13,7 @@ public class RestaurantFoodVO implements Parcelable {
     private long id;
     private long restaurantId;
     private long consumeRecordId;
+    private int consumeRecordIndex;
     private String name;
     private String pictureUri;
     private String comment;
@@ -24,6 +25,7 @@ public class RestaurantFoodVO implements Parcelable {
         id = src.id;
         restaurantId = src.restaurantId;
         consumeRecordId = src.consumeRecordId;
+        consumeRecordIndex = src.consumeRecordIndex;
         name = src.name;
         pictureUri = src.pictureUri;
         comment = src.comment;
@@ -36,6 +38,7 @@ public class RestaurantFoodVO implements Parcelable {
         id = in.readLong();
         restaurantId = in.readLong();
         consumeRecordId = in.readLong();
+        consumeRecordIndex = in.readInt();
         name = in.readString();
         pictureUri = in.readString();
         comment = in.readString();
@@ -66,6 +69,7 @@ public class RestaurantFoodVO implements Parcelable {
         dest.writeLong(id);
         dest.writeLong(restaurantId);
         dest.writeLong(consumeRecordId);
+        dest.writeInt(consumeRecordIndex);
         dest.writeString(name);
         dest.writeString(pictureUri);
         dest.writeString(comment);

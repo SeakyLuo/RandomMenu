@@ -24,6 +24,9 @@ import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
 
+    @Setter
+    private DataItemClickedListener<RestaurantFoodVO> onFoodClickListener;
+
     public RestaurantFoodAdapter(Context context){
         this.context = context;
     }
@@ -37,18 +40,7 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
     protected void fillViewHolder(CustomViewHolder viewHolder, RestaurantFoodVO data, int position) {
         View view = viewHolder.getView();
         fillFood(view, data);
-        view.setOnClickListener(v -> {
-//            RestaurantFoodDialog dialog = new RestaurantFoodDialog();
-//            dialog.setFood(data);
-//            dialog.setConfirmListener(food -> {
-//                data.copyFrom(food);
-//                fillFood(data, foodName, foodNote, foodImage);
-//                if (clickedListener != null){
-//                    clickedListener.click(viewHolder, data);
-//                }
-//            });
-//            dialog.showNow(((FragmentActivity)context).getSupportFragmentManager(), RestaurantFoodDialog.TAG);
-        });
+        view.setOnClickListener(v -> onFoodClickListener.click(viewHolder, data));
     }
 
     private void fillFood(View view, RestaurantFoodVO data){

@@ -8,6 +8,7 @@ import personalprojects.seakyluo.randommenu.database.dao.FoodTypeDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.FoodTypeMapper;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 
+// TODO add order
 public class FoodTypeDaoService {
 
     public static void insert(FoodType item){

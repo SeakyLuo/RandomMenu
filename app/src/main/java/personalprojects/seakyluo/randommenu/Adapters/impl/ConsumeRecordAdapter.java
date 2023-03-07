@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
+import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
 public class ConsumeRecordAdapter extends CustomAdapter<ConsumeRecordVO> {
@@ -20,7 +22,13 @@ public class ConsumeRecordAdapter extends CustomAdapter<ConsumeRecordVO> {
     }
 
     @Setter
-    private DataItemClickedListener<ConsumeRecordVO> onClickListener;
+    private DataItemClickedListener<ConsumeRecordVO> onRecordClickListener;
+
+    @Setter
+    private DataItemClickedListener<ConsumeRecordVO> onRecordDeleteListener;
+
+    @Setter
+    private DataItemClickedListener<RestaurantFoodVO> onFoodClickListener;
 
     @Override
     protected int getLayout(int viewType) {
@@ -38,14 +46,36 @@ public class ConsumeRecordAdapter extends CustomAdapter<ConsumeRecordVO> {
 
         consumeTime.setText(data.formatConsumeTime());
         consumeTotalCost.setText("总消费：￥" + DoubleUtils.truncateZero(data.getTotalCost()));
+        foodAdapter.setOnFoodClickListener(onFoodClickListener);
         foodAdapter.setData(data.getFoods());
         foodRecyclerView.setAdapter(foodAdapter);
 
         view.setOnClickListener(v -> {
-            if (onClickListener != null){
-                onClickListener.click(viewHolder, data);
+            if (onRecordClickListener != null){
+                onRecordClickListener.click(viewHolder, data);
             }
         });
+        view.setOnLongClickListener(v -> {
+            PopupMenuHelper helper = new PopupMenuHelper(R.menu.long_click_consume_record, context, view);
+            helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
+                if (menuItem.getItemId() == R.id.delete_item) {
+                    if (onRecordDeleteListener != null){
+                        onRecordDeleteListener.click(viewHolder, data);
+                    }
+                    return true;
+                }
+                return false;
+            });
+            helper.show();
+            return true;
+        });
+    }
+
+    public void setFood(RestaurantFoodVO food){
+        CustomViewHolder viewHolder = viewHolders.get(food.getConsumeRecordIndex());
+        RecyclerView recyclerView = viewHolder.getView().findViewById(R.id.food_recycler_view);
+        RestaurantFoodAdapter adapter = (RestaurantFoodAdapter) recyclerView.getAdapter();
+        adapter.set(food, food.getIndex());
     }
 
 }

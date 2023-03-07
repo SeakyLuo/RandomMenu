@@ -30,6 +30,13 @@ public class ConsumeRecordVO implements Parcelable {
         return DateFormatUtils.format(consumeTime, CONSUME_TIME_FORMAT);
     }
 
+    public void setIndex(int index){
+        this.index = index;
+        for (RestaurantFoodVO food : foods){
+            food.setConsumeRecordIndex(index);
+        }
+    }
+
     protected ConsumeRecordVO(Parcel in) {
         id = in.readLong();
         consumeTime = in.readLong();

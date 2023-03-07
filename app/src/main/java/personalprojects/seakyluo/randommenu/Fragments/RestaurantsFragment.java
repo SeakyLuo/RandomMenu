@@ -159,6 +159,7 @@ public class RestaurantsFragment extends Fragment {
                 continue;
             }
             RestaurantFoodVO food = new RestaurantFoodVO();
+            food.setConsumeRecordIndex(0);
             foods.add(food);
             food.setPictureUri(fileName);
             String path = FileUtils.getPath(context, uri);

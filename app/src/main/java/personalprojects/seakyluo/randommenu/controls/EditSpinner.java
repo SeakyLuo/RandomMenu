@@ -24,6 +24,7 @@ import java.util.List;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.BaseEditSpinnerAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.EditSpinnerAdapter;
+import personalprojects.seakyluo.randommenu.interfaces.EditSpinnerFilter;
 
 public class EditSpinner extends RelativeLayout {
     private EditText editText;
@@ -45,8 +46,7 @@ public class EditSpinner extends RelativeLayout {
     }
 
     public void setItemData(List<String> data) {
-        adapter = new EditSpinnerAdapter(mContext, data);
-        setAdapter(adapter);
+        setAdapter(new EditSpinnerAdapter(mContext, data));
     }
 
     public void setText(String text) {
@@ -110,20 +110,12 @@ public class EditSpinner extends RelativeLayout {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String key = s.toString();
+                String key = s.toString().trim();
                 editText.setSelection(key.length());
-                if (!TextUtils.isEmpty(key)) {
-                    showFilterData(key);
-                } else {
-                    popupWindow.dismiss();
-                }
+                showFilterData(key);
             }
         });
         editText.setTextSize(18);
-    }
-
-    private void clickEditText(View v){
-
     }
 
     private ListPopupWindow initPopupWindow(Context context) {
@@ -185,15 +177,16 @@ public class EditSpinner extends RelativeLayout {
         if (popupWindow == null){
             return;
         }
-        if (adapter == null || adapter.getEditSpinnerFilter() == null) {
-            dismissPopWindow();
+        if (adapter == null) {
+            popupWindow.dismiss();
             return;
         }
-        if (adapter.getEditSpinnerFilter().onFilter(key)) {
+        EditSpinnerFilter filter = adapter.getEditSpinnerFilter();
+        if (filter == null || filter.onFilter(key)){
             popupWindow.dismiss();
-        } else {
-            popupWindow.show();
+            return;
         }
+        popupWindow.show();
     }
 
     // 关闭弹窗

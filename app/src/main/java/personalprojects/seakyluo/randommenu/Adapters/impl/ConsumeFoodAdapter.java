@@ -12,6 +12,7 @@ import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
@@ -39,12 +40,13 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
         ImageView foodImage = view.findViewById(R.id.food_image);
         ImageButton reorderButton = view.findViewById(R.id.reorder_button);
 
+        data.setIndex(position);
         fillFood(data, foodName, foodPrice, foodComment, foodImage);
         view.setOnClickListener(v -> {
             Activity activity = (Activity) context;
             Intent intent = new Intent(context, EditRestaurantFoodActivity.class);
             intent.putExtra(EditRestaurantFoodActivity.DATA, data);
-            activity.startActivityForResult(intent, EditRestaurantFoodActivity.CODE);
+            activity.startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
             activity.overridePendingTransition(R.anim.push_down_in, 0);
         });
         if (getData().size() == 1){
