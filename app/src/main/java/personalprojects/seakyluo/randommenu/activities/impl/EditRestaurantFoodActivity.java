@@ -28,13 +28,12 @@ import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
 
 public class EditRestaurantFoodActivity extends AppCompatActivity {
-    public static final String DATA = "RESTAURANT_FOOD", CONSUME_RECORD_INDEX = "CONSUME_RECORD_INDEX";
+    public static final String DATA = "RESTAURANT_FOOD";
 
     private ImageView foodImage;
     private ImageButton cameraButton;
     private EditText editName, editPrice, editComment;
     private RestaurantFoodVO currentFood;
-    private int consumeRecordIndex = -1;
     private Uri foodImageUri;
 
     @Override
@@ -53,10 +52,8 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         if (savedInstanceState == null){
             Intent intent = getIntent();
             currentFood = intent.getParcelableExtra(DATA);
-            consumeRecordIndex = intent.getIntExtra(CONSUME_RECORD_INDEX, -1);
         } else {
             currentFood = savedInstanceState.getParcelable(DATA);
-            consumeRecordIndex = savedInstanceState.getInt(CONSUME_RECORD_INDEX);
         }
         fillFood(currentFood);
         if (currentFood == null){
@@ -95,7 +92,6 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
 
     private RestaurantFoodVO buildFood(){
         RestaurantFoodVO dst = JsonUtils.copy(currentFood);
-        dst.setConsumeRecordIndex(consumeRecordIndex);
         dst.setName(editName.getText().toString());
         String price = editPrice.getText().toString();
         if (NumberUtils.isParsable(price)){
@@ -133,7 +129,6 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(DATA, buildFood());
-        outState.putInt(CONSUME_RECORD_INDEX, consumeRecordIndex);
     }
 
     @Override

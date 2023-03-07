@@ -91,6 +91,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         addAddressButton.setOnClickListener(this::addAddressRow);
         addressPlaceholder.setOnClickListener(this::addAddressRow);
         addConsumeRecordButton.setOnClickListener(v -> startEditConsumeRecordActivity(null));
+        addConsumeRecordButton.setOnLongClickListener(v -> quickCreateConsumeRecord());
         consumeRecordAdapter.setOnRecordClickListener((vh, data) -> startEditConsumeRecordActivity(data));
         consumeRecordPlaceholder.setOnClickListener(v -> startEditConsumeRecordActivity(null));
         consumeRecordAdapter.setOnFoodClickListener((vh, data) -> startEditRestaurantFoodActivity(data));
@@ -142,6 +143,13 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
             addressPlaceholder.setVisibility(View.VISIBLE);
         }
         return item;
+    }
+
+    private boolean quickCreateConsumeRecord(){
+        if (isBadAddress()){
+            return false;
+        }
+        return true;
     }
 
     private void startEditConsumeRecordActivity(ConsumeRecordVO data){
@@ -208,10 +216,10 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         return records;
     }
 
-    private void addConsumeRecord(ConsumeRecordVO record){
-        consumeRecordAdapter.add(record, 0);
+    private void addConsumeRecord(ConsumeRecordVO record, int index){
+        consumeRecordAdapter.add(record, index);
         consumeRecordPlaceholder.setVisibility(View.GONE);
-        resetRecordIndex(0);
+        resetRecordIndex(index);
     }
 
     private void updateConsumeRecord(ConsumeRecordVO record){
@@ -227,7 +235,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         }
         Snackbar snackbar = Snackbar.make(consumeRecordRecyclerView, String.format("\"%s\"已被删除", item.formatConsumeTime() + "的记录"), Snackbar.LENGTH_LONG);
         snackbar.setAction("撤销", view -> {
-            addConsumeRecord(item);
+            addConsumeRecord(item, index);
             consumeRecordRecyclerView.scrollToPosition(index);
         });
         snackbar.show();
@@ -266,7 +274,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         if (requestCode == ActivityCodeConstant.EDIT_CONSUME_RECORD){
             ConsumeRecordVO record = data.getParcelableExtra(EditConsumeRecordActivity.DATA);
             if (record.getIndex() == -1){
-                addConsumeRecord(record);
+                addConsumeRecord(record, 0);
             } else {
                 updateConsumeRecord(record);
             }

@@ -39,6 +39,7 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
     @Override
     protected void fillViewHolder(CustomViewHolder viewHolder, RestaurantFoodVO data, int position) {
         View view = viewHolder.getView();
+        data.setIndex(position);
         fillFood(view, data);
         view.setOnClickListener(v -> onFoodClickListener.click(viewHolder, data));
     }

@@ -13,7 +13,7 @@ public class RestaurantFoodVO implements Parcelable {
     private long id;
     private long restaurantId;
     private long consumeRecordId;
-    private int consumeRecordIndex;
+    private int consumeRecordIndex = -1;
     private String name;
     private String pictureUri;
     private String comment;
