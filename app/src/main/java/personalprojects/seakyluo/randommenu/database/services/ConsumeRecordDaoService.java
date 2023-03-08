@@ -81,7 +81,7 @@ public class ConsumeRecordDaoService {
         for (int i = 0; i < foods.size(); i++){
             RestaurantFoodVO curr = foods.get(i);
             // 避免重名菜
-            if (i == 0 || (showCounter < MAX_FOOD_SHOW && !foods.get(i - 1).getName().equals(curr.getName()))){
+            if (i == 0 || (showCounter < MAX_FOOD_SHOW && !StringUtils.equals(foods.get(i - 1).getName(), curr.getName()))){
                 curr.setOrderInHome(showCounter++);
             } else {
                 curr.setOrderInHome(-1);
