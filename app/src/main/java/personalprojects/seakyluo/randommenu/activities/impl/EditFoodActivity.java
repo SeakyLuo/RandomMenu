@@ -78,101 +78,107 @@ public class EditFoodActivity extends AppCompatActivity {
         }
         setFood(currentFood);
 
-        cancel_button.setOnClickListener(v -> {
-            String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
-            AList<Tag> tags = chooseTagFragment.getData();
-            boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
-                    imageChanged = currentFood == null ? images.size() > 0 : !images.equals(currentFood.Images),
-                    tagChanged = currentFood == null ? tags.size() > 0 : !tags.equals(currentFood.getTags()),
-                    noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note),
-                    likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.isFavorite();
-            if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
-                AskYesNoDialog dialog = new AskYesNoDialog();
-                dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
-                dialog.setMessage(R.string.save_as_draft);
-                dialog.setYesListener(view -> {
-                    Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
-                    finish();
-                });
-                dialog.setNoListener(view -> finish());
-            }else{
-                finish();
-            }
-        });
-        confirm_button.setOnClickListener(v -> {
-            String food_name = getFoodName();
-            if (food_name.length() == 0){
-                Toast.makeText(this, R.string.empty_food_name, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            // 非草稿、重名、新菜
-            if (!isDraft && Settings.settings.Foods.any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
-                AskYesNoDialog dialog = new AskYesNoDialog();
-                dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
-                dialog.setMessage(R.string.duplicate_food_merge);
-                dialog.setYesListener(view -> {
-                    int index = Settings.settings.Foods.indexOf(f -> f.Name.equals(food_name));
-                    Food food = Settings.settings.Foods.get(index);
-                    food.Images.addAll(images);
-                    if (!StringUtils.isEmpty(food_cover)){
-                        food.setCover(food_cover);
-                    }
-                    food.setIsFavorite(food.isFavorite() || like_toggle.isChecked());
-                    food.AddTags(chooseTagFragment.getData());
-                    if (!StringUtils.isBlank(food.Note)){
-                        food.Note = food.Note + '\n' + getNote();
-                    }
-                    Settings.settings.Foods.move(index, 0);
-                    FinishWithFood(food);
-                });
-                dialog.setNoListener(view -> {
-                    Toast.makeText(this, R.string.food_exists, Toast.LENGTH_SHORT).show();
-                });
-                return;
-            }
-            AList<Tag> tags = chooseTagFragment.getData();
-            if (tags.isEmpty()){
-                if (Settings.settings.AutoTag){
-                    List<Tag> guessTags = Helper.guessTags(food_name);
-                    chooseTagFragment.setData(guessTags);
-                    if (guessTags.size() > 0){
-                        Toast.makeText(this, R.string.tag_auto_added, Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(this, R.string.auto_tag_failed, Toast.LENGTH_SHORT).show();
-                    }
-                }else{
-                    Toast.makeText(this, R.string.at_least_one_tag, Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-            String note = getNote();
-            Food food = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
-            if (Food.IsIncomplete(currentFood)) Settings.settings.addFood(food);
-            else if (isDraft && !Settings.settings.Foods.any(f -> f.Name.equals(food_name))){
-                Settings.settings.addFood(food);
-                Settings.settings.FoodDraft = null;
-            }else{
-                Settings.settings.updateFood(currentFood, food);
-            }
-            FinishWithFood(food);
-        });
+        cancel_button.setOnClickListener(v -> onCancel());
+        confirm_button.setOnClickListener(v -> onConfirm());
         camera_button.setOnClickListener(v -> {
             if (PermissionUtils.checkAndRequestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, ActivityCodeConstant.WRITE_STORAGE)){
                 showMenuFlyout();
             }
         });
         delete_food_button.setVisibility(currentFood == null ? View.GONE : View.VISIBLE);
-        delete_food_button.setOnClickListener(v -> {
+        delete_food_button.setOnClickListener(v -> deleteFood());
+    }
+
+    private void deleteFood(){
+        AskYesNoDialog dialog = new AskYesNoDialog();
+        dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
+        dialog.setMessage(R.string.ask_delete_food);
+        dialog.setYesListener(view -> {
+            if (isDraft) Settings.settings.FoodDraft = null;
+            else Settings.settings.removeFood(currentFood);
+            setResult(RESULT_OK);
+            finish();
+        });
+    }
+
+    private void onCancel(){
+        String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
+        AList<Tag> tags = chooseTagFragment.getData();
+        boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
+                imageChanged = currentFood == null ? images.size() > 0 : !images.equals(currentFood.Images),
+                tagChanged = currentFood == null ? tags.size() > 0 : !tags.equals(currentFood.getTags()),
+                noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note),
+                likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.isFavorite();
+        if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
             AskYesNoDialog dialog = new AskYesNoDialog();
-            dialog.showNow(fragmentManager, AskYesNoDialog.TAG);
-            dialog.setMessage(R.string.ask_delete_food);
+            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
+            dialog.setMessage(R.string.save_as_draft);
             dialog.setYesListener(view -> {
-                if (isDraft) Settings.settings.FoodDraft = null;
-                else Settings.settings.removeFood(currentFood);
-                setResult(RESULT_OK);
+                Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
                 finish();
             });
-        });
+            dialog.setNoListener(view -> finish());
+        }else{
+            finish();
+        }
+    }
+
+    private void onConfirm(){
+        String food_name = getFoodName();
+        if (food_name.length() == 0){
+            Toast.makeText(this, R.string.empty_food_name, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 非草稿、重名、新菜
+        if (!isDraft && Settings.settings.Foods.any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
+            AskYesNoDialog dialog = new AskYesNoDialog();
+            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
+            dialog.setMessage(R.string.duplicate_food_merge);
+            dialog.setYesListener(view -> {
+                int index = Settings.settings.Foods.indexOf(f -> f.Name.equals(food_name));
+                Food food = Settings.settings.Foods.get(index);
+                food.Images.addAll(images);
+                if (!StringUtils.isEmpty(food_cover)){
+                    food.setCover(food_cover);
+                }
+                food.setIsFavorite(food.isFavorite() || like_toggle.isChecked());
+                food.AddTags(chooseTagFragment.getData());
+                if (!StringUtils.isBlank(food.Note)){
+                    food.Note = food.Note + '\n' + getNote();
+                }
+                Settings.settings.Foods.move(index, 0);
+                finishWithFood(food);
+            });
+            dialog.setNoListener(view -> {
+                Toast.makeText(this, R.string.food_exists, Toast.LENGTH_SHORT).show();
+            });
+            return;
+        }
+        AList<Tag> tags = chooseTagFragment.getData();
+        if (tags.isEmpty()){
+            if (Settings.settings.AutoTag){
+                List<Tag> guessTags = Helper.guessTags(food_name);
+                chooseTagFragment.setData(guessTags);
+                if (guessTags.size() > 0){
+                    Toast.makeText(this, R.string.tag_auto_added, Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this, R.string.auto_tag_failed, Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, R.string.at_least_one_tag, Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        String note = getNote();
+        Food food = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
+        if (Food.IsIncomplete(currentFood)) Settings.settings.addFood(food);
+        else if (isDraft && !Settings.settings.Foods.any(f -> f.Name.equals(food_name))){
+            Settings.settings.addFood(food);
+            Settings.settings.FoodDraft = null;
+        }else{
+            Settings.settings.updateFood(currentFood, food);
+        }
+        finishWithFood(food);
     }
 
     private void showMenuFlyout(){
@@ -189,7 +195,7 @@ public class EditFoodActivity extends AppCompatActivity {
                     ImageUtils.openGallery(this);
                     return true;
                 case R.id.edit_image_item:
-                    crop_image_uri = ImageUtils.cropImage(this, CurrentImage());
+                    crop_image_uri = ImageUtils.cropImage(this, getCurrentImage());
                     return crop_image_uri != null;
                 case R.id.remove_image_item:
                     String image = images.pop(imageViewerFragment.removeCurrentImage());
@@ -238,12 +244,16 @@ public class EditFoodActivity extends AppCompatActivity {
         }
     }
 
-    private String CurrentImage() { return ImageUtils.getImagePath(images.get(imageViewerFragment.getCurrent())); }
-    private boolean AddImage(Bitmap image, String filename){
+    private String getCurrentImage() {
+        return ImageUtils.getImagePath(images.get(imageViewerFragment.getCurrent()));
+    }
+
+    private boolean addImage(Bitmap image, String filename){
         boolean success = ImageUtils.saveImage(image, Helper.ImageFolder, filename);
         if (success) images.with(imageViewerFragment.addImage(filename), 0);
         return success;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -254,7 +264,7 @@ public class EditFoodActivity extends AppCompatActivity {
             case ActivityCodeConstant.CAMERA:
                 try {
                     image = MediaStore.Images.Media.getBitmap(getContentResolver(), camera_image_uri);
-                    if (AddImage(image, filename = camera_image_uri.getPath()))
+                    if (addImage(image, filename = camera_image_uri.getPath()))
                         sources.with(filename, 0);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -274,7 +284,7 @@ public class EditFoodActivity extends AppCompatActivity {
                             images.move(index, 0);
                             sources.move(index, 0);
                             imageViewerFragment.moveImage(index, 0);
-                        }else if (AddImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), ImageUtils.newImageFileName()))
+                        }else if (addImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), ImageUtils.newImageFileName()))
                             sources.with(uri.getPath(), 0);
                     }else{
                         int count = clipData.getItemCount();
@@ -334,7 +344,7 @@ public class EditFoodActivity extends AppCompatActivity {
     public String getFoodName() { return edit_food_name.getText().toString().trim(); }
     private String getNote() { return edit_note.getText().toString().trim(); }
 
-    public void FinishWithFood(Food food){
+    public void finishWithFood(Food food){
         Intent intent = new Intent();
         intent.putExtra(FOOD, food);
         setResult(RESULT_OK, intent);

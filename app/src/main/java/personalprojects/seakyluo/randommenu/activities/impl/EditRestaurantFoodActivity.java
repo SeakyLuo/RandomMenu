@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.common.collect.Lists;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -59,16 +61,29 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         if (currentFood == null){
             currentFood = new RestaurantFoodVO();
         }
+        foodImage.setOnClickListener(v -> startFoodActivity());
         cameraButton.setOnClickListener(v -> showMenuFlyout());
         confirmButton.setOnClickListener(this::onConfirm);
         cancelButton.setOnClickListener(v -> finish());
+    }
+
+    private void startFoodActivity(){
+        String uri = currentFood.getPictureUri();
+        if (StringUtils.isEmpty(uri)){
+            return;
+        }
+        Intent intent = new Intent(this, FullScreenImageActivity.class);
+        intent.putExtra(FullScreenImageActivity.IMAGE, Lists.newArrayList(uri));
+        startActivity(intent);
     }
 
     private void fillFood(RestaurantFoodVO food){
         if (food == null){
             return;
         }
-        ImageUtils.loadImage(this, food.getPictureUri(), foodImage);
+        String pictureUri = food.getPictureUri();
+        foodImageUri = StringUtils.isEmpty(pictureUri) ? null : Uri.parse(pictureUri);
+        ImageUtils.loadImage(this, pictureUri, foodImage);
         editName.setText(food.getName());
         editPrice.setText(DoubleUtils.truncateZero(food.getPrice()));
         editComment.setText(food.getComment());

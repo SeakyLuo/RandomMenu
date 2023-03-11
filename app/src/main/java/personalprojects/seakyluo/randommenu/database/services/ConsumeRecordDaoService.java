@@ -54,7 +54,7 @@ public class ConsumeRecordDaoService {
 
     private static final int MAX_FOOD_SHOW = 5;
     /**
-     * 点的最多的+有图片+有评论+最后消费的
+     * 点的最多的+有图片+有评论+评论有好吃的+最后消费的
      * */
     private static void computeShowFood(List<ConsumeRecordVO> records){
         Map<Long, ConsumeRecordVO> recordMap = records.stream().collect(Collectors.toMap(ConsumeRecordVO::getId, Function.identity()));
@@ -62,12 +62,20 @@ public class ConsumeRecordDaoService {
         Map<String, Integer> counter = new HashMap<>();
         for (RestaurantFoodVO food : foods){
             String name = food.getName();
+            if (StringUtils.isEmpty(name)){
+                continue;
+            }
             counter.put(name, counter.getOrDefault(name, 0) + 1);
         }
         foods.sort((f1, f2) -> {
-            int diff = counter.get(f2.getName()) - counter.get(f1.getName());
+            int diff;
+            diff = Boolean.compare(isPositiveComment(f2.getComment()), isPositiveComment(f1.getComment()));
+            if (diff != 0) return diff;
+            diff = counter.getOrDefault(f2.getName(), 0) - counter.getOrDefault(f1.getName(), 0);
             if (diff != 0) return diff;
             diff = Boolean.compare(StringUtils.isNotEmpty(f2.getPictureUri()), StringUtils.isNotEmpty(f1.getPictureUri()));
+            if (diff != 0) return diff;
+            diff = Boolean.compare(isNotBadComment(f2.getComment()), isNotBadComment(f1.getComment()));
             if (diff != 0) return diff;
             diff = Boolean.compare(StringUtils.isNotEmpty(f2.getComment()), StringUtils.isNotEmpty(f1.getComment()));
             if (diff != 0) return diff;
@@ -81,12 +89,26 @@ public class ConsumeRecordDaoService {
         for (int i = 0; i < foods.size(); i++){
             RestaurantFoodVO curr = foods.get(i);
             // 避免重名菜
-            if (i == 0 || (showCounter < MAX_FOOD_SHOW && !StringUtils.equals(foods.get(i - 1).getName(), curr.getName()))){
+            if (i == 0 || (showCounter < MAX_FOOD_SHOW && foods.stream().limit(i).noneMatch(f -> StringUtils.equals(f.getName(), curr.getName())))){
                 curr.setOrderInHome(showCounter++);
             } else {
                 curr.setOrderInHome(-1);
             }
         }
+    }
+
+    private static boolean isPositiveComment(String comment){
+        if (StringUtils.isEmpty(comment)){
+            return false;
+        }
+        return comment.matches("^(?!不).*(好吃|爱|喜欢).*") || comment.contains("必点") || comment.contains("还不错");
+    }
+
+    private static boolean isNotBadComment(String comment){
+        if (StringUtils.isEmpty(comment)){
+            return false;
+        }
+        return comment.contains("还行") || comment.contains("还可以");
     }
 
     public static void update(List<ConsumeRecordVO> voList, long restaurantId, List<AddressVO> addressList){

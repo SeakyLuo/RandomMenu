@@ -29,7 +29,7 @@ public class RestaurantVO implements Parcelable {
     public double computeAverageCost(){
         if (CollectionUtils.isEmpty(records)) return 0;
         double total = records.stream().mapToDouble(ConsumeRecordVO::getTotalCost).sum();
-        double eaterCount = records.stream().mapToInt(r -> r.getEaters().size() + 1).sum();
+        double eaterCount = records.stream().filter(i -> i.getTotalCost() != 0).mapToInt(r -> r.getEaters().size() + 1).sum();
         return total / eaterCount;
     }
 

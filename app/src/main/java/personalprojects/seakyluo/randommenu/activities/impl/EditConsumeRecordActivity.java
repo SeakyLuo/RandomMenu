@@ -26,8 +26,10 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.R;
@@ -39,8 +41,11 @@ import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
+import personalprojects.seakyluo.randommenu.utils.RestaurantUtils;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
 public class EditConsumeRecordActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<ConsumeRecordVO> {
@@ -101,6 +106,10 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
                     .build().show();
         });
         addConsumeFoodButton.setOnClickListener(v -> showFoodDialog(null));
+        addConsumeFoodButton.setOnLongClickListener(v -> {
+            ImageUtils.openGallery(this);
+            return true;
+        });
         consumeFoodPlaceholder.setOnClickListener(v -> showFoodDialog(null));
         foodAdapter.setClickedListener((v, d) -> foodAdapter.set(d, v.getBindingAdapterPosition()));
     }
@@ -245,12 +254,26 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
-        int index = food.getIndex();
-        if (index == -1){
-            addFood(food);
-        } else {
-            foodAdapter.set(food, index);
+        if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT_FOOD){
+            RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
+            int index = food.getIndex();
+            if (index == -1){
+                addFood(food);
+            } else {
+                foodAdapter.set(food, index);
+            }
+        }
+        else if (requestCode == ActivityCodeConstant.GALLERY){
+            RestaurantVO restaurantVO = RestaurantUtils.buildFromImages(this, data.getClipData());
+            List<ConsumeRecordVO> records = restaurantVO.getRecords();
+            Optional<Long> minConsumeTimeOp = records.stream().map(ConsumeRecordVO::getConsumeTime).min(Comparator.comparing(Function.identity()));
+            if (minConsumeTimeOp.isPresent()){
+                long minConsumeTime = minConsumeTimeOp.get();
+                if (minConsumeTime != 0 && minConsumeTime < consumeTime){
+                    setConsumeTime(minConsumeTime);
+                }
+            }
+            foodAdapter.add(records.stream().flatMap(i -> i.getFoods().stream()).collect(Collectors.toList()));
         }
     }
 }

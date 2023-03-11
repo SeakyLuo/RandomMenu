@@ -53,6 +53,7 @@ public class RestaurantsFragment extends Fragment {
     public static final String TAG = "RestaurantsFragment";
     private static final int PAGE_SIZE = 20;
     private TextView titleTextView;
+    private RecyclerView restaurantRecyclerView;
     private RestaurantAdapter restaurantAdapter;
     private int currentPage = 1;
     private int lastItemPosition;
@@ -65,7 +66,7 @@ public class RestaurantsFragment extends Fragment {
         FloatingActionButton fab = view.findViewById(R.id.restaurant_fab);
         restaurantAdapter = new RestaurantAdapter(getContext());
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
-        RecyclerView restaurantRecyclerView = view.findViewById(R.id.restaurant_recycler_view);
+        restaurantRecyclerView = view.findViewById(R.id.restaurant_recycler_view);
 
         fab.setOnClickListener(this::showCreateRestaurantPopupMenu);
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -136,6 +137,7 @@ public class RestaurantsFragment extends Fragment {
             int index = restaurantAdapter.indexOf(i -> i.getId() == id);
             if (index == -1){
                 restaurantAdapter.add(vo, 0);
+                restaurantRecyclerView.scrollToPosition(0);
             } else {
                 restaurantAdapter.set(vo, index);
             }

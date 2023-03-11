@@ -2,6 +2,7 @@ package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -264,7 +265,13 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     }
 
     private void finishWithData(RestaurantVO data){
-        RestaurantDaoService.save(data);
+        try {
+            RestaurantDaoService.save(data);
+        } catch (Exception e){
+            Toast.makeText(this,"保存失败：" + e.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("EditRestaurantActivity", "finishWithData failed", e);
+            return;
+        }
         Intent intent = new Intent();
         intent.putExtra(DATA, data);
         setResult(RESULT_OK, intent);
@@ -294,9 +301,6 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         }
         else if (requestCode == ActivityCodeConstant.GALLERY){
             RestaurantVO restaurant = RestaurantUtils.buildFromImages(this, data.getClipData());
-            if (restaurant == null){
-                return;
-            }
             List<AddressVO> addressList = restaurant.getAddressList();
             AList<AddressVO> existing = addressAdapter.getData();
             for (AddressVO address : addressList){

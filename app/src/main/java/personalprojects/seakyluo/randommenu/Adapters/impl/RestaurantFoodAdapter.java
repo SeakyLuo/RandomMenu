@@ -41,7 +41,11 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
         View view = viewHolder.getView();
         data.setIndex(position);
         fillFood(view, data);
-        view.setOnClickListener(v -> onFoodClickListener.click(viewHolder, data));
+        view.setOnClickListener(v -> {
+            if (onFoodClickListener != null){
+                onFoodClickListener.click(viewHolder, data);
+            }
+        });
     }
 
     private void fillFood(View view, RestaurantFoodVO data){
@@ -61,7 +65,11 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
             }
         } else {
             foodNote.setVisibility(View.VISIBLE);
-            foodNote.setText("“" + comment + "”");
+            if (comment.length() <= 10){
+                foodNote.setText("“" + comment + "”");
+            } else {
+                foodNote.setText("“" + comment.substring(0, 8) + "...”");
+            }
         }
         String pictureUri = data.getPictureUri();
         if (StringUtils.isEmpty(pictureUri)){

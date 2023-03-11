@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.core.content.FileProvider;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -94,9 +96,11 @@ public class ImageUtils {
     public static Uri cropImage(Activity activity, String imagePath){
         try {
             Intent intent = new Intent("com.android.camera.action.CROP");
-            intent.setDataAndType(Uri.parse(imagePath), "image/*");
+            intent.setDataAndType(FileProvider.getUriForFile(activity, "personalprojects.seakyluo.randommenu.provider", new File(imagePath)), "image/*");
             Uri uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", Helper.TempFolder));
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             activity.startActivityForResult(intent, ActivityCodeConstant.CROP_IMAGE);
             return uri;
         } catch (ActivityNotFoundException e) {

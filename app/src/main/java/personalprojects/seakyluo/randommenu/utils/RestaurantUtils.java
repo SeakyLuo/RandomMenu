@@ -60,6 +60,7 @@ public class RestaurantUtils {
             RestaurantFoodVO food = new RestaurantFoodVO();
             food.setPictureUri(fileName);
             record.setFoods(Lists.newArrayList(food));
+            record.setEaters(new ArrayList<>());
             records.add(record);
 
             String path = FileUtils.getPath(context, uri);
