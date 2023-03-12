@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
@@ -25,9 +26,6 @@ import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
 public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
-
-    private static final String EXPAND_TEXT = "展开", COLLAPSE_TEXT = "收起";
-    private static final int MAX_ADDRESS_LINES = 1;
 
     public RestaurantAdapter(Context context){
         this.context = context;
@@ -46,11 +44,19 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
 
         restaurantFoodRecyclerView.setAdapter(foodAdapter);
         fillWithData(view, foodAdapter, data);
-        view.setOnClickListener(v -> editRestaurant(data));
+        view.setOnClickListener(v -> showRestaurant(data));
         view.setOnLongClickListener(v -> {
             editRestaurant(data);
             return true;
         });
+    }
+
+    private void showRestaurant(RestaurantVO data){
+        Activity activity = (Activity) context;
+        Intent intent = new Intent(activity, ShowRestaurantActivity.class);
+        intent.putExtra(ShowRestaurantActivity.DATA_ID, data.getId());
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.push_down_in, 0);
     }
 
     private void editRestaurant(RestaurantVO data){

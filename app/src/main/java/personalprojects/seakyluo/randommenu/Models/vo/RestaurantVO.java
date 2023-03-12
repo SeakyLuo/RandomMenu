@@ -30,6 +30,7 @@ public class RestaurantVO implements Parcelable {
         if (CollectionUtils.isEmpty(records)) return 0;
         double total = records.stream().mapToDouble(ConsumeRecordVO::getTotalCost).sum();
         double eaterCount = records.stream().filter(i -> i.getTotalCost() != 0).mapToInt(r -> r.getEaters().size() + 1).sum();
+        if (eaterCount == 0) return 0;
         return total / eaterCount;
     }
 

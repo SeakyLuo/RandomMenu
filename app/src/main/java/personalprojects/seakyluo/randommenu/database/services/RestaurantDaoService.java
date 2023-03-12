@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
+import personalprojects.seakyluo.randommenu.database.dao.Page;
+import personalprojects.seakyluo.randommenu.database.dao.PagedData;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
@@ -80,7 +82,7 @@ public class RestaurantDaoService {
         return vo;
     }
 
-    public static List<RestaurantVO> selectByPage(int pageNum, int pageSize){
+    public static PagedData<RestaurantVO> selectByPage(int pageNum, int pageSize){
         RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
         List<RestaurantDAO> daoList = mapper.selectByPage(pageNum, pageSize);
         List<RestaurantVO> voList = daoList.stream().map(RestaurantDaoService::convert).collect(Collectors.toList());
@@ -89,7 +91,10 @@ public class RestaurantDaoService {
             vo.setAddressList(AddressDaoService.selectByRestaurant(restaurantId));
             vo.setFoods(RestaurantFoodDaoService.selectByRestaurantHome(restaurantId));
         }
-        return voList;
+        PagedData<RestaurantVO> data = new PagedData<>();
+        data.setPage(new Page(pageNum, pageSize, mapper.selectCount()));
+        data.setData(voList);
+        return data;
     }
 
     public static List<RestaurantVO> selectAll(){

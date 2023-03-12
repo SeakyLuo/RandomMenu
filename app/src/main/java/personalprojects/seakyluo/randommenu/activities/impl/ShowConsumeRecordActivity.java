@@ -2,20 +2,18 @@ package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.loper7.date_time_picker.dialog.CardDatePickerDialog;
 
@@ -33,10 +31,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.database.services.AddressDaoService;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
@@ -49,7 +47,7 @@ import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 import personalprojects.seakyluo.randommenu.utils.RestaurantUtils;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
-public class EditConsumeRecordActivity extends AppCompatActivity implements DragDropCallback.DragStartListener<ConsumeRecordVO> {
+public class ShowConsumeRecordActivity extends SwipeBackActivity {
     public static final String DATA = "CONSUME_RECORD", ADDRESS_LIST = "ADDRESS_LIST", CONSUME_TIME = "CONSUME_TIME";
     public static final String EATER_DELIMITER = "，";
     private Long consumeTime;
@@ -65,7 +63,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_consume_record);
+        setContentView(R.layout.activity_show_consume_record);
 
         ImageButton cancelButton = findViewById(R.id.cancel_button);
         ImageButton confirmButton = findViewById(R.id.confirm_button);
@@ -90,6 +88,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             consumeTime = savedInstanceState.getLong(CONSUME_TIME);
         }
 
+        setAddress(addressList);
         setData(currentRecord);
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(foodAdapter));
         dragHelper.attachToRecyclerView(consumeRecordRecyclerView);
@@ -116,9 +115,9 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
 
     private void showFoodDialog(RestaurantFoodVO data) {
         Intent intent = new Intent(this, EditRestaurantFoodActivity.class);
-        intent.putExtra(EditConsumeRecordActivity.DATA, data);
+        intent.putExtra(ShowConsumeRecordActivity.DATA, data);
         startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
-        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+        overridePendingTransition(R.anim.push_down_in, 0);
     }
 
     private void addFood(RestaurantFoodVO item){
@@ -170,7 +169,6 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (CollectionUtils.isNotEmpty(eaters)){
             editFriends.setText(String.join(EATER_DELIMITER, eaters));
         }
-        setAddress(addressList);
         AddressVO address = src.getAddress();
         if (address == null){
             addressSpinner.setSelection(0);
@@ -243,11 +241,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     @Override
     public void finish() {
         super.finish();
-    }
-
-    @Override
-    public void requestDrag(CustomAdapter<ConsumeRecordVO>.CustomViewHolder viewHolder) {
-        dragHelper.startDrag(viewHolder);
+        overridePendingTransition(R.anim.push_down_out, 0);
     }
 
     @Override

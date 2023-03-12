@@ -25,7 +25,7 @@ import java.util.Optional;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.AddressAdapter;
-import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordEditAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.controls.EditSpinner;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
@@ -47,7 +47,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     private View addressPlaceholder, consumeRecordPlaceholder;
     private RecyclerView consumeRecordRecyclerView;
     private AddressAdapter addressAdapter;
-    private ConsumeRecordAdapter consumeRecordAdapter;
+    private ConsumeRecordEditAdapter consumeRecordAdapter;
     private EditSpinner editFoodType;
     private ItemTouchHelper dragHelper;
     private RestaurantVO restaurant;
@@ -68,7 +68,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         RecyclerView addressRecyclerView = findViewById(R.id.address_recycler_view);
         consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
         addressAdapter = new AddressAdapter(this);
-        consumeRecordAdapter = new ConsumeRecordAdapter(this);
+        consumeRecordAdapter = new ConsumeRecordEditAdapter(this);
         ImageButton addAddressButton = findViewById(R.id.add_address_button);
         ImageButton addConsumeRecordButton = findViewById(R.id.add_consume_record_button);
 
@@ -170,14 +170,14 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         intent.putExtra(EditConsumeRecordActivity.DATA, data);
         intent.putExtra(EditConsumeRecordActivity.ADDRESS_LIST, addressAdapter.getData());
         startActivityForResult(intent, ActivityCodeConstant.EDIT_CONSUME_RECORD);
-        overridePendingTransition(R.anim.push_down_in, 0);
+        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
     }
 
     private void startEditRestaurantFoodActivity(RestaurantFoodVO food){
         Intent intent = new Intent(this, EditRestaurantFoodActivity.class);
         intent.putExtra(EditRestaurantFoodActivity.DATA, food);
         startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
-        overridePendingTransition(R.anim.push_down_in, 0);
+        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
     }
 
     private boolean isBadAddress(){
@@ -256,12 +256,6 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(DATA, buildData());
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.push_down_out, 0);
     }
 
     private void finishWithData(RestaurantVO data){

@@ -1,53 +1,37 @@
 package personalprojects.seakyluo.randommenu.fragments;
 
-import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
-import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.common.collect.Lists;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
+
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.database.dao.Page;
+import personalprojects.seakyluo.randommenu.database.dao.PagedData;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
-import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
-import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
-import personalprojects.seakyluo.randommenu.utils.AddressUtils;
-import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
+import personalprojects.seakyluo.randommenu.utils.RecyclerViewUtils;
 import personalprojects.seakyluo.randommenu.utils.RestaurantUtils;
 
 import static android.app.Activity.RESULT_OK;
-import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 
 public class RestaurantsFragment extends Fragment {
     public static final String TAG = "RestaurantsFragment";
@@ -55,8 +39,6 @@ public class RestaurantsFragment extends Fragment {
     private TextView titleTextView;
     private RecyclerView restaurantRecyclerView;
     private RestaurantAdapter restaurantAdapter;
-    private int currentPage = 1;
-    private int lastItemPosition;
 
     @Nullable
     @Override
@@ -71,30 +53,11 @@ public class RestaurantsFragment extends Fragment {
         fab.setOnClickListener(this::showCreateRestaurantPopupMenu);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(false);
-            setData(RestaurantDaoService.selectByPage(currentPage = 1, PAGE_SIZE));
+            setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE));
         });
         restaurantRecyclerView.setAdapter(restaurantAdapter);
-        restaurantRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if (newState == SCROLL_STATE_IDLE && lastItemPosition == restaurantAdapter.getItemCount()){
-                    restaurantAdapter.add(RestaurantDaoService.selectByPage(++currentPage, PAGE_SIZE));
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                if (layoutManager instanceof LinearLayoutManager){
-                    LinearLayoutManager manager = (LinearLayoutManager) layoutManager;
-                    int firstItem = manager.findFirstVisibleItemPosition();
-                    int lastItem = manager.findLastCompletelyVisibleItemPosition();
-                    lastItemPosition = firstItem + (lastItem - firstItem) + 1;
-                }
-            }
-        });
-
-        setData(RestaurantDaoService.selectByPage(currentPage = 1, PAGE_SIZE));
+        RecyclerViewUtils.setAsPaged(restaurantRecyclerView, RestaurantDaoService::selectByPage);
+        setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE));
         return view;
     }
 
@@ -114,16 +77,19 @@ public class RestaurantsFragment extends Fragment {
         helper.show();
     }
 
-    private void setData(List<RestaurantVO> restaurants){
+    private void setData(PagedData<RestaurantVO> pagedData){
+        List<RestaurantVO> restaurants = pagedData.getData();
+        Page page = pagedData.getPage();
+        long total = page.getTotal();
         restaurantAdapter.setData(restaurants);
-        setTitle();
+        titleTextView.setText(total == 0 ? "探店" : String.format("探店（%d）", total));
     }
 
     private void createRestaurant(RestaurantVO data){
         Intent intent = new Intent(getContext(), EditRestaurantActivity.class);
         intent.putExtra(EditRestaurantActivity.DATA, data);
         startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT);
-        getActivity().overridePendingTransition(R.anim.push_down_in, 0);
+        getActivity().overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
     }
 
     @Override
@@ -146,10 +112,4 @@ public class RestaurantsFragment extends Fragment {
             createRestaurant(RestaurantUtils.buildFromImages(getContext(), data.getClipData()));
         }
     }
-
-    private void setTitle(){
-        List<RestaurantVO> restaurants = restaurantAdapter.getData();
-        titleTextView.setText(restaurants.isEmpty() ? "探店" : String.format("探店（%d）", restaurants.size()));
-    }
-
 }

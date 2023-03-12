@@ -31,6 +31,9 @@ public interface RestaurantMapper {
     @Query("SELECT * FROM restaurant order by lastVisitTime desc limit :pageSize offset ((:pageNum - 1) * :pageSize)")
     List<RestaurantDAO> selectByPage(int pageNum, int pageSize);
 
+    @Query("SELECT count(*) FROM restaurant")
+    long selectCount();
+
     @Query("SELECT count(0) FROM restaurant where foodTypeId = :foodTypeId")
     long countByFoodType(long foodTypeId);
 }

@@ -15,7 +15,7 @@ import personalprojects.seakyluo.randommenu.models.AddressVO;
 @Data
 public class ConsumeRecordVO implements Parcelable {
 
-    public static final String CONSUME_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+    public static final String CONSUME_TIME_FORMAT = "yyyy-MM-dd HH:mm", CONSUME_TIME_FORMAT_IN_DAY = "yyyy-MM-dd";
 
     private long id;
     private long consumeTime;
@@ -28,6 +28,10 @@ public class ConsumeRecordVO implements Parcelable {
 
     public String formatConsumeTime(){
         return DateFormatUtils.format(consumeTime, CONSUME_TIME_FORMAT);
+    }
+
+    public String formatConsumeTimeToDay(){
+        return DateFormatUtils.format(consumeTime, CONSUME_TIME_FORMAT_IN_DAY);
     }
 
     public void setIndex(int index){

@@ -50,6 +50,9 @@
         <activity android:name=".activities.impl.EditRestaurantActivity" android:label="EditRestaurantActivity" />
         <activity android:name=".activities.impl.EditConsumeRecordActivity" android:label="EditConsumeRecordActivity" />
         <activity android:name=".activities.impl.EditRestaurantFoodActivity" android:label="EditRestaurantFoodActivity" />
+        <activity android:name=".activities.impl.ShowRestaurantActivity" android:label="ShowRestaurantActivity" />
+        <activity android:name=".activities.impl.ShowConsumeRecordActivity" android:label="ShowConsumeRecordActivity" />
+        <activity android:name=".activities.impl.ShowRestaurantFoodActivity" android:label="ShowRestaurantFoodActivity" />
     </application>
 
 </manifest>

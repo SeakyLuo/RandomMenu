@@ -15,9 +15,9 @@ import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
-public class ConsumeRecordAdapter extends CustomAdapter<ConsumeRecordVO> {
+public class ConsumeRecordEditAdapter extends CustomAdapter<ConsumeRecordVO> {
 
-    public ConsumeRecordAdapter(Context context){
+    public ConsumeRecordEditAdapter(Context context){
         this.context = context;
     }
 
