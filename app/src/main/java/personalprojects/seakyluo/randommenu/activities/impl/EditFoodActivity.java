@@ -47,10 +47,10 @@ public class EditFoodActivity extends AppCompatActivity {
     private ChooseTagFragment chooseTagFragment;
     private ImageViewerFragment imageViewerFragment;
     private Food currentFood;
-    private Uri camera_image_uri, crop_image_uri;
+    private Uri camera_image_uri, cropImageUri;
     private AList<String> images = new AList<>(), sources = new AList<>();
     private boolean isDraft = false;
-    private String food_cover = "";
+    private String foodCover = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +114,7 @@ public class EditFoodActivity extends AppCompatActivity {
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
             dialog.setMessage(R.string.save_as_draft);
             dialog.setYesListener(view -> {
-                Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
+                Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked(), foodCover);
                 finish();
             });
             dialog.setNoListener(view -> finish());
@@ -138,8 +138,8 @@ public class EditFoodActivity extends AppCompatActivity {
                 int index = Settings.settings.Foods.indexOf(f -> f.Name.equals(food_name));
                 Food food = Settings.settings.Foods.get(index);
                 food.Images.addAll(images);
-                if (!StringUtils.isEmpty(food_cover)){
-                    food.setCover(food_cover);
+                if (!StringUtils.isEmpty(foodCover)){
+                    food.setCover(foodCover);
                 }
                 food.setIsFavorite(food.isFavorite() || like_toggle.isChecked());
                 food.AddTags(chooseTagFragment.getData());
@@ -170,7 +170,7 @@ public class EditFoodActivity extends AppCompatActivity {
             return;
         }
         String note = getNote();
-        Food food = new Food(food_name, images, tags, note, like_toggle.isChecked(), food_cover);
+        Food food = new Food(food_name, images, tags, note, like_toggle.isChecked(), foodCover);
         if (Food.IsIncomplete(currentFood)) Settings.settings.addFood(food);
         else if (isDraft && !Settings.settings.Foods.any(f -> f.Name.equals(food_name))){
             Settings.settings.addFood(food);
@@ -184,26 +184,26 @@ public class EditFoodActivity extends AppCompatActivity {
     private void showMenuFlyout(){
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, this, camera_button);
         if (images.isEmpty()) helper.removeItems(R.id.edit_image_item, R.id.remove_image_item);
-        if (images.size() < 2 || imageViewerFragment.getCurrentImage().equals(food_cover)) helper.removeItems(R.id.set_cover_item);
+        if (images.size() < 2 || imageViewerFragment.getCurrentImage().equals(foodCover)) helper.removeItems(R.id.set_cover_item);
         if (images.isEmpty() || imageViewerFragment.getCurrent() == 0) helper.removeItems(R.id.move_to_first_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.open_camera_item:
-                    crop_image_uri = ImageUtils.openCamera(this);
-                    return crop_image_uri != null;
+                    cropImageUri = ImageUtils.openCamera(this);
+                    return cropImageUri != null;
                 case R.id.open_gallery_item:
                     ImageUtils.openGallery(this);
                     return true;
                 case R.id.edit_image_item:
-                    crop_image_uri = ImageUtils.cropImage(this, getCurrentImage());
-                    return crop_image_uri != null;
+                    cropImageUri = ImageUtils.cropImage(this, getCurrentImage());
+                    return cropImageUri != null;
                 case R.id.remove_image_item:
                     String image = images.pop(imageViewerFragment.removeCurrentImage());
-                    if (image.equals(food_cover)) food_cover = images.isEmpty() ? "" : images.first();
+                    if (image.equals(foodCover)) foodCover = images.isEmpty() ? "" : images.first();
                     if (images.isEmpty()) food_image.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.set_cover_item:
-                    food_cover = imageViewerFragment.getCurrentImage();
+                    foodCover = imageViewerFragment.getCurrentImage();
                     return true;
                 case R.id.move_to_first_item:
                     images.move(imageViewerFragment.getCurrent(), 0);
@@ -219,7 +219,7 @@ public class EditFoodActivity extends AppCompatActivity {
         if (food == null) return;
         edit_food_name.setText(food.Name);
         food_image.setVisibility(food.hasImage() ? View.GONE : View.VISIBLE);
-        imageViewerFragment.setImages(images.copyFrom(food.Images), food_cover = food.getCover());
+        imageViewerFragment.setImages(images.copyFrom(food.Images), foodCover = food.getCover());
         sources.copyFrom(new AList<>("", food.Images.size()));
         chooseTagFragment.setData(food.getTags());
         edit_note.setText(food.Note);
@@ -315,10 +315,10 @@ public class EditFoodActivity extends AppCompatActivity {
                 break;
             case ActivityCodeConstant.CROP_IMAGE:
                 try {
-                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), crop_image_uri);
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), cropImageUri);
                     if (!ImageUtils.saveImage(image, Helper.ImageFolder, filename = ImageUtils.newImageFileName())) return;
                     int current = imageViewerFragment.getCurrent();
-                    if (images.get(current).equals(food_cover)) food_cover = filename;
+                    if (images.get(current).equals(foodCover)) foodCover = filename;
                     images.set(imageViewerFragment.setCurrentImage(filename), current);
                     sources.set("", current);
                 } catch (IOException e) {
@@ -330,7 +330,7 @@ public class EditFoodActivity extends AppCompatActivity {
                 return;
         }
         food_image.setVisibility(View.GONE);
-        if (StringUtils.isEmpty(food_cover)) food_cover = images.first();
+        if (StringUtils.isEmpty(foodCover)) foodCover = images.first();
     }
 
     @Override
@@ -339,7 +339,7 @@ public class EditFoodActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.putFragment(outState, ChooseTagFragment.TAG, chooseTagFragment);
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
-        outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), food_cover));
+        outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), foodCover));
     }
     public String getFoodName() { return edit_food_name.getText().toString().trim(); }
     private String getNote() { return edit_note.getText().toString().trim(); }

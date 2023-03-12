@@ -4,8 +4,11 @@ import android.Manifest;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,9 +25,11 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
+import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
@@ -36,7 +41,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
     private ImageButton cameraButton;
     private EditText editName, editPrice, editComment;
     private RestaurantFoodVO currentFood;
-    private Uri foodImageUri;
+    private Uri foodImageUri, cropImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +87,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
             return;
         }
         String pictureUri = food.getPictureUri();
-        foodImageUri = StringUtils.isEmpty(pictureUri) ? null : Uri.parse(pictureUri);
+        foodImageUri = StringUtils.isEmpty(pictureUri) ? null : Uri.parse(ImageUtils.getImagePath(pictureUri));
         ImageUtils.loadImage(this, pictureUri, foodImage);
         editName.setText(food.getName());
         editPrice.setText(DoubleUtils.truncateZero(food.getPrice()));
@@ -132,8 +137,8 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
                     ImageUtils.openGallery(this);
                     return true;
                 case R.id.edit_image_item:
-                    foodImageUri = ImageUtils.cropImage(this, foodImageUri.getPath());
-                    return foodImageUri != null;
+                    cropImageUri = ImageUtils.cropImage(this, foodImageUri.getPath());
+                    return cropImageUri != null;
             }
             return false;
         });
@@ -186,6 +191,17 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
                     foodImageUri = clipData.getItemAt(0).getUri();
                 }
                 if (!ImageUtils.saveImage(this, foodImageUri, pictureUri = ImageUtils.newImageFileName())){
+                    return;
+                }
+                break;
+            case ActivityCodeConstant.CROP_IMAGE:
+                try {
+                    Bitmap image = MediaStore.Images.Media.getBitmap(getContentResolver(), cropImageUri);
+                    if (!ImageUtils.saveImage(image, Helper.ImageFolder, pictureUri = ImageUtils.newImageFileName())){
+                        return;
+                    }
+                } catch (Exception e){
+                    Log.e(EditRestaurantFoodActivity.class.getName(), "onActivityResult failed", e);
                     return;
                 }
                 break;
