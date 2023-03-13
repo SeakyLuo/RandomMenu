@@ -100,7 +100,7 @@ public class ShowConsumeRecordActivity extends SwipeBackActivity {
             consumeRecordComment.setVisibility(View.GONE);
         } else {
             consumeRecordComment.setVisibility(View.VISIBLE);
-            consumeRecordComment.setText(comment);
+            consumeRecordComment.setText("\uD83D\uDCDD 评价：" + comment);
         }
         RestaurantVO restaurant = RestaurantDaoService.selectById(src.getRestaurantId());
         if (restaurant != null){

@@ -64,7 +64,7 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
             consumeRecordComment.setVisibility(View.GONE);
         } else {
             consumeRecordComment.setVisibility(View.VISIBLE);
-            consumeRecordComment.setText(comment);
+            consumeRecordComment.setText("\uD83D\uDCDD 评价： " + comment);
         }
         foodAdapter.setData(data.getFoods());
         foodRecyclerView.setAdapter(foodAdapter);

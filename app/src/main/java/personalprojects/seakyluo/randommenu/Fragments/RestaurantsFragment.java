@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -35,7 +34,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class RestaurantsFragment extends Fragment {
     public static final String TAG = "RestaurantsFragment";
-    private static final int PAGE_SIZE = 20;
+    private static final int PAGE_SIZE = 10;
     private TextView titleTextView;
     private RecyclerView restaurantRecyclerView;
     private RestaurantAdapter restaurantAdapter;
@@ -56,7 +55,7 @@ public class RestaurantsFragment extends Fragment {
             setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE));
         });
         restaurantRecyclerView.setAdapter(restaurantAdapter);
-        RecyclerViewUtils.setAsPaged(restaurantRecyclerView, RestaurantDaoService::selectByPage);
+        RecyclerViewUtils.setAsPaged(restaurantRecyclerView, PAGE_SIZE, RestaurantDaoService::selectByPage);
         setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE));
         return view;
     }

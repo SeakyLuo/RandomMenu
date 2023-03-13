@@ -11,10 +11,7 @@
         android:layout_height="wrap_content"
         android:background="?android:attr/colorBackgroundFloating"
         android:elevation="2dp"
-        app:contentInsetStart="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:contentInsetStart="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -46,7 +43,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,6 +74,7 @@
                         android:text="店名"
                         android:textSize="24dp"
                         android:textStyle="bold"
+                        android:textColor="@color/colorTextBlack"
                         android:layout_marginTop="4dp"/>
 
                     <LinearLayout
@@ -87,7 +86,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="菜系"
-                            android:textSize="14dp"
+                            android:textColor="@color/colorTextBlack"
                             android:layout_marginEnd="16dp"
                             />
                         <TextView
@@ -95,7 +94,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="人均￥"
-                            android:textSize="14dp"
+                            android:textColor="@color/colorTextBlack"
                             android:layout_marginEnd="16dp"
                             />
                     </LinearLayout>
@@ -106,6 +105,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="6dp"
+                    android:textColor="@color/colorTextBlack"
                     android:text="地址"/>
 
                 <TextView
@@ -113,6 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="评价"
+                    android:textColor="@color/colorTextBlack"
                     android:layout_marginVertical="6dp"/>
             </LinearLayout>
 
@@ -122,16 +123,24 @@
                 android:layout_height="wrap_content"
                 android:text="消费记录"
                 android:textStyle="bold"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="24dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/consume_record_recycler_view"
+            <!--        加了RelativeLayout才会显示全。。。-->
+            <RelativeLayout
+                android:descendantFocusability="blocksDescendants"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/white_capsule"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                android:layout_height="wrap_content">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/consume_record_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/white_capsule"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginBottom="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 

@@ -56,7 +56,7 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         Intent intent = new Intent(activity, ShowRestaurantActivity.class);
         intent.putExtra(ShowRestaurantActivity.DATA_ID, data.getId());
         activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.push_down_in, 0);
+        activity.overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
     }
 
     private void editRestaurant(RestaurantVO data){
@@ -64,7 +64,7 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         Intent intent = new Intent(activity, EditRestaurantActivity.class);
         intent.putExtra(EditRestaurantActivity.DATA_ID, data.getId());
         activity.startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT);
-        activity.overridePendingTransition(R.anim.push_down_in, 0);
+        activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
     }
 
     private void fillWithData(View view, RestaurantFoodAdapter foodAdapter, RestaurantVO data){
@@ -72,7 +72,7 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         TextView foodTypeTextView = view.findViewById(R.id.food_type);
         TextView averagePrice = view.findViewById(R.id.average_price);
         ExpandableTextView addressTextView = view.findViewById(R.id.address);
-        TextView commentTextView = view.findViewById(R.id.comment);
+        TextView commentText = view.findViewById(R.id.comment_text);
 
         restaurantName.setText(data.getName());
         FoodType foodType = data.getFoodType();
@@ -93,10 +93,10 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         }
         String comment = data.getComment();
         if (StringUtils.isBlank(comment)){
-            commentTextView.setVisibility(View.GONE);
+            commentText.setVisibility(View.GONE);
         } else {
-            commentTextView.setVisibility(View.VISIBLE);
-            commentTextView.setText(comment);
+            commentText.setVisibility(View.VISIBLE);
+            commentText.setText("\uD83D\uDCDD 评价：" + comment);
         }
         foodAdapter.setData(data.getFoods());
     }

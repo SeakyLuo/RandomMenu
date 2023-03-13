@@ -24,6 +24,7 @@
             android:text="店名"
             android:textSize="24dp"
             android:textStyle="bold"
+            android:textColor="@color/colorTextBlack"
             android:layout_marginTop="4dp"/>
 
         <LinearLayout
@@ -35,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="菜系"
-                android:textSize="14dp"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginEnd="16dp"
                 />
             <TextView
@@ -43,21 +44,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="人均￥"
-                android:textSize="14dp"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginEnd="16dp"
                 />
         </LinearLayout>
 
         <com.ms.square.android.expandabletextview.ExpandableTextView
             android:id="@+id/address"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="2dp"
+            android:textColor="@color/colorTextBlack"
             app:maxCollapsedLines="1">
             <TextView
                 android:id="@id/expandable_text"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorTextBlack"
                 />
             <ImageButton
                 android:id="@id/expand_collapse"
@@ -67,15 +70,13 @@
         </com.ms.square.android.expandabletextview.ExpandableTextView>
 
         <TextView
-            android:id="@+id/comment"
+            android:id="@+id/comment_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="2dp"
             android:text="评价"
-            android:layout_marginVertical="4dp"
+            android:textColor="@color/colorTextBlack"
+            android:layout_marginVertical="2dp"
             android:maxLines="1"
-            android:background="@drawable/restaurant_comment_background"
             />
 
         <androidx.recyclerview.widget.RecyclerView

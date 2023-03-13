@@ -37,7 +37,7 @@ public class ConsumeRecordDaoService {
         List<Long> ids = mapper.insert(daoList);
         setRestaurantIdAndRecordId(voList, restaurantId, ids);
         computeShowFood(voList);
-        RestaurantFoodDaoService.insert(voList.stream().flatMap(vo -> vo.getFoods().stream()).collect(Collectors.toList()));
+        RestaurantFoodDaoService.insert(voList.stream().flatMap(vo -> vo.getFoods().stream().peek(f -> f.setId(0))).collect(Collectors.toList()));
     }
 
     private static void setRestaurantIdAndRecordId(List<ConsumeRecordVO> voList, long restaurantId, List<Long> ids){
