@@ -3,61 +3,39 @@ package personalprojects.seakyluo.randommenu.activities.impl;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.loper7.date_time_picker.dialog.CardDatePickerDialog;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
-import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
-import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
+import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
-import personalprojects.seakyluo.randommenu.utils.JsonUtils;
-import personalprojects.seakyluo.randommenu.utils.RestaurantUtils;
-import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
 
 public class ShowConsumeRecordActivity extends SwipeBackActivity {
-    public static final String DATA = "CONSUME_RECORD", ADDRESS_LIST = "ADDRESS_LIST", CONSUME_TIME = "CONSUME_TIME";
-    public static final String EATER_DELIMITER = "，";
-    private Long consumeTime;
-    private TextView consumeTimeText, addressText;
-    private Spinner addressSpinner;
-    private EditText editFriends, editComment, editTotalCost;
-    private View consumeFoodPlaceholder;
+    public static final String DATA = "CONSUME_RECORD";
+    public static final String EATER_DELIMITER = "、";
+    private TextView consumeTimeText, addressText, eatersText, consumeRecordComment, consumeTotalCost, restaurantName, foodText;
     private ConsumeFoodAdapter foodAdapter;
-    private ItemTouchHelper dragHelper;
-    private ArrayList<AddressVO> addressList;
     private ConsumeRecordVO currentRecord;
 
     @Override
@@ -65,209 +43,79 @@ public class ShowConsumeRecordActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_consume_record);
 
-        ImageButton cancelButton = findViewById(R.id.cancel_button);
-        ImageButton confirmButton = findViewById(R.id.confirm_button);
+        ImageButton backButton = findViewById(R.id.back_button);
+        ImageButton moreButton = findViewById(R.id.more_button);
         consumeTimeText = findViewById(R.id.consume_time_text);
         addressText = findViewById(R.id.address_text);
-        addressSpinner = findViewById(R.id.address_spinner);
-        editFriends = findViewById(R.id.edit_friends);
-        editComment = findViewById(R.id.edit_comment);
-        editTotalCost = findViewById(R.id.edit_total_cost_text);
-        consumeFoodPlaceholder = findViewById(R.id.consume_food_placeholder);
-        ImageButton addConsumeFoodButton = findViewById(R.id.add_consume_food_button);
-        RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
-        foodAdapter = new ConsumeFoodAdapter(this);
+        eatersText = findViewById(R.id.eaters_text);
+        consumeRecordComment = findViewById(R.id.consume_record_comment);
+        consumeTotalCost = findViewById(R.id.consume_total_cost);
+        restaurantName = findViewById(R.id.restaurant_name);
+        foodText = findViewById(R.id.food_text);
+        RecyclerView foodRecyclerView = findViewById(R.id.food_recycler_view);
+        foodAdapter = new ConsumeFoodAdapter(this, false);
 
-        if (savedInstanceState == null){
-            Intent intent = getIntent();
-            currentRecord = intent.getParcelableExtra(DATA);
-            addressList = intent.getParcelableArrayListExtra(ADDRESS_LIST);
-        } else {
-            currentRecord = savedInstanceState.getParcelable(DATA);
-            addressList = savedInstanceState.getParcelableArrayList(ADDRESS_LIST);
-            consumeTime = savedInstanceState.getLong(CONSUME_TIME);
-        }
-
-        setAddress(addressList);
+        Intent intent = getIntent();
+        currentRecord = intent.getParcelableExtra(DATA);
+        foodRecyclerView.setAdapter(foodAdapter);
         setData(currentRecord);
-        dragHelper = new ItemTouchHelper(new DragDropCallback<>(foodAdapter));
-        dragHelper.attachToRecyclerView(consumeRecordRecyclerView);
-        SwipeToDeleteUtils.apply(consumeRecordRecyclerView, this, this::removeFood, this::addFood, RestaurantFoodVO::getName);
-        consumeRecordRecyclerView.setAdapter(foodAdapter);
-        cancelButton.setOnClickListener(this::onCancel);
-        confirmButton.setOnClickListener(this::onConfirm);
-        consumeTimeText.setOnClickListener(v -> {
-            new CardDatePickerDialog.Builder(this)
-                    .setLabelText("年","月","日","时","分")
-                    .setOnChoose("选择", this::setConsumeTime)
-                    .setDefaultTime(Optional.ofNullable(consumeTime).orElse(System.currentTimeMillis()))
-                    .showBackNow(true)
-                    .build().show();
+        backButton.setOnClickListener(v -> finish());
+        moreButton.setOnClickListener(this::showMoreMenu);
+    }
+
+    private void showMoreMenu(View view){
+        PopupMenuHelper helper = new PopupMenuHelper(R.menu.show_restaurant_menu, this, view);
+        helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
+            switch (menuItem.getItemId()){
+                case R.id.edit:
+                    Intent intent = new Intent(this, EditConsumeRecordActivity.class);
+                    intent.putExtra(EditConsumeRecordActivity.DATA, currentRecord);
+                    startActivityForResult(intent, ActivityCodeConstant.EDIT_CONSUME_RECORD);
+                    overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+                    return true;
+                case R.id.delete_item:
+                    return true;
+            }
+            return false;
         });
-        addConsumeFoodButton.setOnClickListener(v -> showFoodDialog(null));
-        addConsumeFoodButton.setOnLongClickListener(v -> {
-            ImageUtils.openGallery(this);
-            return true;
-        });
-        consumeFoodPlaceholder.setOnClickListener(v -> showFoodDialog(null));
-        foodAdapter.setClickedListener((v, d) -> foodAdapter.set(d, v.getBindingAdapterPosition()));
-    }
-
-    private void showFoodDialog(RestaurantFoodVO data) {
-        Intent intent = new Intent(this, EditRestaurantFoodActivity.class);
-        intent.putExtra(ShowConsumeRecordActivity.DATA, data);
-        startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
-        overridePendingTransition(R.anim.push_down_in, 0);
-    }
-
-    private void addFood(RestaurantFoodVO item){
-        item.setIndex(foodAdapter.getItemCount());
-        foodAdapter.add(item);
-        consumeFoodPlaceholder.setVisibility(View.GONE);
-    }
-
-    private RestaurantFoodVO removeFood(int index){
-        RestaurantFoodVO item = foodAdapter.getDataAt(index);
-        foodAdapter.removeAt(index);
-        for (int i = index; i < foodAdapter.getItemCount(); i++) {
-            foodAdapter.getDataAt(i).setIndex(i);
-        }
-        if (foodAdapter.isEmpty()){
-            consumeFoodPlaceholder.setVisibility(View.VISIBLE);
-        }
-        return item;
-    }
-
-    private void onCancel(View view){
-        finish();
-    }
-
-    private void onConfirm(View view){
-        String totalCost = editTotalCost.getText().toString();
-        if (StringUtils.isEmpty(totalCost)){
-            editTotalCost.setText("0");
-        }
-        else if (!NumberUtils.isParsable(totalCost)){
-            Toast.makeText(this, "总金额不合法！", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (foodAdapter.isEmpty()){
-            Toast.makeText(this, "菜品不能为空！", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        finishWithData(buildData());
+        helper.show();
     }
 
     private void setData(ConsumeRecordVO src){
         if (src == null){
-            setConsumeTime(System.currentTimeMillis());
-            addressSpinner.setSelection(0);
             return;
         }
-        setConsumeTime(src.getConsumeTime());
+        consumeTimeText.setText("\uD83D\uDCC5 时间：" + DateFormatUtils.format(src.getConsumeTime(), ConsumeRecordVO.CONSUME_TIME_FORMAT));
+        consumeTotalCost.setText("\uD83D\uDCB0 总消费：￥" + DoubleUtils.truncateZero(src.getTotalCost()));
         List<String> eaters = src.getEaters();
-        if (CollectionUtils.isNotEmpty(eaters)){
-            editFriends.setText(String.join(EATER_DELIMITER, eaters));
-        }
-        AddressVO address = src.getAddress();
-        if (address == null){
-            addressSpinner.setSelection(0);
+        if (CollectionUtils.isEmpty(eaters)){
+            eatersText.setVisibility(View.GONE);
         } else {
-            int addressIndex = new AList<>(addressList).indexOf(a -> a.getId() == address.getId() || StringUtils.equals(a.buildFullAddress(), address.buildFullAddress()));
-            addressSpinner.setSelection(addressIndex);
+            eatersText.setVisibility(View.VISIBLE);
+            eatersText.setText("\uD83E\uDD62 饭伙：" + String.join(EATER_DELIMITER, eaters));
         }
-        editComment.setText(src.getComment());
-        editTotalCost.setText(DoubleUtils.truncateZero(src.getTotalCost()));
+        addressText.setText("\uD83D\uDCCD 地址：" + src.getAddress().buildFullAddress());
+        String comment = src.getComment();
+        if (StringUtils.isEmpty(comment)){
+            consumeRecordComment.setVisibility(View.GONE);
+        } else {
+            consumeRecordComment.setVisibility(View.VISIBLE);
+            consumeRecordComment.setText(comment);
+        }
+        RestaurantVO restaurant = RestaurantDaoService.selectById(src.getRestaurantId());
+        if (restaurant != null){
+            restaurantName.setText(restaurant.getName());
+        }
+        foodText.setText(String.format("菜品（%d）", src.getFoods().size()));
         foodAdapter.setData(src.getFoods());
-        foodAdapter.getData().For(i -> foodAdapter.getDataAt(i).setIndex(i));
-        if (CollectionUtils.isEmpty(src.getFoods())){
-            consumeFoodPlaceholder.setVisibility(View.VISIBLE);
-        } else {
-            consumeFoodPlaceholder.setVisibility(View.GONE);
-        }
-    }
-
-    private void setConsumeTime(long time){
-        consumeTime = time;
-        consumeTimeText.setText(DateFormatUtils.format(time, ConsumeRecordVO.CONSUME_TIME_FORMAT));
-    }
-
-    private void setAddress(List<AddressVO> addressList){
-        if (CollectionUtils.isEmpty(addressList)){
-            return;
-        }
-        if (addressList.size() == 1){
-            AddressVO address = addressList.get(0);
-            addressText.setText(address.buildSimpleAddress());
-            addressText.setVisibility(View.VISIBLE);
-            addressSpinner.setVisibility(View.GONE);
-        } else {
-            List<String> addressSelections = addressList.stream().map(AddressVO::buildSimpleAddress).collect(Collectors.toList());
-            addressSpinner.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, addressSelections));
-            addressText.setVisibility(View.GONE);
-            addressSpinner.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private ConsumeRecordVO buildData(){
-        ConsumeRecordVO dst = currentRecord == null ? new ConsumeRecordVO() : JsonUtils.copy(currentRecord);
-        dst.setConsumeTime(consumeTime);
-        dst.setAddress(addressList.get(addressSpinner.getSelectedItemPosition()));
-        dst.setEaters(Arrays.stream(editFriends.getText().toString().trim().split(EATER_DELIMITER)).filter(StringUtils::isNoneBlank).collect(Collectors.toList()));
-        String totalCost = editTotalCost.getText().toString();
-        if (NumberUtils.isParsable(totalCost)){
-            dst.setTotalCost(Double.parseDouble(totalCost));
-        }
-        dst.setComment(editComment.getText().toString());
-        dst.setFoods(foodAdapter.getData());
-        return dst;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(DATA, buildData());
-        outState.putParcelableArrayList(ADDRESS_LIST, addressList);
-        outState.putLong(CONSUME_TIME, consumeTime);
-    }
-
-    private void finishWithData(ConsumeRecordVO data){
-        Intent intent = new Intent();
-        intent.putExtra(DATA, data);
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.push_down_out, 0);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT_FOOD){
-            RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
-            int index = food.getIndex();
-            if (index == -1){
-                addFood(food);
-            } else {
-                foodAdapter.set(food, index);
-            }
-        }
-        else if (requestCode == ActivityCodeConstant.GALLERY){
-            RestaurantVO restaurantVO = RestaurantUtils.buildFromImages(this, data.getClipData());
-            List<ConsumeRecordVO> records = restaurantVO.getRecords();
-            Optional<Long> minConsumeTimeOp = records.stream().map(ConsumeRecordVO::getConsumeTime).min(Comparator.comparing(Function.identity()));
-            if (minConsumeTimeOp.isPresent()){
-                long minConsumeTime = minConsumeTimeOp.get();
-                if (minConsumeTime != 0 && minConsumeTime < consumeTime){
-                    setConsumeTime(minConsumeTime);
-                }
-            }
-            foodAdapter.add(records.stream().flatMap(i -> i.getFoods().stream()).collect(Collectors.toList()));
+        if (requestCode == ActivityCodeConstant.EDIT_CONSUME_RECORD){
+
         }
     }
 }

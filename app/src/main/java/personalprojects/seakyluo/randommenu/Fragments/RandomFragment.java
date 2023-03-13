@@ -20,7 +20,6 @@ import org.apache.commons.lang3.RandomUtils;
 
 import personalprojects.seakyluo.randommenu.dialogs.FilterDialog;
 import personalprojects.seakyluo.randommenu.dialogs.MenuDialog;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
@@ -61,14 +60,14 @@ public class RandomFragment extends Fragment {
             excluded_tags.copyFrom(excluded);
             filterDialog.dismiss();
             Reset();
-            foodCardFragment.SetFood(NextFood());
+            foodCardFragment.fillFood(NextFood());
         });
         filterDialog.SetOnResetListener(v -> {
             filterDialog.SetData(preferred_tags.copy(), excluded_tags.copy());
             preferred_tags.clear();
             excluded_tags.clear();
             Reset();
-            foodCardFragment.SetFood(NextFood());
+            foodCardFragment.fillFood(NextFood());
         });
         ImageButton filterButton = view.findViewById(R.id.filter_button);
         filterButton.setOnClickListener(v -> {
@@ -80,7 +79,7 @@ public class RandomFragment extends Fragment {
             food_pool.removeAll(data);
             menu.copyFrom(data);
             SetMenuHeader();
-            if (menu.contains(foodCardFragment.GetFood())) NextFood();
+            if (menu.contains(foodCardFragment.getFood())) NextFood();
         });
         menuDialog.SetFoodRemovedListener((viewHolder, data) -> {
             menu.remove(data);
@@ -99,7 +98,7 @@ public class RandomFragment extends Fragment {
             menuDialog.showNow(getChildFragmentManager(), MenuDialog.TAG);
         });
         Reset();
-        if (!food_pool.isEmpty()) foodCardFragment.loadFood(food_pool.pop(0));
+        if (!food_pool.isEmpty()) foodCardFragment.setFood(food_pool.pop(0));
         return view;
     }
 
@@ -113,7 +112,7 @@ public class RandomFragment extends Fragment {
             Reset();
             Toast.makeText(getContext(), getString(R.string.reshuffle), Toast.LENGTH_SHORT).show();
         }
-        return food_pool.isEmpty() ? null : foodCardFragment.SetFood(food_pool.pop(0));
+        return food_pool.isEmpty() ? null : foodCardFragment.fillFood(food_pool.pop(0));
     }
 
     private AList<Food> Reset(){
@@ -125,7 +124,7 @@ public class RandomFragment extends Fragment {
         return food_pool.copyFrom(source);
     }
 
-    public void Refresh() { foodCardFragment.Refresh(); }
+    public void Refresh() { foodCardFragment.refresh(); }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -146,7 +145,7 @@ public class RandomFragment extends Fragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                menu.with(foodCardFragment.GetFood(), 0);
+                menu.with(foodCardFragment.getFood(), 0);
                 NextFood();
             }
 

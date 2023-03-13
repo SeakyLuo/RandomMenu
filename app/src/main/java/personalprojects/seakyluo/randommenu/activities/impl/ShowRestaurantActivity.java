@@ -50,14 +50,9 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
         consumeRecordsText = findViewById(R.id.consume_record_text);
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
 
-        long restaurantId;
-        if (savedInstanceState == null){
-            restaurantId = getIntent().getLongExtra(DATA_ID, 0);
-            restaurant = getIntent().getParcelableExtra(DATA);
-        } else {
-            restaurantId = savedInstanceState.getLong(DATA_ID, 0);
-            restaurant = savedInstanceState.getParcelable(DATA);
-        }
+        Intent intent = getIntent();
+        long restaurantId = intent.getLongExtra(DATA_ID, 0);
+        restaurant = intent.getParcelableExtra(DATA);
         consumeRecordAdapter = new ConsumeRecordDisplayAdapter(this, restaurantId);
         restaurant = Optional.ofNullable(restaurant).orElse(RestaurantDaoService.selectById(restaurantId));
         consumeRecordRecyclerView.setAdapter(consumeRecordAdapter);

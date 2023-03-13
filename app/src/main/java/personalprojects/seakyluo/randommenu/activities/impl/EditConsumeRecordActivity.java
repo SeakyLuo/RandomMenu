@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -78,7 +77,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         consumeFoodPlaceholder = findViewById(R.id.consume_food_placeholder);
         ImageButton addConsumeFoodButton = findViewById(R.id.add_consume_food_button);
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
-        foodAdapter = new ConsumeFoodAdapter(this);
+        foodAdapter = new ConsumeFoodAdapter(this, true);
 
         if (savedInstanceState == null){
             Intent intent = getIntent();
@@ -90,6 +89,9 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             consumeTime = savedInstanceState.getLong(CONSUME_TIME);
         }
 
+        if (addressList == null){
+            addressList = (ArrayList<AddressVO>) AddressDaoService.selectByRestaurant(currentRecord.getRestaurantId());
+        }
         setData(currentRecord);
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(foodAdapter));
         dragHelper.attachToRecyclerView(consumeRecordRecyclerView);
@@ -105,16 +107,15 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
                     .showBackNow(true)
                     .build().show();
         });
-        addConsumeFoodButton.setOnClickListener(v -> showFoodDialog(null));
+        addConsumeFoodButton.setOnClickListener(v -> editRestaurantFood(null));
         addConsumeFoodButton.setOnLongClickListener(v -> {
             ImageUtils.openGallery(this);
             return true;
         });
-        consumeFoodPlaceholder.setOnClickListener(v -> showFoodDialog(null));
-        foodAdapter.setClickedListener((v, d) -> foodAdapter.set(d, v.getBindingAdapterPosition()));
+        consumeFoodPlaceholder.setOnClickListener(v -> editRestaurantFood(null));
     }
 
-    private void showFoodDialog(RestaurantFoodVO data) {
+    private void editRestaurantFood(RestaurantFoodVO data) {
         Intent intent = new Intent(this, EditRestaurantFoodActivity.class);
         intent.putExtra(EditConsumeRecordActivity.DATA, data);
         startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
@@ -238,11 +239,6 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         intent.putExtra(DATA, data);
         setResult(RESULT_OK, intent);
         finish();
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
     }
 
     @Override

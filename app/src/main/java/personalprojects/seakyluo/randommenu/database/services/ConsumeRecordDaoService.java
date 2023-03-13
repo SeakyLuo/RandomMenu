@@ -146,6 +146,7 @@ public class ConsumeRecordDaoService {
         }
         ConsumeRecordDAO dst = new ConsumeRecordDAO();
         dst.setId(src.getId());
+        dst.setRestaurantId(src.getRestaurantId());
         dst.setConsumeTime(src.getConsumeTime());
         dst.setAddressId(src.getAddress().getId());
         dst.setEaters(JsonUtils.toJson(src.getEaters()));
@@ -161,6 +162,7 @@ public class ConsumeRecordDaoService {
         }
         ConsumeRecordVO dst = new ConsumeRecordVO();
         dst.setId(src.getId());
+        dst.setRestaurantId(src.getRestaurantId());
         dst.setConsumeTime(src.getConsumeTime());
         dst.setAddress(AddressVO.builder().id(src.getAddressId()).build());
         dst.setEaters(JsonUtils.fromJson(src.getEaters(), new TypeToken<List<String>>(){}));

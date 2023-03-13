@@ -1,6 +1,5 @@
 package personalprojects.seakyluo.randommenu.adapters.impl;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -8,22 +7,22 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import lombok.Setter;
-import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantFoodActivity;
+import androidx.appcompat.app.AppCompatActivity;
+
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
-    @Setter
-    private DataItemClickedListener<RestaurantFoodVO> clickedListener;
+    private boolean canEdit;
 
-    public ConsumeFoodAdapter(Context context){
+    public ConsumeFoodAdapter(Context context, boolean canEdit){
         this.context = context;
+        this.canEdit = canEdit;
     }
 
     @Override
@@ -43,13 +42,19 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
         data.setIndex(position);
         fillFood(data, foodName, foodPrice, foodComment, foodImage);
         view.setOnClickListener(v -> {
-            Activity activity = (Activity) context;
-            Intent intent = new Intent(context, EditRestaurantFoodActivity.class);
-            intent.putExtra(EditRestaurantFoodActivity.DATA, data);
-            activity.startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
-            activity.overridePendingTransition(R.anim.push_down_in, 0);
+            AppCompatActivity activity = (AppCompatActivity) context;
+            if (canEdit){
+                Intent intent = new Intent(activity, EditRestaurantFoodActivity.class);
+                intent.putExtra(EditRestaurantFoodActivity.DATA, data);
+                activity.startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
+                activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+            } else {
+//                FoodCardDialog dialog = new FoodCardDialog();
+//                dialog.setFood(data);
+//                dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
+            }
         });
-        if (getData().size() == 1){
+        if (!canEdit || getData().size() == 1){
             reorderButton.setVisibility(View.GONE);
         }
         reorderButton.setOnTouchListener((v, event) -> dragStart(viewHolder, event));
@@ -57,8 +62,10 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
 
     @Override
     protected void dataSizeChanged() {
-        for (CustomViewHolder viewHolder : viewHolders){
-            viewHolder.getView().findViewById(R.id.reorder_button).setVisibility(data.size() == 1 ? View.GONE : View.VISIBLE);
+        if (canEdit){
+            for (CustomViewHolder viewHolder : viewHolders){
+                viewHolder.getView().findViewById(R.id.reorder_button).setVisibility(data.size() == 1 ? View.GONE : View.VISIBLE);
+            }
         }
     }
 

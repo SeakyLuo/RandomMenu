@@ -5,4 +5,5 @@
     <dimen name="settings_item_padding_start">16dp</dimen>
     <dimen name="settings_item_padding_end">8dp</dimen>
     <dimen name="settings_item_padding_vertical">12dp</dimen>
+    <dimen name="restaurant_display_marginHorizontal">10dp</dimen>
 </resources>

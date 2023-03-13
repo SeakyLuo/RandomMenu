@@ -55,10 +55,10 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
             eatersText.setVisibility(View.GONE);
         } else {
             eatersText.setVisibility(View.VISIBLE);
-            eatersText.setText("饭伙：" + eaters);
+            eatersText.setText("\uD83E\uDD62 饭伙：" + eaters);
         }
         consumeTime.setText(data.formatConsumeTimeToDay());
-        consumeTotalCost.setText("总消费：￥" + DoubleUtils.truncateZero(data.getTotalCost()));
+        consumeTotalCost.setText("\uD83D\uDCB0 总消费：￥" + DoubleUtils.truncateZero(data.getTotalCost()));
         String comment = data.getComment();
         if (StringUtils.isEmpty(comment)){
             consumeRecordComment.setVisibility(View.GONE);
