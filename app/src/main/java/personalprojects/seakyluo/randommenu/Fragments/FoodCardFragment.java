@@ -51,7 +51,7 @@ public class FoodCardFragment extends Fragment {
     private TagsFragment tagsFragment;
     private ImageViewerFragment imageViewerFragment;
     private TextView foodNameText, foodNoteFrontText, foodNoteBackText;
-    private ImageView foodImage, likedImage;
+    private ImageView likedImage;
     private ImageButton moreButton;
     @Getter
     private BaseFood food;
@@ -68,7 +68,6 @@ public class FoodCardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_food_card, container, false);
         foodNameText = view.findViewById(R.id.food_name);
-        foodImage = view.findViewById(R.id.food_image);
         likedImage = view.findViewById(R.id.liked_image);
         foodNoteFrontText = view.findViewById(R.id.food_note_front);
         foodNoteBackText = view.findViewById(R.id.food_note_back);
@@ -78,9 +77,10 @@ public class FoodCardFragment extends Fragment {
 
         FragmentManager fragmentManager = getChildFragmentManager();
         if (savedInstanceState == null){
-            fragmentManager.beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).
-                    add(R.id.imageviewer_frame, imageViewerFragment = new ImageViewerFragment()).
-                    commit();
+            fragmentManager.beginTransaction()
+                    .add(R.id.tags_frame, tagsFragment = new TagsFragment())
+                    .commit();
+            imageViewerFragment = (ImageViewerFragment) fragmentManager.findFragmentById(R.id.imageviewer_fragment);
         }
         else {
             tagsFragment = (TagsFragment) fragmentManager.getFragment(savedInstanceState, TagsFragment.TAG);
@@ -135,7 +135,7 @@ public class FoodCardFragment extends Fragment {
                         startActivityForResult(editFoodIntent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
                     } else {
                         Intent editFoodIntent = new Intent(getContext(), EditSelfMadeFoodActivity.class);
-                        editFoodIntent.putExtra(EditSelfMadeFoodActivity.FOOD, food.asSelfMadeFood());
+                        editFoodIntent.putExtra(EditSelfMadeFoodActivity.FOOD_ID, food.asSelfMadeFood().getId());
                         editFoodIntent.putExtra(EditSelfMadeFoodActivity.IS_DRAFT, true);
                         startActivityForResult(editFoodIntent, ActivityCodeConstant.EDIT_SELF_FOOD);
                     }
@@ -246,7 +246,6 @@ public class FoodCardFragment extends Fragment {
         foodNameText.setText(food.getName());
         foodNoteBackText.setText(food.getNote());
         setFoodNote(food);
-        foodImage.setVisibility(food.hasImage() ? View.GONE : View.VISIBLE);
         imageViewerFragment.setImages(food.getImages(), food.getCover());
         showFoodFavorite(food.isFavorite());
         tagsFragment.setData(food.getTags());

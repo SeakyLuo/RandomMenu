@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,8 +114,8 @@ public class ImageViewerFragment extends Fragment {
     }
 
     private void setButtonVisibility(int current){
-        prevImageButton.setVisibility(current <= 0 ? View.INVISIBLE : View.VISIBLE);
-        nextImageButton.setVisibility(current < 0 || current == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
+        prevImageButton.setVisibility(current <= 0 ? View.GONE : View.VISIBLE);
+        nextImageButton.setVisibility(current < 0 || current == adapter.getCount() - 1 ? View.GONE : View.VISIBLE);
     }
 
     public void setImages(List<String> images, String cover) {

@@ -55,7 +55,7 @@ public class BaseFood {
         dst.setName(src.getName());
         String cover = src.getCover();
         dst.setCover(cover);
-        dst.setImages(Lists.newArrayList(cover));
+        dst.setImages(src.getImages());
         List<String> notes = new ArrayList<>();
         double price = src.getPrice();
         if (price != 0){
