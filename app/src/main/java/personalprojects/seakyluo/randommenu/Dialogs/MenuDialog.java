@@ -5,12 +5,19 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.impl.ChooseFoodActivity;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
@@ -24,12 +31,14 @@ public class MenuDialog extends DialogFragment {
     public static final String TAG = "MenuDialog";
     private FoodListFragment fragment = new FoodListFragment();
     private Button clear_button, add_button;
+    @Setter
     private View.OnClickListener clearListener;
-    private DataItemClickedListener<Food> foodRemovedListener;
-    private DataItemClickedListener<AList<Food>> foodAddedListener;
+    @Setter
+    private Consumer<Food> foodRemovedListener;
+    @Setter
+    private Consumer<List<Food>> foodAddedListener;
     private TextView header_text;
     private String header;
-    private boolean chooseFoodClicked = false;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -38,8 +47,8 @@ public class MenuDialog extends DialogFragment {
         clear_button = view.findViewById(R.id.clear_button);
         header_text = view.findViewById(R.id.header_text);
 
-        fragment.setFoodRemovedListener((viewHolder, data) -> {
-            if (foodRemovedListener != null) foodRemovedListener.click(viewHolder, data);
+        fragment.setFoodRemovedListener(data -> {
+            if (foodRemovedListener != null) foodRemovedListener.accept(data);
             fragment.removeFood(data);
         });
         if (savedInstanceState == null){
@@ -57,19 +66,28 @@ public class MenuDialog extends DialogFragment {
         return view;
     }
 
-    public void SetHeaderText(String text) { header = text; if (header_text != null) header_text.setText(header); }
-    public void SetOnClearListener(View.OnClickListener listener) { clearListener = listener; if (clear_button != null) clear_button.setOnClickListener(clearListener); }
-    public void SetFoodRemovedListener(DataItemClickedListener<Food> listener) { foodRemovedListener = listener; }
-    public void SetFoodAddedListener(DataItemClickedListener<AList<Food>> listener) { foodAddedListener = listener; }
-    public void SetData(AList<Food> data) { fragment.setData(data); }
-    public void Clear() { fragment.clear(); }
+    public void setHeaderText(String text) {
+        header = text;
+        if (header_text != null){
+            header_text.setText(header);
+        }
+    }
+
+    public void setData(AList<Food> data) {
+        fragment.setData(data);
+    }
+
+    public void clear() {
+        fragment.clear();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_CANCELED) return;
-        fragment.setData(data.getParcelableArrayListExtra(ChooseFoodActivity.TAG));
-        foodAddedListener.click(null, fragment.getData());
+        List<Food> foods = data.getParcelableArrayListExtra(ChooseFoodActivity.TAG);
+        fragment.setData(foods);
+        foodAddedListener.accept(foods);
     }
 
     @Override

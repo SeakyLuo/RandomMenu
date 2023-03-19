@@ -9,7 +9,6 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
 
 @NoArgsConstructor
 @Data

@@ -39,11 +39,11 @@ public class FilterDialog extends DialogFragment {
         return view;
     }
 
-    public void SetData(AList<Tag> preferred, AList<Tag> excluded){
+    public void setData(AList<Tag> preferred, AList<Tag> excluded){
         prefer.setData(preferred);
         exclude.setData(excluded);
     }
-    public void SetTagFilterListener(TagFilterListener listener) { tagFilterListener = listener; }
-    public void SetOnResetListener(View.OnClickListener listener) { resetListener = listener; }
+    public void setTagFilterListener(TagFilterListener listener) { tagFilterListener = listener; }
+    public void setOnResetListener(View.OnClickListener listener) { resetListener = listener; }
 }
 

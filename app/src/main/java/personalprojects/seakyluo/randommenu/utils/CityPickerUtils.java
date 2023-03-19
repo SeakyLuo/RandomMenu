@@ -4,7 +4,7 @@ import com.lljjcoder.citywheel.CityConfig;
 
 import java.util.Optional;
 
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 
 public class CityPickerUtils {
 

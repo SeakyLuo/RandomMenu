@@ -10,7 +10,7 @@ import personalprojects.seakyluo.randommenu.database.dao.Page;
 import personalprojects.seakyluo.randommenu.database.dao.PagedData;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;

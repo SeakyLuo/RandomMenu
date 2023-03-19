@@ -13,17 +13,23 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import personalprojects.seakyluo.randommenu.database.AppDatabase;
+import personalprojects.seakyluo.randommenu.database.dao.SelfFoodImageDAO;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantFoodDaoService;
+import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
+import personalprojects.seakyluo.randommenu.database.services.SelfFoodImageDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
 import personalprojects.seakyluo.randommenu.activities.impl.DislikeActivity;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
@@ -37,6 +43,7 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.ToCookActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.ToEatActivity;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
+import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
@@ -83,14 +90,22 @@ public class SettingsFragment extends Fragment {
         view.findViewById(R.id.import_data_button).setOnClickListener(v -> importData());
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> exportData());
         view.findViewById(R.id.save_data_button).setOnClickListener(v -> {
-            Settings.settings.Tags.forEach(t -> {
-                t.setCounter(Settings.settings.Foods.find(f -> f.hasTag(t)).size());
-            });
-            Settings.settings.sortTags();
             Helper.save();
             Toast.makeText(getContext(), R.string.data_saved, Toast.LENGTH_SHORT).show();
         });
         return view;
+    }
+
+    private void clearLocalImages(Collection<String> using){
+        if (CollectionUtils.isEmpty(using)){
+            return;
+        }
+        Set<String> paths = new HashSet<>(using);
+        for (File file : Helper.ImageFolder.listFiles()) {
+            if (!paths.contains(file.getName())){
+                file.delete();
+            }
+        }
     }
 
     private void clearData(){
@@ -99,16 +114,11 @@ public class SettingsFragment extends Fragment {
             dialog.setMessage(R.string.clearing_cache);
             new Thread(() -> {
                 // Removing unused images
-                if (Settings.settings.Foods.size() > 0){
-                    Set<String> paths = Settings.settings.Foods.stream().flatMap(f -> f.Images.stream()).collect(Collectors.toSet());
-                    paths.addAll(RestaurantFoodDaoService.selectPaths());
-                    Arrays.stream(Helper.ImageFolder.listFiles())
-                            .filter(file -> !paths.contains(file.getName()))
-                            .forEach(File::delete);
-                }
+                clearLocalImages(SelfFoodImageDaoService.selectPaths());
+                clearLocalImages(RestaurantFoodDaoService.selectPaths());
                 // Removing non-existent images
-                Set<String> files = Arrays.stream(Helper.ImageFolder.listFiles()).map(File::getName).collect(Collectors.toSet());
-                Settings.settings.Foods.ForEach(food -> food.Images.removeIf(i -> !files.contains(i)));
+                List<String> filenames = Arrays.stream(Helper.ImageFolder.listFiles()).map(File::getName).collect(Collectors.toList());
+                SelfFoodService.deleteNonExistentImage(filenames);
                 clearFolder(Helper.LogFolder);
                 clearFolder(Helper.TempFolder);
                 clearFolder(Helper.TempUnzipFolder);
@@ -230,7 +240,7 @@ public class SettingsFragment extends Fragment {
         switch (requestCode){
             case MyFavoritesActivity.REQUEST_CODE:
                 if (resultCode == RESULT_OK){
-                    ((MainActivity)getActivity()).randomFragment.Refresh();
+                    ((MainActivity)getActivity()).randomFragment.refresh();
                 }
                 break;
             case FILE_PICKER:

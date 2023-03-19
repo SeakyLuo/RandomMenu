@@ -14,7 +14,7 @@ import android.widget.Toast;
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 
 public class AddressDialog extends DialogFragment {
     public static final String TAG = "AddressDialog";

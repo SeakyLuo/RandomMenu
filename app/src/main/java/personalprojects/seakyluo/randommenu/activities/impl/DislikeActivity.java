@@ -47,7 +47,7 @@ public class DislikeActivity extends SwipeBackActivity {
         findViewById(R.id.sf_fab).setOnClickListener(v -> {
             InputDialog dialog = new InputDialog();
             dialog.SetHint(getString(R.string.food_name));
-            dialog.SetConfirmListener(text -> {
+            dialog.setConfirmListener(text -> {
                 if (Settings.settings.DislikeFood.remove(text)) adapter.remove(text);
                 Settings.settings.DislikeFood.with(text, 0);
                 adapter.add(text, 0);

@@ -9,7 +9,7 @@ import org.apache.commons.collections.CollectionUtils;
 import java.util.List;
 import java.util.Locale;
 
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 
 public class AddressUtils {
 

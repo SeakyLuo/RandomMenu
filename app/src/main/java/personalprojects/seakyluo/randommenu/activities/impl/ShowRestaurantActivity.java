@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,19 +18,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordDisplayAdapter;
-import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordEditAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
-public class ShowRestaurantActivity extends SwipeBackActivity {
+public class ShowRestaurantActivity extends AppCompatActivity {
     public static final String DATA_ID = "RESTAURANT_ID", DATA = "RESTAURANT";
     private TextView restaurantNameText, foodTypeText, averagePriceText, restaurantComment, consumeRecordsText, addressText;
     private ConsumeRecordDisplayAdapter consumeRecordAdapter;
@@ -111,8 +110,12 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
         }
         List<ConsumeRecordVO> records = src.getRecords();
         records.sort(Comparator.comparing(ConsumeRecordVO::getConsumeTime).reversed());
+        consumeRecordAdapter.setShowAddress(src.getAddressList().size() != 1);
+        int foodCount = records.stream().mapToInt(r -> r.getFoods().size()).sum();
+        int recordSize = records.size();
+        consumeRecordAdapter.setVertical(recordSize == 1 || foodCount <= 7);
         consumeRecordAdapter.setData(records);
-        consumeRecordsText.setText(String.format("消费记录（%d）", records.size()));
+        consumeRecordsText.setText(String.format("消费记录（%d）", recordSize));
     }
 
     @Override

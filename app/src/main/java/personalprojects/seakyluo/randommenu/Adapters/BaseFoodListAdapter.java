@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.impl.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.Food;
@@ -14,10 +15,10 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
+    @Setter
     protected DataItemClickedListener<Food> foodClickedListener;
+    @Setter
     protected boolean showLikeImage = true;
-    public void setFoodClickedListener(DataItemClickedListener<Food> foodClickedListener) { this.foodClickedListener = foodClickedListener; }
-    public void setShowLikeImage(boolean showLikeImage) { this.showLikeImage = showLikeImage; }
 
     @Override
     protected void fillViewHolder(CustomViewHolder viewHolder, Food data, int position) {
@@ -35,7 +36,7 @@ public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
         foodName.setOnClickListener(v -> {
             if (data.hasImage()){
                 Intent intent = new Intent(context, FullScreenImageActivity.class);
-                intent.putExtra(FullScreenImageActivity.IMAGE, data.Images);
+                intent.putExtra(FullScreenImageActivity.IMAGE, data.getImages());
                 context.startActivity(intent);
             }else{
                 Toast.makeText(context, R.string.no_food_image, Toast.LENGTH_SHORT).show();
@@ -43,13 +44,8 @@ public abstract class BaseFoodListAdapter extends CustomAdapter<Food> {
         });
 
         ImageUtils.loadImage(view, data.getCover(), foodImage);
-        foodName.setText(data.Name);
+        foodName.setText(data.getName());
         likedImage.setVisibility(showLikeImage && data.isFavorite() ? View.VISIBLE : View.GONE);
-    }
-
-
-    public void setContext(Context context){
-        this.context = context;
     }
 
 }

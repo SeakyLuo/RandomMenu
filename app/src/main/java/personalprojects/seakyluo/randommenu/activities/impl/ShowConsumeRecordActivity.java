@@ -9,27 +9,22 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.loper7.date_time_picker.dialog.CardDatePickerDialog;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.constants.EmojiConstant;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
-import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
-import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 public class ShowConsumeRecordActivity extends SwipeBackActivity {
     public static final String DATA = "CONSUME_RECORD";
@@ -85,22 +80,22 @@ public class ShowConsumeRecordActivity extends SwipeBackActivity {
         if (src == null){
             return;
         }
-        consumeTimeText.setText("\uD83D\uDCC5 时间：" + DateFormatUtils.format(src.getConsumeTime(), ConsumeRecordVO.CONSUME_TIME_FORMAT));
-        consumeTotalCost.setText("\uD83D\uDCB0 总消费：￥" + DoubleUtils.truncateZero(src.getTotalCost()));
+        consumeTimeText.setText(EmojiConstant.CONSUME_TIME + " 时间：" + DateFormatUtils.format(src.getConsumeTime(), ConsumeRecordVO.CONSUME_TIME_FORMAT));
+        consumeTotalCost.setText(EmojiConstant.TOTAL_COST + " 总消费：￥" + DoubleUtils.truncateZero(src.getTotalCost()));
         List<String> eaters = src.getEaters();
         if (CollectionUtils.isEmpty(eaters)){
             eatersText.setVisibility(View.GONE);
         } else {
             eatersText.setVisibility(View.VISIBLE);
-            eatersText.setText("\uD83E\uDD62 饭伙：" + String.join(EATER_DELIMITER, eaters));
+            eatersText.setText(EmojiConstant.EATERS + " 饭伙：" + String.join(EATER_DELIMITER, eaters));
         }
-        addressText.setText("\uD83D\uDCCD 地址：" + src.getAddress().buildFullAddress());
+        addressText.setText(EmojiConstant.ADDRESS + " 地址：" + src.getAddress().buildFullAddress());
         String comment = src.getComment();
         if (StringUtils.isEmpty(comment)){
             consumeRecordComment.setVisibility(View.GONE);
         } else {
             consumeRecordComment.setVisibility(View.VISIBLE);
-            consumeRecordComment.setText("\uD83D\uDCDD 评价：" + comment);
+            consumeRecordComment.setText(EmojiConstant.COMMENT + " 评价：" + comment);
         }
         RestaurantVO restaurant = RestaurantDaoService.selectById(src.getRestaurantId());
         if (restaurant != null){

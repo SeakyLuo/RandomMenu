@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import lombok.NonNull;
@@ -20,7 +20,7 @@ public class SwipeToDeleteUtils {
     public static <T> void apply(RecyclerView recyclerView,
                                  Context context,
                                  Function<Integer, T> remove,
-                                 Consumer<T> add,
+                                 BiConsumer<Integer, T> add,
                                  Function<T, String> getName) {
         apply(recyclerView, context, null, remove, add, getName);
     }
@@ -29,7 +29,7 @@ public class SwipeToDeleteUtils {
                                  Context context,
                                  Function<Integer, Boolean> check,
                                  Function<Integer, T> remove,
-                                 Consumer<T> add,
+                                 BiConsumer<Integer, T> add,
                                  Function<T, String> getName) {
         SwipeToDeleteCallback callback = new SwipeToDeleteCallback(context) {
             @Override
@@ -40,7 +40,7 @@ public class SwipeToDeleteUtils {
                 String name = getName.apply(item);
                 if (shouldNotBeDeleted){
                     Toast.makeText(context, String.format("\"%s\"正在使用中，无法删除", name), Toast.LENGTH_SHORT).show();
-                    add.accept(item);
+                    add.accept(position, item);
                     recyclerView.scrollToPosition(position);
                     return;
                 }
@@ -49,7 +49,7 @@ public class SwipeToDeleteUtils {
                 }
                 Snackbar snackbar = Snackbar.make(recyclerView, String.format("\"%s\"已被删除", name), Snackbar.LENGTH_LONG);
                 snackbar.setAction("撤销", view -> {
-                    add.accept(item);
+                    add.accept(position, item);
                     recyclerView.scrollToPosition(position);
                 });
                 snackbar.show();

@@ -4,6 +4,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import lombok.Getter;
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.adapters.BaseFoodListAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.CustomDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
@@ -11,15 +17,14 @@ import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 public class FoodListAdapter extends BaseFoodListAdapter {
-    public AList<Food> selectedFood = new AList<>();
+
+    @Setter
     private boolean selectable = false;
-    private DataItemClickedListener<Tag> tagClickedListener;
+    @Setter
     private CustomDataItemClickedListener<Food, Boolean> selectionChangedListener;
-    public void setTagClickedListener(DataItemClickedListener<Tag> tagClickedListener) { this.tagClickedListener = tagClickedListener; }
-    public void setsSelectionChangedListener(CustomDataItemClickedListener<Food, Boolean> selectionChangedListener) { this.selectionChangedListener = selectionChangedListener; }
-    public void setSelectable(boolean selectable) { this.selectable = selectable; }
 
     @Override
     protected int getLayout(int viewType) {
@@ -28,6 +33,7 @@ public class FoodListAdapter extends BaseFoodListAdapter {
 
     @Override
     protected void fillViewHolder(CustomViewHolder viewHolder, Food data, int position) {
+        super.fillViewHolder(viewHolder, data, position);
         View view = viewHolder.getView();
         ImageView checkedImage = view.findViewById(R.id.checked_image);
         RecyclerView recyclerView = view.findViewById(R.id.tags_recycler_view);
@@ -44,16 +50,20 @@ public class FoodListAdapter extends BaseFoodListAdapter {
                 }
             }
         });
-        checkedImage.setVisibility(selectedFood.contains(data) ?  View.VISIBLE : View.GONE);
+        checkedImage.setVisibility(data.isSelected() ?  View.VISIBLE : View.GONE);
         adapter.setData(data.getTags());
-        adapter.setTagClickedListener((v, t) -> {
-            if (tagClickedListener != null) tagClickedListener.click(v, t);
-        });
         recyclerView.setAdapter(adapter);
     }
 
-    public void setSelectedFood(AList<Food> foods){
-        selectedFood.copyFrom(foods);
+    public void setSelectedFoods(List<Food> foods){
+        Set<Long> foodIds = foods.stream().map(Food::getId).collect(Collectors.toSet());
+        for (Food food : data){
+            food.setSelected(foodIds.contains(food.getId()));
+        }
+    }
+
+    public AList<Food> getSelectedFoods(){
+        return data.stream().filter(Food::isSelected).collect(Collectors.toCollection(AList::new));
     }
 
     public void setSelected(CustomViewHolder viewHolder, boolean selected){
@@ -63,9 +73,6 @@ public class FoodListAdapter extends BaseFoodListAdapter {
         View view = viewHolder.getView();
         ImageView checkedImage = view.findViewById(R.id.checked_image);
         checkedImage.setVisibility(selected ? View.VISIBLE : View.GONE);
-
-        if (selected) selectedFood.add(data);
-        else selectedFood.remove(data);
     }
 
 }

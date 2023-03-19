@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -123,8 +124,12 @@ public class AList<T> extends IList<T> {
     }
     public T last() { return size() > 0 ? get(size() - 1) : null; }
     public T last(Predicate<T> lambda){ return reverse().first(lambda); }
-    public AList<T> For(ForLambda lambda) {
-        for (int i = 0; i < size(); i++) lambda.operate(i);
+    public AList<T> For(Consumer<Integer> lambda) {
+        for (int i = 0; i < size(); i++) lambda.accept(i);
+        return this;
+    }
+    public AList<T> enumerate(BiConsumer<Integer, ? super T> biConsumer){
+        for (int i = 0; i < size(); i++) biConsumer.accept(i, get(i));
         return this;
     }
     public AList<T> ForEach(Consumer<? super T> lambda){
@@ -183,11 +188,6 @@ public class AList<T> extends IList<T> {
         return new ZipList<>(this, zip);
     }
     public <A> ZipList<T, A> zip(IList<A> zip){ return new ZipList<>(this, zip); }
-    public AList<T> enumerate(ZipVoidLambda<Integer, T> lambda) {
-        for (int i = 0; i < size(); i++)
-            lambda.operate(i, get(i));
-        return this;
-    }
     private int modIndex(int index){
         if (index == 0) return 0;
         int count = size();

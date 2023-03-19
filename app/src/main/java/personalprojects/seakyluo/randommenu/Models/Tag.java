@@ -7,18 +7,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import personalprojects.seakyluo.randommenu.R;
 
+@NoArgsConstructor
 @Data
 public class Tag implements Comparable<Tag>, Parcelable {
     public static String AllCategories = "All Categories";
     public static Tag AllCategoriesTag = new Tag(AllCategories);
     public static final int MAX_TAGS = 10;
+    private long id;
     public String Name;
     protected int Counter = 0;
     private transient boolean isSelected = false;
 
-    protected Tag() {}
     public Tag(String name){ this.Name = name; }
     public Tag(String name, int counter){
         this.Name = name;
@@ -44,10 +46,10 @@ public class Tag implements Comparable<Tag>, Parcelable {
     @NonNull
     @Override
     public String toString() { return Name + " " + Counter; }
-    public static String format(Context context, String name, int count){
+    public static String format(Context context, String name, long count){
         return String.format(context.getString(R.string.tag_format), name, count);
     }
-    public static String format(Context context, int resId, int count){
+    public static String format(Context context, int resId, long count){
         return format(context, context.getString(resId), count);
     }
     public static String format(Context context, Tag tag){
@@ -55,6 +57,7 @@ public class Tag implements Comparable<Tag>, Parcelable {
     }
 
     protected Tag(Parcel in) {
+        id = in.readLong();
         Name = in.readString();
         Counter = in.readInt();
     }
@@ -83,6 +86,7 @@ public class Tag implements Comparable<Tag>, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(Name);
         dest.writeInt(Counter);
     }

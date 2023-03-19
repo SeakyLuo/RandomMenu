@@ -42,7 +42,7 @@ public class ChooseTagFragment extends Fragment {
         header_text = view.findViewById(R.id.header_text);
         add_tag_button = view.findViewById(R.id.add_tag_button);
 
-        tagsFragment.SetCloseable(true);
+        tagsFragment.setCloseable(true);
         getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
         if (StringUtils.isNotEmpty(header)) header_text.setText(header);
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());

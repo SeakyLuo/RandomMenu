@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,82 +13,84 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Food implements Parcelable {
-    public String Name;
-    public AList<String> Images = new AList<>();
-    private AList<Tag> Tags = new AList<>();
-    public String Note = "";
-    private boolean IsFavorite = false;
-    private String Cover = "";
-    private Long DateAdded = 0L;
-    public int HideCount = 0;
+    private long id;
+    private String name;
+    private AList<String> images = new AList<>();
+    private AList<Tag> tags = new AList<>();
+    private String note = "";
+    private boolean favorite = false;
+    private String cover = "";
+    private Long dateAdded = 0L;
+    private int hideCount = 0;
     private transient boolean isSelected = false;
 
     public Food(String name){
-        Name = name;
+        this.name = name;
     }
 
     public Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite, String cover){
-        this(name, images, tags, note, isFavorite, cover, Calendar.getInstance().getTimeInMillis());
+        this(name, images, tags, note, isFavorite, cover, System.currentTimeMillis());
     }
+
     private Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite, String cover, Long dateAdded){
-        Name = name;
-        Images = images;
-        Tags = tags;
-        Note = note;
-        IsFavorite = isFavorite;
-        Cover = cover;
-        DateAdded = dateAdded;
+        this.name = name;
+        this.images = images;
+        this.tags = tags;
+        this.note = note;
+        this.favorite = isFavorite;
+        this.cover = cover;
+        this.dateAdded = dateAdded;
     }
 
-    public Food copy(){ return new Food(Name, Images.copy(), Tags.copy(), Note, IsFavorite, Cover, DateAdded); }
-    public boolean isFavorite() { return IsFavorite; }
-
-    public boolean hasImage() { return Images.size() > 0; }
-    public boolean hasTag(Tag tag) { return Tags.contains(tag); }
-    public boolean hasTag(String name) { return Tags.any(t -> t.Name.equals(name)); }
-    public void renameTag(String oldName, String newName){ Tags.first(t -> t.Name.equals(oldName)).Name = newName; }
-    public String GetDateAddedString(){
-        Calendar date = Calendar.getInstance();
-        date.setTimeInMillis(DateAdded);
-        return new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
+    public Food copy(){
+        return new Food(name, images.copy(), tags.copy(), note, favorite, cover, dateAdded);
     }
-    public void AddTags(AList<Tag> tags) {
-        Tags.addAll(tags);
+
+    public boolean hasImage() {
+        return images.size() > 0;
+    }
+    public boolean hasTag(Tag tag) {
+        return tags.contains(tag);
+    }
+
+    public void addTags(AList<Tag> tags) {
         tags.ForEach(tag -> {
-            if (!Tags.contains(tag))
-                Tags.add(tag);
+            if (!this.tags.contains(tag))
+                this.tags.add(tag);
         });
     }
-    public void removeTag(Tag tag) { Tags.remove(tag); }
-    public static boolean IsIncomplete(Food food) { return food == null || food.DateAdded == 0; }
+    public String formatDateAdded(){
+        return new SimpleDateFormat("yyyy-MM-dd").format(dateAdded);
+    }
 
     @Override
     public int hashCode() {
-        return Name.hashCode();
+        return name.hashCode();
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof Food && Name.equals(((Food)obj).Name);
+        return obj instanceof Food && name.equals(((Food)obj).name);
     }
 
     protected Food(Parcel in) {
-        Name = in.readString();
+        id = in.readLong();
+        name = in.readString();
         ArrayList<String> images = new ArrayList<>();
         in.readStringList(images);
-        Images = new AList<>(images);
+        this.images = new AList<>(images);
         ArrayList<Tag> tags = new ArrayList<>();
         in.readTypedList(tags, Tag.CREATOR);
-        Tags = new AList<>(tags);
-        Note = in.readString();
-        IsFavorite = in.readByte() != 0;
-        Cover = in.readString();
+        this.tags = new AList<>(tags);
+        note = in.readString();
+        favorite = in.readByte() != 0;
+        cover = in.readString();
         if (in.readByte() == 0) {
-            DateAdded = null;
+            dateAdded = null;
         } else {
-            DateAdded = in.readLong();
+            dateAdded = in.readLong();
         }
-        HideCount = in.readInt();
+        hideCount = in.readInt();
     }
 
     public static final Creator<Food> CREATOR = new Creator<Food>() {
@@ -111,18 +112,19 @@ public class Food implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(Name);
-        dest.writeStringList(Images);
-        dest.writeTypedList(Tags);
-        dest.writeString(Note);
-        dest.writeByte((byte) (IsFavorite ? 1 : 0));
-        dest.writeString(Cover);
-        if (DateAdded == null) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeStringList(images);
+        dest.writeTypedList(tags);
+        dest.writeString(note);
+        dest.writeByte((byte) (favorite ? 1 : 0));
+        dest.writeString(cover);
+        if (dateAdded == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeLong(DateAdded);
+            dest.writeLong(dateAdded);
         }
-        dest.writeInt(HideCount);
+        dest.writeInt(hideCount);
     }
 }

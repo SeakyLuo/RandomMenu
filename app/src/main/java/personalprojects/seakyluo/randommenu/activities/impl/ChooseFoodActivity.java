@@ -12,11 +12,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.TagsFragment;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
-import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class ChooseFoodActivity extends AppCompatActivity {
@@ -44,13 +44,13 @@ public class ChooseFoodActivity extends AppCompatActivity {
         AList<Food> foods = new AList<>(getIntent().getParcelableArrayListExtra(TAG));
 
         tagsFragment.setSpanCount(1);
-        tagsFragment.SetCloseable(true);
-        tagsFragment.setData(foods.convert(f -> new Tag(f.Name)));
+        tagsFragment.setCloseable(true);
+        tagsFragment.setData(foods.convert(f -> new Tag(f.getName())));
         tagsFragment.setTagClosedListener((vh, food) -> foodListFragment.unselectFood(food.Name));
-        foodListFragment.setData(Settings.settings.Foods);
+        foodListFragment.setData(SelfFoodDaoService.selectAll());
         foodListFragment.setSelectedFood(foods);
         foodListFragment.setFoodSelectedListener((vh, selected) -> {
-            Tag food = new Tag(vh.getData().Name);
+            Tag food = new Tag(vh.getData().getName());
             if (selected) tagsFragment.add(food);
             else tagsFragment.remove(food);
         });
@@ -65,7 +65,7 @@ public class ChooseFoodActivity extends AppCompatActivity {
         });
         findViewById(R.id.confirm_button).setOnClickListener(v -> {
             Intent intent = new Intent();
-            intent.putExtra(TAG, foodListFragment.getSelectedFood());
+            intent.putParcelableArrayListExtra(TAG, foodListFragment.getSelectedFoods());
             setResult(RESULT_OK, intent);
             finish();
         });

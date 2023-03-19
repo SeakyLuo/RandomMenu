@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.AddressMapper;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 
 public class AddressDaoService {
 

@@ -16,7 +16,7 @@ import com.lljjcoder.style.citypickerview.CityPickerView;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.utils.CityPickerUtils;
 
 public class AddressAdapter extends DraggableAdapter<AddressVO> {

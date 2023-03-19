@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import lombok.Getter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.BaseFoodListAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
@@ -19,6 +20,7 @@ import personalprojects.seakyluo.randommenu.models.Food;
 
 public abstract class BaseFoodListFragment<T extends BaseFoodListAdapter> extends Fragment {
     // 原数组，adapter.data可能为过滤后的数组
+    @Getter
     protected AList<Food> data = new AList<>();
     protected T adapter;
     protected RecyclerView recyclerView;
@@ -33,15 +35,23 @@ public abstract class BaseFoodListFragment<T extends BaseFoodListAdapter> extend
         return view;
     }
 
-    public void setFoodClickedListener(DataItemClickedListener<Food> listener){ adapter.setFoodClickedListener(listener); }
-    public void updateFood(Food before, Food after){
-        int index = adapter.getData().indexOf(before);
+    public void setFoodClickedListener(DataItemClickedListener<Food> listener){
+        adapter.setFoodClickedListener(listener);
+    }
+
+    public void updateFood(Food food){
+        int index = adapter.getData().indexOf(f -> f.getId() == food.getId());
         if (index > -1){
-            adapter.set(after, index);
+            adapter.set(food, index);
         }
     }
-    public void clear() { this.data.clear(); adapter.clear(); }
-    public void setData(AList<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
-    public void setData(List<Food> data){ this.data.copyFrom(data); adapter.setData(data); }
-    public AList<Food> getData(){ return data; }
+    public void clear() {
+        this.data.clear();
+        adapter.clear();
+    }
+
+    public void setData(List<Food> data){
+        this.data.copyFrom(data);
+        adapter.setData(data);
+    }
 }

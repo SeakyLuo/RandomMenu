@@ -20,7 +20,7 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;

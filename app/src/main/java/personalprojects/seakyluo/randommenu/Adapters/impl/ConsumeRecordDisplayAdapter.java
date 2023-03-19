@@ -15,19 +15,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.EditConsumeRecordActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowConsumeRecordActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.constants.EmojiConstant;
 import personalprojects.seakyluo.randommenu.database.services.AddressDaoService;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
 public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> {
 
     private long restaurantId;
+    @Setter
+    private boolean showAddress = false;
+    @Setter
+    private boolean vertical = true;
 
     public ConsumeRecordDisplayAdapter(Context context, long restaurantId){
         this.context = context;
@@ -44,30 +51,45 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
         View view = viewHolder.getView();
 
         TextView eatersText = view.findViewById(R.id.eaters_text);
+        TextView addressText = view.findViewById(R.id.address_text);
         TextView consumeTime = view.findViewById(R.id.consume_time);
         TextView consumeTotalCost = view.findViewById(R.id.consume_total_cost);
         TextView consumeRecordComment = view.findViewById(R.id.consume_record_comment);
-        RecyclerView foodRecyclerView = view.findViewById(R.id.food_recycler_view);
-        RestaurantFoodAdapter foodAdapter = new RestaurantFoodAdapter(context);
+        RecyclerView foodRecyclerViewHorizontal = view.findViewById(R.id.food_recycler_view_horizontal);
+        RecyclerView foodRecylerViewVertical = view.findViewById(R.id.food_recycler_view_vertical);
+        RestaurantFoodAdapter restaurantFoodAdapter = new RestaurantFoodAdapter(context);
+        ConsumeFoodAdapter consumeFoodAdapter = new ConsumeFoodAdapter(context, false);
 
         String eaters = formatEater(data.getEaters());
         if (StringUtils.isEmpty(eaters)){
             eatersText.setVisibility(View.GONE);
         } else {
             eatersText.setVisibility(View.VISIBLE);
-            eatersText.setText("\uD83E\uDD62 饭伙：" + eaters);
+            eatersText.setText(EmojiConstant.EATERS + " 饭伙：" + eaters);
+        }
+        addressText.setText(EmojiConstant.ADDRESS + " 地址：" + data.getAddress().buildSimpleAddress());
+        if (showAddress){
+            addressText.setVisibility(View.VISIBLE);
+        } else {
+            addressText.setVisibility(View.GONE);
         }
         consumeTime.setText(data.formatConsumeTimeToDay());
-        consumeTotalCost.setText("\uD83D\uDCB0 总消费：￥" + DoubleUtils.truncateZero(data.getTotalCost()));
+        consumeTotalCost.setText(EmojiConstant.TOTAL_COST + " 总消费：￥" + DoubleUtils.truncateZero(data.getTotalCost()));
         String comment = data.getComment();
         if (StringUtils.isEmpty(comment)){
             consumeRecordComment.setVisibility(View.GONE);
         } else {
             consumeRecordComment.setVisibility(View.VISIBLE);
-            consumeRecordComment.setText("\uD83D\uDCDD 评价： " + comment);
+            consumeRecordComment.setText(EmojiConstant.COMMENT + " 评价： " + comment);
         }
-        foodAdapter.setData(data.getFoods());
-        foodRecyclerView.setAdapter(foodAdapter);
+        List<RestaurantFoodVO> foods = data.getFoods();
+        if (vertical){
+            consumeFoodAdapter.setData(foods);
+            foodRecylerViewVertical.setAdapter(consumeFoodAdapter);
+        } else {
+            restaurantFoodAdapter.setData(foods);
+            foodRecyclerViewHorizontal.setAdapter(restaurantFoodAdapter);
+        }
 
         view.setOnClickListener(v -> {
             Activity activity = (Activity) this.context;

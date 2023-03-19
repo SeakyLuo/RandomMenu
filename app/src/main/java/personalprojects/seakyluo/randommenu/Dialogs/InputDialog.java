@@ -54,14 +54,14 @@ public class InputDialog extends DialogFragment {
     }
 
     public void SetHint(String placeHolder) { this.placeHolder = placeHolder; if (input_text != null) input_text.setHint(text); }
-    public void SetText(String text) {
+    public void setText(String text) {
         this.text = text;
         if (input_text != null){
             input_text.setText(text);
             input_text.selectAll();
         }
     }
-    public void SetConfirmListener(InputConfirmListener confirmListener) { this.confirmListener = confirmListener; }
+    public void setConfirmListener(InputConfirmListener confirmListener) { this.confirmListener = confirmListener; }
     public void SetCancelListener(View.OnClickListener cancelListener) { this.cancelListener = cancelListener; }
 
     @Override

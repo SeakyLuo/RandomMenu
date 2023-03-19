@@ -31,7 +31,7 @@ import personalprojects.seakyluo.randommenu.controls.EditSpinner;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -135,8 +135,8 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         addressPlaceholder.setVisibility(View.GONE);
     }
 
-    private void addAddress(AddressVO address) {
-        addressAdapter.add(address);
+    private void addAddress(int index, AddressVO address) {
+        addressAdapter.add(address, index);
         addressPlaceholder.setVisibility(View.GONE);
     }
 

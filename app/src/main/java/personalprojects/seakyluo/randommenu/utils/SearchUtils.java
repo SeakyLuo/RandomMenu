@@ -24,11 +24,11 @@ public class SearchUtils {
     }
 
     public static MatchFood evalFood(Food food, String keyword){
-        int namePoints = evalString(food.Name, keyword), tagPoints = evalFoodTag(food, keyword), notePoints = evalFoodNote(food, keyword);
+        int namePoints = evalString(food.getName(), keyword), tagPoints = evalFoodTag(food, keyword), notePoints = evalFoodNote(food, keyword);
         int points = namePoints + tagPoints + notePoints;
         int bonus = 0;
         if (points > 0){
-            bonus -= food.HideCount;
+            bonus -= food.getHideCount();
             if (food.isFavorite()) bonus += 10;
         }
         return new MatchFood(food, points, bonus, namePoints, tagPoints, notePoints);
@@ -46,8 +46,9 @@ public class SearchUtils {
     }
 
     public static int evalFoodNote(Food food, String keyword){
-        if (StringUtils.isBlank(food.Note)) return 0;
-        int points = evalString(food.Note, keyword);
+        String note = food.getNote();
+        if (StringUtils.isBlank(note)) return 0;
+        int points = evalString(note, keyword);
         return points == MAX_POINTS ? 120 : Math.max(points - 30, 0);
     }
 

@@ -26,6 +26,7 @@ import java.util.List;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.fragments.ChooseTagFragment;
 import personalprojects.seakyluo.randommenu.fragments.ImageViewerFragment;
@@ -35,11 +36,13 @@ import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
+import personalprojects.seakyluo.randommenu.services.SelfFoodService;
+import personalprojects.seakyluo.randommenu.utils.FoodTagUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
 
 public class EditFoodActivity extends AppCompatActivity {
-    public static final String FOOD = "Food", IS_DRAFT = "IsDraft";
+    public static final String FOOD = "Food", FOOD_ID = "FoodId", IS_DRAFT = "IsDraft";
     private ImageButton camera_button;
     private EditText edit_food_name, edit_note;
     private ImageView food_image;
@@ -58,7 +61,7 @@ public class EditFoodActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_food);
         ImageButton cancel_button = findViewById(R.id.cancel_button);
         ImageButton confirm_button = findViewById(R.id.confirm_button);
-        Button delete_food_button = findViewById(R.id.delete_food_button);
+        Button deleteFoodButton = findViewById(R.id.delete_food_button);
         camera_button = findViewById(R.id.camera_button);
         edit_food_name = findViewById(R.id.edit_food_name);
         edit_note = findViewById(R.id.edit_note);
@@ -68,8 +71,10 @@ public class EditFoodActivity extends AppCompatActivity {
         if (savedInstanceState == null){
             chooseTagFragment = (ChooseTagFragment) fragmentManager.findFragmentById(R.id.choose_tag_fragment);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.findFragmentById(R.id.imageviewer_fragment);
-            currentFood = getIntent().getParcelableExtra(FOOD);
-            isDraft = getIntent().getBooleanExtra(IS_DRAFT, false);
+            Intent intent = getIntent();
+            long foodId = intent.getLongExtra(FOOD_ID, -1);
+            currentFood = foodId < 0 ? intent.getParcelableExtra(FOOD) : SelfFoodService.selectById(foodId);
+            isDraft = intent.getBooleanExtra(IS_DRAFT, false);
         }else{
             chooseTagFragment = (ChooseTagFragment) fragmentManager.getFragment(savedInstanceState, ChooseTagFragment.TAG);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
@@ -85,8 +90,8 @@ public class EditFoodActivity extends AppCompatActivity {
                 showMenuFlyout();
             }
         });
-        delete_food_button.setVisibility(currentFood == null ? View.GONE : View.VISIBLE);
-        delete_food_button.setOnClickListener(v -> deleteFood());
+        deleteFoodButton.setVisibility(currentFood == null ? View.GONE : View.VISIBLE);
+        deleteFoodButton.setOnClickListener(v -> deleteFood());
     }
 
     private void deleteFood(){
@@ -95,7 +100,7 @@ public class EditFoodActivity extends AppCompatActivity {
         dialog.setMessage(R.string.ask_delete_food);
         dialog.setYesListener(view -> {
             if (isDraft) Settings.settings.FoodDraft = null;
-            else Settings.settings.removeFood(currentFood);
+            else SelfFoodService.removeFood(currentFood);
             setResult(RESULT_OK);
             finish();
         });
@@ -104,10 +109,10 @@ public class EditFoodActivity extends AppCompatActivity {
     private void onCancel(){
         String food_name = edit_food_name.getText().toString(), note = edit_note.getText().toString();
         AList<Tag> tags = chooseTagFragment.getData();
-        boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.Name),
-                imageChanged = currentFood == null ? images.size() > 0 : !images.equals(currentFood.Images),
+        boolean nameChanged = currentFood == null ? food_name.length() > 0 : !food_name.equals(currentFood.getName()),
+                imageChanged = currentFood == null ? images.size() > 0 : !images.equals(currentFood.getImages()),
                 tagChanged = currentFood == null ? tags.size() > 0 : !tags.equals(currentFood.getTags()),
-                noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.Note),
+                noteChanged = currentFood == null ? note.length() > 0 : !note.equals(currentFood.getNote()),
                 likeChanged = currentFood != null && like_toggle.isChecked() != currentFood.isFavorite();
         if (nameChanged || imageChanged || tagChanged || noteChanged || likeChanged){
             AskYesNoDialog dialog = new AskYesNoDialog();
@@ -123,62 +128,81 @@ public class EditFoodActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isNewFood(){
+        return currentFood == null || currentFood.getId() == 0;
+    }
+
     private void onConfirm(){
-        String food_name = getFoodName();
-        if (food_name.length() == 0){
+        String foodName = getFoodName();
+        if (foodName.length() == 0){
             Toast.makeText(this, R.string.empty_food_name, Toast.LENGTH_SHORT).show();
             return;
         }
-        // 非草稿、重名、新菜
-        if (!isDraft && Settings.settings.Foods.any(f -> f.Name.equals(food_name)) && (currentFood == null || !currentFood.Name.equals(food_name))){
-            AskYesNoDialog dialog = new AskYesNoDialog();
-            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
-            dialog.setMessage(R.string.duplicate_food_merge);
-            dialog.setYesListener(view -> {
-                int index = Settings.settings.Foods.indexOf(f -> f.Name.equals(food_name));
-                Food food = Settings.settings.Foods.get(index);
-                food.Images.addAll(images);
-                if (!StringUtils.isEmpty(foodCover)){
-                    food.setCover(foodCover);
-                }
-                food.setIsFavorite(food.isFavorite() || like_toggle.isChecked());
-                food.AddTags(chooseTagFragment.getData());
-                if (!StringUtils.isBlank(food.Note)){
-                    food.Note = food.Note + '\n' + getNote();
-                }
-                Settings.settings.Foods.move(index, 0);
-                finishWithFood(food);
-            });
-            dialog.setNoListener(view -> {
-                Toast.makeText(this, R.string.food_exists, Toast.LENGTH_SHORT).show();
-            });
+        AList<Tag> tags = chooseTagFragment.getData();
+        String note = getNote();
+
+        // 草稿 or 新食物 or 改名成重名
+        Food duplicate = SelfFoodDaoService.selectByName(foodName);
+        if (duplicate != null && (isDraft || isNewFood() || !currentFood.getName().equals(foodName))){
+            showDuplicateNameFoodDialog(duplicate);
             return;
         }
-        AList<Tag> tags = chooseTagFragment.getData();
+
         if (tags.isEmpty()){
             if (Settings.settings.AutoTag){
-                List<Tag> guessTags = Helper.guessTags(food_name);
+                List<Tag> guessTags = FoodTagUtils.guessTags(foodName);
                 chooseTagFragment.setData(guessTags);
                 if (guessTags.size() > 0){
                     Toast.makeText(this, R.string.tag_auto_added, Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     Toast.makeText(this, R.string.auto_tag_failed, Toast.LENGTH_SHORT).show();
                 }
-            }else{
+            } else {
                 Toast.makeText(this, R.string.at_least_one_tag, Toast.LENGTH_SHORT).show();
             }
             return;
         }
-        String note = getNote();
-        Food food = new Food(food_name, images, tags, note, like_toggle.isChecked(), foodCover);
-        if (Food.IsIncomplete(currentFood)) Settings.settings.addFood(food);
-        else if (isDraft && !Settings.settings.Foods.any(f -> f.Name.equals(food_name))){
-            Settings.settings.addFood(food);
+        Food food = new Food(foodName, images, tags, note, like_toggle.isChecked(), foodCover);
+        if (isDraft){
+            SelfFoodService.addFood(food);
             Settings.settings.FoodDraft = null;
-        }else{
-            Settings.settings.updateFood(currentFood, food);
+        }
+        else if (isNewFood()){
+            SelfFoodService.addFood(food);
+        }
+        else {
+            currentFood.setName(food.getName());
+            currentFood.setImages(food.getImages());
+            currentFood.setTags(food.getTags());
+            currentFood.setNote(food.getNote());
+            currentFood.setFavorite(food.isFavorite());
+            currentFood.setCover(food.getCover());
+            SelfFoodService.updateFood(currentFood);
         }
         finishWithFood(food);
+    }
+
+    private void showDuplicateNameFoodDialog(Food existing){
+        AskYesNoDialog dialog = new AskYesNoDialog();
+        dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
+        dialog.setMessage(R.string.duplicate_food_merge);
+        dialog.setYesListener(view -> {
+            existing.getImages().addAll(images);
+            if (!StringUtils.isEmpty(foodCover)){
+                existing.setCover(foodCover);
+            }
+            existing.setFavorite(existing.isFavorite() || like_toggle.isChecked());
+            existing.addTags(chooseTagFragment.getData());
+            String note = existing.getNote();
+            if (!StringUtils.isBlank(note)){
+                existing.setNote(note + "\n" + getNote());
+            }
+            SelfFoodService.updateFood(existing);
+            finishWithFood(existing);
+        });
+        dialog.setNoListener(view -> {
+            Toast.makeText(this, R.string.food_exists, Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void showMenuFlyout(){
@@ -217,12 +241,12 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void setFood(Food food){
         if (food == null) return;
-        edit_food_name.setText(food.Name);
+        edit_food_name.setText(food.getName());
         food_image.setVisibility(food.hasImage() ? View.GONE : View.VISIBLE);
-        imageViewerFragment.setImages(images.copyFrom(food.Images), foodCover = food.getCover());
-        sources.copyFrom(new AList<>("", food.Images.size()));
+        imageViewerFragment.setImages(images.copyFrom(food.getImages()), foodCover = food.getCover());
+        sources.copyFrom(new AList<>("", food.getImages().size()));
         chooseTagFragment.setData(food.getTags());
-        edit_note.setText(food.Note);
+        edit_note.setText(food.getNote());
         like_toggle.setChecked(food.isFavorite());
     }
 
@@ -341,8 +365,12 @@ public class EditFoodActivity extends AppCompatActivity {
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
         outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), foodCover));
     }
-    public String getFoodName() { return edit_food_name.getText().toString().trim(); }
-    private String getNote() { return edit_note.getText().toString().trim(); }
+    private String getFoodName() {
+        return edit_food_name.getText().toString().trim();
+    }
+    private String getNote() {
+        return edit_note.getText().toString().trim();
+    }
 
     public void finishWithFood(Food food){
         Intent intent = new Intent();

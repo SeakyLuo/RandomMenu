@@ -18,12 +18,13 @@ import java.util.ArrayList;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.TagListAdapter;
+import personalprojects.seakyluo.randommenu.database.services.FoodTagDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.fragments.TagsFragment;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
+import personalprojects.seakyluo.randommenu.utils.FoodTagUtils;
 
 public class ChooseTagActivity extends SwipeBackActivity {
     public static final String SELECTED_TAGS = "selected", EXCLUDED_TAGS = "excluded", FOOD = "source_food";
@@ -107,16 +108,14 @@ public class ChooseTagActivity extends SwipeBackActivity {
 
         selected_tags.addAll(original_tags);
         if (Settings.settings.AutoTag && selected_tags.size() == 0 && guessFoodName != null){
-            for (Tag tag: Helper.guessTags(guessFoodName)){
+            for (Tag tag: FoodTagUtils.guessTags(guessFoodName)){
                 if (!selected_tags.contains(tag)){
                     selected_tags.add(tag);
                 }
-                if (!Settings.settings.Tags.contains(tag)){
-                    Settings.settings.Tags.add(tag);
-                }
+                FoodTagDaoService.insert(tag);
             }
         }
-        tagListAdapter = new TagListAdapter(this, Settings.settings.Tags.copy().without(excluded_tags), selected_tags);
+        tagListAdapter = new TagListAdapter(this, new AList<>(FoodTagDaoService.selectAll()).without(excluded_tags), selected_tags);
         tagListAdapter.setTagClickedListener((viewHolder, tag) -> chooseTag(tag));
 
         RecyclerView tag_recycler_view = findViewById(R.id.listed_tag_recycler_view);
@@ -128,13 +127,13 @@ public class ChooseTagActivity extends SwipeBackActivity {
         else
             tagsFragment = (TagsFragment) getSupportFragmentManager().getFragment(savedInstanceState, TagsFragment.TAG);
         tagsFragment.setSpanCount(1);
-        tagsFragment.SetCloseable(true);
+        tagsFragment.setCloseable(true);
         tagsFragment.setData(selected_tags);
         tagsFragment.setTagClosedListener((viewHolder, tag) -> tagListAdapter.checkTag(tag, false));
     }
 
     private void chooseTag(Tag tag){
-        if (tagsFragment.GetAdapter().getItemCount() == Tag.MAX_TAGS){
+        if (tagsFragment.getAdapter().getItemCount() == Tag.MAX_TAGS){
             Toast.makeText(ChooseTagActivity.this, getString(R.string.tag_limit), Toast.LENGTH_SHORT).show();
         }else{
             if (tagsFragment.contains(tag)){

@@ -47,7 +47,7 @@ public class ToEatActivity extends SwipeBackActivity {
         findViewById(R.id.sf_fab).setOnClickListener(v -> {
             InputDialog dialog = new InputDialog();
             dialog.SetHint(getString(R.string.food_name));
-            dialog.SetConfirmListener(text -> {
+            dialog.setConfirmListener(text -> {
                 if (Settings.settings.ToEat.remove(text)) adapter.remove(text);
                 Settings.settings.ToEat.with(text, 0);
                 adapter.add(text, 0);

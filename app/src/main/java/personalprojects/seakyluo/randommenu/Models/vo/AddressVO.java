@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.models;
+package personalprojects.seakyluo.randommenu.models.vo;
 
 import android.os.Parcel;
 import android.os.Parcelable;

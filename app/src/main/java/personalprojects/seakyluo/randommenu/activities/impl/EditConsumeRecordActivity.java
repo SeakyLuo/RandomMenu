@@ -38,7 +38,7 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.AddressDaoService;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
@@ -122,9 +122,9 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
     }
 
-    private void addFood(RestaurantFoodVO item){
-        item.setIndex(foodAdapter.getItemCount());
-        foodAdapter.add(item);
+    private void addFood(int index, RestaurantFoodVO item){
+        item.setIndex(index);
+        foodAdapter.add(item, index);
         consumeFoodPlaceholder.setVisibility(View.GONE);
     }
 
@@ -254,7 +254,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
             int index = food.getIndex();
             if (index == -1){
-                addFood(food);
+                addFood(foodAdapter.getItemCount(), food);
             } else {
                 foodAdapter.set(food, index);
             }

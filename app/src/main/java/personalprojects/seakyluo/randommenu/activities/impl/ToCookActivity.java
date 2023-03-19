@@ -53,7 +53,7 @@ public class ToCookActivity extends SwipeBackActivity {
         findViewById(R.id.sf_fab).setOnClickListener(v -> {
             InputDialog dialog = new InputDialog();
             dialog.SetHint(getString(R.string.food_name));
-            dialog.SetConfirmListener(text -> {
+            dialog.setConfirmListener(text -> {
                 if (Settings.settings.ToCook.remove(text)) adapter.remove(text);
                 Settings.settings.ToCook.with(text, 0);
                 adapter.add(text, 0);
@@ -81,9 +81,10 @@ public class ToCookActivity extends SwipeBackActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        String food = ((Food) data.getParcelableExtra(EditFoodActivity.FOOD)).Name;
-        Settings.settings.ToCook.remove(food);
-        adapter.remove(food);
+        Food food = (Food) data.getParcelableExtra(EditFoodActivity.FOOD);
+        String foodName = food.getName();
+        Settings.settings.ToCook.remove(foodName);
+        adapter.remove(foodName);
         updated = true;
         SetTitle();
     }

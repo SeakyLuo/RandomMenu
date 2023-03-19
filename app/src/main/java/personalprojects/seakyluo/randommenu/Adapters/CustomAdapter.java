@@ -2,6 +2,7 @@ package personalprojects.seakyluo.randommenu.adapters;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,10 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     protected abstract void fillViewHolder(CustomViewHolder viewHolder, T data, int position);
 
     protected void dataSizeChanged(){}
+
+    protected FragmentActivity getContextAsFragmentActivity(){
+        return (FragmentActivity) context;
+    }
 
     @NonNull
     @Override

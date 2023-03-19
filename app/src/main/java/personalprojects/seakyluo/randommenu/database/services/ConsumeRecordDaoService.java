@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.ConsumeRecordDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.ConsumeRecordMapper;
-import personalprojects.seakyluo.randommenu.models.AddressVO;
+import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
@@ -101,7 +101,7 @@ public class ConsumeRecordDaoService {
         if (StringUtils.isEmpty(comment)){
             return false;
         }
-        return comment.matches("^(?!不).*(好吃|爱|喜欢).*") || comment.contains("必点") || comment.contains("还不错") || comment.contains("yyds");
+        return comment.matches("^(?!不).*(好吃|爱|喜欢|推荐).*") || comment.contains("必点") || comment.contains("还不错") || comment.contains("yyds");
     }
 
     private static boolean isNotBadComment(String comment){

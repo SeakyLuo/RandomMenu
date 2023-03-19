@@ -65,8 +65,9 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
         }
         String tags = data.getTags().stream().map(Tag::getName).collect(Collectors.joining(comma));
         tagContent.setText(tags);
-        noteContent.setText(data.Note);
-        if (StringUtils.isEmpty(data.Note)){
+        String note = data.getNote();
+        noteContent.setText(note);
+        if (StringUtils.isEmpty(note)){
             noteRow.setVisibility(View.GONE);
         } else {
             if (showNote){

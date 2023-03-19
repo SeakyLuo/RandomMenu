@@ -6,11 +6,13 @@ import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
+import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
+import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 
 public class MyFavoritesActivity extends SwipeBackActivity {
     public static final int REQUEST_CODE = 10;
@@ -27,34 +29,29 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         setTitle();
 
         fragment = (FoodListFragment) getSupportFragmentManager().findFragmentById(R.id.food_list_fragment);
-        fragment.setData(Settings.settings.getFavoriteFoods());
+        fragment.setData(SelfFoodService.getFavoriteFoods());
+        fragment.setRemovable(true);
         fragment.setShowLikeImage(false);
         fragment.setFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
-            dialog.setFood(food);
-            dialog.setFoodEditedListener((before, after) -> {
-                fragment.removeFood(before);
-                dialog.setFood(after);
+            dialog.setFoodId(food.getId());
+            dialog.setFoodLikedListener(after -> {
+                fragment.removeFood(after);
                 setTitle();
-                setResult(RESULT_OK);
             });
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         });
-        fragment.setFoodRemovedListener((viewHolder, data) -> {
-            int index = fragment.removeFood(data);
-            Settings.settings.setFavorite(data, false);
+        fragment.setFoodRemovedListener(data -> {
+            data.setFavorite(false);
+            SelfFoodService.updateFood(data);
             setTitle();
-            setResult(RESULT_OK);
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.mf_toolbar), String.format(getString(R.string.item_removed), data.Name), Snackbar.LENGTH_LONG);
-            snackbar.setAction(getString(R.string.undo), view -> {
-                fragment.cancelRemoval();
-                Settings.settings.setFavorite(data, true);
-                Settings.settings.MyFavorites.move(0, index);
-                setTitle();
-            });
-            snackbar.show();
+        });
+        fragment.setFoodAddedListener(data -> {
+            data.setFavorite(true);
+            SelfFoodService.updateFood(data);
+            setTitle();
         });
     }
 
-    private void setTitle() { title.setText(Tag.format(this, R.string.my_favorites, Settings.settings.MyFavorites.size())); }
+    private void setTitle() { title.setText(Tag.format(this, R.string.my_favorites, SelfFoodDaoService.countFavoriteFoods())); }
 }

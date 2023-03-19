@@ -59,7 +59,8 @@
                 android:showDividers="middle"
                 android:dividerPadding="16dp"
                 android:layout_marginTop="10dp"
-                android:paddingHorizontal="8dp">
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="6dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -135,10 +136,12 @@
                     android:id="@+id/consume_record_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:background="@drawable/white_capsule"
                     android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp"
+                    android:paddingVertical="6dp"
+                    android:paddingHorizontal="4dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
             </RelativeLayout>
         </LinearLayout>

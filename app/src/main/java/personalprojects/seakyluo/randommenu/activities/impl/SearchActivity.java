@@ -22,12 +22,14 @@ import java.util.stream.Stream;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.TabPagerAdapter;
+import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.fragments.BaseFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.SearchFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.StringListFragment;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 import personalprojects.seakyluo.randommenu.utils.SearchUtils;
 import personalprojects.seakyluo.randommenu.models.Food;
 import personalprojects.seakyluo.randommenu.models.MatchFood;
@@ -59,7 +61,7 @@ public class SearchActivity extends SwipeBackActivity {
         historyFragment.setClickedListener((viewHolder, data) -> {
             search_bar.setText(data);
             search_bar.setSelection(data.length());
-            Search(data);
+            search(data);
             tabLayout.getTabAt(1).select();
         });
         historyFragment.setOnDeletedClickedListener((viewHolder, data) -> {
@@ -69,14 +71,11 @@ public class SearchActivity extends SwipeBackActivity {
         getSearchFragments().forEach(fragment -> fragment.setFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.setFood(food);
-            dialog.setFoodEditedListener((before, after) -> {
-                dialog.setFood(after);
-                getSearchFragments().forEach(f -> f.updateFood(before, after));
-                Settings.settings.updateFood(before, after);
+            dialog.setFoodEditedListener(after -> {
+                getSearchFragments().forEach(f -> f.updateFood(after));
             });
-            dialog.setFoodLikedListener(((before, after) -> {
-                getSearchFragments().forEach(f -> f.updateFood(before, after));
-                Settings.settings.updateFood(before, after);
+            dialog.setFoodLikedListener((after -> {
+                getSearchFragments().forEach(f -> f.updateFood(after));
             }));
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         }));
@@ -100,7 +99,7 @@ public class SearchActivity extends SwipeBackActivity {
                     clear_button.setVisibility(View.GONE);
                 }else{
                     Settings.settings.SearchHistory.move(keyword, 0);
-                    Search(keyword);
+                    search(keyword);
                     clear_button.setVisibility(View.VISIBLE);
                 }
             }
@@ -146,14 +145,14 @@ public class SearchActivity extends SwipeBackActivity {
     public String getKeyword() { return getKeyword(search_bar.getText()); }
     public Stream<SearchFoodListFragment> getSearchFragments() { return tabPagerAdapter.getFragments().after(0).stream().map(f -> (SearchFoodListFragment)f); }
 
-    public void Search(String keyword){
+    public void search(String keyword){
         if (keyword.isEmpty()){
             getSearchFragments().forEach(BaseFoodListFragment::clear);
         }else{
             getSearchFragments().forEach(f -> f.setKeyword(keyword));
             if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
             List<MatchFood> food = new ArrayList<>(), tag = new ArrayList<>(), note = new ArrayList<>(), all = new ArrayList<>();
-            Settings.settings.Foods.ForEach(f -> {
+            SelfFoodDaoService.selectAll().forEach(f -> {
                 MatchFood mf = SearchUtils.evalFood(f, keyword);
                 if (mf.namePoints > 0){
                     food.add(new MatchFood(mf.food, mf.namePoints + mf.bonus));

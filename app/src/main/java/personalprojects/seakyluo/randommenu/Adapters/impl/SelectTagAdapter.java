@@ -5,6 +5,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.List;
+
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
@@ -47,7 +49,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
         }
     }
 
-    public Tag GetSelectedTag() { return lastTag == null ? null : lastTag.getData(); }
+    public Tag getSelectedTag() { return lastTag == null ? null : lastTag.getData(); }
 
     public void highlightTag(Tag tag){
         if (tag == null || (lastTag != null && tag.equals(lastTag.getData()))) return;
@@ -75,7 +77,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
         }
     }
 
-    public void setTags(AList<Tag> tags){
+    public void setTags(List<Tag> tags){
         if (data.isEmpty()){
             data.add(Tag.AllCategoriesTag);
         } else {
