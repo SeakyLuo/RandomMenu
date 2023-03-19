@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu.database.services;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantFoodDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantFoodMapper;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.services.ImagePathService;
 
 public class RestaurantFoodDaoService {
 
@@ -18,21 +20,42 @@ public class RestaurantFoodDaoService {
         List<RestaurantFoodDAO> daoList = voList.stream().map(RestaurantFoodDaoService::convert).collect(Collectors.toList());
         List<Long> ids = mapper.insert(daoList);
         for (int i = 0; i < ids.size(); i++){
-            voList.get(i).setId(ids.get(i));
+            Long id = ids.get(i);
+            RestaurantFoodVO vo = voList.get(i);
+            vo.setId(id);
+            ImagePathService.insertRestaurantFood(id, vo.getImages());
         }
     }
 
     public static void deleteByRestaurant(long restaurantId){
         RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
+        List<RestaurantFoodDAO> foods = mapper.selectByRestaurant(restaurantId);
         mapper.deleteByRestaurant(restaurantId);
+        ImagePathService.deleteByRestaurantFoods(foods.stream().map(RestaurantFoodDAO::getId).collect(Collectors.toList()));
+    }
+
+    public static RestaurantFoodVO selectById(Long id){
+        if (id == null){
+            return null;
+        }
+        RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
+        RestaurantFoodVO vo = convert(mapper.selectById(id));
+        if (vo == null){
+            return null;
+        }
+        vo.setImages(ImagePathService.selectByRestaurantFood(id));
+        return vo;
     }
 
     public static List<RestaurantFoodVO> selectByRestaurantId(long restaurantId){
         RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
-        return mapper.selectByRestaurant(restaurantId).stream()
+        List<RestaurantFoodVO> foods = mapper.selectByRestaurant(restaurantId).stream()
                 .sorted(Comparator.comparing(RestaurantFoodDAO::getOrder))
                 .map(RestaurantFoodDaoService::convert)
                 .collect(Collectors.toList());
+        List<Long> foodIds = foods.stream().map(RestaurantFoodVO::getId).collect(Collectors.toList());
+        Map<Long, List<String>> map = ImagePathService.selectByRestaurantFoods(foodIds);
+        return foods.stream().peek(f -> f.setImages(map.get(f.getId()))).collect(Collectors.toList());
     }
 
     public static List<RestaurantFoodVO> selectByRestaurantHome(long restaurantId){
@@ -40,11 +63,6 @@ public class RestaurantFoodDaoService {
         return mapper.selectByRestaurantHome(restaurantId).stream()
                 .map(RestaurantFoodDaoService::convert)
                 .collect(Collectors.toList());
-    }
-
-    public static Set<String> selectPaths(){
-        RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
-        return new HashSet<>(mapper.selectPaths());
     }
 
     private static RestaurantFoodDAO convert(RestaurantFoodVO src){
@@ -55,7 +73,7 @@ public class RestaurantFoodDaoService {
         dst.setId(src.getId());
         dst.setRestaurantId(src.getRestaurantId());
         dst.setConsumeRecordId(src.getConsumeRecordId());
-        dst.setPictureUri(src.getPictureUri());
+        dst.setPictureUri(src.getCover());
         dst.setName(src.getName());
         dst.setComment(src.getComment());
         dst.setPrice(src.getPrice());
@@ -70,7 +88,7 @@ public class RestaurantFoodDaoService {
         RestaurantFoodVO dst = new RestaurantFoodVO();
         dst.setId(src.getId());
         dst.setConsumeRecordId(src.getConsumeRecordId());
-        dst.setPictureUri(src.getPictureUri());
+        dst.setCover(src.getPictureUri());
         dst.setName(src.getName());
         dst.setComment(src.getComment());
         dst.setPrice(src.getPrice());

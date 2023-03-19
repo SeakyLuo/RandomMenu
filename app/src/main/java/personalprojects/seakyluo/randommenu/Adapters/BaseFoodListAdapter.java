@@ -11,18 +11,18 @@ import java.util.ArrayList;
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.impl.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
-public abstract class BaseFoodListAdapter extends CustomAdapter<SelfFood> {
+public abstract class BaseFoodListAdapter extends CustomAdapter<SelfMadeFood> {
     @Setter
-    protected DataItemClickedListener<SelfFood> foodClickedListener;
+    protected DataItemClickedListener<SelfMadeFood> foodClickedListener;
     @Setter
     protected boolean showLikeImage = true;
 
     @Override
-    protected void fillViewHolder(CustomViewHolder viewHolder, SelfFood data, int position) {
+    protected void fillViewHolder(CustomViewHolder viewHolder, SelfMadeFood data, int position) {
         View view = viewHolder.getView();
         TextView foodName = view.findViewById(R.id.food_name);
         ImageView foodImage = view.findViewById(R.id.food_image);

@@ -15,11 +15,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.impl.ChooseTagActivity;
-import personalprojects.seakyluo.randommenu.interfaces.OnLaunchActivityListener;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
@@ -27,13 +28,12 @@ import static android.app.Activity.RESULT_OK;
 
 public class ChooseTagFragment extends Fragment {
     public static final String TAG = "ChooseTagFragment";
-    public static final int CHOOSE_TAG_CODE = 100;
     private ImageButton add_tag_button;
     private TextView header_text;
     private TagsFragment tagsFragment = new TagsFragment();
     private String header;
-    private OnLaunchActivityListener chooseTagListener;
-    private SelfFood guessTagFood;
+    @Setter
+    private Consumer<Intent> chooseTagListener;
 
     @Nullable
     @Override
@@ -57,13 +57,12 @@ public class ChooseTagFragment extends Fragment {
     public void setData(AList<Tag> data) { tagsFragment.setData(data); }
     public AList<Tag> getData() { return tagsFragment.getData(); }
     public void setHeader(String text) { header = text; if (header_text != null) header_text.setText(text); }
-    public void setChooseTagListener(OnLaunchActivityListener launchActivityListener) { chooseTagListener = launchActivityListener; }
 
     private void LaunchChooseTagActivity(){
         Intent intent = new Intent(getActivity(), ChooseTagActivity.class);
         intent.putExtra(ChooseTagActivity.SELECTED_TAGS, tagsFragment.getData());
-        if (chooseTagListener != null) chooseTagListener.Launch(intent);
-        startActivityForResult(intent, CHOOSE_TAG_CODE);
+        if (chooseTagListener != null) chooseTagListener.accept(intent);
+        startActivityForResult(intent, ActivityCodeConstant.CHOOSE_TAG);
         getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
     }
 
@@ -71,8 +70,10 @@ public class ChooseTagFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.SELECTED_TAGS);
-        setData(tags);
-        add_tag_button.setVisibility(tags.size() == Tag.MAX_TAGS ? View.GONE : View.VISIBLE);
+        if (requestCode == ActivityCodeConstant.CHOOSE_TAG){
+            ArrayList<Tag> tags = data.getParcelableArrayListExtra(ChooseTagActivity.SELECTED_TAGS);
+            setData(tags);
+            add_tag_button.setVisibility(tags.size() == Tag.MAX_TAGS ? View.GONE : View.VISIBLE);
+        }
     }
 }

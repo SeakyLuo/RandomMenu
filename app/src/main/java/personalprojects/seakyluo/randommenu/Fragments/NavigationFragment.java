@@ -25,17 +25,17 @@ import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
-import personalprojects.seakyluo.randommenu.activities.impl.EditFoodActivity;
-import personalprojects.seakyluo.randommenu.adapters.impl.FoodAdapter;
+import personalprojects.seakyluo.randommenu.activities.impl.EditSelfMadeFoodActivity;
+import personalprojects.seakyluo.randommenu.adapters.impl.SelfFoodAdapter;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.SearchActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.SelectTagAdapter;
 import personalprojects.seakyluo.randommenu.services.FoodTagService;
-import personalprojects.seakyluo.randommenu.services.SelfFoodService;
+import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -43,7 +43,7 @@ public class NavigationFragment extends Fragment {
     public static final String TAG = "NavigationFragment";
     private TextView title_text_view;
     private SelectTagAdapter selectTagAdapter;
-    private FoodAdapter foodAdapter;
+    private SelfFoodAdapter foodAdapter;
     private boolean IsLoaded = false;
     private Tag pendingTag, lastTag;
 
@@ -74,10 +74,10 @@ public class NavigationFragment extends Fragment {
         masterView.setAdapter(selectTagAdapter);
 
         RecyclerView detailView = view.findViewById(R.id.detailView);
-        foodAdapter = new FoodAdapter();
+        foodAdapter = new SelfFoodAdapter();
         foodAdapter.setFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
-            dialog.setFoodId(food.getId());
+            dialog.setSelfFoodId(food.getId());
             dialog.setFoodEditedListener(after -> foodAdapter.updateFood(after));
             dialog.setFoodLikedListener(after -> foodAdapter.setFoodLiked(after));
             dialog.showNow(getChildFragmentManager(), FoodCardDialog.TAG);
@@ -166,14 +166,14 @@ public class NavigationFragment extends Fragment {
         } else {
             lastTag = FoodTagDaoService.selectById(tag.getId());
             title_text_view.setText(Tag.format(getContext(), lastTag));
-            foodAdapter.setData(SelfFoodService.selectByTag(lastTag));
+            foodAdapter.setData(SelfMadeFoodService.selectByTag(lastTag));
         }
     }
 
-    private void editFood(SelfFood food, boolean isDraft){
-        Intent intent = new Intent(getContext(), EditFoodActivity.class);
-        intent.putExtra(EditFoodActivity.FOOD_ID, food.getId());
-        intent.putExtra(EditFoodActivity.IS_DRAFT, isDraft);
+    private void editFood(SelfMadeFood food, boolean isDraft){
+        Intent intent = new Intent(getContext(), EditSelfMadeFoodActivity.class);
+        intent.putExtra(EditSelfMadeFoodActivity.FOOD_ID, food.getId());
+        intent.putExtra(EditSelfMadeFoodActivity.IS_DRAFT, isDraft);
         startActivityForResult(intent, ActivityCodeConstant.FOOD_CODE);
     }
 

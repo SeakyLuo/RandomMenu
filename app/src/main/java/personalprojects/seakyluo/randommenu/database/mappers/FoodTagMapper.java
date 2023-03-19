@@ -9,7 +9,6 @@ import androidx.room.Update;
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.database.dao.FoodTagDAO;
-import personalprojects.seakyluo.randommenu.database.dao.SelfFoodDAO;
 
 @Dao
 public interface FoodTagMapper {

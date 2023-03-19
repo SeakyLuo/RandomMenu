@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.common.collect.Lists;
 
@@ -73,7 +72,7 @@ public class ShowRestaurantFoodActivity extends SwipeBackActivity {
     }
 
     private void startFoodActivity(){
-        String uri = currentFood.getPictureUri();
+        String uri = currentFood.getCover();
         if (StringUtils.isEmpty(uri)){
             return;
         }
@@ -86,7 +85,7 @@ public class ShowRestaurantFoodActivity extends SwipeBackActivity {
         if (food == null){
             return;
         }
-        String pictureUri = food.getPictureUri();
+        String pictureUri = food.getCover();
         foodImageUri = StringUtils.isEmpty(pictureUri) ? null : Uri.parse(ImageUtils.getImagePath(pictureUri));
         ImageUtils.loadImage(this, pictureUri, foodImage);
         editName.setText(food.getName());
@@ -209,7 +208,7 @@ public class ShowRestaurantFoodActivity extends SwipeBackActivity {
                 return;
         }
         ImageUtils.loadImage(this, pictureUri, foodImage);
-        currentFood.setPictureUri(pictureUri);
+        currentFood.setCover(pictureUri);
     }
 
     private void finishWithData(RestaurantFoodVO data){

@@ -64,7 +64,7 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
                 foodNote.setText("“" + comment.substring(0, 8) + "...”");
             }
         }
-        String pictureUri = data.getPictureUri();
+        String pictureUri = data.getCover();
         if (StringUtils.isEmpty(pictureUri)){
             foodImage.setVisibility(View.GONE);
             defaultFoodImage.setVisibility(View.VISIBLE);

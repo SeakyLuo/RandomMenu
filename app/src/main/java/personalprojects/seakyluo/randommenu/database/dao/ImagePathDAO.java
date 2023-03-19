@@ -7,14 +7,15 @@ import androidx.room.PrimaryKey;
 import lombok.Data;
 
 @Data
-@Entity(tableName = "self_food_image")
-public class SelfFoodImageDAO {
+@Entity(tableName = "image_path")
+public class ImagePathDAO {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
     @ColumnInfo(index = true)
-    private long foodId;
-    private String image;
+    private long itemId;
+    private String itemType;
+    private String path;
     private int orderNum;
 
 }

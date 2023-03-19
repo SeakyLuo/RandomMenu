@@ -26,16 +26,20 @@ import java.util.function.Consumer;
 
 import lombok.Getter;
 import lombok.Setter;
-import personalprojects.seakyluo.randommenu.activities.impl.EditFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.EditSelfMadeFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.activities.impl.MainActivity;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.BaseFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.services.SelfFoodService;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.ClipboardUtils;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
@@ -50,10 +54,9 @@ public class FoodCardFragment extends Fragment {
     private ImageView foodImage, likedImage;
     private ImageButton moreButton;
     @Getter
+    private BaseFood food;
     @Setter
-    private SelfFood food;
-    @Setter
-    private Consumer<SelfFood> foodEditedListener, foodLikedChangedListener;
+    private Consumer<SelfMadeFood> foodEditedListener, foodLikedChangedListener;
     @Setter
     private boolean isTagClickable = true;
     private AnimatorSet flipInAnim, flipOutAnim;
@@ -74,14 +77,14 @@ public class FoodCardFragment extends Fragment {
         flipOutAnim = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.flip_out);
 
         FragmentManager fragmentManager = getChildFragmentManager();
-        if (savedInstanceState == null)
+        if (savedInstanceState == null){
             fragmentManager.beginTransaction().add(R.id.tags_frame, tagsFragment = new TagsFragment()).
-                                               add(R.id.imageviewer_frame, imageViewerFragment = new ImageViewerFragment()).
-                                               commit();
-        else{
+                    add(R.id.imageviewer_frame, imageViewerFragment = new ImageViewerFragment()).
+                    commit();
+        }
+        else {
             tagsFragment = (TagsFragment) fragmentManager.getFragment(savedInstanceState, TagsFragment.TAG);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
-            food = savedInstanceState.getParcelable(FOOD);
         }
 
         isLoaded = true;
@@ -94,8 +97,16 @@ public class FoodCardFragment extends Fragment {
         tagsFragment.setSpanCount(1);
         tagsFragment.setTagClickedListener(this::tagClicked);
         moreButton.setOnClickListener(this::moreClicked);
-        foodNoteFrontText.setOnClickListener(v -> { if (!StringUtils.isEmpty(food.getName())) flip(); });
-        foodNoteBackText.setOnClickListener(v -> { if (!StringUtils.isEmpty(food.getNote())) flip(); });
+        foodNoteFrontText.setOnClickListener(v -> {
+            if (StringUtils.isNotEmpty(foodNoteBackText.getText())){
+                flip();
+            }
+        });
+        foodNoteBackText.setOnClickListener(v -> {
+            if (StringUtils.isNotEmpty(foodNoteFrontText.getText())){
+                flip();
+            }
+        });
         fillFood(food);
         return view;
     }
@@ -107,16 +118,27 @@ public class FoodCardFragment extends Fragment {
         if (!food.hasImage()){
             helper.removeItems(R.id.save_image_item, R.id.share_item);
         }
-        if (StringUtils.isEmpty(food.getNote())) helper.removeItems(R.id.more_item);
-        helper.removeItems(food.getHideCount() == 0 ? R.id.show_food_item : R.id.hide_food_item);
+        if (food.getFoodClass() == FoodClass.RESTAURANT){
+            helper.removeItems(R.id.show_food_item, R.id.hide_food_item, R.id.like_food_item, R.id.dislike_food_item, R.id.more_item);
+        } else {
+            SelfMadeFood selfMadeFood = food.asSelfMadeFood();
+            if (StringUtils.isEmpty(food.getNote())) helper.removeItems(R.id.more_item);
+            helper.removeItems(selfMadeFood.getHideCount() == 0 ? R.id.show_food_item : R.id.hide_food_item);
+        }
         helper.removeItems(food.isFavorite() ? R.id.like_food_item : R.id.dislike_food_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.edit_food_item:
-                    Intent editFoodIntent = new Intent(getContext(), EditFoodActivity.class);
-                    editFoodIntent.putExtra(EditFoodActivity.FOOD, food);
-                    editFoodIntent.putExtra(EditFoodActivity.IS_DRAFT, true);
-                    startActivityForResult(editFoodIntent, ActivityCodeConstant.EDIT_FOOD);
+                    if (food.getFoodClass() == FoodClass.RESTAURANT){
+                        Intent editFoodIntent = new Intent(getContext(), EditRestaurantFoodActivity.class);
+                        editFoodIntent.putExtra(EditRestaurantFoodActivity.DATA, food.asRestaurantFood());
+                        startActivityForResult(editFoodIntent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
+                    } else {
+                        Intent editFoodIntent = new Intent(getContext(), EditSelfMadeFoodActivity.class);
+                        editFoodIntent.putExtra(EditSelfMadeFoodActivity.FOOD, food.asSelfMadeFood());
+                        editFoodIntent.putExtra(EditSelfMadeFoodActivity.IS_DRAFT, true);
+                        startActivityForResult(editFoodIntent, ActivityCodeConstant.EDIT_SELF_FOOD);
+                    }
                     return true;
                 case R.id.save_image_item:
                     ImageUtils.saveImage(ImageUtils.getFoodBitmap(imageViewerFragment.getCurrentImage()), Helper.ImageFolder, ImageUtils.newImageFileName());
@@ -130,16 +152,16 @@ public class FoodCardFragment extends Fragment {
                     startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), food.getName())));
                     return true;
                 case R.id.like_food_item:
-                    setFoodFavorite(food, true);
+                    setFoodFavorite(true);
                     return true;
                 case R.id.dislike_food_item:
-                    setFoodFavorite(food, false);
+                    setFoodFavorite(false);
                     return true;
                 case R.id.show_food_item:
                     setFoodHideCount(0);
                     return true;
                 case R.id.hide_food_item:
-                    setFoodHideCount(food.getHideCount() + 3);
+                    setFoodHideCount(food.asSelfMadeFood().getHideCount() + 3);
                     return true;
                 case R.id.more_item:
                     flip();
@@ -151,17 +173,21 @@ public class FoodCardFragment extends Fragment {
         helper.show();
     }
     
-    private void setFoodFavorite(SelfFood food, boolean isFavorite){
+    private void setFoodFavorite(boolean isFavorite){
         food.setFavorite(isFavorite);
         showFoodFavorite(isFavorite);
-        SelfFoodService.updateFood(food);
-        if (foodLikedChangedListener != null) foodLikedChangedListener.accept(food);
+        if (food.getFoodClass() == FoodClass.SELF_MADE){
+            SelfMadeFood selfMadeFood = food.asSelfMadeFood();
+            SelfMadeFoodService.updateFood(selfMadeFood);
+            if (foodLikedChangedListener != null) foodLikedChangedListener.accept(selfMadeFood);
+        }
     }
     
     private void setFoodHideCount(int hideCount){
-        food.setHideCount(hideCount);
+        SelfMadeFood selfMadeFood = food.asSelfMadeFood();
+        selfMadeFood.setHideCount(hideCount);
         setFoodNote(food);
-        SelfFoodService.updateFood(food);
+        SelfMadeFoodService.updateFood(selfMadeFood);
     }
 
     private void tagClicked(CustomAdapter<Tag>.CustomViewHolder viewHolder, Tag tag){
@@ -198,14 +224,21 @@ public class FoodCardFragment extends Fragment {
         flipOutAnim.start();
     }
 
-    public void refresh() {
-        fillFood(food = SelfFoodService.selectById(food.getId()));
-    }
-
-    public SelfFood fillFood(SelfFood food){
+    public BaseFood fillFood(SelfMadeFood food){
         if (food == null){
             return null;
         }
+        return fillFood(BaseFood.from(food));
+    }
+
+    public BaseFood fillFood(RestaurantFoodVO food){
+        if (food == null){
+            return null;
+        }
+        return fillFood(BaseFood.from(food));
+    }
+
+    private BaseFood fillFood(BaseFood food){
         this.food = food;
         if (!isLoaded){
             return food;
@@ -217,14 +250,20 @@ public class FoodCardFragment extends Fragment {
         imageViewerFragment.setImages(food.getImages(), food.getCover());
         showFoodFavorite(food.isFavorite());
         tagsFragment.setData(food.getTags());
-        return food;
+        return this.food;
     }
 
     public void showFoodFavorite(boolean favorite) { likedImage.setVisibility(favorite ? View.VISIBLE : View.GONE); }
 
-    public void setFoodNote(SelfFood food){
-        String food_info = String.format(getString(R.string.created_at), food.formatDateAdded());
-        int hideCount = food.getHideCount();
+    public void setFoodNote(BaseFood food){
+        if (food.getFoodClass() == FoodClass.RESTAURANT){
+            foodNoteFrontText.setText(food.getNote());
+            foodNoteBackText.setText("");
+            return;
+        }
+        SelfMadeFood selfMadeFood = food.asSelfMadeFood();
+        String food_info = String.format(getString(R.string.created_at), selfMadeFood.formatDateAdded());
+        int hideCount = selfMadeFood.getHideCount();
         if (hideCount > 0) food_info += "\n" + String.format(getString(R.string.hide_recent), hideCount);
         String note = food.getNote();
         if (StringUtils.isEmpty(note)){
@@ -247,8 +286,8 @@ public class FoodCardFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         if (data == null) return;
-        if (requestCode == ActivityCodeConstant.EDIT_FOOD){
-            SelfFood food = data.getParcelableExtra(EditFoodActivity.FOOD);
+        if (requestCode == ActivityCodeConstant.EDIT_SELF_FOOD){
+            SelfMadeFood food = data.getParcelableExtra(EditSelfMadeFoodActivity.FOOD);
             if (food == null) return;
             fillFood(food);
             if (foodEditedListener != null) foodEditedListener.accept(food);
@@ -264,7 +303,7 @@ public class FoodCardFragment extends Fragment {
         FragmentManager fragmentManager = getChildFragmentManager();
         fragmentManager.putFragment(outState, TagsFragment.TAG, tagsFragment);
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
-        outState.putParcelable(FOOD, food);
+//        outState.putParcelable(FOOD, selfMadeFood);
     }
 }
 

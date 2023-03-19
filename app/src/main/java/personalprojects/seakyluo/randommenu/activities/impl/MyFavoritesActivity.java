@@ -1,7 +1,6 @@
 package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
 import android.widget.TextView;
 
 import personalprojects.seakyluo.randommenu.R;
@@ -10,9 +9,8 @@ import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
-import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
-import personalprojects.seakyluo.randommenu.services.SelfFoodService;
+import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 
 public class MyFavoritesActivity extends SwipeBackActivity {
     public static final int REQUEST_CODE = 10;
@@ -29,12 +27,12 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         setTitle();
 
         fragment = (FoodListFragment) getSupportFragmentManager().findFragmentById(R.id.food_list_fragment);
-        fragment.setData(SelfFoodService.getFavoriteFoods());
+        fragment.setData(SelfMadeFoodService.getFavoriteFoods());
         fragment.setRemovable(true);
         fragment.setShowLikeImage(false);
         fragment.setFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
-            dialog.setFoodId(food.getId());
+            dialog.setSelfFoodId(food.getId());
             dialog.setFoodLikedListener(after -> {
                 fragment.removeFood(after);
                 setTitle();
@@ -43,12 +41,12 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         });
         fragment.setFoodRemovedListener(data -> {
             data.setFavorite(false);
-            SelfFoodService.updateFood(data);
+            SelfMadeFoodService.updateFood(data);
             setTitle();
         });
         fragment.setFoodAddedListener(data -> {
             data.setFavorite(true);
-            SelfFoodService.updateFood(data);
+            SelfMadeFoodService.updateFood(data);
             setTitle();
         });
     }

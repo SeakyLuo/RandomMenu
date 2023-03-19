@@ -7,12 +7,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
@@ -42,16 +43,16 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
         data.setIndex(position);
         fillFood(data, foodName, foodPrice, foodComment, foodImage);
         view.setOnClickListener(v -> {
-            AppCompatActivity activity = (AppCompatActivity) context;
+            FragmentActivity activity = getContextAsFragmentActivity();
             if (canEdit){
                 Intent intent = new Intent(activity, EditRestaurantFoodActivity.class);
                 intent.putExtra(EditRestaurantFoodActivity.DATA, data);
                 activity.startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
                 activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
             } else {
-//                FoodCardDialog dialog = new FoodCardDialog();
-//                dialog.setFood(data);
-//                dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
+                FoodCardDialog dialog = new FoodCardDialog();
+                dialog.setRestaurantFoodId(data.getId());
+                dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
             }
         });
         if (!canEdit || getData().size() == 1){
@@ -73,7 +74,7 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
         foodName.setText(data.getName());
         foodPrice.setText("￥" + DoubleUtils.truncateZero(data.getPrice()));
         foodComment.setText(data.getComment());
-        ImageUtils.loadImage(context, data.getPictureUri(), foodImage);
+        ImageUtils.loadImage(context, data.getCover(), foodImage);
     }
 
 }

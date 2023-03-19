@@ -17,6 +17,7 @@ import personalprojects.seakyluo.randommenu.database.mappers.ConsumeRecordMapper
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.services.ImagePathService;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
 public class ConsumeRecordDaoService {
@@ -37,7 +38,8 @@ public class ConsumeRecordDaoService {
         List<Long> ids = mapper.insert(daoList);
         setRestaurantIdAndRecordId(voList, restaurantId, ids);
         computeShowFood(voList);
-        RestaurantFoodDaoService.insert(voList.stream().flatMap(vo -> vo.getFoods().stream().peek(f -> f.setId(0))).collect(Collectors.toList()));
+        List<RestaurantFoodVO> foods = voList.stream().flatMap(vo -> vo.getFoods().stream().peek(f -> f.setId(0))).collect(Collectors.toList());
+        RestaurantFoodDaoService.insert(foods);
     }
 
     private static void setRestaurantIdAndRecordId(List<ConsumeRecordVO> voList, long restaurantId, List<Long> ids){
@@ -73,7 +75,7 @@ public class ConsumeRecordDaoService {
             if (diff != 0) return diff;
             diff = counter.getOrDefault(f2.getName(), 0) - counter.getOrDefault(f1.getName(), 0);
             if (diff != 0) return diff;
-            diff = Boolean.compare(StringUtils.isNotEmpty(f2.getPictureUri()), StringUtils.isNotEmpty(f1.getPictureUri()));
+            diff = Boolean.compare(StringUtils.isNotEmpty(f2.getCover()), StringUtils.isNotEmpty(f1.getCover()));
             if (diff != 0) return diff;
             diff = Boolean.compare(isNotBadComment(f2.getComment()), isNotBadComment(f1.getComment()));
             if (diff != 0) return diff;

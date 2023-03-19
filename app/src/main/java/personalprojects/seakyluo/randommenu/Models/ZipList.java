@@ -3,8 +3,7 @@ package personalprojects.seakyluo.randommenu.models;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import personalprojects.seakyluo.randommenu.interfaces.ZipVoidLambda;
+import java.util.function.BiConsumer;
 
 public class ZipList<T1, T2> extends IList<T1>{
     private List<T2> zip_list;
@@ -18,10 +17,10 @@ public class ZipList<T1, T2> extends IList<T1>{
         zip_list = new ArrayList<>(list2);
     }
 
-    public ZipList<T1, T2> ForEach(ZipVoidLambda<T1, T2> lambda){
+    public ZipList<T1, T2> ForEach(BiConsumer<T1, T2> lambda){
         int min = Math.min(size(), zip_list.size());
         for (int i = 0; i < min; i++)
-            lambda.operate(get(i), zip_list.get(i));
+            lambda.accept(get(i), zip_list.get(i));
         return this;
     }
     
@@ -31,10 +30,10 @@ public class ZipList<T1, T2> extends IList<T1>{
         return collection;
     }
 
-    public ZipList<T1, T2> Enumerate(ZipVoidLambda<Integer, ZipObject> lambda){
+    public ZipList<T1, T2> Enumerate(BiConsumer<Integer, ZipObject> lambda){
         int min = Math.min(size(), zip_list.size());
         for(int i = 0; i < min; i++)
-            lambda.operate(i, new ZipObject(get(i), zip_list.get(i)));
+            lambda.accept(i, new ZipObject(get(i), zip_list.get(i)));
         return this;
     }
 

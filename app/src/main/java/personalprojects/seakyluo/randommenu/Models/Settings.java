@@ -12,7 +12,7 @@ public class Settings {
     public AList<String> ToEat = new AList<>();
     public AList<String> DislikeFood = new AList<>();
     public AList<String> SearchHistory = new AList<>();
-    public SelfFood FoodDraft;
+    public SelfMadeFood FoodDraft;
     public String Note = "";
     public boolean AutoTag = true;
 

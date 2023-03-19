@@ -22,6 +22,9 @@ public interface RestaurantFoodMapper {
     @Delete
     int delete(RestaurantFoodDAO dao);
 
+    @Query("select * from restaurant_food where id = :id")
+    RestaurantFoodDAO selectById(long id);
+
     @Query("select * from restaurant_food where restaurantId = :restaurantId")
     List<RestaurantFoodDAO> selectByRestaurant(long restaurantId);
 
@@ -37,6 +40,4 @@ public interface RestaurantFoodMapper {
     @Query("delete from restaurant_food where consumeRecordId = :consumeRecordId")
     void deleteByConsumeRecord(long consumeRecordId);
 
-    @Query("select distinct pictureUri from restaurant_food")
-    List<String> selectPaths();
 }

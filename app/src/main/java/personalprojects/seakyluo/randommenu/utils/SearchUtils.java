@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.MatchFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
@@ -25,7 +25,7 @@ public class SearchUtils {
         return 0;
     }
 
-    public static MatchFood evalFood(SelfFood food, String keyword){
+    public static MatchFood evalFood(SelfMadeFood food, String keyword){
         int namePoints = evalString(food.getName(), keyword), tagPoints = evalFoodTag(food, keyword), notePoints = evalFoodNote(food, keyword);
         int points = namePoints + tagPoints + notePoints;
         int bonus = 0;
@@ -36,7 +36,7 @@ public class SearchUtils {
         return new MatchFood(food, points, bonus, namePoints, tagPoints, notePoints);
     }
 
-    public static int evalFoodTag(SelfFood food, String keyword){
+    public static int evalFoodTag(SelfMadeFood food, String keyword){
         int points = 0;
         for (Tag t: food.getTags()) {
             points = Math.max(points, evalString(t.getName(), keyword) - 15);
@@ -47,7 +47,7 @@ public class SearchUtils {
         return points;
     }
 
-    public static int evalFoodNote(SelfFood food, String keyword){
+    public static int evalFoodNote(SelfMadeFood food, String keyword){
         String note = food.getNote();
         if (StringUtils.isBlank(note)) return 0;
         int points = evalString(note, keyword);

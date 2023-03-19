@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ms.square.android.expandabletextview.ExpandableTextView;
@@ -20,8 +21,10 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
@@ -43,12 +46,20 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         RestaurantFoodAdapter foodAdapter = new RestaurantFoodAdapter(context);
 
         restaurantFoodRecyclerView.setAdapter(foodAdapter);
+        foodAdapter.setOnFoodClickListener((vh, f) -> showFood(f));
         fillWithData(view, foodAdapter, data);
         view.setOnClickListener(v -> showRestaurant(data));
         view.setOnLongClickListener(v -> {
             editRestaurant(data);
             return true;
         });
+    }
+
+    private void showFood(RestaurantFoodVO data){
+        FragmentActivity activity = getContextAsFragmentActivity();
+        FoodCardDialog dialog = new FoodCardDialog();
+        dialog.setRestaurantFoodId(data.getId());
+        dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
     }
 
     private void showRestaurant(RestaurantVO data){

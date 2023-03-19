@@ -3,13 +3,11 @@ package personalprojects.seakyluo.randommenu.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import personalprojects.seakyluo.randommenu.database.AppDatabase;
-import personalprojects.seakyluo.randommenu.database.dao.SelfFoodTagDAO;
-import personalprojects.seakyluo.randommenu.database.mappers.FoodTagMapper;
+import personalprojects.seakyluo.randommenu.database.dao.SelfMadeFoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.services.FoodTagDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodTagDaoService;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class FoodTagService {
@@ -33,8 +31,8 @@ public class FoodTagService {
         if (oldName.equals(newName)){
             return;
         }
-        List<SelfFood> foods = SelfFoodService.selectByTag(tag);
-        for (SelfFood food : foods){
+        List<SelfMadeFood> foods = SelfMadeFoodService.selectByTag(tag);
+        for (SelfMadeFood food : foods){
             for (Tag t : food.getTags()){
                 if (t.getId() == id){
                     t.setName(newName);
@@ -45,7 +43,7 @@ public class FoodTagService {
         }
     }
 
-    public static void increment(SelfFood food){
+    public static void increment(SelfMadeFood food){
         increment(food.getId(), food.getTags());
     }
 
@@ -65,7 +63,7 @@ public class FoodTagService {
         SelfFoodTagDaoService.insert(foodId, tags);
     }
 
-    public static void decrement(SelfFood food){
+    public static void decrement(SelfMadeFood food){
         decrement(food.getId(), food.getTags());
     }
 
@@ -87,8 +85,8 @@ public class FoodTagService {
     }
 
     public static List<Tag> selectByFood(long foodId){
-        List<SelfFoodTagDAO> selfFoodTagDAOS = SelfFoodTagDaoService.selectByFood(foodId);
-        List<Long> tagIds = selfFoodTagDAOS.stream().map(SelfFoodTagDAO::getTagId).collect(Collectors.toList());
+        List<SelfMadeFoodTagDAO> selfMadeFoodTagDAOS = SelfFoodTagDaoService.selectByFood(foodId);
+        List<Long> tagIds = selfMadeFoodTagDAOS.stream().map(SelfMadeFoodTagDAO::getTagId).collect(Collectors.toList());
         return FoodTagDaoService.selectByIds(tagIds);
     }
 

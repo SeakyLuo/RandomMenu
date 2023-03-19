@@ -4,19 +4,19 @@ import lombok.Data;
 
 @Data
 public class MatchFood {
-    private SelfFood food;
+    private SelfMadeFood food;
     private int points;
     private int bonus;
     private int namePoints;
     private int tagPoints;
     private int notePoints;
 
-    public MatchFood(SelfFood food, int points){
+    public MatchFood(SelfMadeFood food, int points){
         this.food = food;
         this.points = points;
     }
 
-    public MatchFood(SelfFood food, int points, int bonus, int namePoints, int tagPoints, int notePoints){
+    public MatchFood(SelfMadeFood food, int points, int bonus, int namePoints, int tagPoints, int notePoints){
         this.food = food;
         this.points = points;
         this.bonus = bonus;

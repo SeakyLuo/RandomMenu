@@ -7,13 +7,13 @@ import android.widget.TextView;
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
-public class FoodAdapter extends CustomAdapter<SelfFood> {
+public class SelfFoodAdapter extends CustomAdapter<SelfMadeFood> {
     @Setter
-    private DataItemClickedListener<SelfFood> foodClickedListener, foodLongClickListener;
+    private DataItemClickedListener<SelfMadeFood> foodClickedListener, foodLongClickListener;
 
     @Override
     protected int getLayout(int viewType) {
@@ -21,7 +21,7 @@ public class FoodAdapter extends CustomAdapter<SelfFood> {
     }
 
     @Override
-    protected void fillViewHolder(CustomViewHolder viewHolder, SelfFood data, int position) {
+    protected void fillViewHolder(CustomViewHolder viewHolder, SelfMadeFood data, int position) {
         View view = viewHolder.getView();
         TextView food_name = view.findViewById(R.id.food_name);
         ImageView foodImage = view.findViewById(R.id.food_image);
@@ -39,14 +39,14 @@ public class FoodAdapter extends CustomAdapter<SelfFood> {
         });
     }
 
-    public void updateFood(SelfFood food){
+    public void updateFood(SelfMadeFood food){
         int index = data.indexOf(f -> f.getId() == food.getId());
         if (index != -1){
             set(food, index);
         }
     }
 
-    public void setFoodLiked(SelfFood food) {
+    public void setFoodLiked(SelfMadeFood food) {
         CustomViewHolder viewHolder = viewHolders.first(vh -> vh.getData().equals(food));
         setFoodLiked(viewHolder.getView(), food.isFavorite());
     }

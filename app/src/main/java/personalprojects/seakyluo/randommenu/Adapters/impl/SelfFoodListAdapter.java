@@ -12,15 +12,15 @@ import lombok.Setter;
 import personalprojects.seakyluo.randommenu.adapters.BaseFoodListAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.CustomDataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.R;
 
-public class FoodListAdapter extends BaseFoodListAdapter {
+public class SelfFoodListAdapter extends BaseFoodListAdapter {
 
     @Setter
     private boolean selectable = false;
     @Setter
-    private CustomDataItemClickedListener<SelfFood, Boolean> selectionChangedListener;
+    private CustomDataItemClickedListener<SelfMadeFood, Boolean> selectionChangedListener;
 
     @Override
     protected int getLayout(int viewType) {
@@ -28,7 +28,7 @@ public class FoodListAdapter extends BaseFoodListAdapter {
     }
 
     @Override
-    protected void fillViewHolder(CustomViewHolder viewHolder, SelfFood data, int position) {
+    protected void fillViewHolder(CustomViewHolder viewHolder, SelfMadeFood data, int position) {
         super.fillViewHolder(viewHolder, data, position);
         View view = viewHolder.getView();
         ImageView checkedImage = view.findViewById(R.id.checked_image);
@@ -51,19 +51,19 @@ public class FoodListAdapter extends BaseFoodListAdapter {
         recyclerView.setAdapter(adapter);
     }
 
-    public void setSelectedFoods(List<SelfFood> foods){
-        Set<Long> foodIds = foods.stream().map(SelfFood::getId).collect(Collectors.toSet());
-        for (SelfFood food : data){
+    public void setSelectedFoods(List<SelfMadeFood> foods){
+        Set<Long> foodIds = foods.stream().map(SelfMadeFood::getId).collect(Collectors.toSet());
+        for (SelfMadeFood food : data){
             food.setSelected(foodIds.contains(food.getId()));
         }
     }
 
-    public AList<SelfFood> getSelectedFoods(){
-        return data.stream().filter(SelfFood::isSelected).collect(Collectors.toCollection(AList::new));
+    public AList<SelfMadeFood> getSelectedFoods(){
+        return data.stream().filter(SelfMadeFood::isSelected).collect(Collectors.toCollection(AList::new));
     }
 
     public void setSelected(CustomViewHolder viewHolder, boolean selected){
-        SelfFood data = viewHolder.getData();
+        SelfMadeFood data = viewHolder.getData();
         data.setSelected(selected);
 
         View view = viewHolder.getView();

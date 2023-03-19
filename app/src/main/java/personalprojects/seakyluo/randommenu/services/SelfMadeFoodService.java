@@ -5,60 +5,62 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import personalprojects.seakyluo.randommenu.database.dao.SelfFoodTagDAO;
+import personalprojects.seakyluo.randommenu.database.dao.SelfMadeFoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
-import personalprojects.seakyluo.randommenu.database.services.SelfFoodImageDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodTagDaoService;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
-public class SelfFoodService {
+public class SelfMadeFoodService {
 
-    private static List<Consumer<SelfFood>> foodDeletedListeners = new ArrayList<>();
+    private static List<Consumer<SelfMadeFood>> foodDeletedListeners = new ArrayList<>();
 
-    public static void addFood(SelfFood food){
-        SelfFood existing = SelfFoodDaoService.selectByName(food.getName());
+    public static void addFood(SelfMadeFood food){
+        SelfMadeFood existing = SelfFoodDaoService.selectByName(food.getName());
         if (existing != null){
             return;
         }
         SelfFoodDaoService.insert(food);
         FoodTagService.increment(food);
         long id = food.getId();
-        SelfFoodImageDaoService.insert(id, food.getImages());
+        ImagePathService.insertSelfMadeFood(id, food.getImages());
         SelfFoodTagDaoService.insert(id, food.getTags());
     }
 
-    public static void removeFood(SelfFood food){
+    public static void removeFood(SelfMadeFood food){
         SelfFoodDaoService.delete(food);
         FoodTagService.decrement(food);
-        SelfFoodImageDaoService.deleteByFood(food);
+        ImagePathService.deleteBySelfMadeFood(food);
         SelfFoodTagDaoService.deleteByFood(food);
         foodDeletedListeners.forEach(l -> l.accept(food));
     }
 
-    public static void updateFood(SelfFood food){
+    public static void updateFood(SelfMadeFood food){
         long foodId = food.getId();
         SelfFoodDaoService.update(food);
-        SelfFood existing = selectById(foodId);
+        SelfMadeFood existing = selectById(foodId);
         if (existing != null){
             FoodTagService.decrement(existing);
-            SelfFoodImageDaoService.deleteByFood(existing);
+            ImagePathService.deleteBySelfMadeFood(food);
             SelfFoodTagDaoService.deleteByFood(food);
         }
         FoodTagService.increment(food);
-        SelfFoodImageDaoService.insert(foodId, food.getImages());
+        ImagePathService.insertSelfMadeFood(foodId, food.getImages());
         SelfFoodTagDaoService.insert(foodId, food.getTags());
     }
 
-    public static List<SelfFood> selectAll(){
+    public static List<SelfMadeFood> selectAll(){
         return SelfFoodDaoService.selectAll().parallelStream()
-                .peek(SelfFoodService::fillFood)
+                .peek(SelfMadeFoodService::fillFood)
                 .collect(Collectors.toList());
     }
 
-    public static SelfFood selectById(long id){
-        SelfFood food = SelfFoodDaoService.selectById(id);
+    public static SelfMadeFood selectById(Long id){
+        if (id == null){
+            return null;
+        }
+        SelfMadeFood food = SelfFoodDaoService.selectById(id);
         if (food == null){
             return null;
         }
@@ -66,8 +68,8 @@ public class SelfFoodService {
         return food;
     }
 
-    public static SelfFood selectByName(String name){
-        SelfFood food = SelfFoodDaoService.selectByName(name);
+    public static SelfMadeFood selectByName(String name){
+        SelfMadeFood food = SelfFoodDaoService.selectByName(name);
         if (food == null){
             return null;
         }
@@ -75,28 +77,28 @@ public class SelfFoodService {
         return food;
     }
 
-    private static void fillFood(SelfFood food){
+    private static void fillFood(SelfMadeFood food){
         long id = food.getId();
         food.setTags(new AList<>(FoodTagService.selectByFood(id)));
-        AList<String> images = new AList<>(SelfFoodImageDaoService.selectByFood(id));
+        AList<String> images = new AList<>(ImagePathService.selectBySelfMadeFood(id));
         food.setImages(images);
     }
 
-    public static List<SelfFood> selectByTag(Tag tag){
+    public static List<SelfMadeFood> selectByTag(Tag tag){
         List<Long> foodIds = SelfFoodTagDaoService.selectByTag(tag.getId()).stream()
-                .map(SelfFoodTagDAO::getFoodId)
+                .map(SelfMadeFoodTagDAO::getFoodId)
                 .collect(Collectors.toList());
         return SelfFoodDaoService.selectByIds(foodIds);
     }
 
     public static void deleteNonExistentImage(List<String> currentImages){
-        SelfFoodImageDaoService.clearNonExistent(currentImages);
+        ImagePathService.clearNonExistent(currentImages);
         // TODO clear food cover
     }
 
-    public static List<SelfFood> getFavoriteFoods(){
-        List<SelfFood> foods = SelfFoodDaoService.getFavoriteFoods();
-        for (SelfFood food : foods){
+    public static List<SelfMadeFood> getFavoriteFoods(){
+        List<SelfMadeFood> foods = SelfFoodDaoService.getFavoriteFoods();
+        for (SelfMadeFood food : foods){
             food.setTags(new AList<>(FoodTagService.selectByFood(food.getId())));
         }
         return foods;

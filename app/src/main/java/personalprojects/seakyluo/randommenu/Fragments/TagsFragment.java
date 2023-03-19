@@ -49,7 +49,8 @@ public class TagsFragment extends Fragment {
         adapter.move(from, to);
     }
     public void remove(Tag tag) {
-        adapter.remove(tag);
+        int index = adapter.indexOf(t -> t.getName().equals(tag.getName()));
+        adapter.removeAt(index);
     }
     public boolean contains(Tag tag) {
         return adapter.contains(tag);

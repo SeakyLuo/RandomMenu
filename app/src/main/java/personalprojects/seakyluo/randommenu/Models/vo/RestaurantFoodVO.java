@@ -3,6 +3,8 @@ package personalprojects.seakyluo.randommenu.models.vo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,24 +17,12 @@ public class RestaurantFoodVO implements Parcelable {
     private long consumeRecordId;
     private int consumeRecordIndex = -1;
     private String name;
-    private String pictureUri;
+    private String cover;
+    private List<String> images;
     private String comment;
     private double price;
     private int index = -1;
     private int orderInHome = -1;
-
-    public void copyFrom(RestaurantFoodVO src){
-        id = src.id;
-        restaurantId = src.restaurantId;
-        consumeRecordId = src.consumeRecordId;
-        consumeRecordIndex = src.consumeRecordIndex;
-        name = src.name;
-        pictureUri = src.pictureUri;
-        comment = src.comment;
-        price = src.price;
-        index = src.index;
-        orderInHome = src.orderInHome;
-    }
 
     protected RestaurantFoodVO(Parcel in) {
         id = in.readLong();
@@ -40,7 +30,8 @@ public class RestaurantFoodVO implements Parcelable {
         consumeRecordId = in.readLong();
         consumeRecordIndex = in.readInt();
         name = in.readString();
-        pictureUri = in.readString();
+        cover = in.readString();
+        images = in.createStringArrayList();
         comment = in.readString();
         price = in.readDouble();
         index = in.readInt();
@@ -71,7 +62,8 @@ public class RestaurantFoodVO implements Parcelable {
         dest.writeLong(consumeRecordId);
         dest.writeInt(consumeRecordIndex);
         dest.writeString(name);
-        dest.writeString(pictureUri);
+        dest.writeString(cover);
+        dest.writeStringList(images);
         dest.writeString(comment);
         dest.writeDouble(price);
         dest.writeInt(index);

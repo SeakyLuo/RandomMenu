@@ -45,13 +45,14 @@ public class RestaurantUtils {
         int count = clipData.getItemCount();
         for (int i = 0; i < count; i++){
             Uri uri = clipData.getItemAt(i).getUri();
-            String fileName = ImageUtils.newImageFileName(i);
-            if (!ImageUtils.saveImage(context, uri, fileName)){
+            String filename = ImageUtils.newImageFileName(i);
+            if (!ImageUtils.saveImage(context, uri, filename)){
                 continue;
             }
             ConsumeRecordVO record = new ConsumeRecordVO();
             RestaurantFoodVO food = new RestaurantFoodVO();
-            food.setPictureUri(fileName);
+            food.setCover(filename);
+            food.setImages(Lists.newArrayList(filename));
             record.setFoods(Lists.newArrayList(food));
             record.setEaters(new ArrayList<>());
             records.add(record);

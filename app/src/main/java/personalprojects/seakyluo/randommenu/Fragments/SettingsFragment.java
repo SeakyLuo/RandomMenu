@@ -27,15 +27,13 @@ import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.services.AutoTagMapperDaoService;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
-import personalprojects.seakyluo.randommenu.database.services.RestaurantFoodDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
-import personalprojects.seakyluo.randommenu.database.services.SelfFoodImageDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
 import personalprojects.seakyluo.randommenu.activities.impl.DislikeActivity;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.activities.impl.MainActivity;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.activities.impl.MoreSettingsActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.MyFavoritesActivity;
@@ -45,7 +43,8 @@ import personalprojects.seakyluo.randommenu.activities.impl.ToCookActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.ToEatActivity;
 import personalprojects.seakyluo.randommenu.models.TagMapEntry;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
-import personalprojects.seakyluo.randommenu.services.SelfFoodService;
+import personalprojects.seakyluo.randommenu.services.ImagePathService;
+import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
@@ -117,11 +116,10 @@ public class SettingsFragment extends Fragment {
             dialog.setMessage(R.string.clearing_cache);
             new Thread(() -> {
                 // Removing unused images
-                clearLocalImages(SelfFoodImageDaoService.selectPaths());
-                clearLocalImages(RestaurantFoodDaoService.selectPaths());
+                clearLocalImages(ImagePathService.selectPaths());
                 // Removing non-existent images
                 List<String> filenames = Arrays.stream(Helper.ImageFolder.listFiles()).map(File::getName).collect(Collectors.toList());
-                SelfFoodService.deleteNonExistentImage(filenames);
+                SelfMadeFoodService.deleteNonExistentImage(filenames);
                 clearFolder(Helper.LogFolder);
                 clearFolder(Helper.TempFolder);
                 clearFolder(Helper.TempUnzipFolder);
@@ -179,7 +177,7 @@ public class SettingsFragment extends Fragment {
             File settings = FileUtils.getFile(Settings.FILENAME);
 
             File restaurantsFile = exportToFile(buildRestaurantFilename(), RestaurantDaoService.selectAll());
-            File selfFoodsFile = exportToFile(buildSelfFoodFilename(), SelfFoodService.selectAll());
+            File selfFoodsFile = exportToFile(buildSelfFoodFilename(), SelfMadeFoodService.selectAll());
             File autoTagMapFile = exportToFile(buildAutoTagMapFilename(), AutoTagMapperDaoService.selectAll());
 
             dialog.setMessage("正在打包，请稍候");
@@ -255,9 +253,9 @@ public class SettingsFragment extends Fragment {
         try {
             dialog.setMessage("正在导入菜肴");
             String json = FileUtils.readFile(buildSelfFoodFilename());
-            List<SelfFood> list = JsonUtils.fromJson(json, new TypeToken<List<SelfFood>>() {});
+            List<SelfMadeFood> list = JsonUtils.fromJson(json, new TypeToken<List<SelfMadeFood>>() {});
             SelfFoodDaoService.selectAll().forEach(SelfFoodDaoService::delete);
-            list.forEach(SelfFoodService::addFood);
+            list.forEach(SelfMadeFoodService::addFood);
         } catch (Exception e){
             showExceptionToast(dialog, "导入菜肴记录失败", e);
         }

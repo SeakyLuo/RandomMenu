@@ -13,26 +13,26 @@ import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
 import personalprojects.seakyluo.randommenu.database.dao.ConsumeRecordDAO;
 import personalprojects.seakyluo.randommenu.database.dao.FoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.dao.FoodTypeDAO;
+import personalprojects.seakyluo.randommenu.database.dao.ImagePathDAO;
+import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantFoodDAO;
-import personalprojects.seakyluo.randommenu.database.dao.SelfFoodImageDAO;
-import personalprojects.seakyluo.randommenu.database.dao.SelfFoodTagDAO;
-import personalprojects.seakyluo.randommenu.database.dao.SelfFoodDAO;
+import personalprojects.seakyluo.randommenu.database.dao.SelfMadeFoodDAO;
+import personalprojects.seakyluo.randommenu.database.dao.SelfMadeFoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.dao.TagMapEntryDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.AddressMapper;
-import personalprojects.seakyluo.randommenu.database.mappers.TagMapEntryMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.ConsumeRecordMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.FoodTagMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.FoodTypeMapper;
+import personalprojects.seakyluo.randommenu.database.mappers.ImagePathMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantFoodMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
-import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
-import personalprojects.seakyluo.randommenu.database.mappers.SelfFoodImageMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.SelfFoodMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.SelfFoodTagMapper;
+import personalprojects.seakyluo.randommenu.database.mappers.TagMapEntryMapper;
 
 @Database(entities = {RestaurantDAO.class, AddressDAO.class, ConsumeRecordDAO.class, RestaurantFoodDAO.class, FoodTypeDAO.class,
-        SelfFoodDAO.class, FoodTagDAO.class, SelfFoodTagDAO.class, SelfFoodImageDAO.class, TagMapEntryDAO.class},
-        version = 11,
+        SelfMadeFoodDAO.class, FoodTagDAO.class, SelfMadeFoodTagDAO.class, TagMapEntryDAO.class, ImagePathDAO.class },
+        version = 13,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -47,19 +47,31 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SelfFoodMapper selfFoodMapper();
     public abstract FoodTagMapper foodTagMapper();
     public abstract SelfFoodTagMapper selfFoodTagMapper();
-    public abstract SelfFoodImageMapper selfFoodImageMapper();
+
     public abstract TagMapEntryMapper tagMapEntryMapper();
+    public abstract ImagePathMapper imagePathMapper();
 
     public static void createInstance(Context context){
         instance = Room.databaseBuilder(context, AppDatabase.class, DB_NAME)
                 .allowMainThreadQueries()
-                .addMigrations(new Migration(5, 6) {
+                .addMigrations(new Migration(12, 13) {
                     @Override
                     public void migrate(@NonNull SupportSQLiteDatabase database) {
-                        database.execSQL("alter table restaurant_food add column orderInHome INTEGER DEFAULT -1");
+
                     }
-                })
-                .addMigrations(new Migration(8, 9) {
+                }, new Migration(11, 12) {
+                    @Override
+                    public void migrate(@NonNull SupportSQLiteDatabase database) {
+                        database.execSQL("create table image_path (" +
+                                "id INTEGER PRIMARY KEY NOT NULL, " +
+                                "itemId INTEGER NOT NULL," +
+                                "itemType TEXT," +
+                                "path TEXT," +
+                                "orderNum INTEGER NOT NULL" +
+                                ")");
+                        database.execSQL("CREATE INDEX index_image_path on image_path (itemId)");
+                    }
+                }, new Migration(8, 9) {
                     @Override
                     public void migrate(@NonNull SupportSQLiteDatabase database) {
                         database.execSQL("drop table self_food");
@@ -97,8 +109,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                 ")");
                         database.execSQL("CREATE INDEX index_self_food_image_foodId on self_food_image (foodId)");
                     }
-                })
-                .addMigrations(new Migration(9, 10) {
+                }, new Migration(9, 10) {
                     @Override
                     public void migrate(@NonNull SupportSQLiteDatabase database) {
                         database.execSQL("create table auto_tag_map (" +
@@ -107,11 +118,15 @@ public abstract class AppDatabase extends RoomDatabase {
                                 "tags TEXT" +
                                 ")");
                     }
-                })
-                .addMigrations(new Migration(10, 11) {
+                }, new Migration(10, 11) {
                     @Override
                     public void migrate(@NonNull SupportSQLiteDatabase database) {
                         database.execSQL("alter table self_food add column tags TEXT");
+                    }
+                }, new Migration(5, 6) {
+                    @Override
+                    public void migrate(@NonNull SupportSQLiteDatabase database) {
+                        database.execSQL("alter table restaurant_food add column orderInHome INTEGER DEFAULT -1");
                     }
                 })
                 .build();

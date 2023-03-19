@@ -24,16 +24,16 @@ import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService
 import personalprojects.seakyluo.randommenu.dialogs.FilterDialog;
 import personalprojects.seakyluo.randommenu.dialogs.MenuDialog;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.services.SelfFoodService;
+import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 
 public class RandomFragment extends Fragment {
     public static final String TAG = "RandomFragment", TAG_MENU = "menu", TAG_PREFERRED_TAGS = "preferred_tags", TAG_EXCLUDED_TAGS = "excluded_tags";
-    private AList<SelfFood> foodPool = new AList<>();
+    private AList<SelfMadeFood> foodPool = new AList<>();
     private FoodCardFragment foodCardFragment;
-    private AList<SelfFood> menu = new AList<>();
+    private AList<SelfMadeFood> menu = new AList<>();
     private MenuDialog menuDialog = new MenuDialog();
     private FilterDialog filterDialog = new FilterDialog();
     private AList<Tag> preferredTags = new AList<>(), excludedTags = new AList<>();
@@ -65,7 +65,7 @@ public class RandomFragment extends Fragment {
             reset();
             nextFood();
         });
-        filterDialog.setOnResetListener(v -> {
+        filterDialog.setResetListener(v -> {
             filterDialog.setData(preferredTags.copy(), excludedTags.copy());
             preferredTags.clear();
             excludedTags.clear();
@@ -82,7 +82,10 @@ public class RandomFragment extends Fragment {
             foodPool.removeAll(data);
             menu.copyFrom(data);
             setMenuHeader();
-            if (menu.contains(foodCardFragment.getFood())) nextFood();
+            SelfMadeFood selfMadeFood = foodCardFragment.getFood().asSelfMadeFood();
+            if (menu.contains(selfMadeFood)){
+                nextFood();
+            }
         });
         menuDialog.setFoodRemovedListener(data -> {
             menu.remove(data);
@@ -119,7 +122,7 @@ public class RandomFragment extends Fragment {
         flipInAnim.start();
     }
 
-    private SelfFood nextFood(){
+    private SelfMadeFood nextFood(){
         if (foodPool.isEmpty()){
             if (foodCardFragment.getFood() != null){
                 reset();
@@ -127,18 +130,19 @@ public class RandomFragment extends Fragment {
             }
             return null;
         }
-        SelfFood food = SelfFoodService.selectById(foodPool.pop(0).getId());
+        SelfMadeFood food = SelfMadeFoodService.selectById(foodPool.pop(0).getId());
         if (food == null) return nextFood();
-        return foodCardFragment.fillFood(food);
+        foodCardFragment.fillFood(food);
+        return food;
     }
 
-    private AList<SelfFood> reset(){
+    private AList<SelfMadeFood> reset(){
         SelfFoodDaoService.decrementHideCount();
         return setData();
     }
 
-    private AList<SelfFood> setData(){
-        AList<SelfFood> source = SelfFoodDaoService.selectNonHidden().stream()
+    private AList<SelfMadeFood> setData(){
+        AList<SelfMadeFood> source = SelfFoodDaoService.selectNonHidden().stream()
                 .collect(Collectors.toCollection(AList::new));
         if (!preferredTags.isEmpty()) source.removeIf(f -> !preferredTags.any(f::hasTag));
         if (!excludedTags.isEmpty()) source.removeIf(f -> excludedTags.any(f::hasTag));
@@ -147,7 +151,11 @@ public class RandomFragment extends Fragment {
         return foodPool.copyFrom(source);
     }
 
-    public void refresh() { foodCardFragment.refresh(); }
+    public void refresh() {
+        SelfMadeFood selfMadeFood = foodCardFragment.getFood().asSelfMadeFood();
+        if (selfMadeFood == null) return;
+        foodCardFragment.fillFood(SelfMadeFoodService.selectById(selfMadeFood.getId()));
+    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -168,7 +176,7 @@ public class RandomFragment extends Fragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                menu.with(foodCardFragment.getFood(), 0);
+                menu.add(0, foodCardFragment.getFood().asSelfMadeFood());
                 nextFood();
             }
 

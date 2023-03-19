@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Entity(tableName = "self_food_tag")
-public class SelfFoodTagDAO {
+public class SelfMadeFoodTagDAO {
 
     @PrimaryKey(autoGenerate = true)
     private long id;

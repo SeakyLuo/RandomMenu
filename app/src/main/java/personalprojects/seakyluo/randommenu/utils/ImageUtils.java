@@ -117,6 +117,7 @@ public class ImageUtils {
             return null;
         }
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         Uri uri = FileUtils.getFileUri(activity, ImageUtils.newImageFileName());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         activity.startActivityForResult(intent, ActivityCodeConstant.CAMERA);

@@ -14,7 +14,7 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
@@ -35,8 +35,8 @@ public class ToCookActivity extends SwipeBackActivity {
         adapter = new SimpleFoodListAdapter();
         adapter.setData(Settings.settings.ToCook);
         adapter.SetOnDataItemClickedListener((viewHolder, data) -> {
-            Intent intent = new Intent(this, EditFoodActivity.class);
-            intent.putExtra(EditFoodActivity.FOOD, new SelfFood(data));
+            Intent intent = new Intent(this, EditSelfMadeFoodActivity.class);
+            intent.putExtra(EditSelfMadeFoodActivity.FOOD, new SelfMadeFood(data));
             startActivityForResult(intent, ActivityCodeConstant.FOOD_CODE);
         });
         adapter.SetOnDeletedClickedListener((viewHolder, data) -> {
@@ -81,7 +81,7 @@ public class ToCookActivity extends SwipeBackActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        SelfFood food = (SelfFood) data.getParcelableExtra(EditFoodActivity.FOOD);
+        SelfMadeFood food = (SelfMadeFood) data.getParcelableExtra(EditSelfMadeFoodActivity.FOOD);
         String foodName = food.getName();
         Settings.settings.ToCook.remove(foodName);
         adapter.remove(foodName);

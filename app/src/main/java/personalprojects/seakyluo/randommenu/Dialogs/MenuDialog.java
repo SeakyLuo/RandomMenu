@@ -19,7 +19,7 @@ import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.impl.ChooseFoodActivity;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.R;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -31,9 +31,9 @@ public class MenuDialog extends DialogFragment {
     @Setter
     private View.OnClickListener clearListener;
     @Setter
-    private Consumer<SelfFood> foodRemovedListener;
+    private Consumer<SelfMadeFood> foodRemovedListener;
     @Setter
-    private Consumer<List<SelfFood>> foodAddedListener;
+    private Consumer<List<SelfMadeFood>> foodAddedListener;
     private TextView header_text;
     private String header;
     @Nullable
@@ -70,7 +70,7 @@ public class MenuDialog extends DialogFragment {
         }
     }
 
-    public void setData(AList<SelfFood> data) {
+    public void setData(AList<SelfMadeFood> data) {
         fragment.setData(data);
     }
 
@@ -82,7 +82,7 @@ public class MenuDialog extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_CANCELED) return;
-        List<SelfFood> foods = data.getParcelableArrayListExtra(ChooseFoodActivity.TAG);
+        List<SelfMadeFood> foods = data.getParcelableArrayListExtra(ChooseFoodActivity.TAG);
         fragment.setData(foods);
         foodAddedListener.accept(foods);
     }

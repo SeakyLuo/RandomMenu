@@ -8,37 +8,37 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import personalprojects.seakyluo.randommenu.database.dao.SelfFoodDAO;
+import personalprojects.seakyluo.randommenu.database.dao.SelfMadeFoodDAO;
 
 @Dao
 public interface SelfFoodMapper {
 
     @Insert
-    Long insert(SelfFoodDAO dao);
+    Long insert(SelfMadeFoodDAO dao);
 
     @Update
-    void update(SelfFoodDAO dao);
+    void update(SelfMadeFoodDAO dao);
 
     @Delete
-    void delete(SelfFoodDAO dao);
+    void delete(SelfMadeFoodDAO dao);
 
     @Query("select * from self_food where id = :id")
-    SelfFoodDAO selectById(long id);
+    SelfMadeFoodDAO selectById(long id);
 
     @Query("select * from self_food where id in (:ids)")
-    List<SelfFoodDAO> selectByIds(List<Long> ids);
+    List<SelfMadeFoodDAO> selectByIds(List<Long> ids);
 
     @Query("select * from self_food where name = :name")
-    SelfFoodDAO selectByName(String name);
+    SelfMadeFoodDAO selectByName(String name);
 
     @Query("select * from self_food order by id desc")
-    List<SelfFoodDAO> selectAll();
+    List<SelfMadeFoodDAO> selectAll();
 
     @Query("select * from self_food where favorite = :isFavorite")
-    List<SelfFoodDAO> selectFavorite(boolean isFavorite);
+    List<SelfMadeFoodDAO> selectFavorite(boolean isFavorite);
 
     @Query("select * from self_food where hideCount = 0")
-    List<SelfFoodDAO> selectNonHidden();
+    List<SelfMadeFoodDAO> selectNonHidden();
 
     @Query("select count(0) from self_food")
     long count();

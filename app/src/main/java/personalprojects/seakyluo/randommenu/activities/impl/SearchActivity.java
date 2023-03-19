@@ -30,9 +30,8 @@ import personalprojects.seakyluo.randommenu.fragments.BaseFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.SearchFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.StringListFragment;
 import personalprojects.seakyluo.randommenu.services.FoodTagService;
-import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 import personalprojects.seakyluo.randommenu.utils.SearchUtils;
-import personalprojects.seakyluo.randommenu.models.SelfFood;
+import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.MatchFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 
@@ -138,9 +137,9 @@ public class SearchActivity extends SwipeBackActivity {
     public String getKeyword() { return getKeyword(search_bar.getText()); }
     public Stream<SearchFoodListFragment> getSearchFragments() { return tabPagerAdapter.getFragments().after(0).stream().map(f -> (SearchFoodListFragment)f); }
 
-    private void foodClicked(SelfFood food){
+    private void foodClicked(SelfMadeFood food){
         FoodCardDialog dialog = new FoodCardDialog();
-        dialog.setFoodId(food.getId());
+        dialog.setSelfFoodId(food.getId());
         dialog.setFoodEditedListener(after -> {
             getSearchFragments().forEach(f -> f.updateFood(after));
         });
@@ -158,9 +157,9 @@ public class SearchActivity extends SwipeBackActivity {
         getSearchFragments().forEach(f -> f.setKeyword(keyword));
         if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
         List<MatchFood> byFood = new ArrayList<>(), byTag = new ArrayList<>(), byNote = new ArrayList<>(), all = new ArrayList<>();
-        for (SelfFood f : SelfFoodDaoService.selectAll()) {
+        for (SelfMadeFood f : SelfFoodDaoService.selectAll()) {
             MatchFood mf = SearchUtils.evalFood(f, keyword);
-            SelfFood food = mf.getFood();
+            SelfMadeFood food = mf.getFood();
             if (mf.getNamePoints() > 0){
                 byFood.add(new MatchFood(food, mf.getNamePointsWithBonus()));
             }
@@ -180,7 +179,7 @@ public class SearchActivity extends SwipeBackActivity {
         noteFragment.setData(sortFoods(byNote));
     }
 
-    public static List<SelfFood> sortFoods(List<MatchFood> foods){
+    public static List<SelfMadeFood> sortFoods(List<MatchFood> foods){
         return foods.stream().sorted(Comparator.comparing(MatchFood::getPoints).reversed())
                 .map(MatchFood::getFood)
                 .peek(f -> f.setTags(FoodTagService.selectByFood(f.getId())))

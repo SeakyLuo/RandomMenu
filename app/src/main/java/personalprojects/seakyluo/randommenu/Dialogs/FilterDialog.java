@@ -9,18 +9,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.function.BiConsumer;
+
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.impl.ChooseTagActivity;
 import personalprojects.seakyluo.randommenu.fragments.ChooseTagFragment;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;
-import personalprojects.seakyluo.randommenu.interfaces.TagFilterListener;
 import personalprojects.seakyluo.randommenu.R;
 
 public class FilterDialog extends DialogFragment {
     public static final String TAG = "FilterDialog";
     private ChooseTagFragment prefer = new ChooseTagFragment(), exclude = new ChooseTagFragment();
+    @Setter
     private View.OnClickListener resetListener;
-    private TagFilterListener tagFilterListener;
+    @Setter
+    private BiConsumer<AList<Tag>, AList<Tag>> tagFilterListener;
 
     @Nullable
     @Override
@@ -34,7 +38,7 @@ public class FilterDialog extends DialogFragment {
         prefer.setChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, exclude.getData()));
         exclude.setHeader(getString(R.string.exclude_tags));
         exclude.setChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, prefer.getData()));
-        confirm_button.setOnClickListener(v -> tagFilterListener.Filter(prefer.getData(), exclude.getData()));
+        confirm_button.setOnClickListener(v -> tagFilterListener.accept(prefer.getData(), exclude.getData()));
         reset_button.setOnClickListener(resetListener);
         return view;
     }
@@ -43,7 +47,5 @@ public class FilterDialog extends DialogFragment {
         prefer.setData(preferred);
         exclude.setData(excluded);
     }
-    public void setTagFilterListener(TagFilterListener listener) { tagFilterListener = listener; }
-    public void setOnResetListener(View.OnClickListener listener) { resetListener = listener; }
 }
 

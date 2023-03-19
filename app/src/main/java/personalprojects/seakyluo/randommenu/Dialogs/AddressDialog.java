@@ -11,9 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.function.Consumer;
+
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 
 public class AddressDialog extends DialogFragment {
@@ -22,7 +23,7 @@ public class AddressDialog extends DialogFragment {
     @Setter
     private AddressVO address;
     @Setter
-    private DataOperationListener<AddressVO> confirmListener;
+    private Consumer<AddressVO> confirmListener;
 
     private EditText editProvince, editCity, editCounty, editAddress;
 
@@ -61,6 +62,7 @@ public class AddressDialog extends DialogFragment {
     }
 
     private static final String ZHIXIASHI_REGEX = "(北京|上海|重庆|天津).*";
+
     private void onConfirm(View view){
         String province = editProvince.getText().toString();
         String city = editCity.getText().toString();
@@ -114,7 +116,7 @@ public class AddressDialog extends DialogFragment {
             Toast.makeText(getContext(), "请规范填写具体地址", Toast.LENGTH_SHORT).show();
             return;
         }
-        confirmListener.operate(buildAddress());
+        confirmListener.accept(buildAddress());
         dismiss();
     }
 }

@@ -3,14 +3,12 @@ package personalprojects.seakyluo.randommenu.models;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -20,9 +18,6 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import personalprojects.seakyluo.randommenu.interfaces.ForLambda;
-import personalprojects.seakyluo.randommenu.interfaces.ZipVoidLambda;
 
 public class AList<T> extends IList<T> {
     public AList(){}

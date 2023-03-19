@@ -1,8 +1,6 @@
 package personalprojects.seakyluo.randommenu.helpers;
 
 import android.app.Activity;
-import android.text.Layout;
-import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,12 +10,8 @@ import java.util.Arrays;
 import java.util.Date;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
-import personalprojects.seakyluo.randommenu.database.services.AutoTagMapperDaoService;
-import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Settings;
-import personalprojects.seakyluo.randommenu.models.TagMapEntry;
-import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
@@ -46,21 +40,16 @@ public class Helper {
     }
 
     private static void script(Settings settings){
-//        SelfFoodService.selectAll().forEach(f -> SelfFoodDaoService.update(f));
-//        settings.AutoTagMap.entrySet().forEach(e -> AutoTagMapperDaoService.insert(new TagMapEntry() {{ setKeyword(e.getKey()); setTagsFromString(e.getValue()); }}));
-//        settings.Foods.forEach(f -> {
-//            Food food = SelfFoodService.selectByName(f.Name);
-//            if (food != null){
-//                SelfFoodService.removeFood(food);
-//            }
+//        SelfFoodDaoService.selectAll().forEach(f -> {
+//            List<String> paths = SelfFoodImageDaoService.selectByFood(f.getId());
+//            ImagePathService.insertSelfMadeFood(f.getId(), paths);
 //        });
-//        FoodTagDaoService.selectAll().forEach(t -> {
-//            FoodTagService.delete(t);
-//        });
-//        settings.Foods.reverse().forEach(f -> {
-//            HashSet<String> fav = new HashSet<>(settings.MyFavorites);
-//            f.Favorite = fav.contains(f.Name);
-//            SelfFoodService.addFood(f.convert());
+//        RestaurantDaoService.selectAll().forEach(r -> {
+//            r.getRecords().forEach(recordVO -> {
+//                recordVO.getFoods().forEach(f -> {
+//                    ImagePathService.insertRestaurantFood(f.getId(), Lists.newArrayList(f.getCover()));
+//                });
+//            });
 //        });
     }
 

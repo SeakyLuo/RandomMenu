@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class SelfFood implements Parcelable {
+public class SelfMadeFood implements Parcelable {
     private long id;
     private String name;
     private List<String> images = new AList<>();
@@ -24,15 +24,15 @@ public class SelfFood implements Parcelable {
     private int hideCount = 0;
     private transient boolean isSelected = false;
 
-    public SelfFood(String name){
+    public SelfMadeFood(String name){
         this.name = name;
     }
 
-    public SelfFood(String name, List<String> images, List<Tag> tags, String note, boolean isFavorite, String cover){
+    public SelfMadeFood(String name, List<String> images, List<Tag> tags, String note, boolean isFavorite, String cover){
         this(name, images, tags, note, isFavorite, cover, System.currentTimeMillis());
     }
 
-    private SelfFood(String name, List<String> images, List<Tag> tags, String note, boolean isFavorite, String cover, Long dateAdded){
+    private SelfMadeFood(String name, List<String> images, List<Tag> tags, String note, boolean isFavorite, String cover, Long dateAdded){
         this.name = name;
         this.images = images;
         this.tags = tags;
@@ -42,13 +42,14 @@ public class SelfFood implements Parcelable {
         this.dateAdded = dateAdded;
     }
 
-    public SelfFood copy(){
-        return new SelfFood(name, new ArrayList<>(images), new ArrayList<>(tags), note, favorite, cover, dateAdded);
+    public SelfMadeFood copy(){
+        return new SelfMadeFood(name, new ArrayList<>(images), new ArrayList<>(tags), note, favorite, cover, dateAdded);
     }
 
     public boolean hasImage() {
         return images.size() > 0;
     }
+
     public boolean hasTag(Tag tag) {
         return tags.contains(tag);
     }
@@ -63,7 +64,7 @@ public class SelfFood implements Parcelable {
         return new SimpleDateFormat("yyyy-MM-dd").format(dateAdded);
     }
 
-    protected SelfFood(Parcel in) {
+    protected SelfMadeFood(Parcel in) {
         id = in.readLong();
         name = in.readString();
         tags = in.createTypedArrayList(Tag.CREATOR);
@@ -78,15 +79,15 @@ public class SelfFood implements Parcelable {
         hideCount = in.readInt();
     }
 
-    public static final Creator<SelfFood> CREATOR = new Creator<SelfFood>() {
+    public static final Creator<SelfMadeFood> CREATOR = new Creator<SelfMadeFood>() {
         @Override
-        public SelfFood createFromParcel(Parcel in) {
-            return new SelfFood(in);
+        public SelfMadeFood createFromParcel(Parcel in) {
+            return new SelfMadeFood(in);
         }
 
         @Override
-        public SelfFood[] newArray(int size) {
-            return new SelfFood[size];
+        public SelfMadeFood[] newArray(int size) {
+            return new SelfMadeFood[size];
         }
     };
 

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity(tableName = "self_food")
-public class SelfFoodDAO {
+public class SelfMadeFoodDAO {
 
     @PrimaryKey(autoGenerate = true)
     private long id;

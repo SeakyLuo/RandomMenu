@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+// 菜系
 public class FoodType implements Parcelable {
 
     private long id;

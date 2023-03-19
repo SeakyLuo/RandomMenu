@@ -22,12 +22,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.function.Consumer;
+
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.impl.TagAdapter;
 import personalprojects.seakyluo.randommenu.database.services.AutoTagMapperDaoService;
 import personalprojects.seakyluo.randommenu.database.services.FoodTagDaoService;
-import personalprojects.seakyluo.randommenu.interfaces.DataOperationListener;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.models.TagMapEntry;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
@@ -42,7 +43,7 @@ public class TagMapperDialog extends DialogFragment {
     private RecyclerView recyclerView;
     private TagAdapter adapter = new TagAdapter(true);
     @Setter
-    private DataOperationListener<TagMapEntry> confirmListener;
+    private Consumer<TagMapEntry> confirmListener;
     private ArrayAdapter<String> suggestionTagListAdapter;
 
     @Nullable
@@ -142,7 +143,7 @@ public class TagMapperDialog extends DialogFragment {
         } else {
             AutoTagMapperDaoService.update(tagMapEntry);
         }
-        if (confirmListener != null) confirmListener.operate(tagMapEntry);
+        if (confirmListener != null) confirmListener.accept(tagMapEntry);
         dismiss();
     }
 

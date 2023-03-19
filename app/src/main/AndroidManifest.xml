@@ -35,7 +35,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.impl.EditFoodActivity" android:label="EditFoodActivity" />
+        <activity android:name=".activities.impl.EditSelfMadeFoodActivity" android:label="EditFoodActivity" />
         <activity android:name=".activities.impl.ChooseTagActivity" android:label="ChooseTagActivity" />
         <activity android:name=".activities.impl.FullScreenImageActivity" android:label="FullScreenImageActivity" android:theme="@style/DarkStatusBarTheme"/>
         <activity android:name=".activities.impl.ToCookActivity" android:label="ToCookActivity"/>

@@ -22,12 +22,13 @@ public class FullScreenImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
         swipeCounter = findViewById(R.id.swipeCounter);
-        Intent intent = getIntent();
-
         ViewPager viewPager = findViewById(R.id.imageViewPager);
+
+        Intent intent = getIntent();
+        images = new AList<>(intent.getStringArrayListExtra(IMAGE));
+        ImageAdapter adapter = new ImageAdapter(this, images, ImageView.ScaleType.CENTER_INSIDE);
         viewPager.setOnClickListener(v -> finish());
-        ImageAdapter adapter = new ImageAdapter(this, images = new AList<>(intent.getStringArrayListExtra(IMAGE)), ImageView.ScaleType.CENTER_INSIDE);
-        adapter.setOnImageClickedListener(v -> finish());
+        adapter.setImageClickedListener(v -> finish());
         swipeCounter.setVisibility(images.size() == 1 ? View.GONE : View.VISIBLE);
         setCounter(1);
         viewPager.setAdapter(adapter); // Here we are passing and setting the adapter for the images

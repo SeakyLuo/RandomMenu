@@ -13,7 +13,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import personalprojects.seakyluo.randommenu.interfaces.InputConfirmListener;
+import java.util.function.Consumer;
+
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 
 public class InputDialog extends DialogFragment {
@@ -21,7 +23,9 @@ public class InputDialog extends DialogFragment {
     private EditText input_text;
     private Button confirm, cancel;
     private String placeHolder = "", text = "";
-    private InputConfirmListener confirmListener;
+    @Setter
+    private Consumer<String> confirmListener;
+    @Setter
     private View.OnClickListener cancelListener;
     @Nullable
     @Override
@@ -40,7 +44,7 @@ public class InputDialog extends DialogFragment {
         confirm.setOnClickListener(v -> {
             String text = input_text.getText().toString().trim();
             if (text.length() > 0){
-                if (confirmListener != null) confirmListener.Confirm(text);
+                if (confirmListener != null) confirmListener.accept(text);
                 dismiss();
             }else{
                 input_text.setError("Text cannot be empty!");
@@ -61,8 +65,6 @@ public class InputDialog extends DialogFragment {
             input_text.selectAll();
         }
     }
-    public void setConfirmListener(InputConfirmListener confirmListener) { this.confirmListener = confirmListener; }
-    public void SetCancelListener(View.OnClickListener cancelListener) { this.cancelListener = cancelListener; }
 
     @Override
     public void dismiss() {
