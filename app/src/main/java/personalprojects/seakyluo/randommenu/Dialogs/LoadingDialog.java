@@ -10,12 +10,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 
 public class LoadingDialog extends DialogFragment {
     public static String TAG = "LoadingDialog";
-    public TextView loading_message;
-    public ProgressBar loading_progress;
+    private TextView loading_message;
+    private ProgressBar loading_progress;
+    @Setter
     private View.OnClickListener onViewCreatedListener;
     private Integer message_res_id;
     private String message;
@@ -31,17 +33,24 @@ public class LoadingDialog extends DialogFragment {
         else if (message != null) setMessage(message);
         return view;
     }
-    public void setOnViewCreatedListener(View.OnClickListener listener) { onViewCreatedListener = listener; }
 
     public void setMessage(String message) {
         if (loading_message == null) this.message = message;
         else loading_message.setText(message);
     }
+
     public void setMessage(int resId) {
         if (loading_message == null) this.message_res_id = resId;
         else loading_message.setText(resId);
     }
-    public void setIndeterminate(boolean indeterminate) { loading_progress.setIndeterminate(indeterminate); }
-    public void setProgress(int progress) { loading_progress.setProgress(progress); }
-    public void setMax(int max) { loading_progress.setMax(max); }
+
+    public void setIndeterminate(boolean indeterminate) {
+        loading_progress.setIndeterminate(indeterminate);
+    }
+    public void setProgress(int progress) {
+        loading_progress.setProgress(progress);
+    }
+    public void setMax(int max) {
+        loading_progress.setMax(max);
+    }
 }

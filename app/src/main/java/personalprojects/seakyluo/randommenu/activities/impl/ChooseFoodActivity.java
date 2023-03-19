@@ -16,8 +16,9 @@ import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.TagsFragment;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
+import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 
 public class ChooseFoodActivity extends AppCompatActivity {
     public static final int CODE = 12;
@@ -41,12 +42,12 @@ public class ChooseFoodActivity extends AppCompatActivity {
         }
         clear_button = findViewById(R.id.clear_button);
         inputBox = findViewById(R.id.input_box);
-        AList<Food> foods = new AList<>(getIntent().getParcelableArrayListExtra(TAG));
+        AList<SelfFood> foods = new AList<>(getIntent().getParcelableArrayListExtra(TAG));
 
         tagsFragment.setSpanCount(1);
         tagsFragment.setCloseable(true);
         tagsFragment.setData(foods.convert(f -> new Tag(f.getName())));
-        tagsFragment.setTagClosedListener((vh, food) -> foodListFragment.unselectFood(food.Name));
+        tagsFragment.setTagClosedListener((vh, food) -> foodListFragment.unselectFood(food.getName()));
         foodListFragment.setData(SelfFoodDaoService.selectAll());
         foodListFragment.setSelectedFood(foods);
         foodListFragment.setFoodSelectedListener((vh, selected) -> {

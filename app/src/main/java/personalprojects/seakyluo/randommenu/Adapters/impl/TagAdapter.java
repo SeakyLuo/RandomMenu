@@ -39,7 +39,7 @@ public class TagAdapter extends CustomAdapter<Tag> {
         view.setOnClickListener(v -> {
             if (tagClickedListener != null) tagClickedListener.click(viewHolder, data);
         });
-        tagName.setText(data.Name);
+        tagName.setText(data.getName());
         closeButton.setVisibility(closeable ? View.VISIBLE : View.GONE);
     }
 

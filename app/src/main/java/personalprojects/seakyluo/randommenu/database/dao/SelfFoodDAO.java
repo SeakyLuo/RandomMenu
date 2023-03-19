@@ -18,6 +18,7 @@ public class SelfFoodDAO {
     private boolean favorite;
     @Deprecated
     private int cover;
+    private String tags;
     private String foodCover;
     private long dateAdded;
     private int hideCount;

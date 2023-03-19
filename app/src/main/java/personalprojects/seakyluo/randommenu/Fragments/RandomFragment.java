@@ -24,16 +24,16 @@ import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService
 import personalprojects.seakyluo.randommenu.dialogs.FilterDialog;
 import personalprojects.seakyluo.randommenu.dialogs.MenuDialog;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 
 public class RandomFragment extends Fragment {
     public static final String TAG = "RandomFragment", TAG_MENU = "menu", TAG_PREFERRED_TAGS = "preferred_tags", TAG_EXCLUDED_TAGS = "excluded_tags";
-    private AList<Food> foodPool = new AList<>();
+    private AList<SelfFood> foodPool = new AList<>();
     private FoodCardFragment foodCardFragment;
-    private AList<Food> menu = new AList<>();
+    private AList<SelfFood> menu = new AList<>();
     private MenuDialog menuDialog = new MenuDialog();
     private FilterDialog filterDialog = new FilterDialog();
     private AList<Tag> preferredTags = new AList<>(), excludedTags = new AList<>();
@@ -119,7 +119,7 @@ public class RandomFragment extends Fragment {
         flipInAnim.start();
     }
 
-    private Food nextFood(){
+    private SelfFood nextFood(){
         if (foodPool.isEmpty()){
             if (foodCardFragment.getFood() != null){
                 reset();
@@ -127,18 +127,18 @@ public class RandomFragment extends Fragment {
             }
             return null;
         }
-        Food food = SelfFoodService.selectById(foodPool.pop(0).getId());
+        SelfFood food = SelfFoodService.selectById(foodPool.pop(0).getId());
         if (food == null) return nextFood();
         return foodCardFragment.fillFood(food);
     }
 
-    private AList<Food> reset(){
+    private AList<SelfFood> reset(){
         SelfFoodDaoService.decrementHideCount();
         return setData();
     }
 
-    private AList<Food> setData(){
-        AList<Food> source = SelfFoodDaoService.selectNonHidden().stream()
+    private AList<SelfFood> setData(){
+        AList<SelfFood> source = SelfFoodDaoService.selectNonHidden().stream()
                 .collect(Collectors.toCollection(AList::new));
         if (!preferredTags.isEmpty()) source.removeIf(f -> !preferredTags.any(f::hasTag));
         if (!excludedTags.isEmpty()) source.removeIf(f -> excludedTags.any(f::hasTag));

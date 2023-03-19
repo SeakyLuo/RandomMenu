@@ -33,7 +33,7 @@ import personalprojects.seakyluo.randommenu.fragments.ImageViewerFragment;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.services.SelfFoodService;
@@ -49,7 +49,7 @@ public class EditFoodActivity extends AppCompatActivity {
     private Switch like_toggle;
     private ChooseTagFragment chooseTagFragment;
     private ImageViewerFragment imageViewerFragment;
-    private Food currentFood;
+    private SelfFood currentFood;
     private Uri camera_image_uri, cropImageUri;
     private AList<String> images = new AList<>(), sources = new AList<>();
     private boolean isDraft = false;
@@ -119,7 +119,7 @@ public class EditFoodActivity extends AppCompatActivity {
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
             dialog.setMessage(R.string.save_as_draft);
             dialog.setYesListener(view -> {
-                Settings.settings.FoodDraft = new Food(food_name, images, tags, note, like_toggle.isChecked(), foodCover);
+                Settings.settings.FoodDraft = new SelfFood(food_name, images, tags, note, like_toggle.isChecked(), foodCover);
                 finish();
             });
             dialog.setNoListener(view -> finish());
@@ -142,7 +142,7 @@ public class EditFoodActivity extends AppCompatActivity {
         String note = getNote();
 
         // 草稿 or 新食物 or 改名成重名
-        Food duplicate = SelfFoodDaoService.selectByName(foodName);
+        SelfFood duplicate = SelfFoodDaoService.selectByName(foodName);
         if (duplicate != null && (isDraft || isNewFood() || !currentFood.getName().equals(foodName))){
             showDuplicateNameFoodDialog(duplicate);
             return;
@@ -162,7 +162,7 @@ public class EditFoodActivity extends AppCompatActivity {
             }
             return;
         }
-        Food food = new Food(foodName, images, tags, note, like_toggle.isChecked(), foodCover);
+        SelfFood food = new SelfFood(foodName, images, tags, note, like_toggle.isChecked(), foodCover);
         if (isDraft){
             SelfFoodService.addFood(food);
             Settings.settings.FoodDraft = null;
@@ -182,7 +182,7 @@ public class EditFoodActivity extends AppCompatActivity {
         finishWithFood(food);
     }
 
-    private void showDuplicateNameFoodDialog(Food existing){
+    private void showDuplicateNameFoodDialog(SelfFood existing){
         AskYesNoDialog dialog = new AskYesNoDialog();
         dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         dialog.setMessage(R.string.duplicate_food_merge);
@@ -239,7 +239,7 @@ public class EditFoodActivity extends AppCompatActivity {
         helper.show();
     }
 
-    private void setFood(Food food){
+    private void setFood(SelfFood food){
         if (food == null) return;
         edit_food_name.setText(food.getName());
         food_image.setVisibility(food.hasImage() ? View.GONE : View.VISIBLE);
@@ -363,7 +363,7 @@ public class EditFoodActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.putFragment(outState, ChooseTagFragment.TAG, chooseTagFragment);
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
-        outState.putParcelable(FOOD, new Food(getFoodName(), images, chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), foodCover));
+        outState.putParcelable(FOOD, new SelfFood(getFoodName(), images, chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), foodCover));
     }
     private String getFoodName() {
         return edit_food_name.getText().toString().trim();
@@ -372,7 +372,7 @@ public class EditFoodActivity extends AppCompatActivity {
         return edit_note.getText().toString().trim();
     }
 
-    public void finishWithFood(Food food){
+    public void finishWithFood(SelfFood food){
         Intent intent = new Intent();
         intent.putExtra(FOOD, food);
         setResult(RESULT_OK, intent);

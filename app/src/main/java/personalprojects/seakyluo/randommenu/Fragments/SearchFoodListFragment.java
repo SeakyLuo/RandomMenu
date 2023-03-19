@@ -28,5 +28,7 @@ public class SearchFoodListFragment extends BaseFoodListFragment<SearchFoodListA
     public void setShowNote(boolean showNote) {
         adapter.setShowNote(showNote);
     }
-    public void setKeyword(String keyword) { adapter.setKeyword(keyword); }
+    public void setKeyword(String keyword) {
+        adapter.setKeyword(keyword);
+    }
 }

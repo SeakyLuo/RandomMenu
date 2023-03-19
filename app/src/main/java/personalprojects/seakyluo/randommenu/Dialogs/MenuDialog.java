@@ -6,23 +6,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.impl.ChooseFoodActivity;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
-import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.R;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -34,9 +31,9 @@ public class MenuDialog extends DialogFragment {
     @Setter
     private View.OnClickListener clearListener;
     @Setter
-    private Consumer<Food> foodRemovedListener;
+    private Consumer<SelfFood> foodRemovedListener;
     @Setter
-    private Consumer<List<Food>> foodAddedListener;
+    private Consumer<List<SelfFood>> foodAddedListener;
     private TextView header_text;
     private String header;
     @Nullable
@@ -73,7 +70,7 @@ public class MenuDialog extends DialogFragment {
         }
     }
 
-    public void setData(AList<Food> data) {
+    public void setData(AList<SelfFood> data) {
         fragment.setData(data);
     }
 
@@ -85,7 +82,7 @@ public class MenuDialog extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_CANCELED) return;
-        List<Food> foods = data.getParcelableArrayListExtra(ChooseFoodActivity.TAG);
+        List<SelfFood> foods = data.getParcelableArrayListExtra(ChooseFoodActivity.TAG);
         fragment.setData(foods);
         foodAddedListener.accept(foods);
     }

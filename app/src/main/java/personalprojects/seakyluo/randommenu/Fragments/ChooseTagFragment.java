@@ -19,7 +19,7 @@ import java.util.List;
 import personalprojects.seakyluo.randommenu.activities.impl.ChooseTagActivity;
 import personalprojects.seakyluo.randommenu.interfaces.OnLaunchActivityListener;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
@@ -33,7 +33,7 @@ public class ChooseTagFragment extends Fragment {
     private TagsFragment tagsFragment = new TagsFragment();
     private String header;
     private OnLaunchActivityListener chooseTagListener;
-    private Food guessTagFood;
+    private SelfFood guessTagFood;
 
     @Nullable
     @Override

@@ -70,6 +70,11 @@ public class RestaurantDaoService {
         });
     }
 
+    public static void delete(RestaurantVO vo){
+        RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
+        mapper.delete(convert(vo));
+    }
+
     public static RestaurantVO selectById(long id){
         RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
         RestaurantDAO dao = mapper.selectById(id);

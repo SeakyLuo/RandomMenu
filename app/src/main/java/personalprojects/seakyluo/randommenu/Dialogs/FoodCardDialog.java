@@ -12,8 +12,7 @@ import java.util.function.Consumer;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.fragments.FoodCardFragment;
-import personalprojects.seakyluo.randommenu.interfaces.FoodEditedListener;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 
@@ -21,7 +20,7 @@ public class FoodCardDialog extends DialogFragment {
     public static final String TAG = "FoodCardDialog";
     private FoodCardFragment foodCardFragment = new FoodCardFragment();
     @Setter
-    private Food food;
+    private SelfFood food;
     @Setter
     private Long foodId;
     @Nullable
@@ -37,10 +36,10 @@ public class FoodCardDialog extends DialogFragment {
         return view;
     }
 
-    public void setFoodEditedListener(Consumer<Food> listener) {
+    public void setFoodEditedListener(Consumer<SelfFood> listener) {
         foodCardFragment.setFoodEditedListener(listener);
     }
-    public void setFoodLikedListener(Consumer<Food> listener) {
+    public void setFoodLikedListener(Consumer<SelfFood> listener) {
         foodCardFragment.setFoodLikedChangedListener(listener);
     }
 }

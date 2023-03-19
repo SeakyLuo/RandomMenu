@@ -32,7 +32,7 @@ import personalprojects.seakyluo.randommenu.database.mappers.SelfFoodTagMapper;
 
 @Database(entities = {RestaurantDAO.class, AddressDAO.class, ConsumeRecordDAO.class, RestaurantFoodDAO.class, FoodTypeDAO.class,
         SelfFoodDAO.class, FoodTagDAO.class, SelfFoodTagDAO.class, SelfFoodImageDAO.class, TagMapEntryDAO.class},
-        version = 10,
+        version = 11,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -106,6 +106,12 @@ public abstract class AppDatabase extends RoomDatabase {
                                 "keyword TEXT," +
                                 "tags TEXT" +
                                 ")");
+                    }
+                })
+                .addMigrations(new Migration(10, 11) {
+                    @Override
+                    public void migrate(@NonNull SupportSQLiteDatabase database) {
+                        database.execSQL("alter table self_food add column tags TEXT");
                     }
                 })
                 .build();

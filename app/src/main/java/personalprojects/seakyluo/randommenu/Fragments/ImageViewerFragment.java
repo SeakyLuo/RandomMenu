@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import java.util.List;
+
 import personalprojects.seakyluo.randommenu.adapters.impl.ImageAdapter;
 import personalprojects.seakyluo.randommenu.activities.impl.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.models.AList;
@@ -68,7 +70,7 @@ public class ImageViewerFragment extends Fragment {
         prev_image_button.setVisibility(current <= 0 ? View.INVISIBLE : View.VISIBLE);
         next_image_button.setVisibility(current < 0 || current == adapter.getCount() - 1 ? View.INVISIBLE : View.VISIBLE);
     }
-    public void setImages(AList<String> images, String cover) {
+    public void setImages(List<String> images, String cover) {
         current = images.indexOf(cover);
         adapter.setData(images);
         if (viewPager != null){

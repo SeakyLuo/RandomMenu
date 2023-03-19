@@ -86,7 +86,7 @@ public class TagMapperDialog extends DialogFragment {
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
                 String keyword = s.toString().trim();
-                suggestionTagListAdapter.addAll(SearchUtils.searchTags(FoodTagDaoService.selectAll().stream(), keyword));
+                suggestionTagListAdapter.addAll(SearchUtils.searchTags(FoodTagDaoService.selectAll(), keyword));
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -158,13 +158,13 @@ public class TagMapperDialog extends DialogFragment {
             Toast.makeText(getContext(), R.string.tag_limit, Toast.LENGTH_SHORT).show();
             return;
         }
-        String tag = tagContent.getText().toString().trim();
-        if (StringUtils.isEmpty(tag)){
+        String tagName = tagContent.getText().toString().trim();
+        if (StringUtils.isEmpty(tagName)){
             return;
         }
-        int index = adapter.indexOf(t -> t.Name.equals(tag));
+        int index = adapter.indexOf(t -> t.getName().equals(tagName));
         if (index == -1){
-            adapter.add(new Tag(tag), 0);
+            adapter.add(new Tag(tagName), 0);
         } else {
             adapter.move(index, 0);
         }

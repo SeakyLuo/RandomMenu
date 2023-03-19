@@ -10,16 +10,10 @@ import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class FoodTagDaoService {
 
-    public static boolean insert(Tag tag){
-        Tag existing = selectByName(tag.getName());
-        if (existing != null){
-            tag.setId(existing.getId());
-            return false;
-        }
+    public static void insert(Tag tag){
         FoodTagMapper foodTagMapper = AppDatabase.instance.foodTagMapper();
         Long id = foodTagMapper.insert(convert(tag));
         tag.setId(id);
-        return true;
     }
 
     public static void delete(Tag tag){

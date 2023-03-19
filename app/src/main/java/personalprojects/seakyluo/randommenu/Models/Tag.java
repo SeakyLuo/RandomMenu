@@ -17,49 +17,52 @@ public class Tag implements Comparable<Tag>, Parcelable {
     public static Tag AllCategoriesTag = new Tag(AllCategories);
     public static final int MAX_TAGS = 10;
     private long id;
-    public String Name;
-    protected int Counter = 0;
+    private String name;
+    protected int counter = 0;
     private transient boolean isSelected = false;
 
-    public Tag(String name){ this.Name = name; }
+    public Tag(String name){ this.name = name; }
     public Tag(String name, int counter){
-        this.Name = name;
-        this.Counter = counter;
+        this.name = name;
+        this.counter = counter;
     }
 
-    public Tag more() { ++Counter; return this; }
-    public Tag less() { --Counter; return this; }
-    public boolean isEmpty() { return Counter == 0; }
+    public Tag more() { ++counter; return this; }
+    public Tag less() { --counter; return this; }
+    public boolean isEmpty() { return counter == 0; }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof Tag && Name.equals(((Tag)obj).Name);
+        return obj instanceof Tag && name.equals(((Tag)obj).name);
     }
 
     public boolean isAllCategoriesTag() { return equals(AllCategoriesTag); }
 
     @Override
     public int hashCode() {
-        return Name.hashCode();
+        return name.hashCode();
     }
 
     @NonNull
     @Override
-    public String toString() { return Name + " " + Counter; }
+    public String toString() { return name + " " + counter; }
+
     public static String format(Context context, String name, long count){
         return String.format(context.getString(R.string.tag_format), name, count);
     }
+
     public static String format(Context context, int resId, long count){
         return format(context, context.getString(resId), count);
     }
+
     public static String format(Context context, Tag tag){
-        return format(context, tag.Name, tag.Counter);
+        return format(context, tag.name, tag.counter);
     }
 
     protected Tag(Parcel in) {
         id = in.readLong();
-        Name = in.readString();
-        Counter = in.readInt();
+        name = in.readString();
+        counter = in.readInt();
     }
 
     public static final Creator<Tag> CREATOR = new Creator<Tag>() {
@@ -76,7 +79,7 @@ public class Tag implements Comparable<Tag>, Parcelable {
 
     @Override
     public int compareTo(Tag tag) {
-        return Counter == tag.Counter ? Name.compareTo(tag.Name) : Counter - tag.Counter ;
+        return counter == tag.counter ? name.compareTo(tag.name) : counter - tag.counter;
     }
 
     @Override
@@ -87,8 +90,8 @@ public class Tag implements Comparable<Tag>, Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
-        dest.writeString(Name);
-        dest.writeInt(Counter);
+        dest.writeString(name);
+        dest.writeInt(counter);
     }
 }
 

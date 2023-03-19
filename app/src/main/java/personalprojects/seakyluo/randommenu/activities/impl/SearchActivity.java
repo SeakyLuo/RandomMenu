@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import com.jude.swipbackhelper.SwipeBackHelper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,10 +29,10 @@ import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.fragments.BaseFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.SearchFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.StringListFragment;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.services.FoodTagService;
 import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 import personalprojects.seakyluo.randommenu.utils.SearchUtils;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.MatchFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 
@@ -68,17 +69,9 @@ public class SearchActivity extends SwipeBackActivity {
             historyFragment.Remove(data);
             Settings.settings.SearchHistory.remove(data);
         });
-        getSearchFragments().forEach(fragment -> fragment.setFoodClickedListener((viewHolder, food) -> {
-            FoodCardDialog dialog = new FoodCardDialog();
-            dialog.setFood(food);
-            dialog.setFoodEditedListener(after -> {
-                getSearchFragments().forEach(f -> f.updateFood(after));
-            });
-            dialog.setFoodLikedListener((after -> {
-                getSearchFragments().forEach(f -> f.updateFood(after));
-            }));
-            dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
-        }));
+        getSearchFragments().forEach(fragment -> {
+            fragment.setFoodClickedListener((viewHolder, food) -> foodClicked(food));
+        });
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         viewPager.setAdapter(tabPagerAdapter);
         search_bar.addTextChangedListener(new TextWatcher() {
@@ -145,43 +138,53 @@ public class SearchActivity extends SwipeBackActivity {
     public String getKeyword() { return getKeyword(search_bar.getText()); }
     public Stream<SearchFoodListFragment> getSearchFragments() { return tabPagerAdapter.getFragments().after(0).stream().map(f -> (SearchFoodListFragment)f); }
 
+    private void foodClicked(SelfFood food){
+        FoodCardDialog dialog = new FoodCardDialog();
+        dialog.setFoodId(food.getId());
+        dialog.setFoodEditedListener(after -> {
+            getSearchFragments().forEach(f -> f.updateFood(after));
+        });
+        dialog.setFoodLikedListener(after -> {
+            getSearchFragments().forEach(f -> f.updateFood(after));
+        });
+        dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
+    }
+
     public void search(String keyword){
         if (keyword.isEmpty()){
             getSearchFragments().forEach(BaseFoodListFragment::clear);
-        }else{
-            getSearchFragments().forEach(f -> f.setKeyword(keyword));
-            if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
-            List<MatchFood> food = new ArrayList<>(), tag = new ArrayList<>(), note = new ArrayList<>(), all = new ArrayList<>();
-            SelfFoodDaoService.selectAll().forEach(f -> {
-                MatchFood mf = SearchUtils.evalFood(f, keyword);
-                if (mf.namePoints > 0){
-                    food.add(new MatchFood(mf.food, mf.namePoints + mf.bonus));
-                }
-                if (mf.tagPoints > 0){
-                    tag.add(new MatchFood(mf.food, mf.tagPoints + mf.bonus));
-                }
-                if (mf.notePoints > 0){
-                    note.add(new MatchFood(mf.food, mf.notePoints + mf.bonus));
-                }
-                if (mf.points > 0){
-                    all.add(new MatchFood(mf.food, mf.points + mf.bonus));
-                }
-            });
-            allFragment.setData(sortFoods(all));
-            foodFragment.setData(sortFoods(food));
-            tagFragment.setData(sortFoods(tag));
-            noteFragment.setData(sortFoods(note));
+            return;
         }
+        getSearchFragments().forEach(f -> f.setKeyword(keyword));
+        if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
+        List<MatchFood> byFood = new ArrayList<>(), byTag = new ArrayList<>(), byNote = new ArrayList<>(), all = new ArrayList<>();
+        for (SelfFood f : SelfFoodDaoService.selectAll()) {
+            MatchFood mf = SearchUtils.evalFood(f, keyword);
+            SelfFood food = mf.getFood();
+            if (mf.getNamePoints() > 0){
+                byFood.add(new MatchFood(food, mf.getNamePointsWithBonus()));
+            }
+            if (mf.getTagPoints() > 0){
+                byTag.add(new MatchFood(food, mf.getTagPointsWithBonus()));
+            }
+            if (mf.getNotePoints() > 0){
+                byNote.add(new MatchFood(food, mf.getNotePointsWithBonus()));
+            }
+            if (mf.getPoints() > 0){
+                all.add(new MatchFood(food, mf.getPointsWithBonus()));
+            }
+        }
+        allFragment.setData(sortFoods(all));
+        foodFragment.setData(sortFoods(byFood));
+        tagFragment.setData(sortFoods(byTag));
+        noteFragment.setData(sortFoods(byNote));
     }
 
-    public static List<Food> sortFoods(List<MatchFood> foods){
-        return foods.stream().sorted((f1, f2) -> (f2.points - f1.points)).map(f -> f.food).collect(Collectors.toList());
-    }
-
-    @Override
-    public void finish() {
-        Helper.save();
-        super.finish();
+    public static List<SelfFood> sortFoods(List<MatchFood> foods){
+        return foods.stream().sorted(Comparator.comparing(MatchFood::getPoints).reversed())
+                .map(MatchFood::getFood)
+                .peek(f -> f.setTags(FoodTagService.selectByFood(f.getId())))
+                .collect(Collectors.toList());
     }
 
     @Override

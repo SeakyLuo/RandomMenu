@@ -16,12 +16,12 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.BaseFoodListAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 
 public abstract class BaseFoodListFragment<T extends BaseFoodListAdapter> extends Fragment {
     // 原数组，adapter.data可能为过滤后的数组
     @Getter
-    protected AList<Food> data = new AList<>();
+    protected AList<SelfFood> data = new AList<>();
     protected T adapter;
     protected RecyclerView recyclerView;
 
@@ -35,11 +35,11 @@ public abstract class BaseFoodListFragment<T extends BaseFoodListAdapter> extend
         return view;
     }
 
-    public void setFoodClickedListener(DataItemClickedListener<Food> listener){
+    public void setFoodClickedListener(DataItemClickedListener<SelfFood> listener){
         adapter.setFoodClickedListener(listener);
     }
 
-    public void updateFood(Food food){
+    public void updateFood(SelfFood food){
         int index = adapter.getData().indexOf(f -> f.getId() == food.getId());
         if (index > -1){
             adapter.set(food, index);
@@ -50,7 +50,7 @@ public abstract class BaseFoodListFragment<T extends BaseFoodListAdapter> extend
         adapter.clear();
     }
 
-    public void setData(List<Food> data){
+    public void setData(List<SelfFood> data){
         this.data.copyFrom(data);
         adapter.setData(data);
     }

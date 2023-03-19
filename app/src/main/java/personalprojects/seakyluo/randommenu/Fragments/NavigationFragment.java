@@ -28,7 +28,7 @@ import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.activities.impl.EditFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.FoodAdapter;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
@@ -116,14 +116,14 @@ public class NavigationFragment extends Fragment {
                     return true;
                 case R.id.edit_tag_item:
                     InputDialog inputDialog = new InputDialog();
-                    inputDialog.setText(data.Name);
+                    inputDialog.setText(data.getName());
                     inputDialog.setConfirmListener(text -> {
-                        if (text.equals(data.Name)) return;
+                        if (text.equals(data.getName())) return;
                         if (FoodTagDaoService.selectByName(text) != null){
                             Toast.makeText(getContext(), getString(R.string.tag_exists), Toast.LENGTH_SHORT).show();
                         } else {
                             data.setName(text);
-                            FoodTagDaoService.update(data);
+                            FoodTagService.update(data);
                             selectTagAdapter.set(data, selectTagAdapter.indexOf(t -> t.getId() == data.getId()));
                         }
                     });
@@ -131,7 +131,7 @@ public class NavigationFragment extends Fragment {
                     return true;
                 case R.id.delete_tag_item:
                     AskYesNoDialog askDialog = new AskYesNoDialog();
-                    askDialog.setMessage(String.format(getString(R.string.delete_tag), data.Name));
+                    askDialog.setMessage(String.format(getString(R.string.delete_tag), data.getName()));
                     askDialog.setYesListener(v -> {
                         if (data.equals(lastTag)) lastTag = Tag.AllCategoriesTag;
                         selectTagAdapter.remove(data);
@@ -170,7 +170,7 @@ public class NavigationFragment extends Fragment {
         }
     }
 
-    private void editFood(Food food, boolean isDraft){
+    private void editFood(SelfFood food, boolean isDraft){
         Intent intent = new Intent(getContext(), EditFoodActivity.class);
         intent.putExtra(EditFoodActivity.FOOD_ID, food.getId());
         intent.putExtra(EditFoodActivity.IS_DRAFT, isDraft);

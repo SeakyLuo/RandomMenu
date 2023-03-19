@@ -23,7 +23,7 @@ import lombok.EqualsAndHashCode;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.BaseFoodListAdapter;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
 @EqualsAndHashCode(callSuper = true)
@@ -47,7 +47,7 @@ public class SearchFoodListAdapter extends BaseFoodListAdapter {
     }
 
     @Override
-    protected void fillViewHolder(CustomAdapter.CustomViewHolder viewHolder, Food data, int position) {
+    protected void fillViewHolder(CustomAdapter.CustomViewHolder viewHolder, SelfFood data, int position) {
         super.fillViewHolder(viewHolder, data, position);
         View view = viewHolder.getView();
 

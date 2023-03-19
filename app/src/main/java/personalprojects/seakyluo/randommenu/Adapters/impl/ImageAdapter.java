@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.List;
+
 import personalprojects.seakyluo.randommenu.interfaces.OnDataChangedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
@@ -51,7 +53,7 @@ public class ImageAdapter extends PagerAdapter {
         return image;
     }
     public int indexOf(String image) { return images.indexOf(image); }
-    public AList<String> setData(AList<String> images){
+    public AList<String> setData(List<String> images){
         this.images.copyFrom(images);
 //        if (container != null){
 //            int count = container.getChildCount();

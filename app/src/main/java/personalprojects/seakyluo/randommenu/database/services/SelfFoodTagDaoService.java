@@ -6,7 +6,7 @@ import java.util.List;
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.SelfFoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.SelfFoodTagMapper;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class SelfFoodTagDaoService {
@@ -27,7 +27,7 @@ public class SelfFoodTagDaoService {
         mapper.deleteByTag(tag.getId());
     }
 
-    public static void deleteByFood(Food food){
+    public static void deleteByFood(SelfFood food){
         SelfFoodTagMapper mapper = AppDatabase.instance.selfFoodTagMapper();
         mapper.deleteByFood(food.getId());
     }

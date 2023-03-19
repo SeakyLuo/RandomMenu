@@ -1,16 +1,12 @@
 package personalprojects.seakyluo.randommenu.database.services;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.SelfFoodImageDAO;
-import personalprojects.seakyluo.randommenu.database.dao.SelfFoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.SelfFoodImageMapper;
-import personalprojects.seakyluo.randommenu.database.mappers.SelfFoodTagMapper;
-import personalprojects.seakyluo.randommenu.models.Food;
-import personalprojects.seakyluo.randommenu.models.Tag;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 
 public class SelfFoodImageDaoService {
 
@@ -25,7 +21,7 @@ public class SelfFoodImageDaoService {
         mapper.insert(daoList);
     }
 
-    public static void deleteByFood(Food food){
+    public static void deleteByFood(SelfFood food){
         SelfFoodImageMapper mapper = AppDatabase.instance.selfFoodImageMapper();
         mapper.deleteByFood(food.getId());
     }

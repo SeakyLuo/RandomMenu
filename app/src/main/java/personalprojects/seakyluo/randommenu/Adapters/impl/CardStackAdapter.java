@@ -9,15 +9,15 @@ import android.widget.BaseAdapter;
 
 import personalprojects.seakyluo.randommenu.fragments.FoodCardFragment;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.R;
 
 public class CardStackAdapter extends BaseAdapter{
     private LayoutInflater inflater;
     private FragmentManager manager;
-    public AList<Food> data;
+    public AList<SelfFood> data;
 
-    public CardStackAdapter(Context context, FragmentManager manager, AList<Food> data) {
+    public CardStackAdapter(Context context, FragmentManager manager, AList<SelfFood> data) {
         this.inflater = LayoutInflater.from(context);
         this.manager = manager;
         this.data = data;
@@ -53,7 +53,7 @@ public class CardStackAdapter extends BaseAdapter{
             this.view = view;
             manager.beginTransaction().add(R.id.food_card_frame, foodCardFragment).commit();
         }
-        void SetData(Food data){
+        void SetData(SelfFood data){
             foodCardFragment.setFood(data);
         }
     }

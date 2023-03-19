@@ -31,10 +31,8 @@ import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
-import personalprojects.seakyluo.randommenu.interfaces.FoodEditedListener;
-import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.activities.impl.MainActivity;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.services.SelfFoodService;
@@ -53,9 +51,9 @@ public class FoodCardFragment extends Fragment {
     private ImageButton moreButton;
     @Getter
     @Setter
-    private Food food;
+    private SelfFood food;
     @Setter
-    private Consumer<Food> foodEditedListener, foodLikedChangedListener;
+    private Consumer<SelfFood> foodEditedListener, foodLikedChangedListener;
     @Setter
     private boolean isTagClickable = true;
     private AnimatorSet flipInAnim, flipOutAnim;
@@ -153,7 +151,7 @@ public class FoodCardFragment extends Fragment {
         helper.show();
     }
     
-    private void setFoodFavorite(Food food, boolean isFavorite){
+    private void setFoodFavorite(SelfFood food, boolean isFavorite){
         food.setFavorite(isFavorite);
         showFoodFavorite(isFavorite);
         SelfFoodService.updateFood(food);
@@ -204,7 +202,7 @@ public class FoodCardFragment extends Fragment {
         fillFood(food = SelfFoodService.selectById(food.getId()));
     }
 
-    public Food fillFood(Food food){
+    public SelfFood fillFood(SelfFood food){
         if (food == null){
             return null;
         }
@@ -224,7 +222,7 @@ public class FoodCardFragment extends Fragment {
 
     public void showFoodFavorite(boolean favorite) { likedImage.setVisibility(favorite ? View.VISIBLE : View.GONE); }
 
-    public void setFoodNote(Food food){
+    public void setFoodNote(SelfFood food){
         String food_info = String.format(getString(R.string.created_at), food.formatDateAdded());
         int hideCount = food.getHideCount();
         if (hideCount > 0) food_info += "\n" + String.format(getString(R.string.hide_recent), hideCount);
@@ -250,7 +248,7 @@ public class FoodCardFragment extends Fragment {
         if (resultCode != RESULT_OK) return;
         if (data == null) return;
         if (requestCode == ActivityCodeConstant.EDIT_FOOD){
-            Food food = data.getParcelableExtra(EditFoodActivity.FOOD);
+            SelfFood food = data.getParcelableExtra(EditFoodActivity.FOOD);
             if (food == null) return;
             fillFood(food);
             if (foodEditedListener != null) foodEditedListener.accept(food);

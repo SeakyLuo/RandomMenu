@@ -9,7 +9,6 @@ import java.util.List;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
-import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
@@ -31,7 +30,7 @@ public class SelectTagAdapter extends CustomAdapter<Tag> {
         View view = viewHolder.getView();
         TextView tagName = view.findViewById(R.id.tag_name);
 
-        tagName.setText(data.isAllCategoriesTag() ? context.getString(R.string.all_categories) : data.Name);
+        tagName.setText(data.isAllCategoriesTag() ? context.getString(R.string.all_categories) : data.getName());
         setHighlight(viewHolder,  false);
 
         view.setOnClickListener(v -> {

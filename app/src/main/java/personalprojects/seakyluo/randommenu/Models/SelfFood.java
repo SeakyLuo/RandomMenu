@@ -2,21 +2,21 @@ package personalprojects.seakyluo.randommenu.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Food implements Parcelable {
+public class SelfFood implements Parcelable {
     private long id;
     private String name;
-    private AList<String> images = new AList<>();
-    private AList<Tag> tags = new AList<>();
+    private List<String> images = new AList<>();
+    private List<Tag> tags = new AList<>();
     private String note = "";
     private boolean favorite = false;
     private String cover = "";
@@ -24,15 +24,15 @@ public class Food implements Parcelable {
     private int hideCount = 0;
     private transient boolean isSelected = false;
 
-    public Food(String name){
+    public SelfFood(String name){
         this.name = name;
     }
 
-    public Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite, String cover){
+    public SelfFood(String name, List<String> images, List<Tag> tags, String note, boolean isFavorite, String cover){
         this(name, images, tags, note, isFavorite, cover, System.currentTimeMillis());
     }
 
-    private Food(String name, AList<String> images, AList<Tag> tags, String note, boolean isFavorite, String cover, Long dateAdded){
+    private SelfFood(String name, List<String> images, List<Tag> tags, String note, boolean isFavorite, String cover, Long dateAdded){
         this.name = name;
         this.images = images;
         this.tags = tags;
@@ -42,8 +42,8 @@ public class Food implements Parcelable {
         this.dateAdded = dateAdded;
     }
 
-    public Food copy(){
-        return new Food(name, images.copy(), tags.copy(), note, favorite, cover, dateAdded);
+    public SelfFood copy(){
+        return new SelfFood(name, new ArrayList<>(images), new ArrayList<>(tags), note, favorite, cover, dateAdded);
     }
 
     public boolean hasImage() {
@@ -53,35 +53,20 @@ public class Food implements Parcelable {
         return tags.contains(tag);
     }
 
-    public void addTags(AList<Tag> tags) {
-        tags.ForEach(tag -> {
-            if (!this.tags.contains(tag))
-                this.tags.add(tag);
-        });
+    public void addTags(List<Tag> src) {
+        for (Tag tag : src){
+            if (!tags.contains(tag))
+                tags.add(tag);
+        }
     }
     public String formatDateAdded(){
         return new SimpleDateFormat("yyyy-MM-dd").format(dateAdded);
     }
 
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        return obj instanceof Food && name.equals(((Food)obj).name);
-    }
-
-    protected Food(Parcel in) {
+    protected SelfFood(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        ArrayList<String> images = new ArrayList<>();
-        in.readStringList(images);
-        this.images = new AList<>(images);
-        ArrayList<Tag> tags = new ArrayList<>();
-        in.readTypedList(tags, Tag.CREATOR);
-        this.tags = new AList<>(tags);
+        tags = in.createTypedArrayList(Tag.CREATOR);
         note = in.readString();
         favorite = in.readByte() != 0;
         cover = in.readString();
@@ -93,15 +78,15 @@ public class Food implements Parcelable {
         hideCount = in.readInt();
     }
 
-    public static final Creator<Food> CREATOR = new Creator<Food>() {
+    public static final Creator<SelfFood> CREATOR = new Creator<SelfFood>() {
         @Override
-        public Food createFromParcel(Parcel in) {
-            return new Food(in);
+        public SelfFood createFromParcel(Parcel in) {
+            return new SelfFood(in);
         }
 
         @Override
-        public Food[] newArray(int size) {
-            return new Food[size];
+        public SelfFood[] newArray(int size) {
+            return new SelfFood[size];
         }
     };
 
@@ -114,7 +99,6 @@ public class Food implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
-        dest.writeStringList(images);
         dest.writeTypedList(tags);
         dest.writeString(note);
         dest.writeByte((byte) (favorite ? 1 : 0));

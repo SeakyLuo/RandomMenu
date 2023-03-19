@@ -24,6 +24,7 @@ import personalprojects.seakyluo.randommenu.fragments.TagsFragment;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
+import personalprojects.seakyluo.randommenu.services.FoodTagService;
 import personalprojects.seakyluo.randommenu.utils.FoodTagUtils;
 
 public class ChooseTagActivity extends SwipeBackActivity {
@@ -47,7 +48,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String tag = suggestionTagListAdapter.getItem(position);
-                chooseTag(tagListAdapter.getData().first(t -> t.Name.equals(tag)));
+                chooseTag(tagListAdapter.getData().first(t -> t.getName().equals(tag)));
                 inputBox.setText("");
             }
 
@@ -70,7 +71,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 suggestionTagListAdapter.clear();
-                suggestionTagListAdapter.addAll(tagListAdapter.getData().without(tagsFragment.getData()).convert(t -> t.Name));
+                suggestionTagListAdapter.addAll(tagListAdapter.getData().without(tagsFragment.getData()).convert(Tag::getName));
                 suggestionTagListAdapter.notifyDataSetChanged();
             }
         });
@@ -112,7 +113,7 @@ public class ChooseTagActivity extends SwipeBackActivity {
                 if (!selected_tags.contains(tag)){
                     selected_tags.add(tag);
                 }
-                FoodTagDaoService.insert(tag);
+                FoodTagService.insert(tag);
             }
         }
         tagListAdapter = new TagListAdapter(this, new AList<>(FoodTagDaoService.selectAll()).without(excluded_tags), selected_tags);

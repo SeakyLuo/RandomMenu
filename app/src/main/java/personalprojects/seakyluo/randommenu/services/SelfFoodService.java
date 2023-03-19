@@ -10,19 +10,15 @@ import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodImageDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodTagDaoService;
 import personalprojects.seakyluo.randommenu.models.AList;
-import personalprojects.seakyluo.randommenu.models.Food;
+import personalprojects.seakyluo.randommenu.models.SelfFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class SelfFoodService {
 
-    private static List<Consumer<Food>> foodDeletedListeners = new ArrayList<>();
+    private static List<Consumer<SelfFood>> foodDeletedListeners = new ArrayList<>();
 
-    public static void addFoodDeletedListener(Consumer<Food> listener){
-        foodDeletedListeners.add(listener);
-    }
-
-    public static void addFood(Food food){
-        Food existing = SelfFoodDaoService.selectByName(food.getName());
+    public static void addFood(SelfFood food){
+        SelfFood existing = SelfFoodDaoService.selectByName(food.getName());
         if (existing != null){
             return;
         }
@@ -33,7 +29,7 @@ public class SelfFoodService {
         SelfFoodTagDaoService.insert(id, food.getTags());
     }
 
-    public static void removeFood(Food food){
+    public static void removeFood(SelfFood food){
         SelfFoodDaoService.delete(food);
         FoodTagService.decrement(food);
         SelfFoodImageDaoService.deleteByFood(food);
@@ -41,10 +37,10 @@ public class SelfFoodService {
         foodDeletedListeners.forEach(l -> l.accept(food));
     }
 
-    public static void updateFood(Food food){
+    public static void updateFood(SelfFood food){
         long foodId = food.getId();
         SelfFoodDaoService.update(food);
-        Food existing = selectById(foodId);
+        SelfFood existing = selectById(foodId);
         if (existing != null){
             FoodTagService.decrement(existing);
             SelfFoodImageDaoService.deleteByFood(existing);
@@ -55,8 +51,14 @@ public class SelfFoodService {
         SelfFoodTagDaoService.insert(foodId, food.getTags());
     }
 
-    public static Food selectById(long id){
-        Food food = SelfFoodDaoService.selectById(id);
+    public static List<SelfFood> selectAll(){
+        return SelfFoodDaoService.selectAll().parallelStream()
+                .peek(SelfFoodService::fillFood)
+                .collect(Collectors.toList());
+    }
+
+    public static SelfFood selectById(long id){
+        SelfFood food = SelfFoodDaoService.selectById(id);
         if (food == null){
             return null;
         }
@@ -64,8 +66,8 @@ public class SelfFoodService {
         return food;
     }
 
-    public static Food selectByName(String name){
-        Food food = SelfFoodDaoService.selectByName(name);
+    public static SelfFood selectByName(String name){
+        SelfFood food = SelfFoodDaoService.selectByName(name);
         if (food == null){
             return null;
         }
@@ -73,14 +75,14 @@ public class SelfFoodService {
         return food;
     }
 
-    private static void fillFood(Food food){
+    private static void fillFood(SelfFood food){
         long id = food.getId();
         food.setTags(new AList<>(FoodTagService.selectByFood(id)));
         AList<String> images = new AList<>(SelfFoodImageDaoService.selectByFood(id));
         food.setImages(images);
     }
 
-    public static List<Food> selectByTag(Tag tag){
+    public static List<SelfFood> selectByTag(Tag tag){
         List<Long> foodIds = SelfFoodTagDaoService.selectByTag(tag.getId()).stream()
                 .map(SelfFoodTagDAO::getFoodId)
                 .collect(Collectors.toList());
@@ -92,9 +94,9 @@ public class SelfFoodService {
         // TODO clear food cover
     }
 
-    public static List<Food> getFavoriteFoods(){
-        List<Food> foods = SelfFoodDaoService.getFavoriteFoods();
-        for (Food food : foods){
+    public static List<SelfFood> getFavoriteFoods(){
+        List<SelfFood> foods = SelfFoodDaoService.getFavoriteFoods();
+        for (SelfFood food : foods){
             food.setTags(new AList<>(FoodTagService.selectByFood(food.getId())));
         }
         return foods;

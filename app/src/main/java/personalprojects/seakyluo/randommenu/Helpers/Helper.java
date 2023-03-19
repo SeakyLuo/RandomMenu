@@ -13,9 +13,11 @@ import java.util.Date;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.services.AutoTagMapperDaoService;
+import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.TagMapEntry;
+import personalprojects.seakyluo.randommenu.services.SelfFoodService;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
@@ -44,6 +46,7 @@ public class Helper {
     }
 
     private static void script(Settings settings){
+//        SelfFoodService.selectAll().forEach(f -> SelfFoodDaoService.update(f));
 //        settings.AutoTagMap.entrySet().forEach(e -> AutoTagMapperDaoService.insert(new TagMapEntry() {{ setKeyword(e.getKey()); setTagsFromString(e.getValue()); }}));
 //        settings.Foods.forEach(f -> {
 //            Food food = SelfFoodService.selectByName(f.Name);
@@ -62,14 +65,6 @@ public class Helper {
     }
 
     public static String formatCurrentTimestamp() { return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); }
-
-    public static boolean hasEllipSize(TextView textView) {
-        Layout layout = textView.getLayout();
-        if (layout == null) return false;
-        int lines = layout.getLineCount();
-        if (lines == 0) return false;
-        return layout.getEllipsisCount(lines - 1) > 0;
-    }
 
     public static void save(){
         String settings = Settings.settings.toString(), emptyJson = new Settings().toString();

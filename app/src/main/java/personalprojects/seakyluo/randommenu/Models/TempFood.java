@@ -11,8 +11,8 @@ public class TempFood {
     private Long DateAdded = 0L;
     public int HideCount = 0;
 
-    public Food convert(){
-        Food dst = new Food();
+    public SelfFood convert(){
+        SelfFood dst = new SelfFood();
         dst.setName(Name);
         dst.setImages(Images);
         dst.setTags(Tags);
