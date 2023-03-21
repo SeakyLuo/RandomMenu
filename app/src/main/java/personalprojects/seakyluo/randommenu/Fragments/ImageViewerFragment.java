@@ -241,28 +241,12 @@ public class ImageViewerFragment extends Fragment {
                 saveImage(cameraImageUri, cameraImageUri.getPath(), false);
                 break;
             case ActivityCodeConstant.GALLERY:
-                Uri uri;
-                int index;
                 ClipData clipData = data.getClipData();
                 if (clipData == null) {
-                    uri = data.getData();
-                    index = adapter.indexOf(uri.getPath());
-                    // Avoid re-adding images
-                    if (index > -1){
-                        move(index, 0);
-                    } else {
-                        saveImage(uri, ImageUtils.newImageFileName(), false);
-                    }
+                    addOrMoveImage(data.getData(), null);
                 } else {
-                    int count = clipData.getItemCount();
-                    for (int i = 0; i < count; i++){
-                        uri = clipData.getItemAt(i).getUri();
-                        index = adapter.indexOf(uri.getPath());
-                        if (index > -1){
-                            move(index, 0);
-                        } else {
-                            saveImage(uri, ImageUtils.newImageFileName(i), false);
-                        }
+                    for (int i = 0; i < clipData.getItemCount(); i++){
+                        addOrMoveImage(clipData.getItemAt(i).getUri(), i);
                     }
                 }
                 break;
@@ -276,4 +260,15 @@ public class ImageViewerFragment extends Fragment {
         if (StringUtils.isEmpty(foodCover)) setCover(adapter.get(0));
     }
 
+    private void addOrMoveImage(Uri uri, Integer i){
+        if (uri == null){
+            return;
+        }
+        int index = adapter.indexOf(uri.getPath());
+        if (index > -1){
+            move(index, 0);
+        } else {
+            saveImage(uri, ImageUtils.newImageFileName(i), false);
+        }
+    }
 }

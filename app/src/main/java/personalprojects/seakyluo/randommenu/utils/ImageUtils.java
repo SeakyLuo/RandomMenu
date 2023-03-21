@@ -66,8 +66,13 @@ public class ImageUtils {
         return FileUtils.getPath("RandomMenuFood", path);
     }
 
-    public static String newImageFileName(){ return Helper.formatCurrentTimestamp() + ".jpg"; }
-    public static String newImageFileName(int suffix){ return Helper.formatCurrentTimestamp() + "_" + suffix + ".jpg"; }
+    public static String newImageFileName(){
+        return Helper.formatCurrentTimestamp() + ".jpg";
+    }
+    public static String newImageFileName(Integer suffix){
+        if (suffix == null) return newImageFileName();
+        return Helper.formatCurrentTimestamp() + "_" + suffix + ".jpg";
+    }
 
     public static Bitmap getFoodBitmap(String path) { return BitmapFactory.decodeFile(getImagePath(path)); }
     public static Bitmap getFoodBitmap(ImageView imageView){ return ((BitmapDrawable) imageView.getDrawable()).getBitmap(); }
