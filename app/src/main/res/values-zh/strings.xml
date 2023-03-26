@@ -115,4 +115,5 @@
     <string name="import_data_failed">导入文件异常：</string>
     <string name="no_import_image_folder">找不到供导入的音乐文件夹！</string>
     <string name="no_import_settings">找不到供导入的设置文件！</string>
+    <string name="incomplete_address">地址没有填写完整</string>
 </resources>

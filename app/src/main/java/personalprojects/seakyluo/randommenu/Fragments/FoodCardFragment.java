@@ -30,6 +30,7 @@ import personalprojects.seakyluo.randommenu.activities.impl.EditSelfMadeFoodActi
 import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.database.services.RestaurantFoodDaoService;
 import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
@@ -39,6 +40,7 @@ import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.ClipboardUtils;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
@@ -286,13 +288,16 @@ public class FoodCardFragment extends Fragment {
         if (resultCode != RESULT_OK) return;
         if (data == null) return;
         if (requestCode == ActivityCodeConstant.EDIT_SELF_FOOD){
-            SelfMadeFood food = data.getParcelableExtra(EditSelfMadeFoodActivity.FOOD);
+            SelfMadeFood food = data.getParcelableExtra(EditSelfMadeFoodActivity.DATA);
             if (food == null) return;
             fillFood(food);
             if (foodEditedListener != null) foodEditedListener.accept(food);
         }
         else if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT_FOOD){
-            // TODO
+            RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
+            if (food == null) return;
+            fillFood(food);
+            RestaurantFoodDaoService.update(food);
         }
     }
 
@@ -302,7 +307,7 @@ public class FoodCardFragment extends Fragment {
         FragmentManager fragmentManager = getChildFragmentManager();
         fragmentManager.putFragment(outState, TagsFragment.TAG, tagsFragment);
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
-//        outState.putParcelable(FOOD, selfMadeFood);
+        outState.putParcelable(FOOD, food);
     }
 }
 

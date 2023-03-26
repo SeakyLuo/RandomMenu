@@ -21,6 +21,8 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordDisplayAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
+import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.enums.OperationType;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
@@ -29,7 +31,7 @@ import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
 public class ShowRestaurantActivity extends AppCompatActivity {
-    public static final String DATA_ID = "RESTAURANT_ID", DATA = "RESTAURANT";
+    public static final String DATA_ID = "RESTAURANT_ID", DATA = "RESTAURANT", OPERATION_TYPE = "OPERATION_TYPE";
     private TextView restaurantNameText, foodTypeText, averagePriceText, restaurantComment, consumeRecordsText, addressText;
     private ConsumeRecordDisplayAdapter consumeRecordAdapter;
     private RestaurantVO restaurant;
@@ -81,7 +83,13 @@ public class ShowRestaurantActivity extends AppCompatActivity {
     }
 
     private void deleteRestaurant(){
-        // TODO
+        AskYesNoDialog dialog = new AskYesNoDialog();
+        dialog.setMessage("你确定要删除这条探店记录吗？");
+        dialog.setYesListener(v -> {
+            RestaurantDaoService.delete(restaurant);
+            finishWithOperation(restaurant, OperationType.DELETE);
+        });
+        dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
     }
 
     private void setData(RestaurantVO src){
@@ -116,6 +124,14 @@ public class ShowRestaurantActivity extends AppCompatActivity {
         consumeRecordAdapter.setVertical(recordSize == 1 || foodCount <= 7);
         consumeRecordAdapter.setData(records);
         consumeRecordsText.setText(String.format("消费记录（%d）", recordSize));
+    }
+
+    private void finishWithOperation(RestaurantVO data, OperationType operationType){
+        Intent intent = new Intent();
+        intent.putExtra(DATA, data);
+        intent.putExtra(OPERATION_TYPE, operationType);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     @Override

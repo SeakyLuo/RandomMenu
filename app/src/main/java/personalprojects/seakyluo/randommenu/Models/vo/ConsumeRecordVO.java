@@ -25,6 +25,7 @@ public class ConsumeRecordVO implements Parcelable {
     private String comment;
     private List<RestaurantFoodVO> foods;
     private int index = -1;
+    private List<String> environmentPictures;
 
     public String formatConsumeTime(){
         return DateFormatUtils.format(consumeTime, CONSUME_TIME_FORMAT);
@@ -51,6 +52,7 @@ public class ConsumeRecordVO implements Parcelable {
         comment = in.readString();
         foods = in.createTypedArrayList(RestaurantFoodVO.CREATOR);
         index = in.readInt();
+        environmentPictures = in.createStringArrayList();
     }
 
     public static final Creator<ConsumeRecordVO> CREATOR = new Creator<ConsumeRecordVO>() {
@@ -81,5 +83,6 @@ public class ConsumeRecordVO implements Parcelable {
         dest.writeString(comment);
         dest.writeTypedList(foods);
         dest.writeInt(index);
+        dest.writeStringList(environmentPictures);
     }
 }

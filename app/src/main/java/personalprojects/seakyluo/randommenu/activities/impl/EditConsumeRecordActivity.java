@@ -161,6 +161,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     }
 
     private void setData(ConsumeRecordVO src){
+        setAddress(addressList);
         if (src == null){
             setConsumeTime(System.currentTimeMillis());
             addressSpinner.setSelection(0);
@@ -171,7 +172,6 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (CollectionUtils.isNotEmpty(eaters)){
             editFriends.setText(String.join(EATER_DELIMITER, eaters));
         }
-        setAddress(addressList);
         AddressVO address = src.getAddress();
         if (address == null){
             addressSpinner.setSelection(0);

@@ -1,5 +1,7 @@
 package personalprojects.seakyluo.randommenu.database.services;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +16,9 @@ import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 public class ImagePathDaoService {
 
     public static void insert(long itemId, String itemType, List<String> images){
+        if (CollectionUtils.isEmpty(images)){
+            return;
+        }
         ImagePathMapper mapper = AppDatabase.instance.imagePathMapper();
         List<ImagePathDAO> daoList = new ArrayList<>();
         for (int i = 0; i < images.size(); i++){

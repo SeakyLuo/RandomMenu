@@ -66,7 +66,7 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         Activity activity = (Activity) context;
         Intent intent = new Intent(activity, ShowRestaurantActivity.class);
         intent.putExtra(ShowRestaurantActivity.DATA_ID, data.getId());
-        activity.startActivity(intent);
+        activity.startActivityForResult(intent, ActivityCodeConstant.SHOW_RESTAURANT);
         activity.overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
     }
 

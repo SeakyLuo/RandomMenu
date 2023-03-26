@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,9 @@ public class ConsumeRecordDaoService {
         }
         List<Long> ids = mapper.insert(daoList);
         setRestaurantIdAndRecordId(voList, restaurantId, ids);
+        for (ConsumeRecordVO vo : voList){
+            ImagePathService.insertConsumeRecord(vo.getId(), vo.getEnvironmentPictures());
+        }
         computeShowFood(voList);
         List<RestaurantFoodVO> foods = voList.stream().flatMap(vo -> vo.getFoods().stream().peek(f -> f.setId(0))).collect(Collectors.toList());
         RestaurantFoodDaoService.insert(foods);
@@ -69,24 +73,9 @@ public class ConsumeRecordDaoService {
             }
             counter.put(name, counter.getOrDefault(name, 0) + 1);
         }
-        foods.sort((f1, f2) -> {
-            int diff;
-            diff = Boolean.compare(isPositiveComment(f2.getComment()), isPositiveComment(f1.getComment()));
-            if (diff != 0) return diff;
-            diff = counter.getOrDefault(f2.getName(), 0) - counter.getOrDefault(f1.getName(), 0);
-            if (diff != 0) return diff;
-            diff = Boolean.compare(StringUtils.isNotEmpty(f2.getCover()), StringUtils.isNotEmpty(f1.getCover()));
-            if (diff != 0) return diff;
-            diff = Boolean.compare(isNotBadComment(f2.getComment()), isNotBadComment(f1.getComment()));
-            if (diff != 0) return diff;
-            diff = Boolean.compare(StringUtils.isNotEmpty(f2.getComment()), StringUtils.isNotEmpty(f1.getComment()));
-            if (diff != 0) return diff;
-            ConsumeRecordVO r1 = recordMap.get(f1.getConsumeRecordId());
-            ConsumeRecordVO r2 = recordMap.get(f2.getConsumeRecordId());
-            diff = Long.compare(r2.getConsumeTime(), r1.getConsumeTime());
-            if (diff != 0) return diff;
-            return r2.getFoods().indexOf(f1) - r1.getFoods().indexOf(f2);
-        });
+        foods.sort(Comparator.comparing(f -> computeSortPoints((RestaurantFoodVO) f, counter))
+                .thenComparing(f -> -recordMap.get(((RestaurantFoodVO) f).getConsumeRecordId()).getConsumeTime())
+                .thenComparing(f -> recordMap.get(((RestaurantFoodVO) f).getConsumeRecordId()).getFoods().indexOf(f)));
         int showCounter = 0;
         for (int i = 0; i < foods.size(); i++){
             RestaurantFoodVO curr = foods.get(i);
@@ -99,11 +88,30 @@ public class ConsumeRecordDaoService {
         }
     }
 
+    private static int computeSortPoints(RestaurantFoodVO food, Map<String, Integer> counter){
+        int points = 100;
+        String comment = food.getComment();
+        if (isPositiveComment(comment)){
+            points += 30;
+        }
+        else if (isNotBadComment(comment)){
+            points += 9;
+        }
+        else if (StringUtils.isNotEmpty(comment)){
+            points += 3;
+        }
+        points += (counter.getOrDefault(food.getName(), 0) - 1) * 10;
+        if (StringUtils.isNotEmpty(food.getCover())){
+            points += 6;
+        }
+        return -points;
+    }
+
     private static boolean isPositiveComment(String comment){
         if (StringUtils.isEmpty(comment)){
             return false;
         }
-        return comment.matches("^(?!不).*(好吃|爱|喜欢|推荐).*") || comment.contains("必点") || comment.contains("还不错") || comment.contains("yyds");
+        return comment.matches("^(?!不).*(好|爱|喜欢|推荐|棒|赞).*") || comment.contains("必点") || comment.contains("还不错") || comment.contains("yyds");
     }
 
     private static boolean isNotBadComment(String comment){
@@ -117,6 +125,8 @@ public class ConsumeRecordDaoService {
         ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
         mapper.deleteByRestaurant(restaurantId);
         RestaurantFoodDaoService.deleteByRestaurant(restaurantId);
+        List<Long> ids = voList.stream().map(ConsumeRecordVO::getId).collect(Collectors.toList());
+        ImagePathService.deleteByConsumeRecords(ids);
         insert(voList, restaurantId, addressList);
     }
 
@@ -135,9 +145,13 @@ public class ConsumeRecordDaoService {
         }
         Map<Long, List<RestaurantFoodVO>> foodMap = RestaurantFoodDaoService.selectByRestaurantId(restaurantId).stream().collect(Collectors.groupingBy(RestaurantFoodVO::getConsumeRecordId));
         Map<Long, AddressVO> addressMap = AddressDaoService.selectByRestaurant(restaurantId).stream().collect(Collectors.toMap(AddressVO::getId, Function.identity()));
+        List<Long> ids = records.stream().map(ConsumeRecordVO::getId).collect(Collectors.toList());
+        Map<Long, List<String>> imageMap = ImagePathService.selectByConsumeRecords(ids);
         for (ConsumeRecordVO record : records){
+            long recordId = record.getId();
             record.setAddress(addressMap.getOrDefault(record.getAddress().getId(), record.getAddress()));
-            record.setFoods(foodMap.get(record.getId()));
+            record.setFoods(foodMap.get(recordId));
+            record.setEnvironmentPictures(imageMap.get(recordId));
         }
         return records;
     }

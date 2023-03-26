@@ -14,16 +14,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.dao.Page;
 import personalprojects.seakyluo.randommenu.database.dao.PagedData;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
+import personalprojects.seakyluo.randommenu.enums.OperationType;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
@@ -97,18 +100,42 @@ public class RestaurantsFragment extends Fragment {
         if (resultCode != RESULT_OK) return;
         if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT) {
             RestaurantVO restaurant = data.getParcelableExtra(EditRestaurantActivity.DATA);
+            saveRestaurant(restaurant);
+        }
+        else if (requestCode == ActivityCodeConstant.SHOW_RESTAURANT){
+            RestaurantVO restaurant = data.getParcelableExtra(EditRestaurantActivity.DATA);
             long id = restaurant.getId();
-            RestaurantVO vo = RestaurantDaoService.selectPagedView(id);
             int index = restaurantAdapter.indexOf(i -> i.getId() == id);
-            if (index == -1){
-                restaurantAdapter.add(vo, 0);
-                restaurantRecyclerView.scrollToPosition(0);
-            } else {
-                restaurantAdapter.set(vo, index);
+            OperationType operationType = (OperationType) data.getSerializableExtra(ShowRestaurantActivity.OPERATION_TYPE);
+            if (OperationType.DELETE.equals(operationType)){
+                restaurantAdapter.removeAt(index);
+                Snackbar snackbar = Snackbar.make(restaurantRecyclerView, String.format("\"%s\"已被删除", restaurant.getName()), Snackbar.LENGTH_LONG);
+                snackbar.setAction("撤销", vv -> {
+                    RestaurantDaoService.insert(restaurant);
+                });
+                snackbar.show();
+            }
+            else if (OperationType.UPDATE.equals(operationType)){
+                saveRestaurant(restaurant);
             }
         }
         else if (requestCode == ActivityCodeConstant.GALLERY) {
             createRestaurant(RestaurantUtils.buildFromImages(getContext(), data.getClipData()));
+        }
+        else if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT_FOOD){
+
+        }
+    }
+
+    private void saveRestaurant(RestaurantVO restaurant){
+        long id = restaurant.getId();
+        int index = restaurantAdapter.indexOf(i -> i.getId() == id);
+        RestaurantVO vo = RestaurantDaoService.selectPagedView(id);
+        if (index == -1){
+            restaurantAdapter.add(vo, 0);
+            restaurantRecyclerView.scrollToPosition(0);
+        } else {
+            restaurantAdapter.set(vo, index);
         }
     }
 }

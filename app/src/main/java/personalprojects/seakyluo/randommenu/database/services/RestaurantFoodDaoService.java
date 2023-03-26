@@ -15,6 +15,11 @@ import personalprojects.seakyluo.randommenu.services.ImagePathService;
 
 public class RestaurantFoodDaoService {
 
+    public static void update(RestaurantFoodVO vo){
+        RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
+        mapper.update(convert(vo));
+    }
+
     public static void insert(List<RestaurantFoodVO> voList){
         RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
         List<RestaurantFoodDAO> daoList = voList.stream().map(RestaurantFoodDaoService::convert).collect(Collectors.toList());
@@ -87,6 +92,7 @@ public class RestaurantFoodDaoService {
         }
         RestaurantFoodVO dst = new RestaurantFoodVO();
         dst.setId(src.getId());
+        dst.setRestaurantId(src.getRestaurantId());
         dst.setConsumeRecordId(src.getConsumeRecordId());
         dst.setCover(src.getPictureUri());
         dst.setName(src.getName());

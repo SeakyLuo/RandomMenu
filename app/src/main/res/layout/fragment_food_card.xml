@@ -19,8 +19,8 @@
             <fragment
                 class="personalprojects.seakyluo.randommenu.fragments.ImageViewerFragment"
                 android:id="@+id/imageviewer_fragment"
-                android:layout_width="320dp"
-                android:layout_height="320dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 />
 
             <ImageView

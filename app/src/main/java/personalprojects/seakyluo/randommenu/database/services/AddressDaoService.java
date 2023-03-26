@@ -12,7 +12,9 @@ public class AddressDaoService {
 
     public static void insert(List<AddressVO> addressList, long restaurantId){
         AddressMapper mapper = AppDatabase.instance.addressMapper();
-        List<AddressDAO> daoList = convert(addressList, restaurantId);
+        List<AddressDAO> daoList = convert(addressList, restaurantId).stream()
+                .peek(i -> i.setId(0))
+                .collect(Collectors.toList());
         List<Long> ids = mapper.insert(daoList);
         for (int i = 0; i < daoList.size(); i++){
             addressList.get(i).setId(ids.get(i));

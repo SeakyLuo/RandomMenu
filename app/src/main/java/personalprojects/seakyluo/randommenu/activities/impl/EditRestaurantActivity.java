@@ -185,9 +185,21 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
             Toast.makeText(this, "地址不能为空", Toast.LENGTH_SHORT).show();
             return true;
         }
-        if (addressAdapter.getData().any(AddressVO::isEmpty)){
-            Toast.makeText(this, "地址没有填写完整", Toast.LENGTH_SHORT).show();
+        AList<AddressVO> addressList = addressAdapter.getData();
+        if (addressList.any(AddressVO::isEmpty)){
+            Toast.makeText(this, R.string.incomplete_address, Toast.LENGTH_SHORT).show();
             return true;
+        }
+        if (consumeRecordAdapter.getData().stream().anyMatch(i -> i.getAddress() == null)){
+            if (addressList.size() == 1){
+                AddressVO addressVO = addressList.get(0);
+                for (ConsumeRecordVO record : consumeRecordAdapter.getData()) {
+                    record.setAddress(addressVO);
+                }
+            } else {
+                Toast.makeText(this, R.string.incomplete_address, Toast.LENGTH_SHORT).show();
+                return true;
+            }
         }
         return false;
     }

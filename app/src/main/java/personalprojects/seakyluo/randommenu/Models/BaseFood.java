@@ -1,5 +1,8 @@
 package personalprojects.seakyluo.randommenu.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,13 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import personalprojects.seakyluo.randommenu.constants.EmojiConstant;
 import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
+@NoArgsConstructor
 @Data
-public class BaseFood {
+public class BaseFood implements Parcelable {
 
     private String name;
     private String cover;
@@ -69,5 +74,41 @@ public class BaseFood {
         dst.setFoodClass(FoodClass.RESTAURANT);
         dst.setSource(src);
         return dst;
+    }
+
+    protected BaseFood(Parcel in) {
+        name = in.readString();
+        cover = in.readString();
+        images = in.createStringArrayList();
+        tags = in.createTypedArrayList(Tag.CREATOR);
+        note = in.readString();
+        isFavorite = in.readByte() != 0;
+    }
+
+    public static final Creator<BaseFood> CREATOR = new Creator<BaseFood>() {
+        @Override
+        public BaseFood createFromParcel(Parcel in) {
+            return new BaseFood(in);
+        }
+
+        @Override
+        public BaseFood[] newArray(int size) {
+            return new BaseFood[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(cover);
+        dest.writeStringList(images);
+        dest.writeTypedList(tags);
+        dest.writeString(note);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
     }
 }

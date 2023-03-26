@@ -15,4 +15,9 @@
         <item name="android:statusBarColor">@android:color/black</item>
     </style>
 
+    <style name="RoundImageStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+    </style>
+
 </resources>

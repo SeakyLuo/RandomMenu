@@ -29,7 +29,7 @@ import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.FoodTagUtils;
 
 public class EditSelfMadeFoodActivity extends AppCompatActivity {
-    public static final String FOOD = "Food", FOOD_ID = "FoodId", IS_DRAFT = "IsDraft";
+    public static final String DATA = "Food", FOOD_ID = "FoodId", IS_DRAFT = "IsDraft";
     private EditText edit_food_name, edit_note;
     private SwitchCompat like_toggle;
     private ChooseTagFragment chooseTagFragment;
@@ -53,13 +53,13 @@ public class EditSelfMadeFoodActivity extends AppCompatActivity {
             imageViewerFragment = (ImageViewerFragment) fragmentManager.findFragmentById(R.id.imageviewer_fragment);
             Intent intent = getIntent();
             long foodId = intent.getLongExtra(FOOD_ID, -1);
-            currentFood = foodId < 0 ? intent.getParcelableExtra(FOOD) : SelfMadeFoodService.selectById(foodId);
+            currentFood = foodId < 0 ? intent.getParcelableExtra(DATA) : SelfMadeFoodService.selectById(foodId);
             isDraft = intent.getBooleanExtra(IS_DRAFT, false);
         } else {
             chooseTagFragment = (ChooseTagFragment) fragmentManager.getFragment(savedInstanceState, ChooseTagFragment.TAG);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
-            currentFood = savedInstanceState.getParcelable(FOOD);
-            isDraft = savedInstanceState.getBoolean(FOOD);
+            currentFood = savedInstanceState.getParcelable(DATA);
+            isDraft = savedInstanceState.getBoolean(DATA);
         }
         imageViewerFragment.setEditable(true);
         setFood(currentFood);
@@ -200,7 +200,7 @@ public class EditSelfMadeFoodActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.putFragment(outState, ChooseTagFragment.TAG, chooseTagFragment);
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
-        outState.putParcelable(FOOD, new SelfMadeFood(getFoodName(), imageViewerFragment.getImages(), chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), imageViewerFragment.getFoodCover()));
+        outState.putParcelable(DATA, new SelfMadeFood(getFoodName(), imageViewerFragment.getImages(), chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), imageViewerFragment.getFoodCover()));
     }
 
     @Override
@@ -219,7 +219,7 @@ public class EditSelfMadeFoodActivity extends AppCompatActivity {
 
     private void finishWithFood(SelfMadeFood food){
         Intent intent = new Intent();
-        intent.putExtra(FOOD, food);
+        intent.putExtra(DATA, food);
         setResult(RESULT_OK, intent);
         finish();
     }
