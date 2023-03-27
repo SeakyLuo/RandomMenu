@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 import java.util.function.Consumer;
 
 import lombok.Setter;
@@ -17,7 +19,7 @@ import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 
-public class FoodCardDialog extends DialogFragment {
+public class FoodCardDialog extends BottomSheetDialogFragment {
     public static final String TAG = "FoodCardDialog";
     private FoodCardFragment foodCardFragment = new FoodCardFragment();
     @Setter

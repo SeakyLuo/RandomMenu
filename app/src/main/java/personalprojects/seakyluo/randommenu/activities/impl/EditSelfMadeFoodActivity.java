@@ -26,6 +26,7 @@ import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
+import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.FoodTagUtils;
 
 public class EditSelfMadeFoodActivity extends AppCompatActivity {
@@ -96,7 +97,7 @@ public class EditSelfMadeFoodActivity extends AppCompatActivity {
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
             dialog.setMessage(R.string.save_as_draft);
             dialog.setYesListener(view -> {
-                Settings.settings.FoodDraft = new SelfMadeFood(food_name, imageViewerFragment.getImages(), tags, note, like_toggle.isChecked(), imageViewerFragment.getFoodCover());
+                Settings.settings.FoodDraft = new SelfMadeFood(food_name, imageViewerFragment.getImages(), tags, note, like_toggle.isChecked(), imageViewerFragment.getCoverImage());
                 finish();
             });
             dialog.setNoListener(view -> finish());
@@ -140,7 +141,7 @@ public class EditSelfMadeFoodActivity extends AppCompatActivity {
             return;
         }
         List<String> images = imageViewerFragment.getImages();
-        String foodCover = imageViewerFragment.getFoodCover();
+        String foodCover = imageViewerFragment.getCoverImage();
         SelfMadeFood food = new SelfMadeFood(foodName, images, tags, note, like_toggle.isChecked(), foodCover);
         if (isDraft){
             SelfMadeFoodService.addFood(food);
@@ -167,7 +168,7 @@ public class EditSelfMadeFoodActivity extends AppCompatActivity {
         dialog.setMessage(R.string.duplicate_food_merge);
         dialog.setYesListener(view -> {
             existing.getImages().addAll(imageViewerFragment.getImages());
-            String foodCover = imageViewerFragment.getFoodCover();
+            String foodCover = imageViewerFragment.getCoverImage();
             if (!StringUtils.isEmpty(foodCover)){
                 existing.setCover(foodCover);
             }
@@ -200,13 +201,13 @@ public class EditSelfMadeFoodActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.putFragment(outState, ChooseTagFragment.TAG, chooseTagFragment);
         fragmentManager.putFragment(outState, ImageViewerFragment.TAG, imageViewerFragment);
-        outState.putParcelable(DATA, new SelfMadeFood(getFoodName(), imageViewerFragment.getImages(), chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), imageViewerFragment.getFoodCover()));
+        outState.putParcelable(DATA, new SelfMadeFood(getFoodName(), imageViewerFragment.getImages(), chooseTagFragment.getData(), getNote(), like_toggle.isChecked(), imageViewerFragment.getCoverImage()));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        getSupportFragmentManager().getFragments().forEach(f -> f.onActivityResult(requestCode, resultCode, data));
+        ActivityUtils.spreadOnActivityResult(this, requestCode, resultCode, data);
     }
 
     private String getFoodName() {

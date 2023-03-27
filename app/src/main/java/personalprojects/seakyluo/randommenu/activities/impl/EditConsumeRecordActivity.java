@@ -36,12 +36,14 @@ import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.AddressDaoService;
+import personalprojects.seakyluo.randommenu.fragments.HorizontalImageViewFragment;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
+import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
@@ -60,6 +62,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     private ItemTouchHelper dragHelper;
     private ArrayList<AddressVO> addressList;
     private ConsumeRecordVO currentRecord;
+    private HorizontalImageViewFragment imageAdderFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +91,12 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             addressList = savedInstanceState.getParcelableArrayList(ADDRESS_LIST);
             consumeTime = savedInstanceState.getLong(CONSUME_TIME);
         }
+        imageAdderFragment = (HorizontalImageViewFragment) getSupportFragmentManager().findFragmentById(R.id.image_viewer_fragment);
 
         if (addressList == null){
             addressList = (ArrayList<AddressVO>) AddressDaoService.selectByRestaurant(currentRecord.getRestaurantId());
         }
+        imageAdderFragment.setEditable(true);
         setData(currentRecord);
         dragHelper = new ItemTouchHelper(new DragDropCallback<>(foodAdapter));
         dragHelper.attachToRecyclerView(consumeRecordRecyclerView);
@@ -181,6 +186,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         }
         editComment.setText(src.getComment());
         editTotalCost.setText(DoubleUtils.truncateZero(src.getTotalCost()));
+        imageAdderFragment.setData(src.getEnvironmentPictures());
         foodAdapter.setData(src.getFoods());
         foodAdapter.getData().For(i -> foodAdapter.getDataAt(i).setIndex(i));
         if (CollectionUtils.isEmpty(src.getFoods())){
@@ -221,6 +227,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (NumberUtils.isParsable(totalCost)){
             dst.setTotalCost(Double.parseDouble(totalCost));
         }
+        dst.setEnvironmentPictures(imageAdderFragment.getData());
         dst.setComment(editComment.getText().toString());
         dst.setFoods(foodAdapter.getData());
         return dst;
@@ -260,6 +267,10 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             }
         }
         else if (requestCode == ActivityCodeConstant.GALLERY){
+            if (ImageUtils.GALLERY_CALLER != 0){
+                ActivityUtils.spreadOnActivityResult(this, requestCode, resultCode, data);
+                return;
+            }
             RestaurantVO restaurantVO = RestaurantUtils.buildFromImages(this, data.getClipData());
             List<ConsumeRecordVO> records = restaurantVO.getRecords();
             Optional<Long> minConsumeTimeOp = records.stream().map(ConsumeRecordVO::getConsumeTime).min(Comparator.comparing(Function.identity()));

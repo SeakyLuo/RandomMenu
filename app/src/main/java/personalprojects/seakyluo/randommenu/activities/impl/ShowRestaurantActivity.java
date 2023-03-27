@@ -2,6 +2,7 @@ package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -10,10 +11,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,18 +27,21 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.enums.OperationType;
+import personalprojects.seakyluo.randommenu.fragments.HorizontalImageViewFragment;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
+import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
 public class ShowRestaurantActivity extends AppCompatActivity {
     public static final String DATA_ID = "RESTAURANT_ID", DATA = "RESTAURANT", OPERATION_TYPE = "OPERATION_TYPE";
-    private TextView restaurantNameText, foodTypeText, averagePriceText, restaurantComment, consumeRecordsText, addressText;
+    private TextView restaurantNameText, foodTypeText, averagePriceText, restaurantComment, consumeRecordsText, addressText, environmentText;
     private ConsumeRecordDisplayAdapter consumeRecordAdapter;
     private RestaurantVO restaurant;
+    private HorizontalImageViewFragment envImageViewFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +55,15 @@ public class ShowRestaurantActivity extends AppCompatActivity {
         foodTypeText = findViewById(R.id.food_type);
         averagePriceText = findViewById(R.id.average_price);
         restaurantComment = findViewById(R.id.restaurant_comment);
+        environmentText = findViewById(R.id.environment_text);
         consumeRecordsText = findViewById(R.id.consume_record_text);
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
+        envImageViewFragment = (HorizontalImageViewFragment) getSupportFragmentManager().findFragmentById(R.id.image_viewer_fragment);
 
         Intent intent = getIntent();
         long restaurantId = intent.getLongExtra(DATA_ID, 0);
         restaurant = intent.getParcelableExtra(DATA);
+        envImageViewFragment.setEditable(false);
         consumeRecordAdapter = new ConsumeRecordDisplayAdapter(this, restaurantId);
         restaurant = Optional.ofNullable(restaurant).orElse(RestaurantDaoService.selectById(restaurantId));
         consumeRecordRecyclerView.setAdapter(consumeRecordAdapter);
@@ -119,11 +129,28 @@ public class ShowRestaurantActivity extends AppCompatActivity {
         List<ConsumeRecordVO> records = src.getRecords();
         records.sort(Comparator.comparing(ConsumeRecordVO::getConsumeTime).reversed());
         consumeRecordAdapter.setShowAddress(src.getAddressList().size() != 1);
-        int foodCount = records.stream().mapToInt(r -> r.getFoods().size()).sum();
-        int recordSize = records.size();
-        consumeRecordAdapter.setVertical(recordSize == 1 || foodCount <= 7);
         consumeRecordAdapter.setData(records);
-        consumeRecordsText.setText(String.format("消费记录（%d）", recordSize));
+        setConsumeRecords();
+        List<String> environmentPictures = records.stream().map(ConsumeRecordVO::getEnvironmentPictures)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(environmentPictures)){
+            environmentText.setVisibility(View.GONE);
+            ActivityUtils.hideFragment(this, envImageViewFragment);
+        } else {
+            environmentText.setVisibility(View.VISIBLE);
+            ActivityUtils.showFragment(this, envImageViewFragment);
+            environmentText.setText(String.format("环境（%d）", environmentPictures.size()));
+            envImageViewFragment.setData(environmentPictures);
+        }
+    }
+
+    private void setConsumeRecords(){
+        int foodCount = consumeRecordAdapter.getData().stream().mapToInt(r -> r.getFoods().size()).sum();
+        int recordSize = consumeRecordAdapter.getItemCount();
+        consumeRecordAdapter.setVertical(recordSize == 1 || foodCount <= 7);
+        consumeRecordsText.setText(String.format("消费记录（%d）", consumeRecordAdapter.getItemCount()));
     }
 
     private void finishWithOperation(RestaurantVO data, OperationType operationType){
@@ -144,7 +171,17 @@ public class ShowRestaurantActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        setData(data.getParcelableExtra(EditRestaurantFoodActivity.DATA));
+        if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT_FOOD){
+            setData(data.getParcelableExtra(EditRestaurantFoodActivity.DATA));
+        }
+        else if (requestCode == ActivityCodeConstant.SHOW_CONSUME_RECORD){
+            OperationType operationType = (OperationType) data.getSerializableExtra(ShowRestaurantActivity.OPERATION_TYPE);
+            ConsumeRecordVO recordVO = data.getParcelableExtra(ShowConsumeRecordActivity.DATA);
+            if (operationType == OperationType.DELETE){
+                consumeRecordAdapter.removeAt(r -> r.getId() == recordVO.getId());
+                setConsumeRecords();
+            }
+        }
     }
 
 }

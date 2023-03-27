@@ -7,6 +7,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -20,18 +23,24 @@ import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.constants.EmojiConstant;
+import personalprojects.seakyluo.randommenu.database.services.ConsumeRecordDaoService;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
+import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
+import personalprojects.seakyluo.randommenu.enums.OperationType;
+import personalprojects.seakyluo.randommenu.fragments.HorizontalImageViewFragment;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
+import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
 public class ShowConsumeRecordActivity extends SwipeBackActivity {
-    public static final String DATA = "CONSUME_RECORD";
+    public static final String DATA = "CONSUME_RECORD", OPERATION_TYPE = "OPERATION_TYPE";
     public static final String EATER_DELIMITER = "、";
-    private TextView consumeTimeText, addressText, eatersText, consumeRecordComment, consumeTotalCost, restaurantName, foodText;
+    private TextView consumeTimeText, addressText, eatersText, consumeRecordComment, consumeTotalCost, restaurantName, foodText, environmentText;
     private ConsumeFoodAdapter foodAdapter;
     private ConsumeRecordVO currentRecord;
+    private HorizontalImageViewFragment envImageViewFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +56,15 @@ public class ShowConsumeRecordActivity extends SwipeBackActivity {
         consumeTotalCost = findViewById(R.id.consume_total_cost);
         restaurantName = findViewById(R.id.restaurant_name);
         foodText = findViewById(R.id.food_text);
+        environmentText = findViewById(R.id.environment_text);
         RecyclerView foodRecyclerView = findViewById(R.id.food_recycler_view);
         foodAdapter = new ConsumeFoodAdapter(this, false);
+        envImageViewFragment = (HorizontalImageViewFragment) getSupportFragmentManager().findFragmentById(R.id.image_viewer_fragment);
 
         Intent intent = getIntent();
         currentRecord = intent.getParcelableExtra(DATA);
         foodRecyclerView.setAdapter(foodAdapter);
+        envImageViewFragment.setEditable(false);
         setData(currentRecord);
         backButton.setOnClickListener(v -> finish());
         moreButton.setOnClickListener(this::showMoreMenu);
@@ -69,11 +81,30 @@ public class ShowConsumeRecordActivity extends SwipeBackActivity {
                     overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
                     return true;
                 case R.id.delete_item:
+                    deleteConsumeRecord();
                     return true;
             }
             return false;
         });
         helper.show();
+    }
+
+    private void deleteConsumeRecord(){
+        AskYesNoDialog dialog = new AskYesNoDialog();
+        dialog.setMessage("你确定要删除这条消费记录吗？");
+        dialog.setYesListener(v -> {
+            ConsumeRecordDaoService.delete(currentRecord);
+            finishWithOperation(currentRecord, OperationType.DELETE);
+        });
+        dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
+    }
+
+    private void finishWithOperation(ConsumeRecordVO data, OperationType operationType){
+        Intent intent = new Intent();
+        intent.putExtra(DATA, data);
+        intent.putExtra(OPERATION_TYPE, operationType);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private void setData(ConsumeRecordVO src){
@@ -103,6 +134,16 @@ public class ShowConsumeRecordActivity extends SwipeBackActivity {
         }
         foodText.setText(String.format("菜品（%d）", src.getFoods().size()));
         foodAdapter.setData(src.getFoods());
+        List<String> environmentPictures = src.getEnvironmentPictures();
+        if (CollectionUtils.isEmpty(environmentPictures)){
+            environmentText.setVisibility(View.GONE);
+            ActivityUtils.hideFragment(this, envImageViewFragment);
+        } else {
+            environmentText.setVisibility(View.VISIBLE);
+            ActivityUtils.showFragment(this, envImageViewFragment);
+            environmentText.setText(String.format("环境（%d）", environmentPictures.size()));
+            envImageViewFragment.setData(environmentPictures);
+        }
     }
 
     @Override
@@ -110,7 +151,9 @@ public class ShowConsumeRecordActivity extends SwipeBackActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         if (requestCode == ActivityCodeConstant.EDIT_CONSUME_RECORD){
-
+            ConsumeRecordVO consumeRecord = data.getParcelableExtra(EditConsumeRecordActivity.DATA);
+            setData(consumeRecord);
+            ConsumeRecordDaoService.update(consumeRecord);
         }
     }
 }

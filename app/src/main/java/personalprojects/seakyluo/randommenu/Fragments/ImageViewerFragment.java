@@ -10,11 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.view.PreviewView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +46,7 @@ public class ImageViewerFragment extends Fragment {
     private ImageView foodImage;
     private Uri cameraImageUri, cropImageUri;
     @Getter
-    private String foodCover;
+    private String coverImage;
 
     @Nullable
     @Override
@@ -114,12 +114,17 @@ public class ImageViewerFragment extends Fragment {
     }
 
     private void setButtonVisibility(int current){
-        prevImageButton.setVisibility(current <= 0 ? View.GONE : View.VISIBLE);
-        nextImageButton.setVisibility(current < 0 || current == adapter.getCount() - 1 ? View.GONE : View.VISIBLE);
+        if (adapter.isEmpty()){
+            prevImageButton.setVisibility(View.GONE);
+            nextImageButton.setVisibility(View.GONE);
+        } else {
+            prevImageButton.setVisibility(current <= 0 ? View.GONE : View.VISIBLE);
+            nextImageButton.setVisibility(current < 0 || current == adapter.getCount() - 1 ? View.GONE : View.VISIBLE);
+        }
     }
 
     public void setImages(List<String> images, String cover) {
-        foodCover = cover;
+        coverImage = cover;
         adapter.setData(images);
         if (viewPager != null){
             foodImage.setVisibility(images.isEmpty() ? View.VISIBLE : View.GONE);
@@ -152,14 +157,14 @@ public class ImageViewerFragment extends Fragment {
     }
 
     private void updateImage(String image, int index){
-        if (adapter.get(index).equals(foodCover)){
+        if (adapter.get(index).equals(coverImage)){
             setCover(image);
         }
         adapter.set(image, index);
     }
 
     private void setCover(String image){
-        foodCover = image;
+        coverImage = image;
     }
 
     private void showMenuFlyout(){
@@ -167,7 +172,7 @@ public class ImageViewerFragment extends Fragment {
         final PopupMenuHelper helper = new PopupMenuHelper(R.menu.fetch_image_menu, activity, cameraButton);
         int count = adapter.getCount();
         if (count == 0) helper.removeItems(R.id.edit_image_item, R.id.remove_image_item);
-        if (count < 2 || getCurrentImage().equals(foodCover)) helper.removeItems(R.id.set_cover_item);
+        if (count < 2 || getCurrentImage().equals(coverImage)) helper.removeItems(R.id.set_cover_item);
         if (count <= 1 || getCurrent() <= 0) helper.removeItems(R.id.move_to_first_item);
         helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
             switch (menuItem.getItemId()){
@@ -183,7 +188,7 @@ public class ImageViewerFragment extends Fragment {
                 case R.id.remove_image_item:
                     String image = getCurrentImage();
                     removeCurrentImage();
-                    if (image.equals(foodCover)) setCover(adapter.isEmpty() ? null : adapter.get(0));
+                    if (image.equals(coverImage)) setCover(adapter.isEmpty() ? null : adapter.get(0));
                     if (adapter.isEmpty()) foodImage.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.set_cover_item:
@@ -257,7 +262,7 @@ public class ImageViewerFragment extends Fragment {
                 return;
         }
         foodImage.setVisibility(View.GONE);
-        if (StringUtils.isEmpty(foodCover)) setCover(adapter.get(0));
+        if (StringUtils.isEmpty(coverImage)) setCover(adapter.get(0));
     }
 
     private void addOrMoveImage(Uri uri, Integer i){

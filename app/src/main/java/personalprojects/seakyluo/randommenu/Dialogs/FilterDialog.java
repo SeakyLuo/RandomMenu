@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 import java.util.function.BiConsumer;
 
 import lombok.Setter;
@@ -18,7 +20,7 @@ import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
-public class FilterDialog extends DialogFragment {
+public class FilterDialog extends BottomSheetDialogFragment {
     public static final String TAG = "FilterDialog";
     private ChooseTagFragment prefer = new ChooseTagFragment(), exclude = new ChooseTagFragment();
     @Setter

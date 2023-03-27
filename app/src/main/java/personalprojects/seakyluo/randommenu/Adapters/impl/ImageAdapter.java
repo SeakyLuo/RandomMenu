@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.github.chrisbanes.photoview.PhotoView;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -102,10 +104,11 @@ public class ImageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
 //        this.container = container;
         ImageView imageView;
-        if (scaleType == ImageView.ScaleType.CENTER_INSIDE)
-            imageView = new ScalableImageView(context);
-        else
+        if (scaleType == ImageView.ScaleType.CENTER_INSIDE){
+            imageView = new PhotoView(context);
+        } else {
             imageView = new ImageView(context);
+        }
         imageView.setScaleType(scaleType);
         imageView.setOnClickListener(imageClickedListener);
         ImageUtils.loadImage(context, data.get(position), imageView);

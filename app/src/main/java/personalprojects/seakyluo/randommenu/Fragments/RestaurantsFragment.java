@@ -20,6 +20,7 @@ import java.util.List;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
+import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
@@ -28,8 +29,10 @@ import personalprojects.seakyluo.randommenu.database.dao.PagedData;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.enums.OperationType;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
+import personalprojects.seakyluo.randommenu.utils.ListUtils;
 import personalprojects.seakyluo.randommenu.utils.RecyclerViewUtils;
 import personalprojects.seakyluo.randommenu.utils.RestaurantUtils;
 
@@ -123,7 +126,13 @@ public class RestaurantsFragment extends Fragment {
             createRestaurant(RestaurantUtils.buildFromImages(getContext(), data.getClipData()));
         }
         else if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT_FOOD){
-
+            RestaurantFoodVO foodVO = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
+            int index = restaurantAdapter.getData().indexOf(i -> i.getId() == foodVO.getRestaurantId());
+            if (index == -1) return;
+            RestaurantVO restaurantVO = restaurantAdapter.getDataAt(index);
+            int foodIndex = ListUtils.indexOf(restaurantVO.getFoods(), f -> f.getId() == foodVO.getId());
+            restaurantVO.getFoods().remove(foodIndex);
+            restaurantAdapter.set(restaurantVO, index);
         }
     }
 

@@ -15,11 +15,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,6 +40,7 @@ import personalprojects.seakyluo.randommenu.helpers.Helper;
 
 public class ImageUtils {
     public static Bitmap DEFAULT_FOOD_IMAGE;
+    public static int CAMERA_CALLER, GALLERY_CALLER;
 
     public static void init(Activity activity){
         DEFAULT_FOOD_IMAGE = BitmapFactory.decodeResource(activity.getResources(), R.drawable.food_image_place_holder);
@@ -117,10 +125,19 @@ public class ImageUtils {
     }
 
     public static Uri openCamera(Activity activity){
+        return openCamera(activity, null);
+    }
+
+    public static Uri openCamera(Activity activity, View caller){
+        GALLERY_CALLER = caller == null ? 0 : caller.getId();
         if (!PermissionUtils.checkAndRequestPermission(activity, Manifest.permission.CAMERA, ActivityCodeConstant.CAMERA)){
             Toast.makeText(activity, "没有权限使用摄像头", Toast.LENGTH_SHORT).show();
             return null;
         }
+//        Intent intent = new Intent(activity, CameraActivity.class);
+//        activity.startActivityForResult(intent, ActivityCodeConstant.CAMERA);
+//        Uri uri = FileUtils.getFileUri(activity, ImageUtils.newImageFileName());
+//        return uri;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         Uri uri = FileUtils.getFileUri(activity, ImageUtils.newImageFileName());
@@ -129,17 +146,38 @@ public class ImageUtils {
         return uri;
     }
 
-    public static void openGallery(Activity activity){
-        openGallery(activity, true);
+    public static void openCameraX(Activity activity, PreviewView previewView){
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(activity);
+        cameraProviderFuture.addListener(() -> {
+            try {
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                CameraSelector cameraSelector = new CameraSelector.Builder()
+                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                        .build();
+                Preview preview = new Preview.Builder()
+                        .build();
+                preview.setSurfaceProvider(previewView.getSurfaceProvider());
+
+                cameraProvider.unbindAll();
+                cameraProvider.bindToLifecycle((LifecycleOwner) activity, cameraSelector, preview);
+            } catch (Exception e) {
+                // Handle the exception according to your app's requirements.
+            }
+        }, ContextCompat.getMainExecutor(activity));
     }
 
-    public static void openGallery(Activity activity, boolean allowMultiple){
+    public static void openGallery(Activity activity){
+        openGallery(activity, null);
+    }
+
+    public static void openGallery(Activity activity, View caller){
+        GALLERY_CALLER = caller == null ? 0 : caller.getId();
         if (!PermissionUtils.checkAndRequestReadStoragePermission(activity)){
             Toast.makeText(activity, "没有权限使用图库", Toast.LENGTH_SHORT).show();
             return;
         }
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, allowMultiple);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         activity.startActivityForResult(Intent.createChooser(intent, activity.getString(R.string.select_image)), ActivityCodeConstant.GALLERY);
     }
 }

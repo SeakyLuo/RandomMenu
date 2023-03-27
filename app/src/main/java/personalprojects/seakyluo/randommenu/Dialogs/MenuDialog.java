@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -24,7 +27,7 @@ import personalprojects.seakyluo.randommenu.R;
 
 import static android.app.Activity.RESULT_CANCELED;
 
-public class MenuDialog extends DialogFragment {
+public class MenuDialog extends BottomSheetDialogFragment {
     public static final String TAG = "MenuDialog";
     private FoodListFragment fragment = new FoodListFragment();
     private Button clear_button, add_button;

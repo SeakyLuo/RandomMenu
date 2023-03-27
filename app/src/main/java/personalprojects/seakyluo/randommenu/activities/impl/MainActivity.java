@@ -17,6 +17,7 @@ import personalprojects.seakyluo.randommenu.fragments.RandomFragment;
 import personalprojects.seakyluo.randommenu.fragments.RestaurantsFragment;
 import personalprojects.seakyluo.randommenu.fragments.SettingsFragment;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 
 public class MainActivity extends AppCompatActivity {
     public RandomFragment randomFragment;
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 Helper.init(this);
             }
         }
-        getSupportFragmentManager().getFragments().forEach(f -> f.onActivityResult(requestCode, resultCode, data));
+        ActivityUtils.spreadOnActivityResult(this, requestCode, resultCode, data);
     }
 
     @Override

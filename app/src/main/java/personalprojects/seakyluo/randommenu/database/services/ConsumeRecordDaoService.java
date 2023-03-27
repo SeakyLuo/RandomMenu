@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.database.services;
 
+import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -130,11 +131,25 @@ public class ConsumeRecordDaoService {
         insert(voList, restaurantId, addressList);
     }
 
-    public static void update(ConsumeRecordVO vo, List<AddressVO> addressList){
+    public static void insert(ConsumeRecordVO vo){
         ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
         ConsumeRecordDAO dao = convert(vo);
-        dao.setAddressId(addressList.stream().filter(a -> a.equals(vo.getAddress())).findFirst().map(AddressVO::getId).get());
-        mapper.update(dao);
+        dao.setAddressId(vo.getAddress().getId());
+        Long id = mapper.insert(dao);
+        RestaurantFoodDaoService.insert(vo.getFoods());
+        ImagePathService.insertConsumeRecord(id, vo.getEnvironmentPictures());
+    }
+
+    public static void update(ConsumeRecordVO vo){
+        delete(vo);
+        insert(vo);
+    }
+
+    public static void delete(ConsumeRecordVO vo){
+        ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
+        mapper.delete(convert(vo));
+        RestaurantFoodDaoService.deleteByConsumeRecord(vo.getId());
+        ImagePathService.deleteByConsumeRecords(Lists.newArrayList(vo.getId()));
     }
 
     public static List<ConsumeRecordVO> selectByRestaurant(long restaurantId){

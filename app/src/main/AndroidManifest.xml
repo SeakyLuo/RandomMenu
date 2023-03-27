@@ -52,7 +52,7 @@
         <activity android:name=".activities.impl.EditRestaurantFoodActivity" android:label="EditRestaurantFoodActivity" />
         <activity android:name=".activities.impl.ShowRestaurantActivity" android:label="ShowRestaurantActivity" />
         <activity android:name=".activities.impl.ShowConsumeRecordActivity" android:label="ShowConsumeRecordActivity" />
-        <activity android:name=".activities.impl.ShowRestaurantFoodActivity" android:label="ShowRestaurantFoodActivity" />
+        <activity android:name=".activities.impl.CameraActivity" android:label="CameraActivity" />
     </application>
 
 </manifest>

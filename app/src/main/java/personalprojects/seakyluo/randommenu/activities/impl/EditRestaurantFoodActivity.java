@@ -16,6 +16,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.fragments.ImageViewerFragment;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
@@ -86,7 +87,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         RestaurantFoodVO dst = JsonUtils.copy(currentFood);
         dst.setName(editName.getText().toString());
         dst.setImages(imageViewerFragment.getImages());
-        dst.setCover(imageViewerFragment.getFoodCover());
+        dst.setCover(imageViewerFragment.getCoverImage());
         String price = editPrice.getText().toString();
         if (NumberUtils.isParsable(price)){
             dst.setPrice(Double.parseDouble(price));
@@ -106,7 +107,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        getSupportFragmentManager().getFragments().forEach(f -> f.onActivityResult(requestCode, resultCode, data));
+        ActivityUtils.spreadOnActivityResult(this, requestCode, resultCode, data);
     }
 
     private void finishWithData(RestaurantFoodVO data){

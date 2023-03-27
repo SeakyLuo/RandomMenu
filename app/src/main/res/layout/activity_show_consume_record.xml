@@ -132,6 +132,22 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/environment_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="环境"
+                android:textColor="@color/colorTextBlack"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp" />
+
+            <fragment
+                class="personalprojects.seakyluo.randommenu.fragments.HorizontalImageViewFragment"
+                android:id="@+id/image_viewer_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+
+            <TextView
                 android:id="@+id/food_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

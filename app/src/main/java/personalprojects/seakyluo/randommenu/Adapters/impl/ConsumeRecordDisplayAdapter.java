@@ -95,7 +95,7 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
             Activity activity = (Activity) this.context;
             Intent intent = new Intent(activity, ShowConsumeRecordActivity.class);
             intent.putExtra(ShowConsumeRecordActivity.DATA, data);
-            activity.startActivity(intent);
+            activity.startActivityForResult(intent, ActivityCodeConstant.SHOW_CONSUME_RECORD);
             activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
         });
         view.setOnLongClickListener(v -> {

@@ -97,9 +97,11 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
         notifyItemRemoved(index);
     }
 
-    public void sort(Comparator<? super T> comparator) {
-        data.sorted(comparator);
-        notifyDataSetChanged();
+    public void removeAt(Predicate<T> predicate){
+        int index = data.indexOf(predicate);
+        if (index > -1){
+            removeAt(index);
+        }
     }
 
     public void set(T element, int index){
@@ -109,6 +111,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
 
     public void move(int from, int to){
         data.move(from, to);
+        viewHolders.move(from, to);
         notifyItemMoved(from, to);
     }
 

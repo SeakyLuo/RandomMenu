@@ -16,6 +16,9 @@ public interface ConsumeRecordMapper {
     @Insert
     List<Long> insert(List<ConsumeRecordDAO> daoList);
 
+    @Insert
+    Long insert(ConsumeRecordDAO dao);
+
     @Update
     void update(ConsumeRecordDAO dao);
 
@@ -24,7 +27,6 @@ public interface ConsumeRecordMapper {
 
     @Query("delete from consume_record where restaurantId = :restaurantId")
     void deleteByRestaurant(long restaurantId);
-
 
     @Query("select * from consume_record where restaurantId = :restaurantId order by consumeTime desc")
     List<ConsumeRecordDAO> selectByRestaurant(long restaurantId);
