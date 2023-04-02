@@ -20,7 +20,7 @@ import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 
-public class FilterDialog extends BottomSheetDialogFragment {
+public class RandomFilterDialog extends BottomSheetDialogFragment {
     public static final String TAG = "FilterDialog";
     private ChooseTagFragment prefer = new ChooseTagFragment(), exclude = new ChooseTagFragment();
     @Setter
@@ -32,8 +32,8 @@ public class FilterDialog extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_filter, container, false);
-        Button confirm_button = view.findViewById(R.id.confirm_button);
-        Button reset_button = view.findViewById(R.id.reset_button);
+        Button confirm_button = view.findViewById(R.id.doneButton);
+        Button reset_button = view.findViewById(R.id.resetButton);
 
         getChildFragmentManager().beginTransaction().add(R.id.prefer_tags, prefer).add(R.id.exclude_tags, exclude).commit();
         prefer.setHeader(getString(R.string.prefer_tags));

@@ -1,6 +1,7 @@
 package personalprojects.seakyluo.randommenu.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -8,6 +9,10 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
 import personalprojects.seakyluo.randommenu.database.dao.ConsumeRecordDAO;
@@ -54,6 +59,15 @@ public abstract class AppDatabase extends RoomDatabase {
     public static void createInstance(Context context){
         instance = Room.databaseBuilder(context, AppDatabase.class, DB_NAME)
                 .allowMainThreadQueries()
+                .setQueryCallback(new RoomDatabase.QueryCallback() {
+                    @Override
+                    public void onQuery(@NonNull String sqlQuery, @NonNull List<Object> bindArgs) {
+                        for (Object arg:bindArgs){
+                            sqlQuery = sqlQuery.replaceFirst("\\?", arg == null ? "null" : arg.toString());
+                        }
+                        Log.d("RoomDebug", "Executed SQL: " + sqlQuery);
+                    }
+                }, Executors.newSingleThreadExecutor())
                 .addMigrations(new Migration(12, 13) {
                     @Override
                     public void migrate(@NonNull SupportSQLiteDatabase database) {

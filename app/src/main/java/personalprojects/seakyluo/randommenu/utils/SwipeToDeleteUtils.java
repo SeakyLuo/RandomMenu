@@ -41,7 +41,7 @@ public class SwipeToDeleteUtils {
                 if (shouldNotBeDeleted){
                     Toast.makeText(context, String.format("\"%s\"正在使用中，无法删除", name), Toast.LENGTH_SHORT).show();
                     add.accept(position, item);
-                    recyclerView.scrollToPosition(position);
+                    recyclerView.smoothScrollToPosition(position);
                     return;
                 }
                 if (StringUtils.isEmpty(name)) {
@@ -50,7 +50,7 @@ public class SwipeToDeleteUtils {
                 Snackbar snackbar = Snackbar.make(recyclerView, String.format("\"%s\"已被删除", name), Snackbar.LENGTH_LONG);
                 snackbar.setAction("撤销", view -> {
                     add.accept(position, item);
-                    recyclerView.scrollToPosition(position);
+                    recyclerView.smoothScrollToPosition(position);
                 });
                 snackbar.show();
             }

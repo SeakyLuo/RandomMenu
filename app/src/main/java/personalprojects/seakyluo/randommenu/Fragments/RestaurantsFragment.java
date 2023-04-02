@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,8 +28,10 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.dao.Page;
 import personalprojects.seakyluo.randommenu.database.dao.PagedData;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
+import personalprojects.seakyluo.randommenu.dialogs.RestaurantFilterDialog;
 import personalprojects.seakyluo.randommenu.enums.OperationType;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
+import personalprojects.seakyluo.randommenu.models.RestaurantFilter;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
@@ -44,6 +47,8 @@ public class RestaurantsFragment extends Fragment {
     private TextView titleTextView;
     private RecyclerView restaurantRecyclerView;
     private RestaurantAdapter restaurantAdapter;
+    private ImageButton filterButton, searchButton;
+    private RestaurantFilter restaurantFilter;
 
     @Nullable
     @Override
@@ -54,15 +59,19 @@ public class RestaurantsFragment extends Fragment {
         restaurantAdapter = new RestaurantAdapter(getContext());
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         restaurantRecyclerView = view.findViewById(R.id.restaurant_recycler_view);
+        filterButton = view.findViewById(R.id.filter_button);
+        searchButton = view.findViewById(R.id.search_button);
 
         fab.setOnClickListener(this::showCreateRestaurantPopupMenu);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(false);
-            setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE));
+            setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
         });
+        filterButton.setOnClickListener(this::showFilterDialog);
+        titleTextView.setOnClickListener(v -> restaurantRecyclerView.smoothScrollToPosition(0));
         restaurantRecyclerView.setAdapter(restaurantAdapter);
-        RecyclerViewUtils.setAsPaged(restaurantRecyclerView, PAGE_SIZE, RestaurantDaoService::selectByPage);
-        setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE));
+        RecyclerViewUtils.setAsPaged(restaurantRecyclerView, PAGE_SIZE, ((pageNum, pageSize, filter) -> RestaurantDaoService.selectByPage(pageNum, pageSize, restaurantFilter)), restaurantFilter);
+        setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
         return view;
     }
 
@@ -80,6 +89,21 @@ public class RestaurantsFragment extends Fragment {
             return false;
         });
         helper.show();
+    }
+
+    private void showFilterDialog(View v){
+        RestaurantFilterDialog dialog = new RestaurantFilterDialog();
+        dialog.setRestaurantFilter(restaurantFilter);
+        dialog.setConfirmListener(filter -> {
+            restaurantFilter = filter;
+            if (filter == null || filter.isEmpty()){
+                filterButton.setImageResource(R.drawable.ic_filter);
+            } else {
+                filterButton.setImageResource(R.drawable.ic_filtering);
+            }
+            setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
+        });
+        dialog.show(getChildFragmentManager(), RestaurantFilterDialog.TAG);
     }
 
     private void setData(PagedData<RestaurantVO> pagedData){
@@ -142,7 +166,7 @@ public class RestaurantsFragment extends Fragment {
         RestaurantVO vo = RestaurantDaoService.selectPagedView(id);
         if (index == -1){
             restaurantAdapter.add(vo, 0);
-            restaurantRecyclerView.scrollToPosition(0);
+            restaurantRecyclerView.smoothScrollToPosition(0);
         } else {
             restaurantAdapter.set(vo, index);
         }

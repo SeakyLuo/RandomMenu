@@ -33,20 +33,12 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
     protected void fillViewHolder(CustomViewHolder viewHolder, RestaurantFoodVO data, int position) {
         View view = viewHolder.getView();
         data.setIndex(position);
-        fillFood(view, data);
-        view.setOnClickListener(v -> {
-            if (onFoodClickListener != null){
-                onFoodClickListener.click(viewHolder, data);
-            }
-        });
-    }
-
-    private void fillFood(View view, RestaurantFoodVO data){
         TextView foodName = view.findViewById(R.id.food_name);
         TextView foodNote = view.findViewById(R.id.food_note);
         ImageView foodImage = view.findViewById(R.id.food_image);
         ImageView defaultFoodImage = view.findViewById(R.id.default_food_image);
 
+        view.setOnClickListener(v -> onClick(viewHolder, data));
         foodName.setText(data.getName());
         String comment = data.getComment();
         if (StringUtils.isEmpty(comment)){
@@ -72,6 +64,12 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
             foodImage.setVisibility(View.VISIBLE);
             defaultFoodImage.setVisibility(View.GONE);
             ImageUtils.loadImage(context, pictureUri, foodImage);
+        }
+    }
+
+    private void onClick(CustomViewHolder viewHolder, RestaurantFoodVO data){
+        if (onFoodClickListener != null){
+            onFoodClickListener.click(viewHolder, data);
         }
     }
 

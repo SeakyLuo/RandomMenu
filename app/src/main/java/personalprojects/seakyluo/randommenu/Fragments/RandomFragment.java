@@ -21,7 +21,7 @@ import org.apache.commons.lang3.RandomUtils;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
-import personalprojects.seakyluo.randommenu.dialogs.FilterDialog;
+import personalprojects.seakyluo.randommenu.dialogs.RandomFilterDialog;
 import personalprojects.seakyluo.randommenu.dialogs.MenuDialog;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
@@ -35,11 +35,12 @@ public class RandomFragment extends Fragment {
     private FoodCardFragment foodCardFragment;
     private AList<SelfMadeFood> menu = new AList<>();
     private MenuDialog menuDialog = new MenuDialog();
-    private FilterDialog filterDialog = new FilterDialog();
+    private RandomFilterDialog filterDialog = new RandomFilterDialog();
     private AList<Tag> preferredTags = new AList<>(), excludedTags = new AList<>();
     private View foodCard;
     private Animation goodFoodAnim, badFoodAnim;
     private Animator flipInAnim, flip_out;
+    private ImageButton filterButton;
 
     @Nullable
     @Override
@@ -58,9 +59,15 @@ public class RandomFragment extends Fragment {
         view.findViewById(R.id.check_button).setOnClickListener(v -> showGoodFoodAnim());
         view.findViewById(R.id.cross_button).setOnClickListener(v -> showBadFoodAnim());
         view.findViewById(R.id.refresh_button).setOnClickListener(v -> resetFood());
+        filterButton = view.findViewById(R.id.filter_button);
+        filterButton.setOnClickListener(v -> {
+            filterDialog.setData(preferredTags, excludedTags);
+            filterDialog.showNow(getChildFragmentManager(), RandomFilterDialog.TAG);
+        });
         filterDialog.setTagFilterListener((preferred, excluded) -> {
             preferredTags.copyFrom(preferred);
             excludedTags.copyFrom(excluded);
+            setFilterButtonImage();
             filterDialog.dismiss();
             reset();
             nextFood();
@@ -69,13 +76,9 @@ public class RandomFragment extends Fragment {
             filterDialog.setData(preferredTags.copy(), excludedTags.copy());
             preferredTags.clear();
             excludedTags.clear();
+            setFilterButtonImage();
             reset();
             nextFood();
-        });
-        ImageButton filterButton = view.findViewById(R.id.filter_button);
-        filterButton.setOnClickListener(v -> {
-            filterDialog.setData(preferredTags, excludedTags);
-            filterDialog.showNow(getChildFragmentManager(), FilterDialog.TAG);
         });
         ImageButton menuButton = view.findViewById(R.id.menu_button);
         menuDialog.setFoodAddedListener(data -> {
@@ -108,6 +111,13 @@ public class RandomFragment extends Fragment {
         return view;
     }
 
+    private void setFilterButtonImage(){
+        if (preferredTags.isEmpty() && excludedTags.isEmpty()){
+            filterButton.setImageResource(R.drawable.ic_filter);
+        } else {
+            filterButton.setImageResource(R.drawable.ic_filtering);
+        }
+    }
     private void setMenuHeader() {
         menuDialog.setHeaderText(String.format(getString(R.string.food_count), menu.size()));
     }

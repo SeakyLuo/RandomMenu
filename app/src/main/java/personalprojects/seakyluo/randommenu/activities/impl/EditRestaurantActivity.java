@@ -258,7 +258,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         Snackbar snackbar = Snackbar.make(consumeRecordRecyclerView, String.format("\"%s\"已被删除", item.formatConsumeTime() + "的记录"), Snackbar.LENGTH_LONG);
         snackbar.setAction("撤销", view -> {
             addConsumeRecord(item, index);
-            consumeRecordRecyclerView.scrollToPosition(index);
+            consumeRecordRecyclerView.smoothScrollToPosition(index);
         });
         snackbar.show();
         return item;

@@ -6,17 +6,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.Pager;
+import personalprojects.seakyluo.randommenu.models.PagerFilter;
 
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 
 public class RecyclerViewUtils {
 
-    public static <T> void setAsPaged(RecyclerView recyclerView, Pager<T> pager) {
-        setAsPaged(recyclerView, 20, pager);
-    }
-
-    public static <T> void setAsPaged(RecyclerView recyclerView, int pageSize, Pager<T> pager){
-
+    public static <T> void setAsPaged(RecyclerView recyclerView, int pageSize, Pager<T> pager, PagerFilter<T> filter){
         final int[] currentPage = {1};
         final int[] lastItemPosition = {0};
 
@@ -28,7 +24,7 @@ public class RecyclerViewUtils {
                     return;
                 }
                 if (newState == SCROLL_STATE_IDLE && lastItemPosition[0] == adapter.getItemCount()){
-                    adapter.add(pager.selectByPage(++currentPage[0], pageSize).getData());
+                    adapter.add(pager.selectByPage(++currentPage[0], pageSize, filter).getData());
                 }
             }
 

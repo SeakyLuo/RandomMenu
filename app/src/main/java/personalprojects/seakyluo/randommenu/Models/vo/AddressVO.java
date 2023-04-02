@@ -28,14 +28,6 @@ public class AddressVO implements Parcelable {
         return StringUtils.isEmpty(province) || StringUtils.isEmpty(city) || StringUtils.isEmpty(city) || StringUtils.isEmpty(address);
     }
 
-    public void copyFrom(AddressVO src){
-        id = src.id;
-        province = src.province;
-        city = src.city;
-        county = src.county;
-        address = src.address;
-    }
-
     public String buildDistrict(){
         if (province == null){
             return null;

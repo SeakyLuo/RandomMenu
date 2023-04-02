@@ -42,23 +42,25 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
 
         data.setIndex(position);
         fillFood(data, foodName, foodPrice, foodComment, foodImage);
-        view.setOnClickListener(v -> {
-            FragmentActivity activity = getContextAsFragmentActivity();
-            if (canEdit){
-                Intent intent = new Intent(activity, EditRestaurantFoodActivity.class);
-                intent.putExtra(EditRestaurantFoodActivity.DATA, data);
-                activity.startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
-                activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
-            } else {
-                FoodCardDialog dialog = new FoodCardDialog();
-                dialog.setRestaurantFoodId(data.getId());
-                dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
-            }
-        });
+        view.setOnClickListener(v -> showFood(data));
         if (!canEdit || getData().size() == 1){
             reorderButton.setVisibility(View.GONE);
         }
         reorderButton.setOnTouchListener((v, event) -> dragStart(viewHolder, event));
+    }
+
+    private void showFood(RestaurantFoodVO data) {
+        FragmentActivity activity = getContextAsFragmentActivity();
+        if (canEdit){
+            Intent intent = new Intent(activity, EditRestaurantFoodActivity.class);
+            intent.putExtra(EditRestaurantFoodActivity.DATA, data);
+            activity.startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
+            activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+        } else {
+            FoodCardDialog dialog = new FoodCardDialog();
+            dialog.setRestaurantFoodId(data.getId());
+            dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
+        }
     }
 
     @Override

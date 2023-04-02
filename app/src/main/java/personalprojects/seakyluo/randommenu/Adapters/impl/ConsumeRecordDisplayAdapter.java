@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -23,6 +24,7 @@ import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.constants.EmojiConstant;
 import personalprojects.seakyluo.randommenu.database.services.AddressDaoService;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -56,7 +58,7 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
         TextView consumeTotalCost = view.findViewById(R.id.consume_total_cost);
         TextView consumeRecordComment = view.findViewById(R.id.consume_record_comment);
         RecyclerView foodRecyclerViewHorizontal = view.findViewById(R.id.food_recycler_view_horizontal);
-        RecyclerView foodRecylerViewVertical = view.findViewById(R.id.food_recycler_view_vertical);
+        RecyclerView foodRecyclerViewVertical = view.findViewById(R.id.food_recycler_view_vertical);
         RestaurantFoodAdapter restaurantFoodAdapter = new RestaurantFoodAdapter(context);
         ConsumeFoodAdapter consumeFoodAdapter = new ConsumeFoodAdapter(context, false);
 
@@ -85,19 +87,13 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
         List<RestaurantFoodVO> foods = data.getFoods();
         if (vertical){
             consumeFoodAdapter.setData(foods);
-            foodRecylerViewVertical.setAdapter(consumeFoodAdapter);
+            foodRecyclerViewVertical.setAdapter(consumeFoodAdapter);
         } else {
             restaurantFoodAdapter.setData(foods);
             foodRecyclerViewHorizontal.setAdapter(restaurantFoodAdapter);
         }
 
-        view.setOnClickListener(v -> {
-            Activity activity = (Activity) this.context;
-            Intent intent = new Intent(activity, ShowConsumeRecordActivity.class);
-            intent.putExtra(ShowConsumeRecordActivity.DATA, data);
-            activity.startActivityForResult(intent, ActivityCodeConstant.SHOW_CONSUME_RECORD);
-            activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
-        });
+        view.setOnClickListener(v -> showConsumeRecord(data));
         view.setOnLongClickListener(v -> {
             Activity activity = (Activity) this.context;
             Intent intent = new Intent(activity, EditConsumeRecordActivity.class);
@@ -107,6 +103,20 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
             activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
             return true;
         });
+        restaurantFoodAdapter.setOnFoodClickListener((vh, d) -> {
+            FragmentActivity activity = getContextAsFragmentActivity();
+            FoodCardDialog dialog = new FoodCardDialog();
+            dialog.setRestaurantFoodId(d.getId());
+            dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
+        });
+    }
+
+    private void showConsumeRecord(ConsumeRecordVO data) {
+        Activity activity = (Activity) this.context;
+        Intent intent = new Intent(activity, ShowConsumeRecordActivity.class);
+        intent.putExtra(ShowConsumeRecordActivity.DATA, data);
+        activity.startActivityForResult(intent, ActivityCodeConstant.SHOW_CONSUME_RECORD);
+        activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
     }
 
     private String formatEater(List<String> eaters){

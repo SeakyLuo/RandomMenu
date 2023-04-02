@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/LightGray" /> <!-- 浅灰色 -->
+    <corners android:radius="50dp" /> <!-- 设置圆角半径，可以根据需求调整 -->
+    <padding
+        android:left="16dp"
+        android:top="8dp"
+        android:right="16dp"
+        android:bottom="8dp" />
+</shape>

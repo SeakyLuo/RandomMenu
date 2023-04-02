@@ -54,7 +54,7 @@ public class AddressAdapter extends DraggableAdapter<AddressVO> {
             }
         });
         textDistrict.setOnClickListener(v -> {
-            cityPickerView.setConfig(CityPickerUtils.buildConfig(data));
+            cityPickerView.setConfig(CityPickerUtils.buildAddressPicker(data));
             cityPickerView.showCityPicker();
         });
         textAddress.addTextChangedListener(new TextWatcher() {

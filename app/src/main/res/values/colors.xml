@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimary">#FFA726</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="BlackGray">#242424</color>
+    <color name="LightGray">#E3E3E3</color>
     <color name="aluminum">#999999</color>
     <color name="highlight">#0078D7</color>
     <color name="whiteSmoke">#F5F5F5</color>
