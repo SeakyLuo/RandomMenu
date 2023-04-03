@@ -2,14 +2,14 @@ package personalprojects.seakyluo.randommenu.activities.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.jude.swipbackhelper.SwipeBackHelper;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +22,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.EditRestaurantActivity;
+import personalprojects.seakyluo.randommenu.activities.EditRestaurantFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordDisplayAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
@@ -36,7 +39,7 @@ import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 
-public class ShowRestaurantActivity extends AppCompatActivity {
+public class ShowRestaurantActivity extends SwipeBackActivity {
     public static final String DATA_ID = "RESTAURANT_ID", DATA = "RESTAURANT", OPERATION_TYPE = "OPERATION_TYPE";
     private TextView restaurantNameText, foodTypeText, averagePriceText, restaurantComment, consumeRecordsText, addressText, environmentText;
     private ConsumeRecordDisplayAdapter consumeRecordAdapter;
@@ -60,6 +63,7 @@ public class ShowRestaurantActivity extends AppCompatActivity {
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
         envImageViewFragment = (HorizontalImageViewFragment) getSupportFragmentManager().findFragmentById(R.id.image_viewer_fragment);
 
+        SwipeBackHelper.getCurrentPage(this).setSwipeEdgePercent(0.2f);
         Intent intent = getIntent();
         long restaurantId = intent.getLongExtra(DATA_ID, 0);
         restaurant = intent.getParcelableExtra(DATA);

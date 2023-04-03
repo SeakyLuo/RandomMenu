@@ -42,7 +42,7 @@
                     android:imeOptions="actionSearch"
                     android:inputType="text|textPersonName"
                     android:scrollHorizontally="true"
-                    android:maxLength="@integer/maxFoodNameLength"
+                    android:maxLength="20"
                     android:maxLines="1"
                     android:layout_weight="1"/>
 
@@ -52,7 +52,8 @@
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:padding="8dp"
-                    app:srcCompat="@drawable/ic_clear" />
+                    app:srcCompat="@drawable/ic_clear"
+                    android:visibility="gone"/>
 
                 <ImageButton
                     android:id="@+id/search_button"

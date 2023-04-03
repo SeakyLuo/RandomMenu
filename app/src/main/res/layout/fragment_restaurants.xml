@@ -73,4 +73,5 @@
         app:backgroundTint="@android:color/holo_red_light"
         android:layout_gravity="bottom|end"
         app:srcCompat="@drawable/ic_add" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.camera.view.PreviewView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -28,7 +27,7 @@ import java.util.List;
 
 import lombok.Getter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ImageAdapter;
-import personalprojects.seakyluo.randommenu.activities.impl.FullScreenImageActivity;
+import personalprojects.seakyluo.randommenu.activities.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;

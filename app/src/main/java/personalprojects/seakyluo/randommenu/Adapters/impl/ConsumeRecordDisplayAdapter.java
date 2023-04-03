@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.activities.impl.EditConsumeRecordActivity;
+import personalprojects.seakyluo.randommenu.activities.EditConsumeRecordActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowConsumeRecordActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;

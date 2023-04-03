@@ -20,8 +20,9 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
-import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.EditRestaurantActivity;
+import personalprojects.seakyluo.randommenu.activities.EditRestaurantFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.SearchActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
@@ -29,6 +30,7 @@ import personalprojects.seakyluo.randommenu.database.dao.Page;
 import personalprojects.seakyluo.randommenu.database.dao.PagedData;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.RestaurantFilterDialog;
+import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.enums.OperationType;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.RestaurantFilter;
@@ -68,6 +70,7 @@ public class RestaurantsFragment extends Fragment {
             setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
         });
         filterButton.setOnClickListener(this::showFilterDialog);
+        searchButton.setOnClickListener(this::showSearchActivity);
         titleTextView.setOnClickListener(v -> restaurantRecyclerView.smoothScrollToPosition(0));
         restaurantRecyclerView.setAdapter(restaurantAdapter);
         RecyclerViewUtils.setAsPaged(restaurantRecyclerView, PAGE_SIZE, ((pageNum, pageSize, filter) -> RestaurantDaoService.selectByPage(pageNum, pageSize, restaurantFilter)), restaurantFilter);
@@ -104,6 +107,13 @@ public class RestaurantsFragment extends Fragment {
             setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
         });
         dialog.show(getChildFragmentManager(), RestaurantFilterDialog.TAG);
+    }
+
+    private void showSearchActivity(View v){
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        intent.putExtra(SearchActivity.SEARCH_TYPE, FoodClass.RESTAURANT);
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
     }
 
     private void setData(PagedData<RestaurantVO> pagedData){

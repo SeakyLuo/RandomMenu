@@ -1,4 +1,4 @@
-package personalprojects.seakyluo.randommenu.activities.impl;
+package personalprojects.seakyluo.randommenu.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;

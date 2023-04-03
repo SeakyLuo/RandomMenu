@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import androidx.fragment.app.FragmentActivity;
 
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.activities.impl.FullScreenImageActivity;
+import personalprojects.seakyluo.randommenu.activities.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 

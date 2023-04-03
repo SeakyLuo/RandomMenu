@@ -12,6 +12,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.TagsFragment;
@@ -19,7 +20,7 @@ import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
 
-public class ChooseFoodActivity extends AppCompatActivity {
+public class ChooseFoodActivity extends SwipeBackActivity {
     public static final int CODE = 12;
     public static final String TAG = "ChooseFoodActivity";
     private ImageButton clear_button;
@@ -95,7 +96,7 @@ public class ChooseFoodActivity extends AppCompatActivity {
     }
 
     private void search(Editable s){
-        String keyword = SearchActivity.getKeyword(s);
+        String keyword = s.toString().trim();
         if (keyword.isEmpty()){
             clear_button.setVisibility(View.GONE);
             foodListFragment.cancelFilter();

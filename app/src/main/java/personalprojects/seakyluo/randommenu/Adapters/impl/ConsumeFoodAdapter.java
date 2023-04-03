@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.fragment.app.FragmentActivity;
 
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;

@@ -21,6 +21,7 @@ import personalprojects.seakyluo.randommenu.database.dao.FoodTypeDAO;
 import personalprojects.seakyluo.randommenu.database.dao.ImagePathDAO;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantFoodDAO;
+import personalprojects.seakyluo.randommenu.database.dao.SearchHistoryDAO;
 import personalprojects.seakyluo.randommenu.database.dao.SelfMadeFoodDAO;
 import personalprojects.seakyluo.randommenu.database.dao.SelfMadeFoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.dao.TagMapEntryDAO;
@@ -31,13 +32,15 @@ import personalprojects.seakyluo.randommenu.database.mappers.FoodTypeMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.ImagePathMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantFoodMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
+import personalprojects.seakyluo.randommenu.database.mappers.SearchHistoryMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.SelfFoodMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.SelfFoodTagMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.TagMapEntryMapper;
 
 @Database(entities = {RestaurantDAO.class, AddressDAO.class, ConsumeRecordDAO.class, RestaurantFoodDAO.class, FoodTypeDAO.class,
-        SelfMadeFoodDAO.class, FoodTagDAO.class, SelfMadeFoodTagDAO.class, TagMapEntryDAO.class, ImagePathDAO.class },
-        version = 13,
+        SelfMadeFoodDAO.class, FoodTagDAO.class, SelfMadeFoodTagDAO.class, TagMapEntryDAO.class, ImagePathDAO.class,
+        SearchHistoryDAO.class },
+        version = 14,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -52,26 +55,35 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SelfFoodMapper selfFoodMapper();
     public abstract FoodTagMapper foodTagMapper();
     public abstract SelfFoodTagMapper selfFoodTagMapper();
-
     public abstract TagMapEntryMapper tagMapEntryMapper();
     public abstract ImagePathMapper imagePathMapper();
+    public abstract SearchHistoryMapper searchHistoryMapper();
 
     public static void createInstance(Context context){
         instance = Room.databaseBuilder(context, AppDatabase.class, DB_NAME)
                 .allowMainThreadQueries()
-                .setQueryCallback(new RoomDatabase.QueryCallback() {
+//                .setQueryCallback(new RoomDatabase.QueryCallback() {
+//                    @Override
+//                    public void onQuery(@NonNull String sqlQuery, @NonNull List<Object> bindArgs) {
+//                        for (Object arg:bindArgs){
+//                            sqlQuery = sqlQuery.replaceFirst("\\?", arg == null ? "null" : arg.toString());
+//                        }
+//                        Log.d("RoomDebug", "Executed SQL: " + sqlQuery);
+//                    }
+//                }, Executors.newSingleThreadExecutor())
+                .addMigrations(new Migration(13, 14) {
                     @Override
-                    public void onQuery(@NonNull String sqlQuery, @NonNull List<Object> bindArgs) {
-                        for (Object arg:bindArgs){
-                            sqlQuery = sqlQuery.replaceFirst("\\?", arg == null ? "null" : arg.toString());
-                        }
-                        Log.d("RoomDebug", "Executed SQL: " + sqlQuery);
+                    public void migrate(@NonNull SupportSQLiteDatabase database) {
+                        database.execSQL("create table search_history (" +
+                                "id INTEGER PRIMARY KEY NOT NULL, " +
+                                "keyword TEXT," +
+                                "searchType TEXT" +
+                                ")");
                     }
-                }, Executors.newSingleThreadExecutor())
+                })
                 .addMigrations(new Migration(12, 13) {
                     @Override
                     public void migrate(@NonNull SupportSQLiteDatabase database) {
-
                     }
                 }, new Migration(11, 12) {
                     @Override

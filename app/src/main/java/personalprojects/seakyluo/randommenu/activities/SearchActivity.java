@@ -1,18 +1,20 @@
-package personalprojects.seakyluo.randommenu.activities.impl;
+package personalprojects.seakyluo.randommenu.activities;
 
 import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
-
-import com.jude.swipbackhelper.SwipeBackHelper;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,11 +23,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
+import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.TabPagerAdapter;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.fragments.BaseFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.SearchFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.StringListFragment;
@@ -35,75 +38,53 @@ import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.MatchFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 
-public class SearchActivity extends SwipeBackActivity {
+public class SearchActivity extends AppCompatActivity {
+    public static final String SEARCH_TYPE = "SEARCH_TYPE";
     private static final String HISTORY = "History", ALL = "All", FOOD = "Food", TAG = "Tag", NOTE = "Note";
-    private EditText search_bar;
-    private ImageButton clear_button;
+    private EditText searchBar;
+    private ImageButton clearButton;
     private SearchFoodListFragment allFragment, foodFragment, tagFragment, noteFragment;
     private StringListFragment historyFragment;
     private TabPagerAdapter<Fragment> tabPagerAdapter;
+    private ViewPager viewPager;
     private TabLayout tabLayout;
+    private FoodClass foodClass;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        SwipeBackHelper.getCurrentPage(this).setSwipeEdgePercent(0.2f);
-        findViewById(R.id.back_button).setOnClickListener(v -> finish());
-        search_bar = findViewById(R.id.search_bar);
-        clear_button = findViewById(R.id.clear_button);
-
+        ImageButton backButton = findViewById(R.id.back_button);
+        searchBar = findViewById(R.id.search_bar);
+        clearButton = findViewById(R.id.clear_button);
         tabLayout = findViewById(R.id.search_tabs);
-        ViewPager viewPager = findViewById(R.id.search_viewpager);
+        viewPager = findViewById(R.id.search_viewpager);
+        ImageButton searchButton = findViewById(R.id.search_button);
+
+        foodClass = (FoodClass) getIntent().getSerializableExtra(SEARCH_TYPE);
         FragmentManager fragmentManager = getSupportFragmentManager();
         tabPagerAdapter = new TabPagerAdapter<>(fragmentManager);
         addFragments(fragmentManager, savedInstanceState);
+        backButton.setOnClickListener(v -> finish());
         historyFragment.setData(Settings.settings.SearchHistory);
-        historyFragment.setClickedListener((viewHolder, data) -> {
-            search_bar.setText(data);
-            search_bar.setSelection(data.length());
-            search(data);
-            tabLayout.getTabAt(1).select();
-        });
-        historyFragment.setOnDeletedClickedListener((viewHolder, data) -> {
-            historyFragment.Remove(data);
-            Settings.settings.SearchHistory.remove(data);
-        });
-        getSearchFragments().forEach(fragment -> {
-            fragment.setFoodClickedListener((viewHolder, food) -> foodClicked(food));
-        });
+        historyFragment.setItemClickedListener(this::clickHistoryItem);
+        historyFragment.setItemDeletedListener(this::removeHistoryItem);
+        getFoodListFragments().forEach(fragment -> fragment.setFoodClickedListener((viewHolder, food) -> foodClicked(food)));
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         viewPager.setAdapter(tabPagerAdapter);
-        search_bar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        searchBar.addTextChangedListener(getSearchBarTextWatcher());
+        searchBar.setOnEditorActionListener(this::onSearchBarEdited);
+        tabLayout.addOnTabSelectedListener(getTabSelectedListener());
+        searchButton.setOnClickListener(this::searchClicked);
+        clearButton.setOnClickListener(this::clearClicked);
+    }
 
-            }
+    private void removeHistoryItem(CustomAdapter<String>.CustomViewHolder viewHolder, String data) {
+        Settings.settings.SearchHistory.remove(data);
+    }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String keyword = getKeyword(s);
-                if (keyword.isEmpty()){
-                    clear_button.setVisibility(View.GONE);
-                }else{
-                    Settings.settings.SearchHistory.move(keyword, 0);
-                    search(keyword);
-                    clear_button.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        search_bar.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                historyFragment.Add(getKeyword());
-                return true;
-            }
-            return false;
-        });
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+    private TabLayout.OnTabSelectedListener getTabSelectedListener() {
+        return new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 int position = tab.getPosition();
@@ -120,41 +101,83 @@ public class SearchActivity extends SwipeBackActivity {
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });
-        findViewById(R.id.search_button).setOnClickListener(v -> {
-            if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
-            historyFragment.Add(getKeyword(search_bar.getText()));
-        });
-
-        clear_button.setVisibility(View.GONE);
-        clear_button.setOnClickListener(v -> {
-            search_bar.setText("");
-            clear_button.setVisibility(View.GONE);
-        });
+        };
     }
 
-    public static String getKeyword(Editable s) { return s.toString().trim(); }
-    public String getKeyword() { return getKeyword(search_bar.getText()); }
-    public Stream<SearchFoodListFragment> getSearchFragments() { return tabPagerAdapter.getFragments().after(0).stream().map(f -> (SearchFoodListFragment)f); }
+    private TextWatcher getSearchBarTextWatcher() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String keyword = s.toString().trim();
+                if (keyword.isEmpty()){
+                    clearButton.setVisibility(View.GONE);
+                } else {
+                    Settings.settings.SearchHistory.move(keyword, 0);
+                    search(keyword);
+                    clearButton.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+    }
+
+    private void searchClicked(View v){
+        String keyword = getKeyword();
+        if (keyword.isEmpty()){
+            return;
+        }
+        if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
+        historyFragment.add(keyword);
+    }
+
+    private void clearClicked(View v){
+        searchBar.setText("");
+        clearButton.setVisibility(View.GONE);
+    }
+
+    private boolean onSearchBarEdited(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            historyFragment.add(getKeyword());
+            return true;
+        }
+        return false;
+    }
+
+    private String getKeyword() {
+        return searchBar.getText().toString().trim();
+    }
+
+    private Stream<SearchFoodListFragment> getFoodListFragments() {
+        return tabPagerAdapter.getFragments().stream().filter(f -> f instanceof SearchFoodListFragment).map(f -> (SearchFoodListFragment) f);
+    }
 
     private void foodClicked(SelfMadeFood food){
         FoodCardDialog dialog = new FoodCardDialog();
         dialog.setSelfFoodId(food.getId());
         dialog.setFoodEditedListener(after -> {
-            getSearchFragments().forEach(f -> f.updateFood(after));
+            getFoodListFragments().forEach(f -> f.updateFood(after));
         });
         dialog.setFoodLikedListener(after -> {
-            getSearchFragments().forEach(f -> f.updateFood(after));
+            getFoodListFragments().forEach(f -> f.updateFood(after));
         });
         dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
     }
 
-    public void search(String keyword){
+    private void search(String keyword){
         if (keyword.isEmpty()){
-            getSearchFragments().forEach(BaseFoodListFragment::clear);
+            getFoodListFragments().forEach(BaseFoodListFragment::clear);
             return;
         }
-        getSearchFragments().forEach(f -> f.setKeyword(keyword));
+        getFoodListFragments().forEach(f -> f.setKeyword(keyword));
         if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
         List<MatchFood> byFood = new ArrayList<>(), byTag = new ArrayList<>(), byNote = new ArrayList<>(), all = new ArrayList<>();
         for (SelfMadeFood f : SelfFoodDaoService.selectAll()) {
@@ -179,7 +202,7 @@ public class SearchActivity extends SwipeBackActivity {
         noteFragment.setData(sortFoods(byNote));
     }
 
-    public static List<SelfMadeFood> sortFoods(List<MatchFood> foods){
+    private static List<SelfMadeFood> sortFoods(List<MatchFood> foods){
         return foods.stream().sorted(Comparator.comparing(MatchFood::getPoints).reversed())
                 .map(MatchFood::getFood)
                 .peek(f -> f.setTags(FoodTagService.selectByFood(f.getId())))
@@ -197,6 +220,12 @@ public class SearchActivity extends SwipeBackActivity {
         try { fragmentManager.putFragment(outState, NOTE, noteFragment); } catch (IllegalStateException | NullPointerException ignored){}
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.push_left_out);
+    }
+
     private void addFragments(FragmentManager fragmentManager, Bundle savedInstanceState){
         if (savedInstanceState == null){
             historyFragment = new StringListFragment();
@@ -204,7 +233,7 @@ public class SearchActivity extends SwipeBackActivity {
             initFoodFragment();
             initTagFragment();
             initNoteFragment();
-        }else{
+        } else {
             historyFragment = (StringListFragment) fragmentManager.getFragment(savedInstanceState, HISTORY);
             allFragment = (SearchFoodListFragment) fragmentManager.getFragment(savedInstanceState, ALL);
             foodFragment = (SearchFoodListFragment) fragmentManager.getFragment(savedInstanceState, FOOD);
@@ -246,4 +275,10 @@ public class SearchActivity extends SwipeBackActivity {
         noteFragment.setShowNote(true);
     }
 
+    private void clickHistoryItem(CustomAdapter<String>.CustomViewHolder viewHolder, String data) {
+        searchBar.setText(data);
+        searchBar.setSelection(data.length());
+        search(data);
+        tabLayout.getTabAt(1).select();
+    }
 }

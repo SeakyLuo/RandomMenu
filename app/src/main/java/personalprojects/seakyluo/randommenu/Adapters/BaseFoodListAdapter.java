@@ -9,7 +9,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import lombok.Setter;
-import personalprojects.seakyluo.randommenu.activities.impl.FullScreenImageActivity;
+import personalprojects.seakyluo.randommenu.activities.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.R;

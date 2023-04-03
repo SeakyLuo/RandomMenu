@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import personalprojects.seakyluo.randommenu.activities.impl.EditRestaurantActivity;
+import personalprojects.seakyluo.randommenu.activities.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;

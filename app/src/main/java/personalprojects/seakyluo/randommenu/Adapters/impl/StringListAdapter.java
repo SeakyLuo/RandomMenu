@@ -4,14 +4,14 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.R;
 
-public class SimpleFoodListAdapter extends CustomAdapter<String> {
-    private DataItemClickedListener<String> listener, deleteListener;
-    public void SetOnDataItemClickedListener(DataItemClickedListener<String> listener) { this.listener = listener; }
-    public void SetOnDeletedClickedListener(DataItemClickedListener<String> listener) { this.deleteListener = listener; }
+public class StringListAdapter extends CustomAdapter<String> {
+    @Setter
+    private DataItemClickedListener<String> itemClickedListener, itemDeletedListener;
 
     @Override
     protected int getLayout(int viewType) {
@@ -25,11 +25,12 @@ public class SimpleFoodListAdapter extends CustomAdapter<String> {
         ImageButton deleteButton = view.findViewById(R.id.delete_button);
 
         foodName.setOnClickListener(v -> {
-            if (listener != null) listener.click(viewHolder, data);
+            if (itemClickedListener != null) itemClickedListener.click(viewHolder, data);
         });
         foodName.setText(data);
         deleteButton.setOnClickListener(v -> {
-            if (deleteListener != null) deleteListener.click(viewHolder, data);
+            remove(data);
+            if (itemDeletedListener != null) itemDeletedListener.click(viewHolder, data);
         });
     }
 }

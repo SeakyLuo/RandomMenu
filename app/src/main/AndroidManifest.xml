@@ -27,7 +27,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <activity
-            android:name=".activities.impl.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,24 +35,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.impl.EditSelfMadeFoodActivity" android:label="EditFoodActivity" />
+        <activity android:name=".activities.EditSelfMadeFoodActivity" android:label="EditFoodActivity" />
         <activity android:name=".activities.impl.ChooseTagActivity" android:label="ChooseTagActivity" />
-        <activity android:name=".activities.impl.FullScreenImageActivity" android:label="FullScreenImageActivity" android:theme="@style/DarkStatusBarTheme"/>
+        <activity android:name=".activities.FullScreenImageActivity" android:label="FullScreenImageActivity" android:theme="@style/DarkStatusBarTheme"/>
         <activity android:name=".activities.impl.ToCookActivity" android:label="ToCookActivity"/>
         <activity android:name=".activities.impl.MyFavoritesActivity" android:label="MyFavoritesActivity"/>
-        <activity  android:name=".activities.impl.SearchActivity" android:label="SearchActivity" />
+        <activity  android:name=".activities.SearchActivity" android:label="SearchActivity" />
         <activity android:name=".activities.impl.ToEatActivity" android:label="ToEatActivity" />
         <activity android:name=".activities.impl.DislikeActivity" android:label="DislikeActivity" />
         <activity android:name=".activities.impl.ChooseFoodActivity" android:label="ChooseFoodActivity" />
         <activity android:name=".activities.impl.NoteActivity" android:label="NoteActivity" />
         <activity android:name=".activities.impl.MoreSettingsActivity" android:label="MoreSettingsActivity" />
         <activity android:name=".activities.impl.TagMapActivity" android:label="TagMapActivity" />
-        <activity android:name=".activities.impl.EditRestaurantActivity" android:label="EditRestaurantActivity" />
-        <activity android:name=".activities.impl.EditConsumeRecordActivity" android:label="EditConsumeRecordActivity" />
-        <activity android:name=".activities.impl.EditRestaurantFoodActivity" android:label="EditRestaurantFoodActivity" />
+        <activity android:name=".activities.EditRestaurantActivity" android:label="EditRestaurantActivity" />
+        <activity android:name=".activities.EditConsumeRecordActivity" android:label="EditConsumeRecordActivity" />
+        <activity android:name=".activities.EditRestaurantFoodActivity" android:label="EditRestaurantFoodActivity" />
         <activity android:name=".activities.impl.ShowRestaurantActivity" android:label="ShowRestaurantActivity" />
         <activity android:name=".activities.impl.ShowConsumeRecordActivity" android:label="ShowConsumeRecordActivity" />
-        <activity android:name=".activities.impl.CameraActivity" android:label="CameraActivity" />
+        <activity android:name=".activities.CameraActivity" android:label="CameraActivity" />
     </application>
 
 </manifest>

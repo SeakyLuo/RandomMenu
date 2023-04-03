@@ -25,14 +25,15 @@ import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
-import personalprojects.seakyluo.randommenu.activities.impl.EditSelfMadeFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.EditSelfMadeFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.SelfFoodAdapter;
+import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.activities.impl.SearchActivity;
+import personalprojects.seakyluo.randommenu.activities.SearchActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.SelectTagAdapter;
 import personalprojects.seakyluo.randommenu.services.FoodTagService;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
@@ -46,6 +47,7 @@ public class NavigationFragment extends Fragment {
     private SelfFoodAdapter foodAdapter;
     private boolean IsLoaded = false;
     private Tag pendingTag, lastTag;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
@@ -54,18 +56,9 @@ public class NavigationFragment extends Fragment {
         title_text_view = view.findViewById(R.id.title_text_view);
         FloatingActionButton fab = view.findViewById(R.id.navi_fab);
         fab.setOnClickListener(v -> editFood(Settings.settings.FoodDraft, true));
-        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            IsLoaded = false;
-            setData();
-            selectTag(selectTagAdapter.getSelectedTag());
-            IsLoaded = true;
-            swipeRefreshLayout.setRefreshing(false);
-        });
-        view.findViewById(R.id.search_button).setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), SearchActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
-        });
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this::refresh);
+        view.findViewById(R.id.search_button).setOnClickListener(this::showSearchActivity);
         RecyclerView masterView = view.findViewById(R.id.masterView);
         masterView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         selectTagAdapter = new SelectTagAdapter((viewHolder, tag) -> selectTag(tag));
@@ -93,6 +86,21 @@ public class NavigationFragment extends Fragment {
         selectTagAdapter.highlightTag(pendingTag);
         pendingTag = null;
         return view;
+    }
+
+    private void refresh() {
+        IsLoaded = false;
+        setData();
+        selectTag(selectTagAdapter.getSelectedTag());
+        IsLoaded = true;
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void showSearchActivity(View view) {
+        Intent intent = new Intent(getContext(), SearchActivity.class);
+        intent.putExtra(SearchActivity.SEARCH_TYPE, FoodClass.SELF_MADE);
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
     }
 
     private void showTagMenu(CustomAdapter<Tag>.CustomViewHolder viewHolder, Tag data){
