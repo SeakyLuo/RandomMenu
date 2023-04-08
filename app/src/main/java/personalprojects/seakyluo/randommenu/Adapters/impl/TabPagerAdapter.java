@@ -4,24 +4,39 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import personalprojects.seakyluo.randommenu.models.AList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+
+import lombok.Getter;
+import lombok.Setter;
+import personalprojects.seakyluo.randommenu.interfaces.SearchFragment;
 
 public class TabPagerAdapter<T extends Fragment> extends FragmentStatePagerAdapter {
-    private final AList<T> fragmentList = new AList<>();
+    @Getter
+    private List<T> fragments = new ArrayList<>();
 
     public TabPagerAdapter(FragmentManager fm) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
-    public void addFragment(T fragment){ fragmentList.add(fragment); }
-    public void addFragments(AList<T> fragments){
-        fragments.ForEach(this::addFragment);
+    public void addFragment(T fragment){
+        fragments.add(fragment);
     }
-    public AList<T> getFragments() { return fragmentList; }
+
+    public void clear(){
+        fragments.clear();
+    }
+
+    public void forEach(BiConsumer<Integer, T> consumer){
+        for (int i = 0; i < fragments.size(); i++){
+            consumer.accept(i, fragments.get(i));
+        }
+    }
 
     @Override
-    public Fragment getItem(int i) { return fragmentList.get(i); }
+    public Fragment getItem(int i) { return fragments.get(i); }
 
     @Override
-    public int getCount() { return fragmentList.size(); }
+    public int getCount() { return fragments.size(); }
 }

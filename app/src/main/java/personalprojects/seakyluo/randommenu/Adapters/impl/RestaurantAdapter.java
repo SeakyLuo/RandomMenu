@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
@@ -27,8 +28,12 @@ import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
+import personalprojects.seakyluo.randommenu.utils.TextViewUtils;
 
 public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
+
+    @Setter
+    private String keyword;
 
     public RestaurantAdapter(Context context){
         this.context = context;
@@ -86,6 +91,7 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         TextView commentText = view.findViewById(R.id.comment_text);
 
         restaurantName.setText(data.getName());
+        TextViewUtils.highlightTextView(restaurantName, keyword);
         FoodType foodType = data.getFoodType();
         if (foodType == null){
             foodTypeTextView.setVisibility(View.GONE);
@@ -109,6 +115,8 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
             commentText.setVisibility(View.VISIBLE);
             commentText.setText("\uD83D\uDCDD 评价：" + comment);
         }
+        TextViewUtils.highlightTextView(commentText, keyword);
+        foodAdapter.setKeyword(keyword);
         foodAdapter.setData(data.getFoods());
     }
 

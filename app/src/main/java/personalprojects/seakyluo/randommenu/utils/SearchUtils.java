@@ -1,58 +1,23 @@
+
 package personalprojects.seakyluo.randommenu.utils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import personalprojects.seakyluo.randommenu.models.MatchResult;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.MatchFood;
 import personalprojects.seakyluo.randommenu.models.Tag;
+import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 
 public class SearchUtils {
     public static final int MAX_POINTS = 100, SECOND_MAX_POINTS = 95, THIRD_MAX_POINTS = 90, FOURTH_MAX_POINTS = 85;
-
-    public static int evalString(String text, String keyword){
-        if (StringUtils.isEmpty(text)) return 0;
-        if (text.equals(keyword)) return MAX_POINTS;
-        if (text.startsWith(keyword)) return SECOND_MAX_POINTS;
-        if (text.endsWith(keyword)) return THIRD_MAX_POINTS;
-        if (text.contains(keyword)) return FOURTH_MAX_POINTS;
-        int editDistance = getEditDistance(text, keyword);
-        int ratio = editDistance * 100 / Math.max(text.length(), keyword.length());
-        if (ratio <= 60) return FOURTH_MAX_POINTS - ratio;
-        return 0;
-    }
-
-    public static MatchFood evalFood(SelfMadeFood food, String keyword){
-        int namePoints = evalString(food.getName(), keyword), tagPoints = evalFoodTag(food, keyword), notePoints = evalFoodNote(food, keyword);
-        int points = namePoints + tagPoints + notePoints;
-        int bonus = 0;
-        if (points > 0){
-            bonus -= food.getHideCount();
-            if (food.isFavorite()) bonus += 10;
-        }
-        return new MatchFood(food, points, bonus, namePoints, tagPoints, notePoints);
-    }
-
-    public static int evalFoodTag(SelfMadeFood food, String keyword){
-        int points = 0;
-        for (Tag t: food.getTags()) {
-            points = Math.max(points, evalString(t.getName(), keyword) - 15);
-            if (points == MAX_POINTS - 15){
-                break;
-            }
-        }
-        return points;
-    }
-
-    public static int evalFoodNote(SelfMadeFood food, String keyword){
-        String note = food.getNote();
-        if (StringUtils.isBlank(note)) return 0;
-        int points = evalString(note, keyword);
-        return points == MAX_POINTS ? 120 : Math.max(points - 30, 0);
-    }
 
     public static List<String> searchTags(List<Tag> tags, String keyword){
         if (StringUtils.isEmpty(keyword)) return new ArrayList<>();
@@ -66,6 +31,81 @@ public class SearchUtils {
                 .collect(Collectors.toList());
     }
 
+    public static MatchResult<RestaurantVO> evalRestaurant(RestaurantVO restaurant, String keyword){
+        int points = evalString(restaurant.getName(), keyword) + evalString(restaurant.getComment(), keyword, -10);
+        List<ConsumeRecordVO> records = restaurant.getRecords();
+        if (CollectionUtils.isNotEmpty(records)){
+            for (ConsumeRecordVO record : records) {
+                points += evalString(record.getComment(), keyword, -15);
+                List<RestaurantFoodVO> foods = record.getFoods();
+                if (CollectionUtils.isNotEmpty(foods)){
+                    for (RestaurantFoodVO food : foods) {
+                        points += evalString(food.getName(), keyword, -15);
+                        points += evalString(food.getComment(), keyword, -20);
+                    }
+                }
+            }
+        }
+        return new MatchResult<>(restaurant, points);
+    }
+
+    public static MatchFood evalFood(SelfMadeFood food, String keyword){
+        int namePoints = evalString(food.getName(), keyword), tagPoints = evalFoodTag(food, keyword), notePoints = evalFoodNote(food, keyword);
+        int points = namePoints + tagPoints + notePoints;
+        int bonus = 0;
+        if (points > 0){
+            bonus -= food.getHideCount();
+            if (food.isFavorite()) bonus += 10;
+        }
+        return new MatchFood(food, points, bonus, namePoints, tagPoints, notePoints);
+    }
+
+    private static int evalFoodTag(SelfMadeFood food, String keyword){
+        int points = 0;
+        for (Tag t: food.getTags()) {
+            points = Math.max(points, evalString(t.getName(), keyword, -15));
+            if (points == MAX_POINTS - 15){
+                break;
+            }
+        }
+        return points;
+    }
+
+    private static int evalFoodNote(SelfMadeFood food, String keyword){
+        String note = food.getNote();
+        if (StringUtils.isBlank(note)) return 0;
+        int points = evalString(note, keyword, -30);
+        return points == MAX_POINTS - 30 ? 120 : points;
+    }
+
+    private static int evalString(String text, String keyword){
+        return evalString(text, keyword, 0);
+    }
+
+    private static int evalString(String text, String keyword, int offset){
+        int points = 0;
+        if (StringUtils.isEmpty(text)) return points;
+        if (text.equals(keyword)){
+            points = MAX_POINTS;
+        }
+        else if (text.startsWith(keyword)){
+            points = SECOND_MAX_POINTS;
+        }
+        else if (text.endsWith(keyword)){
+            points = THIRD_MAX_POINTS;
+        }
+        else if (text.contains(keyword)){
+            points = FOURTH_MAX_POINTS;
+        }
+        else {
+            int editDistance = getEditDistance(text, keyword);
+            int ratio = editDistance * 100 / Math.max(text.length(), keyword.length());
+            if (ratio <= 60){
+                points = FOURTH_MAX_POINTS - ratio;
+            }
+        }
+        return Math.max(points + offset, 0);
+    }
 
     private static int getEditDistance(String target, String given) {
         int n = target.length();

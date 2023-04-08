@@ -1,6 +1,9 @@
 package personalprojects.seakyluo.randommenu.database.services;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
@@ -36,6 +39,18 @@ public class AddressDaoService {
     public static List<AddressVO> selectByRestaurant(long restaurantId){
         AddressMapper mapper = AppDatabase.instance.addressMapper();
         return mapper.selectByRestaurant(restaurantId).stream().map(AddressDaoService::convert).collect(Collectors.toList());
+    }
+
+    public static Map<Long, List<AddressVO>> selectByRestaurants(Collection<Long> restaurantIds){
+        AddressMapper mapper = AppDatabase.instance.addressMapper();
+        return mapper.selectByRestaurants(restaurantIds).stream()
+                .collect(Collectors.groupingBy(AddressDAO::getRestaurantId))
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        e -> e.getValue().stream()
+                                .sorted(Comparator.comparing(AddressDAO::getOrder))
+                                .map(AddressDaoService::convert)
+                                .collect(Collectors.toList())));
     }
 
     private static List<AddressDAO> convert(List<AddressVO> addressList, long restaurantId){

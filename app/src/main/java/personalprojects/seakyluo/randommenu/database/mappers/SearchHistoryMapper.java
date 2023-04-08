@@ -17,9 +17,9 @@ public interface SearchHistoryMapper {
     @Insert
     Long insert(SearchHistoryDAO dao);
 
-    @Delete
-    int delete(SearchHistoryDAO dao);
+    @Query("delete from SEARCH_HISTORY where keyword = :keyword and searchType = :searchType")
+    int delete(String searchType, String keyword);
 
-    @Query("select * from SEARCH_HISTORY where searchType = :searchType")
-    List<SearchHistoryDAO> selectByRestaurant(String searchType);
+    @Query("select * from SEARCH_HISTORY where searchType = :searchType order by id desc")
+    List<SearchHistoryDAO> list(String searchType);
 }

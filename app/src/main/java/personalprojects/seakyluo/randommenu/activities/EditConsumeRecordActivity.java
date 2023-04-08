@@ -283,4 +283,10 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             foodAdapter.add(records.stream().flatMap(i -> i.getFoods().stream()).collect(Collectors.toList()));
         }
     }
+
+    @Override
+    public void finish() {
+        ActivityUtils.hideKeyboard(this);
+        super.finish();
+    }
 }

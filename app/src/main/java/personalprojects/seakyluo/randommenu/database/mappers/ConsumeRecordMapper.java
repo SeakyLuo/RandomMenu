@@ -30,4 +30,10 @@ public interface ConsumeRecordMapper {
 
     @Query("select * from consume_record where restaurantId = :restaurantId order by consumeTime desc")
     List<ConsumeRecordDAO> selectByRestaurant(long restaurantId);
+
+    @Query("select * from consume_record where comment like '%' || :keyword || '%'")
+    List<ConsumeRecordDAO> search(String keyword);
+
+    @Query("select eaters from consume_record")
+    List<String> selectAllEaters();
 }

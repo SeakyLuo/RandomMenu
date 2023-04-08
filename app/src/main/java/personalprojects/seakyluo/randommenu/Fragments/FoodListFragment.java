@@ -70,7 +70,7 @@ public class FoodListFragment extends BaseFoodListFragment<SelfFoodListAdapter> 
                 .map(f -> SearchUtils.evalFood(f, keyword))
                 .sorted(Comparator.comparing(MatchFood::getPointsWithBonus).reversed())
                 .filter(i -> i.getPoints() > 0)
-                .map(MatchFood::getFood)
+                .map(MatchFood::getData)
                 .collect(Collectors.toList()));
     }
     public void cancelFilter(){

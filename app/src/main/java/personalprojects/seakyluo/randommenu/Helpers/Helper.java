@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu.helpers;
 import android.app.Activity;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -10,6 +11,8 @@ import java.util.Arrays;
 import java.util.Date;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
+import personalprojects.seakyluo.randommenu.database.services.SearchHistoryDaoService;
+import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
@@ -34,26 +37,15 @@ public class Helper {
         ExportedDataFolder = FileUtils.createOrOpenFolder("ExportedData");
         LogFolder = FileUtils.createOrOpenFolder("Logs");
         String settings = FileUtils.readFile(activity, Settings.FILENAME);
-        Settings.settings = StringUtils.isEmpty(settings) ? new Settings() : Settings.fromJson(settings);
+        Settings.settings = Settings.fromJson(settings);
         script(Settings.settings);
         if (StringUtils.isEmpty(settings)) Log("Empty Settings Created");
     }
 
     private static void script(Settings settings){
-//        SelfFoodDaoService.selectAll().forEach(f -> {
-//            List<String> paths = SelfFoodImageDaoService.selectByFood(f.getId());
-//            ImagePathService.insertSelfMadeFood(f.getId(), paths);
-//        });
-//        RestaurantDaoService.selectAll().forEach(r -> {
-//            r.getRecords().forEach(recordVO -> {
-//                recordVO.getFoods().forEach(f -> {
-//                    ImagePathService.insertRestaurantFood(f.getId(), Lists.newArrayList(f.getCover()));
-//                });
-//            });
-//        });
     }
 
-    public static String formatCurrentTimestamp() { return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); }
+    public static String formatCurrentTimestamp() { return DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd_HHmmss"); }
 
     public static void save(){
         String settings = Settings.settings.toString(), emptyJson = new Settings().toString();

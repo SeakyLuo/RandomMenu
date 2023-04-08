@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantFoodDAO;
+import personalprojects.seakyluo.randommenu.database.mappers.ConsumeRecordMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantFoodMapper;
+import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.services.ImagePathService;
 
@@ -70,11 +72,28 @@ public class RestaurantFoodDaoService {
         return foods.stream().peek(f -> f.setImages(map.get(f.getId()))).collect(Collectors.toList());
     }
 
+    public static List<RestaurantFoodVO> search(String keyword){
+        RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
+        return mapper.search(keyword).stream().map(RestaurantFoodDaoService::convert).collect(Collectors.toList());
+    }
+
     public static List<RestaurantFoodVO> selectByRestaurantHome(long restaurantId){
         RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
         return mapper.selectByRestaurantHome(restaurantId).stream()
                 .map(RestaurantFoodDaoService::convert)
                 .collect(Collectors.toList());
+    }
+
+    public static Map<Long, List<RestaurantFoodVO>> selectByRestaurantsHome(List<Long> restaurantIds){
+        RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
+        return mapper.selectByRestaurantsHome(restaurantIds).stream()
+                .collect(Collectors.groupingBy(RestaurantFoodDAO::getRestaurantId))
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        e -> e.getValue().stream()
+                                .sorted(Comparator.comparing(RestaurantFoodDAO::getOrderInHome))
+                                .map(RestaurantFoodDaoService::convert)
+                                .collect(Collectors.toList())));
     }
 
     private static RestaurantFoodDAO convert(RestaurantFoodVO src){

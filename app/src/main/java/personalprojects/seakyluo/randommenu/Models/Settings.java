@@ -2,6 +2,8 @@ package personalprojects.seakyluo.randommenu.models;
 
 import androidx.annotation.NonNull;
 
+import java.util.Optional;
+
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
 public class Settings {
@@ -11,18 +13,12 @@ public class Settings {
     public AList<String> ToCook = new AList<>();
     public AList<String> ToEat = new AList<>();
     public AList<String> DislikeFood = new AList<>();
-    public AList<String> SearchHistory = new AList<>();
     public SelfMadeFood FoodDraft;
     public String Note = "";
     public boolean AutoTag = true;
 
     public static Settings fromJson(String json){
-        try{
-            return JsonUtils.fromJson(json, Settings.class);
-        }catch (Exception e){
-            e.printStackTrace();
-            return new Settings();
-        }
+        return Optional.ofNullable(JsonUtils.fromJson(json, Settings.class)).orElse(new Settings());
     }
 
     @NonNull

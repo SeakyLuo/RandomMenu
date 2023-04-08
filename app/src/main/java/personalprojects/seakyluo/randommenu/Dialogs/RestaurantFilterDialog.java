@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,12 +18,15 @@ import com.lljjcoder.bean.DistrictBean;
 import com.lljjcoder.bean.ProvinceBean;
 import com.lljjcoder.style.citypickerview.CityPickerView;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
@@ -34,6 +38,7 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
     public static final String TAG = "RestaurantFilterDialog";
     private static final String DATE_FORMAT = "yyyy/MM/dd";
     private TextView provinceTextView, cityTextView, countyTextView, startTimeTextView, endTimeTextView;
+    private EditText eatersEditText;
     private CityPickerDialog cityPicker;
     @Setter
     private RestaurantFilter restaurantFilter;
@@ -48,6 +53,7 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
         countyTextView = view.findViewById(R.id.countyTextView);
         startTimeTextView = view.findViewById(R.id.startTimeTextView);
         endTimeTextView = view.findViewById(R.id.endTimeTextView);
+        eatersEditText = view.findViewById(R.id.eatersEditText);
         Button resetButton = view.findViewById(R.id.resetButton);
         Button doneButton = view.findViewById(R.id.doneButton);
 
@@ -158,9 +164,17 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
 
     private void confirm(View view){
         if (confirmListener != null){
+            buildRestaurantFilter();
             confirmListener.accept(restaurantFilter);
         }
         dismiss();
+    }
+
+    private void buildRestaurantFilter(){
+        String eaters = eatersEditText.getText().toString().trim();
+        if (StringUtils.isNotEmpty(eaters)){
+            restaurantFilter.setEaters(Arrays.stream(eaters.split("，")).collect(Collectors.toList()));
+        }
     }
 
     private void fillWithRestaurantFilter(RestaurantFilter filter){
@@ -170,6 +184,7 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
             countyTextView.setText("区");
             startTimeTextView.setText("开始时间");
             endTimeTextView.setText("结束时间");
+            eatersEditText.setText("");
         } else {
             AddressVO address = filter.getAddress();
             if (address != null){
@@ -188,6 +203,9 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
             }
             if (filter.getEndTime() != null){
                 endTimeTextView.setText(DateFormatUtils.format(filter.getEndTime(), DATE_FORMAT));
+            }
+            if (filter.getEaters() != null){
+                eatersEditText.setText(String.join("，", filter.getEaters()));
             }
         }
     }

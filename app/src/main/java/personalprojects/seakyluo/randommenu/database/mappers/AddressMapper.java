@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.Collection;
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
@@ -27,4 +28,7 @@ public interface AddressMapper {
 
     @Query("select * from ADDRESS where restaurantId = :restaurantId order by `order`")
     List<AddressDAO> selectByRestaurant(long restaurantId);
+
+    @Query("select * from ADDRESS where restaurantId in (:restaurantIds) ")
+    List<AddressDAO> selectByRestaurants(Collection<Long> restaurantIds);
 }

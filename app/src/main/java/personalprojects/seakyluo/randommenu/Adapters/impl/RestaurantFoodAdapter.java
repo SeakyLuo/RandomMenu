@@ -14,11 +14,14 @@ import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
+import personalprojects.seakyluo.randommenu.utils.TextViewUtils;
 
 public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
 
     @Setter
     private DataItemClickedListener<RestaurantFoodVO> onFoodClickListener;
+    @Setter
+    private String keyword;
 
     public RestaurantFoodAdapter(Context context){
         this.context = context;
@@ -40,6 +43,7 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
 
         view.setOnClickListener(v -> onClick(viewHolder, data));
         foodName.setText(data.getName());
+        TextViewUtils.highlightTextView(foodName, keyword);
         String comment = data.getComment();
         if (StringUtils.isEmpty(comment)){
             if (data.getPrice() == 0){
@@ -56,6 +60,7 @@ public class RestaurantFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
                 foodNote.setText("“" + comment.substring(0, 8) + "...”");
             }
         }
+        TextViewUtils.highlightTextView(foodNote, keyword);
         String pictureUri = data.getCover();
         if (StringUtils.isEmpty(pictureUri)){
             foodImage.setVisibility(View.GONE);

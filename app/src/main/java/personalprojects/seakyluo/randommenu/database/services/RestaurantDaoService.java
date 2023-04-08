@@ -1,9 +1,15 @@
 package personalprojects.seakyluo.randommenu.database.services;
 
+import androidx.sqlite.db.SimpleSQLiteQuery;
+
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
@@ -11,11 +17,11 @@ import personalprojects.seakyluo.randommenu.database.dao.Page;
 import personalprojects.seakyluo.randommenu.database.dao.PagedData;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
-import personalprojects.seakyluo.randommenu.models.PagerFilter;
 import personalprojects.seakyluo.randommenu.models.RestaurantFilter;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.FoodTypeService;
 
@@ -98,10 +104,9 @@ public class RestaurantDaoService {
             daoList = mapper.selectByPage(pageNum, pageSize);
             count = mapper.selectCount();
         } else {
-            AddressVO address = Optional.ofNullable(filter.getAddress()).orElse(new AddressVO());
-            List<Long> ids = mapper.selectByPageWithFilter(pageNum, pageSize, filter.getStartTime(), filter.getEndTime(), address.getProvince(), address.getCity(), address.getCounty());
+            List<Long> ids = mapper.filter(buildPagedFilterSQL(pageNum, pageSize, filter));
             daoList = mapper.selectByIds(ids);
-            count = mapper.selectCountByFilter(filter.getStartTime(), filter.getEndTime(), address.getProvince(), address.getCity(), address.getCounty());
+            count = mapper.selectCountByFilter(buildCountFilterSQL(filter));
         }
         List<RestaurantVO> voList = daoList.stream().map(RestaurantDaoService::convert).collect(Collectors.toList());
         for (RestaurantVO vo : voList){
@@ -113,6 +118,58 @@ public class RestaurantDaoService {
         data.setPage(new Page(pageNum, pageSize, count));
         data.setData(voList);
         return data;
+    }
+
+    private static SimpleSQLiteQuery buildPagedFilterSQL(int pageNum, int pageSize, RestaurantFilter filter){
+        return new SimpleSQLiteQuery("SELECT distinct restaurant.id FROM restaurant " + buildFilterSQL(filter)
+                + " order by restaurant.lastVisitTime desc limit " + pageSize + " offset " + ((pageNum - 1) * pageSize));
+    }
+
+    private static SimpleSQLiteQuery buildCountFilterSQL(RestaurantFilter filter){
+        return new SimpleSQLiteQuery("SELECT count(distinct restaurant.id) FROM restaurant " + buildFilterSQL(filter));
+    }
+
+    private static String buildFilterSQL(RestaurantFilter filter){
+        String s = "";
+        Long startTime = filter.getStartTime();
+        Long endTime = filter.getEndTime();
+        List<String> eaterList = filter.getEaters();
+        if (startTime != null || endTime != null || eaterList != null){
+            s += "left join consume_record cr on restaurant.id = cr.restaurantId ";
+        }
+        AddressVO address = filter.getAddress();
+        if (address != null){
+            s += "left join ADDRESS address on restaurant.id = address.restaurantId ";
+        }
+        s += "where 1 ";
+        if (startTime != null){
+            s += "and cr.consumeTime >= " + startTime + " ";
+        }
+        if (endTime != null){
+            s += "and cr.consumeTime <= " + endTime + " ";
+        }
+        if (eaterList != null){
+            StringBuilder builder = new StringBuilder();
+            for (String eater : eaterList){
+                builder.append("and cr.eaters like '%").append(eater).append("%' ");
+            }
+            s += builder.toString();
+        }
+        if (address != null){
+            String province = address.getProvince();
+            String city = address.getCity();
+            String county = address.getCounty();
+            if (province != null){
+                s += "and address.province = '" + province + "' ";
+            }
+            if (city != null){
+                s += "and address.city = '" + city + "' ";
+            }
+            if (county != null){
+                s += "and address.county = '" + county + "' ";
+            }
+        }
+        return s;
     }
 
     public static List<RestaurantVO> selectAll(){
@@ -142,6 +199,32 @@ public class RestaurantDaoService {
         return vo;
     }
 
+    public static List<RestaurantVO> search(String keyword){
+        RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
+        List<RestaurantVO> restaurants = mapper.search(keyword).stream()
+                .map(RestaurantDaoService::convert)
+                .collect(Collectors.toList());
+        Set<Long> ids = restaurants.stream().map(RestaurantVO::getId).collect(Collectors.toSet());
+        List<Long> consumeRecordRestaurantIds = ConsumeRecordDaoService.search(keyword).stream().map(ConsumeRecordVO::getRestaurantId).distinct().filter(i -> !ids.contains(i)).collect(Collectors.toList());
+        restaurants.addAll(mapper.selectByIds(consumeRecordRestaurantIds).stream().map(RestaurantDaoService::convert).collect(Collectors.toList()));
+        ids.addAll(consumeRecordRestaurantIds);
+        List<RestaurantFoodVO> foods = RestaurantFoodDaoService.search(keyword);
+        List<Long> foodRestaurantIds = foods.stream().map(RestaurantFoodVO::getRestaurantId).filter(i -> !ids.contains(i)).collect(Collectors.toList());
+        Map<Long, List<RestaurantFoodVO>> foodMap = foods.stream().collect(Collectors.groupingBy(RestaurantFoodVO::getRestaurantId));
+        List<RestaurantVO> foodRestaurants = mapper.selectByIds(foodRestaurantIds).stream()
+                .map(RestaurantDaoService::convert)
+                .peek(i -> i.setFoods(foodMap.get(i.getId())))
+                .collect(Collectors.toList());
+        restaurants.addAll(foodRestaurants);
+        ids.addAll(foodRestaurantIds);
+
+        Map<Long, List<AddressVO>> addressMap = AddressDaoService.selectByRestaurants(ids);
+        for (RestaurantVO restaurant : restaurants){
+            restaurant.setAddressList(addressMap.get(restaurant.getId()));
+        }
+        return restaurants;
+    }
+
     private static RestaurantVO convert(RestaurantDAO src){
         if (src == null){
             return null;
@@ -149,8 +232,8 @@ public class RestaurantDaoService {
         RestaurantVO dst = new RestaurantVO();
         dst.setId(src.getId());
         dst.setName(src.getName());
-        Long foodTypeId = src.getFoodTypeId();
-        if (foodTypeId != null){
+        long foodTypeId = src.getFoodTypeId();
+        if (foodTypeId != 0){
             dst.setFoodType(new FoodType(foodTypeId, FoodTypeService.getNameById(foodTypeId)));
         }
         dst.setComment(src.getComment());

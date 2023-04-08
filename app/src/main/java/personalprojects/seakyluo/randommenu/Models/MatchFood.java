@@ -1,23 +1,24 @@
 package personalprojects.seakyluo.randommenu.models;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class MatchFood {
-    private SelfMadeFood food;
-    private int points;
+public class MatchFood extends MatchResult<SelfMadeFood> {
+
     private int bonus;
     private int namePoints;
     private int tagPoints;
     private int notePoints;
 
-    public MatchFood(SelfMadeFood food, int points){
-        this.food = food;
+    public MatchFood(SelfMadeFood data, int points){
+        this.data = data;
         this.points = points;
     }
 
-    public MatchFood(SelfMadeFood food, int points, int bonus, int namePoints, int tagPoints, int notePoints){
-        this.food = food;
+    public MatchFood(SelfMadeFood data, int points,  int bonus, int namePoints, int tagPoints, int notePoints){
+        this.data = data;
         this.points = points;
         this.bonus = bonus;
         this.namePoints = namePoints;

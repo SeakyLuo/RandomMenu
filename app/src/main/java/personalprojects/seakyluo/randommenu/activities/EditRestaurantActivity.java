@@ -37,6 +37,7 @@ import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.FoodTypeService;
+import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 import personalprojects.seakyluo.randommenu.utils.RestaurantUtils;
 import personalprojects.seakyluo.randommenu.utils.SwipeToDeleteUtils;
@@ -326,4 +327,9 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         }
     }
 
+    @Override
+    public void finish() {
+        ActivityUtils.hideKeyboard(this);
+        super.finish();
+    }
 }

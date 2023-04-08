@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import personalprojects.seakyluo.randommenu.adapters.impl.StringListAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
@@ -26,7 +28,7 @@ public class StringListFragment extends Fragment {
         return view;
     }
 
-    public void setData(AList<String> data){
+    public void setData(List<String> data){
         adapter.setData(data);
     }
     public void setItemClickedListener(DataItemClickedListener<String> listener) {

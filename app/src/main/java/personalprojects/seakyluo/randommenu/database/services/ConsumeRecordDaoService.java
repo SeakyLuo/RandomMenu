@@ -171,6 +171,20 @@ public class ConsumeRecordDaoService {
         return records;
     }
 
+    public static List<ConsumeRecordVO> search(String keyword){
+        ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
+        return mapper.search(keyword).stream().map(ConsumeRecordDaoService::convert).collect(Collectors.toList());
+    }
+
+    public static List<String> selectAllEaters(){
+        ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
+        return mapper.selectAllEaters().stream()
+                .filter(StringUtils::isNotEmpty)
+                .flatMap(i -> JsonUtils.fromJson(i, new TypeToken<List<String>>(){}).stream())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     private static ConsumeRecordDAO convert(ConsumeRecordVO src){
         if (src == null){
             return null;

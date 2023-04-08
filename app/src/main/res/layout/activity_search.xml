@@ -82,29 +82,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/history" />
 
-                <com.google.android.material.tabs.TabItem
-                    android:id="@+id/search_all_tab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/all" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:id="@+id/search_food_tab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/food" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:id="@+id/search_tag_tab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tag" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:id="@+id/search_note_history"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/note" />
             </com.google.android.material.tabs.TabLayout>
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>

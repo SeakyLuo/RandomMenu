@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -115,5 +116,11 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         intent.putExtra(DATA, data);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void finish() {
+        ActivityUtils.hideKeyboard(this);
+        super.finish();
     }
 }
