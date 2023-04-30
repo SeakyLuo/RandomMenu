@@ -42,18 +42,19 @@ import static android.app.Activity.RESULT_OK;
 
 public class NavigationFragment extends Fragment {
     public static final String TAG = "NavigationFragment";
-    private TextView title_text_view;
+    private TextView titleTextView;
     private SelectTagAdapter selectTagAdapter;
     private SelfFoodAdapter foodAdapter;
     private boolean IsLoaded = false;
     private Tag pendingTag, lastTag;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView foodDetailView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_navigation, container, false);
-        title_text_view = view.findViewById(R.id.title_text_view);
+        titleTextView = view.findViewById(R.id.title_text_view);
         FloatingActionButton fab = view.findViewById(R.id.navi_fab);
         fab.setOnClickListener(v -> editFood(Settings.settings.FoodDraft, true));
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
@@ -66,7 +67,7 @@ public class NavigationFragment extends Fragment {
         selectTagAdapter.setLongClickListener(this::showTagMenu);
         masterView.setAdapter(selectTagAdapter);
 
-        RecyclerView detailView = view.findViewById(R.id.detailView);
+        foodDetailView = view.findViewById(R.id.detailView);
         foodAdapter = new SelfFoodAdapter();
         foodAdapter.setFoodClickedListener((viewHolder, food) -> {
             FoodCardDialog dialog = new FoodCardDialog();
@@ -76,8 +77,8 @@ public class NavigationFragment extends Fragment {
             dialog.showNow(getChildFragmentManager(), FoodCardDialog.TAG);
         });
         foodAdapter.setFoodLongClickListener((viewHolder, food) -> editFood(food, false));
-        detailView.setAdapter(foodAdapter);
-        view.findViewById(R.id.navigation_toolbar).setOnClickListener(v -> detailView.smoothScrollToPosition(0));
+        foodDetailView.setAdapter(foodAdapter);
+        view.findViewById(R.id.navigation_toolbar).setOnClickListener(v -> foodDetailView.smoothScrollToPosition(0));
 
         setData();
         IsLoaded = true;
@@ -167,15 +168,19 @@ public class NavigationFragment extends Fragment {
     }
 
     private void selectTag(Tag tag){
+        if (tag.equals(lastTag)){
+            return;
+        }
         if (tag.isAllCategoriesTag()){
             lastTag = Tag.AllCategoriesTag;
-            title_text_view.setText(Tag.format(getContext(), R.string.all_categories, SelfFoodDaoService.count()));
+            titleTextView.setText(Tag.format(getContext(), R.string.all_categories, SelfFoodDaoService.count()));
             foodAdapter.setData(SelfFoodDaoService.selectAll());
         } else {
             lastTag = FoodTagDaoService.selectById(tag.getId());
-            title_text_view.setText(Tag.format(getContext(), lastTag));
+            titleTextView.setText(Tag.format(getContext(), lastTag));
             foodAdapter.setData(SelfMadeFoodService.selectByTag(lastTag));
         }
+        foodDetailView.scrollToPosition(0);
     }
 
     private void editFood(SelfMadeFood food, boolean isDraft){

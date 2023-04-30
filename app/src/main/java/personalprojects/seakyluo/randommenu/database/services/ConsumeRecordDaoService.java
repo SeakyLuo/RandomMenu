@@ -35,7 +35,7 @@ public class ConsumeRecordDaoService {
             ConsumeRecordDAO dao = daoList.get(i);
             dao.setRestaurantId(restaurantId);
             AddressVO address = vo.getAddress();
-            dao.setAddressId(addressList.stream().filter(a -> a.getId() == address.getId() || a.equals(address)).map(AddressVO::getId).findFirst().get());
+            dao.setAddressId(addressList.stream().filter(a -> a.equals(address)).map(AddressVO::getId).findFirst().get());
         }
         List<Long> ids = mapper.insert(daoList);
         setRestaurantIdAndRecordId(voList, restaurantId, ids);

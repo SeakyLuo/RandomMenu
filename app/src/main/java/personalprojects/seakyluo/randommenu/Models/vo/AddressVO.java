@@ -5,17 +5,19 @@ import android.os.Parcelable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-@EqualsAndHashCode(of = {"province", "city", "county", "address"})
 public class AddressVO implements Parcelable {
 
     private long id;
@@ -86,5 +88,21 @@ public class AddressVO implements Parcelable {
         dest.writeString(city);
         dest.writeString(county);
         dest.writeString(address);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (!(o instanceof AddressVO)) return false;
+        AddressVO a = (AddressVO) o;
+        return (id != 0 && a.getId() == id) ||
+                (Objects.equals(province, a.province) &&
+                        Objects.equals(city, a.city) &&
+                        Objects.equals(county, a.county) &&
+                        Objects.equals(address, a.address));
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(id, province, city, county, address);
     }
 }

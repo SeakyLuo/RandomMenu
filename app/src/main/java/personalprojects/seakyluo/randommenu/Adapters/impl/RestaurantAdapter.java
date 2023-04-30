@@ -22,6 +22,7 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.constants.EmojiConstant;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
@@ -113,7 +114,7 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
             commentText.setVisibility(View.GONE);
         } else {
             commentText.setVisibility(View.VISIBLE);
-            commentText.setText("\uD83D\uDCDD 评价：" + comment);
+            commentText.setText(EmojiConstant.COMMENT + " 评价：" + comment);
         }
         TextViewUtils.highlightTextView(commentText, keyword);
         foodAdapter.setKeyword(keyword);

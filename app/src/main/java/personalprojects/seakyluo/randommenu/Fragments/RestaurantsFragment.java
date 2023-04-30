@@ -46,6 +46,7 @@ import static android.app.Activity.RESULT_OK;
 public class RestaurantsFragment extends Fragment {
     public static final String TAG = "RestaurantsFragment";
     private static final int PAGE_SIZE = 10;
+    private long totalRestaurants;
     private TextView titleTextView;
     private RecyclerView restaurantRecyclerView;
     private RestaurantAdapter restaurantAdapter;
@@ -121,7 +122,7 @@ public class RestaurantsFragment extends Fragment {
         Page page = pagedData.getPage();
         long total = page.getTotal();
         restaurantAdapter.setData(restaurants);
-        titleTextView.setText(total == 0 ? "探店" : String.format("探店（%d）", total));
+        setTitle(total);
     }
 
     private void createRestaurant(RestaurantVO data){
@@ -177,8 +178,14 @@ public class RestaurantsFragment extends Fragment {
         if (index == -1){
             restaurantAdapter.add(vo, 0);
             restaurantRecyclerView.smoothScrollToPosition(0);
+            setTitle(totalRestaurants + 1);
         } else {
             restaurantAdapter.set(vo, index);
         }
+    }
+
+    private void setTitle(long total){
+        totalRestaurants = total;
+        titleTextView.setText(totalRestaurants == 0 ? "探店" : String.format("探店（%d）", totalRestaurants));
     }
 }

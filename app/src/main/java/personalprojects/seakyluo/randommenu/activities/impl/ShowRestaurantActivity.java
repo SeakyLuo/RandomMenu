@@ -83,7 +83,7 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
             switch (menuItem.getItemId()){
                 case R.id.edit:
                     Intent intent = new Intent(this, EditRestaurantActivity.class);
-                    intent.putExtra(EditRestaurantActivity.DATA, restaurant);
+                    intent.putExtra(EditRestaurantActivity.DATA_ID, restaurant.getId());
                     startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT);
                     overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
                     return true;
@@ -175,8 +175,8 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT_FOOD){
-            setData(data.getParcelableExtra(EditRestaurantFoodActivity.DATA));
+        if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT){
+            setData(data.getParcelableExtra(EditRestaurantActivity.DATA));
         }
         else if (requestCode == ActivityCodeConstant.SHOW_CONSUME_RECORD){
             OperationType operationType = (OperationType) data.getSerializableExtra(ShowRestaurantActivity.OPERATION_TYPE);

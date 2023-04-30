@@ -8,11 +8,13 @@ import android.util.Log;
 
 import com.google.common.collect.Lists;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,7 +79,7 @@ public class RestaurantUtils {
             if (dateTime == null){
                 return Files.readAttributes(Paths.get(path), BasicFileAttributes.class).creationTime().toMillis();
             } else {
-                return new SimpleDateFormat("yyyy:MM:dd hh:mm:ss").parse(dateTime).getTime();
+                return new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").parse(dateTime).getTime();
             }
         } catch (Exception e){
             Log.w("buildRestaurantFromImages", "consumeTime", e);

@@ -181,8 +181,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (address == null){
             addressSpinner.setSelection(0);
         } else {
-            int addressIndex = new AList<>(addressList).indexOf(a -> a.getId() == address.getId() || StringUtils.equals(a.buildFullAddress(), address.buildFullAddress()));
-            addressSpinner.setSelection(addressIndex);
+            addressSpinner.setSelection(addressList.indexOf(address));
         }
         editComment.setText(src.getComment());
         editTotalCost.setText(DoubleUtils.truncateZero(src.getTotalCost()));
@@ -221,7 +220,12 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     private ConsumeRecordVO buildData(){
         ConsumeRecordVO dst = currentRecord == null ? new ConsumeRecordVO() : JsonUtils.copy(currentRecord);
         dst.setConsumeTime(consumeTime);
-        dst.setAddress(addressList.get(addressSpinner.getSelectedItemPosition()));
+        int selectedItemPosition = addressSpinner.getSelectedItemPosition();
+        if (selectedItemPosition == -1){
+            dst.setAddress(addressList.get(0));
+        } else {
+            dst.setAddress(addressList.get(selectedItemPosition));
+        }
         dst.setEaters(Arrays.stream(editFriends.getText().toString().trim().split(EATER_DELIMITER)).filter(StringUtils::isNoneBlank).collect(Collectors.toList()));
         String totalCost = editTotalCost.getText().toString();
         if (NumberUtils.isParsable(totalCost)){
@@ -281,6 +285,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
                 }
             }
             foodAdapter.add(records.stream().flatMap(i -> i.getFoods().stream()).collect(Collectors.toList()));
+            consumeFoodPlaceholder.setVisibility(View.GONE);
         }
     }
 
