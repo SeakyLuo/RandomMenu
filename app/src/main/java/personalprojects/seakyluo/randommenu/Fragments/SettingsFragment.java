@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.services.AutoTagMapperDaoService;
+import personalprojects.seakyluo.randommenu.database.services.FoodTagDaoService;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
@@ -41,6 +42,7 @@ import personalprojects.seakyluo.randommenu.activities.impl.NoteActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.ToCookActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.ToEatActivity;
+import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.models.TagMapEntry;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.ImagePathService;
@@ -91,9 +93,16 @@ public class SettingsFragment extends Fragment {
         view.findViewById(R.id.clear_cache_button).setOnClickListener(v -> clearData());
         view.findViewById(R.id.import_data_button).setOnClickListener(v -> importData());
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> showExportDataDialog());
-        view.findViewById(R.id.save_data_button).setOnClickListener(v -> {
-            Helper.save();
-            Toast.makeText(getContext(), R.string.data_saved, Toast.LENGTH_SHORT).show();
+        view.findViewById(R.id.fix_data_button).setOnClickListener(v -> {
+            List<Tag> tags = FoodTagDaoService.selectAll();
+            for (Tag tag : tags){
+                int size = SelfMadeFoodService.selectByTag(tag).size();
+                if (tag.getCounter() != size){
+                    tag.setCounter(size);
+                    FoodTagDaoService.update(tag);
+                }
+            }
+            Toast.makeText(getContext(), "修复成功", Toast.LENGTH_SHORT).show();
         });
         return view;
     }

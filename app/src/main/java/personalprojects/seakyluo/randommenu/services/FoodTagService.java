@@ -56,6 +56,7 @@ public class FoodTagService {
                 FoodTagDaoService.insert(tag);
             } else {
                 tag.setCounter(existing.getCounter());
+                tag.setId(existing.getId());
                 existing.more();
                 FoodTagDaoService.update(existing);
             }

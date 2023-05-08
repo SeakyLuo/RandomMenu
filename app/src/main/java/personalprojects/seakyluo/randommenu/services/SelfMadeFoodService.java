@@ -1,6 +1,7 @@
 package personalprojects.seakyluo.randommenu.services;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -87,8 +88,11 @@ public class SelfMadeFoodService {
     public static List<SelfMadeFood> selectByTag(Tag tag){
         List<Long> foodIds = SelfFoodTagDaoService.selectByTag(tag.getId()).stream()
                 .map(SelfMadeFoodTagDAO::getFoodId)
+                .distinct()
                 .collect(Collectors.toList());
-        return SelfFoodDaoService.selectByIds(foodIds);
+        List<SelfMadeFood> foods = SelfFoodDaoService.selectByIds(foodIds);
+        foods.sort(Comparator.comparingLong(SelfMadeFood::getId).reversed());
+        return foods;
     }
 
     public static void deleteNonExistentImage(List<String> currentImages){

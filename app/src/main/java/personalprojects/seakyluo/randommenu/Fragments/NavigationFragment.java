@@ -81,7 +81,6 @@ public class NavigationFragment extends Fragment {
         view.findViewById(R.id.navigation_toolbar).setOnClickListener(v -> foodDetailView.smoothScrollToPosition(0));
 
         setData();
-        IsLoaded = true;
         if (pendingTag == null) pendingTag = Tag.AllCategoriesTag;
         selectTag(pendingTag);
         selectTagAdapter.highlightTag(pendingTag);
@@ -154,7 +153,7 @@ public class NavigationFragment extends Fragment {
         helper.show();
     }
 
-    public void setData(){
+    private void setData(){
         if (IsLoaded) return;
         selectTagAdapter.setTags(FoodTagDaoService.selectAll());
         foodAdapter.setData(SelfFoodDaoService.selectAll());
@@ -162,15 +161,14 @@ public class NavigationFragment extends Fragment {
 
     public void selectTagAndHighlight(Tag tag){
         pendingTag = tag;
-        if (!IsLoaded) return;
+        if (!IsLoaded || tag.equals(lastTag)){
+            return;
+        }
         selectTag(tag);
         selectTagAdapter.highlightTag(tag);
     }
 
     private void selectTag(Tag tag){
-        if (tag.equals(lastTag)){
-            return;
-        }
         if (tag.isAllCategoriesTag()){
             lastTag = Tag.AllCategoriesTag;
             titleTextView.setText(Tag.format(getContext(), R.string.all_categories, SelfFoodDaoService.count()));
@@ -185,7 +183,7 @@ public class NavigationFragment extends Fragment {
 
     private void editFood(SelfMadeFood food, boolean isDraft){
         Intent intent = new Intent(getContext(), EditSelfMadeFoodActivity.class);
-        intent.putExtra(EditSelfMadeFoodActivity.FOOD_ID, food.getId());
+        intent.putExtra(EditSelfMadeFoodActivity.FOOD_ID, food == null ? null : food.getId());
         intent.putExtra(EditSelfMadeFoodActivity.IS_DRAFT, isDraft);
         startActivityForResult(intent, ActivityCodeConstant.FOOD_CODE);
     }
@@ -193,7 +191,10 @@ public class NavigationFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) setData();
+        if (resultCode != RESULT_OK){
+            return;
+        }
+        IsLoaded = false;
         if (!lastTag.isAllCategoriesTag() && FoodTagDaoService.selectById(lastTag.getId()) == null)
             selectTagAdapter.highlightTag(lastTag = Tag.AllCategoriesTag);
         selectTag(lastTag);
