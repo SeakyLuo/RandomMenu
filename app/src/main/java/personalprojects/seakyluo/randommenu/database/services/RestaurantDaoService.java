@@ -134,6 +134,7 @@ public class RestaurantDaoService {
         Long startTime = filter.getStartTime();
         Long endTime = filter.getEndTime();
         List<String> eaterList = filter.getEaters();
+        FoodType foodType = filter.getFoodType();
         if (startTime != null || endTime != null || eaterList != null){
             s += "left join consume_record cr on restaurant.id = cr.restaurantId ";
         }
@@ -168,6 +169,9 @@ public class RestaurantDaoService {
             if (county != null){
                 s += "and address.county = '" + county + "' ";
             }
+        }
+        if (foodType != null){
+            s += "and foodTypeId = " + foodType.getId() + " ";
         }
         return s;
     }

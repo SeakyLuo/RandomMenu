@@ -1,12 +1,14 @@
 package personalprojects.seakyluo.randommenu.controls;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +42,7 @@ public class EditSpinner extends RelativeLayout {
     public EditSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
-        initView();
+        initView(context, attrs);
         popupWindow = initPopupWindow(context);
         initAnimation();
     }
@@ -65,6 +67,14 @@ public class EditSpinner extends RelativeLayout {
         editText.setHint(hint);
     }
 
+    public void setTextSize(float size){
+        editText.setTextSize(size);
+    }
+
+    public float getTextSize(){
+        return editText.getTextSize();
+    }
+
     public void setRightImageDrawable(Drawable drawable) {
         mRightIv.setImageDrawable(drawable);
     }
@@ -87,8 +97,9 @@ public class EditSpinner extends RelativeLayout {
         mResetAnimation.setFillAfter(true);
     }
 
-    private void initView() {
-        LayoutInflater.from(mContext).inflate(R.layout.edit_spinner, this);
+    private void initView(Context context, AttributeSet attrs) {
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.EditSpinner);
+        LayoutInflater.from(context).inflate(R.layout.edit_spinner, this);
         editText = findViewById(R.id.edit_spinner_edit);
         mRightIv = findViewById(R.id.edit_spinner_expand);
         mRightIv.setOnClickListener(this::clickRightImage);
@@ -115,7 +126,10 @@ public class EditSpinner extends RelativeLayout {
                 showFilterData(key);
             }
         });
-        editText.setTextSize(18);
+        float pixelSize = a.getDimensionPixelSize(R.styleable.EditSpinner_textSize, 0);
+        float textSizeInSP = pixelSize == 0 ? 18 : pixelSize / getResources().getDisplayMetrics().scaledDensity;
+        setTextSize(textSizeInSP);
+        a.recycle();
     }
 
     private ListPopupWindow initPopupWindow(Context context) {

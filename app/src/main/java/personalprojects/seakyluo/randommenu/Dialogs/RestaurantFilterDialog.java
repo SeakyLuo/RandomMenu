@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -16,9 +17,7 @@ import com.lljjcoder.Interface.OnCityItemClickListener;
 import com.lljjcoder.bean.CityBean;
 import com.lljjcoder.bean.DistrictBean;
 import com.lljjcoder.bean.ProvinceBean;
-import com.lljjcoder.style.citypickerview.CityPickerView;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
@@ -30,8 +29,11 @@ import java.util.stream.Collectors;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.controls.EditSpinner;
+import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.RestaurantFilter;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
+import personalprojects.seakyluo.randommenu.services.FoodTypeService;
 import personalprojects.seakyluo.randommenu.utils.CityPickerUtils;
 
 public class RestaurantFilterDialog extends BottomSheetDialogFragment {
@@ -40,6 +42,7 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
     private TextView provinceTextView, cityTextView, countyTextView, startTimeTextView, endTimeTextView;
     private EditText eatersEditText;
     private CityPickerDialog cityPicker;
+    private EditSpinner foodTypeSpinner;
     @Setter
     private RestaurantFilter restaurantFilter;
     @Setter
@@ -53,6 +56,7 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
         countyTextView = view.findViewById(R.id.countyTextView);
         startTimeTextView = view.findViewById(R.id.startTimeTextView);
         endTimeTextView = view.findViewById(R.id.endTimeTextView);
+        foodTypeSpinner = view.findViewById(R.id.foodTypeSpinner);
         eatersEditText = view.findViewById(R.id.eatersEditText);
         Button resetButton = view.findViewById(R.id.resetButton);
         Button doneButton = view.findViewById(R.id.doneButton);
@@ -79,6 +83,7 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
                 endTimeTextView.setText(DateFormatUtils.format(time, DATE_FORMAT));
             });
         });
+        foodTypeSpinner.setItemData(FoodTypeService.selectAllNames());
         resetButton.setOnClickListener(this::reset);
         doneButton.setOnClickListener(this::confirm);
         cityPicker.setOnCityItemClickListener(new OnCityItemClickListener() {
@@ -164,17 +169,27 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
 
     private void confirm(View view){
         if (confirmListener != null){
-            buildRestaurantFilter();
+            if (!buildRestaurantFilter()){
+                return;
+            }
             confirmListener.accept(restaurantFilter);
         }
         dismiss();
     }
 
-    private void buildRestaurantFilter(){
+    private boolean buildRestaurantFilter(){
+        String foodTypeName = foodTypeSpinner.getText();
+        Long foodTypeId = FoodTypeService.getIdByName(foodTypeName);
+        if (foodTypeId == null){
+            Toast.makeText(getContext(), "菜系不存在！", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        restaurantFilter.setFoodType(new FoodType(foodTypeId, foodTypeName));
         String eaters = eatersEditText.getText().toString().trim();
         if (StringUtils.isNotEmpty(eaters)){
             restaurantFilter.setEaters(Arrays.stream(eaters.split("，")).collect(Collectors.toList()));
         }
+        return true;
     }
 
     private void fillWithRestaurantFilter(RestaurantFilter filter){
@@ -203,6 +218,9 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
             }
             if (filter.getEndTime() != null){
                 endTimeTextView.setText(DateFormatUtils.format(filter.getEndTime(), DATE_FORMAT));
+            }
+            if (filter.getFoodType() != null){
+                foodTypeSpinner.setText(filter.getFoodType().getName());
             }
             if (filter.getEaters() != null){
                 eatersEditText.setText(String.join("，", filter.getEaters()));

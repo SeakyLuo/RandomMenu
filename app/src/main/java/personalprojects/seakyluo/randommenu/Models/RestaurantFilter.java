@@ -13,11 +13,12 @@ public class RestaurantFilter extends PagerFilter<RestaurantVO> {
 
     private Long startTime;
     private Long endTime;
+    private FoodType foodType;
     private AddressVO address;
     private List<String> eaters;
 
     public boolean isEmpty(){
-        return startTime == null && endTime == null && address == null && eaters == null;
+        return startTime == null && endTime == null && foodType == null && address == null && eaters == null;
     }
 
 }
