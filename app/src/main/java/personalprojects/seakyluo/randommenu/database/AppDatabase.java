@@ -40,7 +40,7 @@ import personalprojects.seakyluo.randommenu.database.mappers.TagMapEntryMapper;
 @Database(entities = {RestaurantDAO.class, AddressDAO.class, ConsumeRecordDAO.class, RestaurantFoodDAO.class, FoodTypeDAO.class,
         SelfMadeFoodDAO.class, FoodTagDAO.class, SelfMadeFoodTagDAO.class, TagMapEntryDAO.class, ImagePathDAO.class,
         SearchHistoryDAO.class },
-        version = 14,
+        version = 15,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -71,6 +71,12 @@ public abstract class AppDatabase extends RoomDatabase {
 //                        Log.d("RoomDebug", "Executed SQL: " + sqlQuery);
 //                    }
 //                }, Executors.newSingleThreadExecutor())
+                .addMigrations(new Migration(14, 15) {
+                    @Override
+                    public void migrate(@NonNull SupportSQLiteDatabase database) {
+                        database.execSQL("alter table consume_record add column autoCost INTEGER DEFAULT 0");
+                    }
+                })
                 .addMigrations(new Migration(13, 14) {
                     @Override
                     public void migrate(@NonNull SupportSQLiteDatabase database) {

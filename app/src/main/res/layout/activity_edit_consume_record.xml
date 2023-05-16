@@ -149,13 +149,27 @@
                     android:singleLine="false" />
             </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:text="总金额（元）"
-                android:textSize="16sp" />
+                android:layout_marginEnd="8dp" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="总金额（元）"
+                    android:layout_weight="1"
+                    android:textSize="16sp" />
+                <CheckBox
+                    android:id="@+id/autoCostCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="自动计算"
+                    android:checked="true"
+                    />
+            </LinearLayout>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"

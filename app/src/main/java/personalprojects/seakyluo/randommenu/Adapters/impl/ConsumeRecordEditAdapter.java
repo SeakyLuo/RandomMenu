@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
@@ -45,7 +47,7 @@ public class ConsumeRecordEditAdapter extends CustomAdapter<ConsumeRecordVO> {
         RestaurantFoodAdapter foodAdapter = new RestaurantFoodAdapter(context);
 
         consumeTime.setText(data.formatConsumeTime());
-        consumeTotalCost.setText("总消费：￥" + DoubleUtils.truncateZero(data.getTotalCost()));
+        setTotalCost(consumeTotalCost, data.getTotalCost());
         foodAdapter.setOnFoodClickListener(onFoodClickListener);
         foodAdapter.setData(data.getFoods());
         foodRecyclerView.setAdapter(foodAdapter);
@@ -75,11 +77,21 @@ public class ConsumeRecordEditAdapter extends CustomAdapter<ConsumeRecordVO> {
         int consumeRecordIndex = food.getConsumeRecordIndex();
         CustomViewHolder viewHolder = viewHolders.get(consumeRecordIndex);
         ConsumeRecordVO record = data.get(consumeRecordIndex);
-        RecyclerView recyclerView = viewHolder.getView().findViewById(R.id.food_recycler_view);
+        View view = viewHolder.getView();
+        RecyclerView recyclerView = view.findViewById(R.id.food_recycler_view);
         RestaurantFoodAdapter adapter = (RestaurantFoodAdapter) recyclerView.getAdapter();
         int index = food.getIndex();
         adapter.set(food, index);
-        record.getFoods().set(index, food);
+        List<RestaurantFoodVO> foods = record.getFoods();
+        foods.set(index, food);
+        if (record.isAutoCost()){
+            TextView totalCostTextView = view.findViewById(R.id.consume_total_cost);
+            double totalCost = foods.stream().mapToDouble(RestaurantFoodVO::getPrice).sum();
+            setTotalCost(totalCostTextView, totalCost);
+        }
     }
 
+    private void setTotalCost(TextView consumeTotalCost, double totalCost){
+        consumeTotalCost.setText("总消费：￥" + DoubleUtils.truncateZero(totalCost));
+    }
 }

@@ -18,18 +18,18 @@ public class DoubleUtils {
         return str;
     }
 
-    public static void main(String[] args) {
-        System.out.println(trim("1.0", '0'));
-        System.out.println(trim("1.00", '0'));
-        System.out.println(trim("1.01", '0'));
-        System.out.println(trim("1.10", '0'));
-        System.out.println("===");
-        System.out.println(truncateZero(1.0));
-        System.out.println(truncateZero(1.20));
-        System.out.println(truncateZero(1.25));
-        System.out.println(truncateZero(1.24));
-        System.out.println(truncateZero(1.255));
-        System.out.println(truncateZero(1.26));
-    }
+//    public static void main(String[] args) {
+//        System.out.println(trim("1.0", '0'));
+//        System.out.println(trim("1.00", '0'));
+//        System.out.println(trim("1.01", '0'));
+//        System.out.println(trim("1.10", '0'));
+//        System.out.println("===");
+//        System.out.println(truncateZero(1.0));
+//        System.out.println(truncateZero(1.20));
+//        System.out.println(truncateZero(1.25));
+//        System.out.println(truncateZero(1.24));
+//        System.out.println(truncateZero(1.255));
+//        System.out.println(truncateZero(1.26));
+//    }
 
 }

@@ -198,6 +198,7 @@ public class ConsumeRecordDaoService {
         dst.setComment(src.getComment());
         dst.setTotalCost(src.getTotalCost());
         dst.setComment(src.getComment());
+        dst.setAutoCost(src.isAutoCost());
         return dst;
     }
 
@@ -214,6 +215,7 @@ public class ConsumeRecordDaoService {
         dst.setComment(src.getComment());
         dst.setTotalCost(src.getTotalCost());
         dst.setComment(src.getComment());
+        dst.setAutoCost(src.isAutoCost());
         return dst;
     }
 

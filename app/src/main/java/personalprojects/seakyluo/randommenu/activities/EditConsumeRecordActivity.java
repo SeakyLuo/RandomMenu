@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -38,7 +39,6 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.AddressDaoService;
 import personalprojects.seakyluo.randommenu.fragments.HorizontalImageViewFragment;
 import personalprojects.seakyluo.randommenu.helpers.DragDropCallback;
-import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -57,6 +57,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     private TextView consumeTimeText, addressText;
     private Spinner addressSpinner;
     private EditText editFriends, editComment, editTotalCost;
+    private CheckBox autoCostCheckBox;
     private View consumeFoodPlaceholder;
     private ConsumeFoodAdapter foodAdapter;
     private ItemTouchHelper dragHelper;
@@ -77,6 +78,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         editFriends = findViewById(R.id.edit_friends);
         editComment = findViewById(R.id.edit_comment);
         editTotalCost = findViewById(R.id.edit_total_cost_text);
+        autoCostCheckBox = findViewById(R.id.autoCostCheckBox);
         consumeFoodPlaceholder = findViewById(R.id.consume_food_placeholder);
         ImageButton addConsumeFoodButton = findViewById(R.id.add_consume_food_button);
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
@@ -117,6 +119,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             ImageUtils.openGallery(this);
             return true;
         });
+        autoCostCheckBox.setOnCheckedChangeListener((v, c) -> autoResetTotalCost());
         consumeFoodPlaceholder.setOnClickListener(v -> editRestaurantFood(null));
     }
 
@@ -131,6 +134,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         item.setIndex(index);
         foodAdapter.add(item, index);
         consumeFoodPlaceholder.setVisibility(View.GONE);
+        autoResetTotalCost();
     }
 
     private RestaurantFoodVO removeFood(int index){
@@ -142,6 +146,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (foodAdapter.isEmpty()){
             consumeFoodPlaceholder.setVisibility(View.VISIBLE);
         }
+        autoResetTotalCost();
         return item;
     }
 
@@ -184,6 +189,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             addressSpinner.setSelection(addressList.indexOf(address));
         }
         editComment.setText(src.getComment());
+        autoCostCheckBox.setChecked(src.isAutoCost());
         editTotalCost.setText(DoubleUtils.truncateZero(src.getTotalCost()));
         imageAdderFragment.setData(src.getEnvironmentPictures());
         foodAdapter.setData(src.getFoods());
@@ -227,6 +233,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             dst.setAddress(addressList.get(selectedItemPosition));
         }
         dst.setEaters(Arrays.stream(editFriends.getText().toString().trim().split(EATER_DELIMITER)).filter(StringUtils::isNoneBlank).collect(Collectors.toList()));
+        dst.setAutoCost(autoCostCheckBox.isChecked());
         String totalCost = editTotalCost.getText().toString();
         if (NumberUtils.isParsable(totalCost)){
             dst.setTotalCost(Double.parseDouble(totalCost));
@@ -268,6 +275,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
                 addFood(foodAdapter.getItemCount(), food);
             } else {
                 foodAdapter.set(food, index);
+                autoResetTotalCost();
             }
         }
         else if (requestCode == ActivityCodeConstant.GALLERY){
@@ -287,6 +295,14 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             foodAdapter.add(records.stream().flatMap(i -> i.getFoods().stream()).collect(Collectors.toList()));
             consumeFoodPlaceholder.setVisibility(View.GONE);
         }
+    }
+
+    private void autoResetTotalCost(){
+        if (!autoCostCheckBox.isChecked()){
+            return;
+        }
+        String price = DoubleUtils.truncateZero(foodAdapter.getData().stream().mapToDouble(RestaurantFoodVO::getPrice).sum());
+        editTotalCost.setText(price);
     }
 
     @Override

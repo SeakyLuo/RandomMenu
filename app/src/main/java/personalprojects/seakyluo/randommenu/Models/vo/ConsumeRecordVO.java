@@ -26,6 +26,7 @@ public class ConsumeRecordVO implements Parcelable {
     private List<RestaurantFoodVO> foods;
     private int index = -1;
     private List<String> environmentPictures;
+    private boolean autoCost = true;
 
     public String formatConsumeTime(){
         return DateFormatUtils.format(consumeTime, CONSUME_TIME_FORMAT);
