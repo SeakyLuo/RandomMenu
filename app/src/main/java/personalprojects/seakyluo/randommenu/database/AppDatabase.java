@@ -1,7 +1,6 @@
 package personalprojects.seakyluo.randommenu.database;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -9,10 +8,6 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
 import personalprojects.seakyluo.randommenu.database.dao.ConsumeRecordDAO;
@@ -74,7 +69,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 .addMigrations(new Migration(14, 15) {
                     @Override
                     public void migrate(@NonNull SupportSQLiteDatabase database) {
-                        database.execSQL("alter table consume_record add column autoCost INTEGER DEFAULT 0");
+                        database.execSQL("alter table consume_record add column autoCost INTEGER NOT NULL DEFAULT 0");
                     }
                 })
                 .addMigrations(new Migration(13, 14) {

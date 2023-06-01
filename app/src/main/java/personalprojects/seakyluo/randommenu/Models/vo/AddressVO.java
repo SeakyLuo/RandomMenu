@@ -53,7 +53,7 @@ public class AddressVO implements Parcelable {
 
     public String buildSimpleAddress(){
         if (county == null || address == null) return null;
-        return county.endsWith("区") ? county + " " + address : address;
+        return county + " " + address;
     }
 
     protected AddressVO(Parcel in) {
