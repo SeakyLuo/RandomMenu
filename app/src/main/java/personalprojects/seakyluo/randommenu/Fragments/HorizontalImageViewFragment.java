@@ -39,7 +39,7 @@ public class HorizontalImageViewFragment extends Fragment {
     private Uri cameraImageUri;
     private ImageButton addImageButton;
     @Setter
-    private int maxImages = 5;
+    private int maxImages = -1;
 
     @Nullable
     @Override
@@ -115,10 +115,15 @@ public class HorizontalImageViewFragment extends Fragment {
             case ActivityCodeConstant.GALLERY:
                 ClipData clipData = data.getClipData();
                 if (clipData == null) {
-                    addOrMoveImage(data.getData(), null);
+                    if (!addOrMoveImage(data.getData(), null)){
+                        showMaxImagesExceededToast();
+                    }
                 } else {
                     for (int i = 0; i < clipData.getItemCount(); i++){
-                        addOrMoveImage(clipData.getItemAt(i).getUri(), i);
+                        if (!addOrMoveImage(clipData.getItemAt(i).getUri(), i)){
+                            showMaxImagesExceededToast();
+                            break;
+                        }
                     }
                 }
                 break;
@@ -135,19 +140,24 @@ public class HorizontalImageViewFragment extends Fragment {
         }
     }
 
-    private void addOrMoveImage(Uri uri, Integer i){
+    private boolean addOrMoveImage(Uri uri, Integer i){
         if (uri == null){
-            return;
+            return true;
         }
         int index = adapter.indexOf(uri.getPath());
         if (index > -1){
             adapter.move(index, 1);
         } else {
-            if (adapter.getItemCount() >= maxImages){
-                Toast.makeText(getContext(), String.format("最多只能有%d张图片", maxImages), Toast.LENGTH_SHORT).show();
+            if (maxImages > 0 && adapter.getItemCount() >= maxImages){
+                return false;
             } else {
                 saveImage(uri, ImageUtils.newImageFileName(i));
             }
         }
+        return true;
+    }
+
+    private void showMaxImagesExceededToast(){
+        Toast.makeText(getContext(), String.format("最多只能有%d张图片", maxImages), Toast.LENGTH_SHORT).show();
     }
 }

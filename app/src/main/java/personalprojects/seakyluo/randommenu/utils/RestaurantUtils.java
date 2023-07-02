@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.common.collect.Lists;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -99,20 +100,19 @@ public class RestaurantUtils {
     }
 
     private static List<ConsumeRecordVO> reduceConsumeRecords(List<ConsumeRecordVO> records){
-        records.sort(Comparator.comparing(ConsumeRecordVO::getConsumeTime));
         List<ConsumeRecordVO> ret = new ArrayList<>();
         for (ConsumeRecordVO record : records){
             boolean reduced = false;
             for (int i = ret.size() - 1; i >= 0; i--){
                 ConsumeRecordVO target = ret.get(i);
                 if (canBeReduced(record, target)){
-                    ret.set(i, merge(record, target));
+                    ret.set(i, mergeToTarget(record, target));
                     reduced = true;
                     break;
                 }
             }
             if (!reduced){
-                ret.add(record);
+                insertConsumeRecordByTime(ret, record);
             }
         }
         for (int i = 0; i < ret.size(); i++){
@@ -121,7 +121,31 @@ public class RestaurantUtils {
         return ret;
     }
 
-    // 同一地址，同一天或消费间隔不超过3小时
+    /**
+     * 保证按消费时间排序，正序倒序都可以，下面用的是正序
+     * */
+    private static void insertConsumeRecordByTime(List<ConsumeRecordVO> records, ConsumeRecordVO record){
+        if (CollectionUtils.isEmpty(records)) {
+            records.add(record);
+            return;
+        }
+        for (int i = 0; i < records.size(); i++){
+            ConsumeRecordVO r = records.get(i);
+            if (r.getConsumeTime() < record.getConsumeTime()){
+                if (i == records.size() - 1){
+                    records.add(record);
+                }
+            } else {
+                records.add(i, record);
+                break;
+            }
+        }
+    }
+
+    /**
+     * 同一地址，同一天或消费间隔不超过3小时;
+     * A-B==3 && B-C==3的情况不考虑，应该实际不会出现
+     * */
     private static boolean canBeReduced(ConsumeRecordVO source, ConsumeRecordVO target){
         if (!Objects.equals(source.getAddress(), target.getAddress())){
             return false;
@@ -134,7 +158,7 @@ public class RestaurantUtils {
         return DateUtils.isSameDay(sourceCal, targetCal) || Math.abs(sourceConsumeTime - targetConsumeTime) <= 10800000;
     }
 
-    private static ConsumeRecordVO merge(ConsumeRecordVO source, ConsumeRecordVO target){
+    private static ConsumeRecordVO mergeToTarget(ConsumeRecordVO source, ConsumeRecordVO target){
         target.getFoods().addAll(source.getFoods());
         target.setConsumeTime(Math.min(source.getConsumeTime(), target.getConsumeTime()));
         return target;

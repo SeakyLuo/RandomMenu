@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -114,12 +116,31 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
                     .showBackNow(true)
                     .build().show();
         });
+        editTotalCost.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                autoCostCheckBox.setChecked(false);
+            }
+        });
         addConsumeFoodButton.setOnClickListener(v -> editRestaurantFood(null));
         addConsumeFoodButton.setOnLongClickListener(v -> {
             ImageUtils.openGallery(this);
             return true;
         });
-        autoCostCheckBox.setOnCheckedChangeListener((v, c) -> autoResetTotalCost());
+        autoCostCheckBox.setOnCheckedChangeListener((v, c) -> {
+            v.setChecked(c);
+            autoComputeTotalCost();
+        });
         consumeFoodPlaceholder.setOnClickListener(v -> editRestaurantFood(null));
     }
 
@@ -134,7 +155,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         item.setIndex(index);
         foodAdapter.add(item, index);
         consumeFoodPlaceholder.setVisibility(View.GONE);
-        autoResetTotalCost();
+        autoComputeTotalCost();
     }
 
     private RestaurantFoodVO removeFood(int index){
@@ -146,7 +167,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (foodAdapter.isEmpty()){
             consumeFoodPlaceholder.setVisibility(View.VISIBLE);
         }
-        autoResetTotalCost();
+        autoComputeTotalCost();
         return item;
     }
 
@@ -275,7 +296,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
                 addFood(foodAdapter.getItemCount(), food);
             } else {
                 foodAdapter.set(food, index);
-                autoResetTotalCost();
+                autoComputeTotalCost();
             }
         }
         else if (requestCode == ActivityCodeConstant.GALLERY){
@@ -297,7 +318,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         }
     }
 
-    private void autoResetTotalCost(){
+    private void autoComputeTotalCost(){
         if (!autoCostCheckBox.isChecked()){
             return;
         }

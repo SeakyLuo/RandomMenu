@@ -88,6 +88,7 @@ public class ConsumeRecordEditAdapter extends CustomAdapter<ConsumeRecordVO> {
             TextView totalCostTextView = view.findViewById(R.id.consume_total_cost);
             double totalCost = foods.stream().mapToDouble(RestaurantFoodVO::getPrice).sum();
             setTotalCost(totalCostTextView, totalCost);
+            record.setTotalCost(totalCost);
         }
     }
 

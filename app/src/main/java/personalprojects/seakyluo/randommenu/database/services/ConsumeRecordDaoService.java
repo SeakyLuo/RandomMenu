@@ -80,13 +80,16 @@ public class ConsumeRecordDaoService {
         int showCounter = 0;
         for (int i = 0; i < foods.size(); i++){
             RestaurantFoodVO curr = foods.get(i);
-            // 避免重名菜
-            if (i == 0 || (showCounter < MAX_FOOD_SHOW && foods.stream().limit(i).noneMatch(f -> StringUtils.equals(f.getName(), curr.getName())))){
+            if (i == 0 || (showCounter < MAX_FOOD_SHOW && !hasDuplicateName(curr, foods, i))){
                 curr.setOrderInHome(showCounter++);
             } else {
                 curr.setOrderInHome(-1);
             }
         }
+    }
+
+    private static boolean hasDuplicateName(RestaurantFoodVO curr, List<RestaurantFoodVO> foods, int limit){
+        return foods.stream().limit(limit).anyMatch(f -> StringUtils.isNotEmpty(curr.getName()) && StringUtils.equals(f.getName(), curr.getName()));
     }
 
     private static int computeSortPoints(RestaurantFoodVO food, Map<String, Integer> counter){

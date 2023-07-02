@@ -76,7 +76,8 @@
             android:text="评价"
             android:textColor="@color/colorTextBlack"
             android:layout_marginVertical="2dp"
-            android:maxLines="1"
+            android:maxLines="3"
+            android:ellipsize="end"
             />
 
         <androidx.recyclerview.widget.RecyclerView
