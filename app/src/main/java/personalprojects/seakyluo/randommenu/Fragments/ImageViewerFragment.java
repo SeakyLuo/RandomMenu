@@ -126,7 +126,7 @@ public class ImageViewerFragment extends Fragment {
         coverImage = cover;
         adapter.setData(images);
         if (viewPager != null){
-            foodImage.setVisibility(images.isEmpty() ? View.VISIBLE : View.GONE);
+            foodImage.setVisibility(images == null || images.isEmpty() ? View.VISIBLE : View.GONE);
             scrollTo(0);
             setButtonVisibility(0);
         }

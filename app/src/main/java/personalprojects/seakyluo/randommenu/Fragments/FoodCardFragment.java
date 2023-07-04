@@ -137,7 +137,7 @@ public class FoodCardFragment extends Fragment {
                     } else {
                         Intent editFoodIntent = new Intent(getContext(), EditSelfMadeFoodActivity.class);
                         editFoodIntent.putExtra(EditSelfMadeFoodActivity.FOOD_ID, food.asSelfMadeFood().getId());
-                        editFoodIntent.putExtra(EditSelfMadeFoodActivity.IS_DRAFT, true);
+                        editFoodIntent.putExtra(EditSelfMadeFoodActivity.IS_DRAFT, false);
                         startActivityForResult(editFoodIntent, ActivityCodeConstant.EDIT_SELF_FOOD);
                     }
                     return true;

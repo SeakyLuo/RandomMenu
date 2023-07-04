@@ -56,7 +56,7 @@ public class NavigationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_navigation, container, false);
         titleTextView = view.findViewById(R.id.title_text_view);
         FloatingActionButton fab = view.findViewById(R.id.navi_fab);
-        fab.setOnClickListener(v -> editFood(Settings.settings.FoodDraft, true));
+        fab.setOnClickListener(v -> editFood(Settings.settings.FoodDraft, Settings.settings.FoodDraft != null));
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this::refresh);
         view.findViewById(R.id.search_button).setOnClickListener(this::showSearchActivity);

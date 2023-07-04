@@ -21,6 +21,7 @@ import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 @Data
 public class BaseFood implements Parcelable {
 
+    private long id;
     private String name;
     private String cover;
     private List<String> images;
@@ -44,6 +45,7 @@ public class BaseFood implements Parcelable {
 
     public static BaseFood from(SelfMadeFood src){
         BaseFood dst = new BaseFood();
+        dst.setId(src.getId());
         dst.setName(src.getName());
         dst.setCover(src.getCover());
         dst.setImages(src.getImages());
@@ -57,6 +59,7 @@ public class BaseFood implements Parcelable {
 
     public static BaseFood from(RestaurantFoodVO src){
         BaseFood dst = new BaseFood();
+        dst.setId(src.getId());
         dst.setName(src.getName());
         String cover = src.getCover();
         dst.setCover(cover);
@@ -77,6 +80,8 @@ public class BaseFood implements Parcelable {
     }
 
     protected BaseFood(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
         name = in.readString();
         cover = in.readString();
         images = in.createStringArrayList();
@@ -104,6 +109,7 @@ public class BaseFood implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(cover);
         dest.writeStringList(images);

@@ -87,6 +87,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
         dragHelper.attachToRecyclerView(addressRecyclerView);
         SwipeToDeleteUtils.apply(addressRecyclerView, this, this::checkAddressBeforeRemoval, this::removeAddress, this::addAddress, AddressVO::getAddress);
         addressAdapter.setDragStartListener(this);
+        addressAdapter.setOnAddressChanged(this::addressChanged);
         addressRecyclerView.setAdapter(addressAdapter);
         consumeRecordRecyclerView.setAdapter(consumeRecordAdapter);
 
@@ -153,6 +154,14 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
             addressPlaceholder.setVisibility(View.VISIBLE);
         }
         return item;
+    }
+
+    private void addressChanged(AddressVO before, AddressVO after){
+        for (ConsumeRecordVO record : consumeRecordAdapter.getData()) {
+            if (record.getAddress().equals(before)){
+                record.setAddress(after);
+            }
+        }
     }
 
     private boolean quickCreateConsumeRecord(){

@@ -66,6 +66,8 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
     private ArrayList<AddressVO> addressList;
     private ConsumeRecordVO currentRecord;
     private HorizontalImageViewFragment imageAdderFragment;
+    // 修改AutoCostCheckBox会导致EditTotalCost变化导致触发文本变更事件，导致AutoCostCheckBox.isChecked变回false
+    private boolean detectCostTextChange = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,17 +121,17 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         editTotalCost.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                autoCostCheckBox.setChecked(false);
+                if (detectCostTextChange){
+                    autoCostCheckBox.setChecked(false);
+                }
             }
         });
         addConsumeFoodButton.setOnClickListener(v -> editRestaurantFood(null));
@@ -138,8 +140,9 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             return true;
         });
         autoCostCheckBox.setOnCheckedChangeListener((v, c) -> {
-            v.setChecked(c);
+            detectCostTextChange = false;
             autoComputeTotalCost();
+            detectCostTextChange = true;
         });
         consumeFoodPlaceholder.setOnClickListener(v -> editRestaurantFood(null));
     }

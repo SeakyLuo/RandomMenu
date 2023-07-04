@@ -54,6 +54,7 @@ public class ConsumeRecordVO implements Parcelable {
         foods = in.createTypedArrayList(RestaurantFoodVO.CREATOR);
         index = in.readInt();
         environmentPictures = in.createStringArrayList();
+        autoCost = in.readByte() != 0;
     }
 
     public static final Creator<ConsumeRecordVO> CREATOR = new Creator<ConsumeRecordVO>() {
@@ -85,5 +86,6 @@ public class ConsumeRecordVO implements Parcelable {
         dest.writeTypedList(foods);
         dest.writeInt(index);
         dest.writeStringList(environmentPictures);
+        dest.writeByte((byte) (autoCost ? 1 : 0));
     }
 }

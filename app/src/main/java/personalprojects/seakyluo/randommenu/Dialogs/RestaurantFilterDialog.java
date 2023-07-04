@@ -179,12 +179,14 @@ public class RestaurantFilterDialog extends BottomSheetDialogFragment {
 
     private boolean buildRestaurantFilter(){
         String foodTypeName = foodTypeSpinner.getText();
-        Long foodTypeId = FoodTypeService.getIdByName(foodTypeName);
-        if (foodTypeId == null){
-            Toast.makeText(getContext(), "菜系不存在！", Toast.LENGTH_SHORT).show();
-            return false;
+        if (StringUtils.isNotEmpty(foodTypeName)){
+            Long foodTypeId = FoodTypeService.getIdByName(foodTypeName);
+            if (foodTypeId == null){
+                Toast.makeText(getContext(), "菜系不存在！", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            restaurantFilter.setFoodType(new FoodType(foodTypeId, foodTypeName));
         }
-        restaurantFilter.setFoodType(new FoodType(foodTypeId, foodTypeName));
         String eaters = eatersEditText.getText().toString().trim();
         if (StringUtils.isNotEmpty(eaters)){
             restaurantFilter.setEaters(Arrays.stream(eaters.split("，")).collect(Collectors.toList()));

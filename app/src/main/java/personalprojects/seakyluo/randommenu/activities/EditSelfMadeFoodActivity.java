@@ -28,6 +28,7 @@ import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.FoodTagUtils;
+import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
 public class EditSelfMadeFoodActivity extends AppCompatActivity {
     public static final String DATA = "Food", FOOD_ID = "FoodId", IS_DRAFT = "IsDraft";
@@ -157,6 +158,7 @@ public class EditSelfMadeFoodActivity extends AppCompatActivity {
             currentFood.setNote(food.getNote());
             currentFood.setFavorite(food.isFavorite());
             currentFood.setCover(food.getCover());
+            food = JsonUtils.copy(currentFood);
             SelfMadeFoodService.updateFood(currentFood);
         }
         finishWithFood(food);
@@ -180,9 +182,6 @@ public class EditSelfMadeFoodActivity extends AppCompatActivity {
             }
             SelfMadeFoodService.updateFood(existing);
             finishWithFood(existing);
-        });
-        dialog.setNoListener(view -> {
-            Toast.makeText(this, R.string.food_exists, Toast.LENGTH_SHORT).show();
         });
     }
 

@@ -67,6 +67,7 @@ public class SelfMadeFood implements Parcelable {
     protected SelfMadeFood(Parcel in) {
         id = in.readLong();
         name = in.readString();
+        images = in.createStringArrayList();
         tags = in.createTypedArrayList(Tag.CREATOR);
         note = in.readString();
         favorite = in.readByte() != 0;
@@ -100,6 +101,7 @@ public class SelfMadeFood implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
+        dest.writeStringList(images);
         dest.writeTypedList(tags);
         dest.writeString(note);
         dest.writeByte((byte) (favorite ? 1 : 0));

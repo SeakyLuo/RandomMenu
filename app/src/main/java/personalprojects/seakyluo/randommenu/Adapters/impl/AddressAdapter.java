@@ -14,12 +14,19 @@ import com.lljjcoder.bean.DistrictBean;
 import com.lljjcoder.bean.ProvinceBean;
 import com.lljjcoder.style.citypickerview.CityPickerView;
 
+import java.util.function.BiConsumer;
+
+import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.utils.CityPickerUtils;
+import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
 public class AddressAdapter extends DraggableAdapter<AddressVO> {
+
+    @Setter
+    private BiConsumer<AddressVO, AddressVO> onAddressChanged;
 
     public AddressAdapter(Context context){
         this.context = context;
@@ -42,6 +49,7 @@ public class AddressAdapter extends DraggableAdapter<AddressVO> {
         cityPickerView.setOnCityItemClickListener(new OnCityItemClickListener() {
             @Override
             public void onSelected(ProvinceBean province, CityBean city, DistrictBean district) {
+                AddressVO copy = JsonUtils.copy(data);
                 String provinceName = province.getName();
                 data.setProvince(provinceName);
                 if (provinceName.endsWith("市")){
@@ -51,6 +59,7 @@ public class AddressAdapter extends DraggableAdapter<AddressVO> {
                 }
                 data.setCounty(district.getName());
                 textDistrict.setText(data.buildDistrict());
+                if (onAddressChanged != null) onAddressChanged.accept(copy, data);
             }
         });
         textDistrict.setOnClickListener(v -> {
@@ -69,7 +78,9 @@ public class AddressAdapter extends DraggableAdapter<AddressVO> {
 
             @Override
             public void afterTextChanged(Editable s) {
+                AddressVO copy = JsonUtils.copy(data);
                 data.setAddress(textAddress.getText().toString());
+                if (onAddressChanged != null) onAddressChanged.accept(copy, data);
             }
         });
         fillAddress(data, textDistrict, textAddress);
