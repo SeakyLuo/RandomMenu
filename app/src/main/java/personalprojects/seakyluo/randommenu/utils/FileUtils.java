@@ -24,15 +24,31 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import personalprojects.seakyluo.randommenu.helpers.Helper;
-
-import static personalprojects.seakyluo.randommenu.helpers.Helper.ROOT_FOLDER;
-
 public class FileUtils {
+
+    public static final String ROOT_FOLDER_NAME = "RandomMenu", IMAGE_FOLDER_NAME = "RandomMenuFood";
+    public static File ROOT_FOLDER;
+    public static File SAVED_IMAGE_FOLDER;
+    public static File IMAGE_FOLDER;
+    public static File TEMP_FOLDER;
+    public static File TEMP_UNZIP_FOLDER;
+    public static File EXPORTED_DATA_FOLDER;
+    public static File LOG_FOLDER;
+
+    public static void init(Activity activity){
+        ROOT_FOLDER = createOrOpenFolder(activity, ROOT_FOLDER_NAME);
+        IMAGE_FOLDER = createOrOpenFolder(activity, IMAGE_FOLDER_NAME);
+        SAVED_IMAGE_FOLDER = createOrOpenFolder(activity, "SavedImages");
+        TEMP_FOLDER = createOrOpenFolder(activity, "Temp");
+        TEMP_UNZIP_FOLDER = createOrOpenFolder(activity, "TempUnzipFiles");
+        EXPORTED_DATA_FOLDER = createOrOpenFolder(activity, "ExportedData");
+        LOG_FOLDER = createOrOpenFolder(activity, "Logs");
+    }
 
     /**
      * Get a file path from a Uri. This will get the the path for Storage Access
@@ -161,8 +177,10 @@ public class FileUtils {
     }
 
     public static String getPath(String... paths) {
-        StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory().getPath()).append(File.separator).append(ROOT_FOLDER);
-        for (String path: paths) sb.append(File.separator).append(path);
+        StringBuilder sb = new StringBuilder(ROOT_FOLDER == null ? ROOT_FOLDER_NAME : ROOT_FOLDER.getAbsolutePath());
+        for (String path: paths){
+            sb.append(File.separator).append(path);
+        }
         return sb.toString();
     }
 
@@ -198,26 +216,33 @@ public class FileUtils {
         return "";
     }
 
-    public static String getFilename(String path) { return new File(path).getName(); }
-
     public static void writeFile(String filename, String content){
         /* It writes file to root folder */
         fwrite(getPath(filename), content);
     }
     private static void fwrite(String filename, String content){
-        try (FileOutputStream out = new FileOutputStream(filename);) {
+        try (FileOutputStream out = new FileOutputStream(filename)) {
             out.write(content.getBytes());
         } catch (IOException e) {
-            Log.e("fuck", "File write failed: " + e.toString());
+            Log.e("fuck", "File write failed: " + e);
         }
     }
-    public static File createOrOpenFolder(String folderName){
-        File folder = folderName.equals(ROOT_FOLDER) ? new File(getPath()) : new File(getPath(folderName));
+    public static File createOrOpenFolder(Context context, String folderName){
+        File folder;
+        if (Build.VERSION.SDK_INT > 29){
+            File externalFilesDir = context.getExternalFilesDir(null);
+            String path = folderName.equals(ROOT_FOLDER_NAME) ? ROOT_FOLDER_NAME : ROOT_FOLDER_NAME + File.separator + folderName;
+            folder = new File(externalFilesDir, path);
+        } else {
+            String path = folderName.equals(ROOT_FOLDER_NAME) ? getPath() : getPath(folderName);
+            folder = new File(path);
+        }
         return folder.exists() || folder.mkdir() ? folder : null;
     }
+
     public static void copy(File src, File dst) throws IOException {
-        try (InputStream in = new FileInputStream(src)) {
-            try (OutputStream out = new FileOutputStream(dst)) {
+        try (InputStream in = Files.newInputStream(src.toPath())) {
+            try (OutputStream out = Files.newOutputStream(dst.toPath())) {
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
@@ -235,11 +260,14 @@ public class FileUtils {
         FileOutputStream dest = new FileOutputStream(filename);
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
         for (File item: files){
-            if (item.isDirectory())
-                for (File file: item.listFiles())
+            if (item.isDirectory()){
+                for (File file: item.listFiles()){
                     addZipFile(out, file, item.getName() + File.separator + file.getName());
-            else
+                }
+            }
+            else {
                 addZipFile(out, item, item.getName());
+            }
         }
         out.close();
     }

@@ -32,7 +32,6 @@ import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantFoodDaoService;
 import personalprojects.seakyluo.randommenu.enums.FoodClass;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.activities.MainActivity;
 import personalprojects.seakyluo.randommenu.models.BaseFood;
@@ -142,7 +141,7 @@ public class FoodCardFragment extends Fragment {
                     }
                     return true;
                 case R.id.save_image_item:
-                    ImageUtils.saveImage(ImageUtils.getFoodBitmap(imageViewerFragment.getCurrentImage()), Helper.ImageFolder, ImageUtils.newImageFileName());
+                    ImageUtils.saveImage(ImageUtils.getFoodBitmap(imageViewerFragment.getCurrentImage()), FileUtils.SAVED_IMAGE_FOLDER, ImageUtils.newImageFileName());
                     Toast.makeText(getContext(), R.string.save_image_msg, Toast.LENGTH_SHORT).show();
                     return true;
                 case R.id.share_item:

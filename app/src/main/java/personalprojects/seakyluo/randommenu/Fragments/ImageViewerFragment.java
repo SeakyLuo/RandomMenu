@@ -29,9 +29,9 @@ import lombok.Getter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ImageAdapter;
 import personalprojects.seakyluo.randommenu.activities.FullScreenImageActivity;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 import personalprojects.seakyluo.randommenu.utils.PermissionUtils;
 
@@ -221,25 +221,22 @@ public class ImageViewerFragment extends Fragment {
         }
     }
 
-    private void saveImage(Uri uri, String filename, boolean update){
-        try {
-            Bitmap image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), uri);
-            ImageUtils.saveImage(image, Helper.ImageFolder, filename);
-            if (update){
-                updateImage(filename, getCurrent());
-            } else {
-                addImage(filename);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    private boolean saveImage(Uri uri, String filename, boolean update){
+        if (!ImageUtils.saveImage(getContext(), uri, filename)){
+            return false;
         }
+        if (update){
+            updateImage(filename, getCurrent());
+        } else {
+            addImage(filename);
+        }
+        return true;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        String filename = "";
         switch (requestCode){
             case ActivityCodeConstant.CAMERA:
                 saveImage(cameraImageUri, cameraImageUri.getPath(), false);
@@ -255,24 +252,27 @@ public class ImageViewerFragment extends Fragment {
                 }
                 break;
             case ActivityCodeConstant.CROP_IMAGE:
-                saveImage(cropImageUri, filename = ImageUtils.newImageFileName(), true);
+                saveImage(cropImageUri, ImageUtils.newImageFileName(), true);
                 break;
             default:
                 return;
         }
         foodImage.setVisibility(View.GONE);
-        if (StringUtils.isEmpty(coverImage)) setCover(adapter.get(0));
+        if (StringUtils.isEmpty(coverImage) && !adapter.isEmpty()){
+            setCover(adapter.get(0));
+        }
     }
 
-    private void addOrMoveImage(Uri uri, Integer i){
+    private boolean addOrMoveImage(Uri uri, Integer i){
         if (uri == null){
-            return;
+            return false;
         }
         int index = adapter.indexOf(uri.getPath());
         if (index > -1){
             move(index, 0);
+            return true;
         } else {
-            saveImage(uri, ImageUtils.newImageFileName(i), false);
+            return saveImage(uri, ImageUtils.newImageFileName(i), false);
         }
     }
 }

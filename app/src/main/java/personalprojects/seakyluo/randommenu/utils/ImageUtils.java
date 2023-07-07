@@ -71,7 +71,7 @@ public class ImageUtils {
     }
 
     public static String getImagePath(String path){
-        return FileUtils.getPath("RandomMenuFood", path);
+        return FileUtils.getPath(FileUtils.IMAGE_FOLDER_NAME, path);
     }
 
     public static String newImageFileName(){
@@ -87,8 +87,10 @@ public class ImageUtils {
 
     public static boolean saveImage(Context context, Uri uri, String filename){
         try {
+//            FileUtils.copy(new File(uri.getPath()), new File(getImagePath(filename)));
+//            return true;
             Bitmap image = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-            return ImageUtils.saveImage(image, Helper.ImageFolder, filename);
+            return ImageUtils.saveImage(image, FileUtils.IMAGE_FOLDER, filename);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -99,7 +101,7 @@ public class ImageUtils {
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
             return true;
         } catch (IOException e) {
-            Helper.Log("IOException: " + e.toString());
+            Helper.Log("IOException: " + e);
             return false;
         } catch (Exception e){
             return false;
@@ -110,7 +112,7 @@ public class ImageUtils {
         try {
             Intent intent = new Intent("com.android.camera.action.CROP");
             intent.setDataAndType(FileProvider.getUriForFile(activity, "personalprojects.seakyluo.randommenu.provider", new File(imagePath)), "image/*");
-            Uri uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", Helper.TempFolder));
+            Uri uri = Uri.fromFile(File.createTempFile("tempCrop", ".jpg", FileUtils.TEMP_FOLDER));
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

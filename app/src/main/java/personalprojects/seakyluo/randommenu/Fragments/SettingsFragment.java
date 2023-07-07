@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.services.AutoTagMapperDaoService;
-import personalprojects.seakyluo.randommenu.database.services.FoodTagDaoService;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
@@ -42,7 +41,6 @@ import personalprojects.seakyluo.randommenu.activities.impl.NoteActivity;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.ToCookActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.ToEatActivity;
-import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.models.TagMapEntry;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.ImagePathService;
@@ -90,18 +88,11 @@ public class SettingsFragment extends Fragment {
             startActivity(new Intent(getContext(), MoreSettingsActivity.class));
             getActivity().overridePendingTransition(R.anim.push_left_in, 0);
         });
-        view.findViewById(R.id.clear_cache_button).setOnClickListener(v -> clearData());
+        view.findViewById(R.id.clear_cache_button).setOnClickListener(v -> clearCache());
         view.findViewById(R.id.import_data_button).setOnClickListener(v -> importData());
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> showExportDataDialog());
         view.findViewById(R.id.fix_data_button).setOnClickListener(v -> {
-            List<Tag> tags = FoodTagDaoService.selectAll();
-            for (Tag tag : tags){
-                int size = SelfMadeFoodService.selectByTag(tag).size();
-                if (tag.getCounter() != size){
-                    tag.setCounter(size);
-                    FoodTagDaoService.update(tag);
-                }
-            }
+
             Toast.makeText(getContext(), "修复成功", Toast.LENGTH_SHORT).show();
         });
         return view;
@@ -112,14 +103,14 @@ public class SettingsFragment extends Fragment {
             return;
         }
         Set<String> paths = new HashSet<>(using);
-        for (File file : Helper.ImageFolder.listFiles()) {
+        for (File file : FileUtils.IMAGE_FOLDER.listFiles()) {
             if (!paths.contains(file.getName())){
                 file.delete();
             }
         }
     }
 
-    private void clearData(){
+    private void clearCache(){
         LoadingDialog dialog = new LoadingDialog();
         dialog.setOnViewCreatedListener(d -> {
             dialog.setMessage(R.string.clearing_cache);
@@ -127,12 +118,12 @@ public class SettingsFragment extends Fragment {
                 // Removing unused images
                 clearLocalImages(ImagePathService.selectPaths());
                 // Removing non-existent images
-                List<String> filenames = Arrays.stream(Helper.ImageFolder.listFiles()).map(File::getName).collect(Collectors.toList());
+                List<String> filenames = Arrays.stream(FileUtils.IMAGE_FOLDER.listFiles()).map(File::getName).collect(Collectors.toList());
                 SelfMadeFoodService.deleteNonExistentImage(filenames);
-                clearFolder(Helper.LogFolder);
-                clearFolder(Helper.TempFolder);
-                clearFolder(Helper.TempUnzipFolder);
-                File[] exportedFiles = Helper.ExportedDataFolder.listFiles();
+                clearFolder(FileUtils.LOG_FOLDER);
+                clearFolder(FileUtils.TEMP_FOLDER);
+                clearFolder(FileUtils.TEMP_UNZIP_FOLDER);
+                File[] exportedFiles = FileUtils.EXPORTED_DATA_FOLDER.listFiles();
                 if (exportedFiles != null && exportedFiles.length > 1){
                     Arrays.stream(exportedFiles).skip(1).forEach(File::delete);
                 }
@@ -155,7 +146,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void showExportDataDialog(){
-        String filename = "RandomMenu" + Helper.formatCurrentTimestamp() + ".zip", path = Helper.ExportedDataFolder.getPath() + File.separator + filename;
+        String filename = "RandomMenu" + Helper.formatCurrentTimestamp() + ".zip", path = FileUtils.EXPORTED_DATA_FOLDER.getPath() + File.separator + filename;
         LoadingDialog dialog = new LoadingDialog();
         dialog.setOnViewCreatedListener(d -> {
             dialog.setMessage(R.string.exporting_data);
@@ -165,15 +156,15 @@ public class SettingsFragment extends Fragment {
     }
 
     private static String buildRestaurantFilename(){
-        return Helper.TempFolder.getName() + File.separator + RESTAURANT_FILENAME;
+        return FileUtils.TEMP_FOLDER.getName() + File.separator + RESTAURANT_FILENAME;
     }
 
     private static String buildSelfFoodFilename(){
-        return Helper.TempFolder.getName() + File.separator + SELF_FOOD_FILENAME;
+        return FileUtils.TEMP_FOLDER.getName() + File.separator + SELF_FOOD_FILENAME;
     }
 
     private static String buildAutoTagMapFilename(){
-        return Helper.TempFolder.getName() + File.separator + AUTO_TAG_MAP_FILENAME;
+        return FileUtils.TEMP_FOLDER.getName() + File.separator + AUTO_TAG_MAP_FILENAME;
     }
 
     private File exportToFile(String filename, Object data){
@@ -190,7 +181,7 @@ public class SettingsFragment extends Fragment {
             File autoTagMapFile = exportToFile(buildAutoTagMapFilename(), AutoTagMapperDaoService.selectAll());
 
             dialog.setMessage("正在打包，请稍候");
-            FileUtils.zip(path, Helper.ImageFolder, settings, restaurantsFile, selfFoodsFile, autoTagMapFile);
+            FileUtils.zip(path, FileUtils.IMAGE_FOLDER, settings, restaurantsFile, selfFoodsFile, autoTagMapFile);
         } catch (FileNotFoundException e){
             showExceptionToast(dialog, R.string.file_not_found, e);
             return;
@@ -219,33 +210,33 @@ public class SettingsFragment extends Fragment {
     }
 
     private void unzip(LoadingDialog dialog, File file){
-        clearFolder(Helper.TempUnzipFolder);
+        clearFolder(FileUtils.TEMP_UNZIP_FOLDER);
         try {
             dialog.setMessage("正在解压");
-            FileUtils.unzip(file, Helper.TempUnzipFolder);
+            FileUtils.unzip(file, FileUtils.TEMP_UNZIP_FOLDER);
         } catch (Exception e) {
             showExceptionToast(dialog, R.string.import_data_failed, e);
             return;
         }
-        AList<File> files = new AList<>(Helper.TempUnzipFolder.listFiles());
+        AList<File> files = new AList<>(FileUtils.TEMP_UNZIP_FOLDER.listFiles());
         File settings = files.first(f -> f.getName().equals(Settings.FILENAME));
         if (settings == null){
             showShortToast(dialog, R.string.no_import_settings);
             return;
         }
         try {
-            FileUtils.copy(settings, Helper.root);
+            FileUtils.copy(settings, FileUtils.ROOT_FOLDER);
         } catch (IOException e) {
             showExceptionToast(dialog, R.string.import_data_failed, e);
             return;
         }
-        File imageFolder = files.first(f -> f.getName().equals(Helper.ImageFolder.getName()));
+        File imageFolder = files.first(f -> f.getName().equals(FileUtils.IMAGE_FOLDER.getName()));
         if (imageFolder == null){
             showShortToast(dialog, R.string.no_import_image_folder);
         } else {
             try {
                 dialog.setMessage("正在导入图片");
-                FileUtils.copy(imageFolder, Helper.root);
+                FileUtils.copy(imageFolder, FileUtils.ROOT_FOLDER);
             } catch (IOException e) {
                 showExceptionToast(dialog, R.string.import_data_failed, e);
             }
@@ -279,7 +270,7 @@ public class SettingsFragment extends Fragment {
         }
         Helper.init(getActivity());
         Helper.save();
-        clearFolder(Helper.TempUnzipFolder);
+        clearFolder(FileUtils.TEMP_UNZIP_FOLDER);
     }
 
     @Override

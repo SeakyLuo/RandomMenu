@@ -29,6 +29,7 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.helpers.Helper;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -130,16 +131,6 @@ public class HorizontalImageViewFragment extends Fragment {
         }
     }
 
-    private void saveImage(Uri uri, String filename){
-        try {
-            Bitmap image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), uri);
-            ImageUtils.saveImage(image, Helper.ImageFolder, filename);
-            adapter.add(filename);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private boolean addOrMoveImage(Uri uri, Integer i){
         if (uri == null){
             return true;
@@ -155,6 +146,12 @@ public class HorizontalImageViewFragment extends Fragment {
             }
         }
         return true;
+    }
+
+    private void saveImage(Uri uri, String filename){
+        if (ImageUtils.saveImage(getContext(), uri, filename)){
+            adapter.add(filename);
+        }
     }
 
     private void showMaxImagesExceededToast(){
