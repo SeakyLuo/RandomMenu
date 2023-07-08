@@ -16,7 +16,7 @@ import personalprojects.seakyluo.randommenu.fragments.NavigationFragment;
 import personalprojects.seakyluo.randommenu.fragments.RandomFragment;
 import personalprojects.seakyluo.randommenu.fragments.RestaurantsFragment;
 import personalprojects.seakyluo.randommenu.fragments.SettingsFragment;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.utils.BackupUtils;
 import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
-        Helper.init(this);
+        BackupUtils.init(this);
 
         if (savedInstanceState == null) {
             randomFragment = new RandomFragment();
@@ -88,13 +88,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Helper.save();
+        BackupUtils.save();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Helper.save();
+        BackupUtils.save();
         //Save the fragment's instance
         FragmentManager fragmentManager = getSupportFragmentManager();
         try {
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK){
             if (requestCode == ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE) {
-                Helper.init(this);
+                BackupUtils.init(this);
             }
         }
         ActivityUtils.spreadOnActivityResult(this, requestCode, resultCode, data);
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)
             return;
         if (requestCode == ActivityCodeConstant.READ_EXTERNAL_STORAGE_CODE) {
-            Helper.init(this);
+            BackupUtils.init(this);
         }
     }
 }

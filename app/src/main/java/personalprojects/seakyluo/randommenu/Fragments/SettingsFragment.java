@@ -6,11 +6,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -18,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,7 +34,8 @@ import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoServi
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
 import personalprojects.seakyluo.randommenu.activities.impl.DislikeActivity;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.exceptions.ResourcedException;
+import personalprojects.seakyluo.randommenu.utils.BackupUtils;
 import personalprojects.seakyluo.randommenu.activities.MainActivity;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
@@ -46,6 +51,7 @@ import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.ImagePathService;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
+import personalprojects.seakyluo.randommenu.utils.IntentUtils;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -53,8 +59,6 @@ import static android.app.Activity.RESULT_OK;
 public class SettingsFragment extends Fragment {
     private static final int FILE_PICKER = 1;
     public static final String TAG = "SettingsFragment";
-    private static final String RESTAURANT_FILENAME = "restaurants.json", SELF_FOOD_FILENAME = "selfFoods.json",
-            AUTO_TAG_MAP_FILENAME = "autoTagMap.json";
 
     @Nullable
     @Override
@@ -91,11 +95,12 @@ public class SettingsFragment extends Fragment {
         view.findViewById(R.id.clear_cache_button).setOnClickListener(v -> clearCache());
         view.findViewById(R.id.import_data_button).setOnClickListener(v -> importData());
         view.findViewById(R.id.export_data_button).setOnClickListener(v -> showExportDataDialog());
-        view.findViewById(R.id.fix_data_button).setOnClickListener(v -> {
-
-            Toast.makeText(getContext(), "修复成功", Toast.LENGTH_SHORT).show();
-        });
+        view.findViewById(R.id.fix_data_button).setOnClickListener(v -> fixData());
         return view;
+    }
+
+    private void fixData(){
+        Toast.makeText(getContext(), "修复成功", Toast.LENGTH_SHORT).show();
     }
 
     private void clearLocalImages(Collection<String> using){
@@ -103,11 +108,15 @@ public class SettingsFragment extends Fragment {
             return;
         }
         Set<String> paths = new HashSet<>(using);
+        List<String> deleted = new ArrayList<>();
         for (File file : FileUtils.IMAGE_FOLDER.listFiles()) {
             if (!paths.contains(file.getName())){
                 file.delete();
+                Log.d("clearCache", "delete file: " + file.getAbsolutePath());
+                deleted.add(file.getAbsolutePath());
             }
         }
+        Log.d("clearCache", deleted.size() + " files deleted: ");
     }
 
     private void clearCache(){
@@ -119,7 +128,7 @@ public class SettingsFragment extends Fragment {
                 clearLocalImages(ImagePathService.selectPaths());
                 // Removing non-existent images
                 List<String> filenames = Arrays.stream(FileUtils.IMAGE_FOLDER.listFiles()).map(File::getName).collect(Collectors.toList());
-                SelfMadeFoodService.deleteNonExistentImage(filenames);
+                ImagePathService.clearNonExistent(filenames);
                 clearFolder(FileUtils.LOG_FOLDER);
                 clearFolder(FileUtils.TEMP_FOLDER);
                 clearFolder(FileUtils.TEMP_UNZIP_FOLDER);
@@ -146,56 +155,26 @@ public class SettingsFragment extends Fragment {
     }
 
     private void showExportDataDialog(){
-        String filename = "RandomMenu" + Helper.formatCurrentTimestamp() + ".zip", path = FileUtils.EXPORTED_DATA_FOLDER.getPath() + File.separator + filename;
+        String filename = "RandomMenu" + BackupUtils.now() + ".zip";
         LoadingDialog dialog = new LoadingDialog();
         dialog.setOnViewCreatedListener(d -> {
             dialog.setMessage(R.string.exporting_data);
-            new Thread(() -> exportData(dialog, filename, path)).start();
+            new Thread(() -> exportData(dialog, filename)).start();
         });
         dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
     }
 
-    private static String buildRestaurantFilename(){
-        return FileUtils.TEMP_FOLDER.getName() + File.separator + RESTAURANT_FILENAME;
-    }
-
-    private static String buildSelfFoodFilename(){
-        return FileUtils.TEMP_FOLDER.getName() + File.separator + SELF_FOOD_FILENAME;
-    }
-
-    private static String buildAutoTagMapFilename(){
-        return FileUtils.TEMP_FOLDER.getName() + File.separator + AUTO_TAG_MAP_FILENAME;
-    }
-
-    private File exportToFile(String filename, Object data){
-        FileUtils.writeFile(filename, JsonUtils.toJson(data));
-        return FileUtils.getFile(filename);
-    }
-
-    private void exportData(LoadingDialog dialog, String filename, String path){
+    private void exportData(LoadingDialog dialog, String filename){
+        List<File> files = BackupUtils.getBackupDataFiles();
+        files.add(FileUtils.IMAGE_FOLDER);
+        dialog.setMessage("正在打包，请稍候");
         try {
-            File settings = FileUtils.getFile(Settings.FILENAME);
-
-            File restaurantsFile = exportToFile(buildRestaurantFilename(), RestaurantDaoService.selectAll());
-            File selfFoodsFile = exportToFile(buildSelfFoodFilename(), SelfMadeFoodService.selectAll());
-            File autoTagMapFile = exportToFile(buildAutoTagMapFilename(), AutoTagMapperDaoService.selectAll());
-
-            dialog.setMessage("正在打包，请稍候");
-            FileUtils.zip(path, FileUtils.IMAGE_FOLDER, settings, restaurantsFile, selfFoodsFile, autoTagMapFile);
-        } catch (FileNotFoundException e){
-            showExceptionToast(dialog, R.string.file_not_found, e);
-            return;
-        } catch (Exception e) {
-            showExceptionToast(dialog, R.string.export_data_failed, e);
-            return;
+            File file = FileUtils.zip(FileUtils.EXPORTED_DATA_FOLDER, filename, files);
+            showShortToast(dialog, R.string.export_data_msg);
+            IntentUtils.shareFile(getContext(), file);
+        } catch (ResourcedException e){
+            showShortToast(dialog, e.getResourceId());
         }
-        showShortToast(dialog, R.string.export_data_msg);
-        // 分享导出文件
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        shareIntent.setType("*/*");
-        shareIntent.putExtra(Intent.EXTRA_STREAM, FileUtils.getFileUri(getContext(), path));
-        startActivity(Intent.createChooser(shareIntent, String.format(getString(R.string.share_item), filename)));
     }
 
     private void showUnzipDialog(File file){
@@ -243,7 +222,7 @@ public class SettingsFragment extends Fragment {
         }
         try {
             dialog.setMessage("正在导入探店记录");
-            String json = FileUtils.readFile(buildRestaurantFilename());
+            String json = FileUtils.readFile(BackupUtils.buildRestaurantFilename());
             List<RestaurantVO> list = JsonUtils.fromJson(json, new TypeToken<List<RestaurantVO>>() {});
             RestaurantDaoService.selectAll().forEach(RestaurantDaoService::delete);
             RestaurantDaoService.insert(list);
@@ -252,7 +231,7 @@ public class SettingsFragment extends Fragment {
         }
         try {
             dialog.setMessage("正在导入菜肴");
-            String json = FileUtils.readFile(buildSelfFoodFilename());
+            String json = FileUtils.readFile(BackupUtils.buildSelfFoodFilename());
             List<SelfMadeFood> list = JsonUtils.fromJson(json, new TypeToken<List<SelfMadeFood>>() {});
             SelfFoodDaoService.selectAll().forEach(SelfFoodDaoService::delete);
             list.forEach(SelfMadeFoodService::addFood);
@@ -261,15 +240,15 @@ public class SettingsFragment extends Fragment {
         }
         try {
             dialog.setMessage("正在导入标签映射");
-            String json = FileUtils.readFile(buildAutoTagMapFilename());
+            String json = FileUtils.readFile(BackupUtils.buildAutoTagMapFilename());
             List<TagMapEntry> list = JsonUtils.fromJson(json, new TypeToken<List<TagMapEntry>>() {});
             AutoTagMapperDaoService.selectAll().forEach(AutoTagMapperDaoService::delete);
             list.forEach(AutoTagMapperDaoService::insert);
         } catch (Exception e){
             showExceptionToast(dialog, "导入标签映射记录失败", e);
         }
-        Helper.init(getActivity());
-        Helper.save();
+        BackupUtils.init(getActivity());
+        BackupUtils.save();
         clearFolder(FileUtils.TEMP_UNZIP_FOLDER);
     }
 

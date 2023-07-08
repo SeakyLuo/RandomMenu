@@ -36,7 +36,6 @@ import java.io.IOException;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
 
 public class ImageUtils {
     public static Bitmap DEFAULT_FOOD_IMAGE;
@@ -75,11 +74,11 @@ public class ImageUtils {
     }
 
     public static String newImageFileName(){
-        return Helper.formatCurrentTimestamp() + ".jpg";
+        return BackupUtils.now() + ".jpg";
     }
     public static String newImageFileName(Integer suffix){
         if (suffix == null) return newImageFileName();
-        return Helper.formatCurrentTimestamp() + "_" + suffix + ".jpg";
+        return BackupUtils.now() + "_" + suffix + ".jpg";
     }
 
     public static Bitmap getFoodBitmap(String path) { return BitmapFactory.decodeFile(getImagePath(path)); }
@@ -87,8 +86,6 @@ public class ImageUtils {
 
     public static boolean saveImage(Context context, Uri uri, String filename){
         try {
-//            FileUtils.copy(new File(uri.getPath()), new File(getImagePath(filename)));
-//            return true;
             Bitmap image = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
             return ImageUtils.saveImage(image, FileUtils.IMAGE_FOLDER, filename);
         } catch (IOException e) {
@@ -101,7 +98,7 @@ public class ImageUtils {
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
             return true;
         } catch (IOException e) {
-            Helper.Log("IOException: " + e);
+            BackupUtils.Log("IOException: " + e);
             return false;
         } catch (Exception e){
             return false;

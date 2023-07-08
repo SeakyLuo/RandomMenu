@@ -5,7 +5,7 @@ import android.widget.EditText;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.utils.BackupUtils;
 import personalprojects.seakyluo.randommenu.models.Settings;
 
 public class NoteActivity extends SwipeBackActivity {
@@ -22,7 +22,7 @@ public class NoteActivity extends SwipeBackActivity {
     @Override
     public void finish(){
         Settings.settings.Note = editText.getText().toString();
-        Helper.save();
+        BackupUtils.save();
         super.finish();
     }
 }

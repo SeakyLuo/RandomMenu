@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import personalprojects.seakyluo.randommenu.database.dao.ImagePathDAO;
 import personalprojects.seakyluo.randommenu.database.dao.SelfMadeFoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodTagDaoService;
@@ -93,11 +94,6 @@ public class SelfMadeFoodService {
         List<SelfMadeFood> foods = SelfFoodDaoService.selectByIds(foodIds);
         foods.sort(Comparator.comparingLong(SelfMadeFood::getId).reversed());
         return foods;
-    }
-
-    public static void deleteNonExistentImage(List<String> currentImages){
-        ImagePathService.clearNonExistent(currentImages);
-        // TODO clear food cover
     }
 
     public static List<SelfMadeFood> getFavoriteFoods(){

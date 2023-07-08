@@ -1,11 +1,20 @@
 package personalprojects.seakyluo.randommenu.services;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.List;
 import java.util.Map;
 
+import personalprojects.seakyluo.randommenu.database.dao.ImagePathDAO;
+import personalprojects.seakyluo.randommenu.database.services.ConsumeRecordDaoService;
 import personalprojects.seakyluo.randommenu.database.services.ImagePathDaoService;
+import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
+import personalprojects.seakyluo.randommenu.database.services.RestaurantFoodDaoService;
 import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
+import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 
 public class ImagePathService {
 
@@ -55,9 +64,30 @@ public class ImagePathService {
         return ImagePathDaoService.selectByItems(consumeRecordIds, CONSUME_RECORD);
     }
 
-
     public static void clearNonExistent(List<String> existing){
-        ImagePathDaoService.clearNonExistent(existing);
+        List<ImagePathDAO> paths = ImagePathDaoService.clearNonExistent(existing);
+        for (ImagePathDAO dao : paths){
+            String path = dao.getPath();
+            long itemId = dao.getItemId();
+            String itemType = dao.getItemType();
+            if (FoodClass.RESTAURANT.name().equals(itemType)){
+                RestaurantFoodVO food = RestaurantFoodDaoService.selectById(itemId);
+                if (path.equals(food.getCover())){
+                    food.setCover(CollectionUtils.isEmpty(food.getImages()) ? null : food.getImages().get(0));
+                    RestaurantFoodDaoService.update(food);
+                }
+            }
+            else if (CONSUME_RECORD.equals(itemType)){
+
+            }
+            else if (FoodClass.SELF_MADE.name().equals(itemType)){
+                SelfMadeFood food = SelfMadeFoodService.selectById(itemId);
+                if (path.equals(food.getCover())){
+                    food.setCover(food.hasImage() ? food.getImages().get(0) : null);
+                    SelfMadeFoodService.updateFood(food);
+                }
+            }
+        }
     }
 
     public static List<String> selectPaths(){

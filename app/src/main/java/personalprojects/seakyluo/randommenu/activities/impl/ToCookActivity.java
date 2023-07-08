@@ -14,7 +14,7 @@ import personalprojects.seakyluo.randommenu.adapters.impl.StringListAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.utils.BackupUtils;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.models.Settings;
 import personalprojects.seakyluo.randommenu.models.Tag;
@@ -73,7 +73,7 @@ public class ToCookActivity extends SwipeBackActivity {
 
     @Override
     public void finish() {
-        if (updated) Helper.save();
+        if (updated) BackupUtils.save();
         updated = false;
         super.finish();
     }

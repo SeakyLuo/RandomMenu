@@ -188,6 +188,18 @@ public class ConsumeRecordDaoService {
                 .collect(Collectors.toList());
     }
 
+    public static ConsumeRecordVO selectById(long id){
+        ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
+        ConsumeRecordVO record = convert(mapper.selectById(id));
+        if (record == null){
+            return null;
+        }
+        record.setAddress(AddressDaoService.selectById(record.getAddress().getId()));
+        record.setFoods(RestaurantFoodDaoService.selectByConsumeRecord(record.getId()));
+        record.setEnvironmentPictures(ImagePathService.selectByConsumeRecord(id));
+        return record;
+    }
+
     private static ConsumeRecordDAO convert(ConsumeRecordVO src){
         if (src == null){
             return null;

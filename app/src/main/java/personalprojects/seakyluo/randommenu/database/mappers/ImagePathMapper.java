@@ -29,6 +29,9 @@ public interface ImagePathMapper {
     @Query("delete from image_path where path not in (:existing)")
     void clearNonExistent(List<String> existing);
 
+    @Query("select * from image_path where path not in (:existing)")
+    List<ImagePathDAO> selectNonExistent(List<String> existing);
+
     @Query("select path from image_path ")
     List<String> selectPaths();
 

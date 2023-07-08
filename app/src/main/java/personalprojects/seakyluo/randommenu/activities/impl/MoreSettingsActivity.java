@@ -6,7 +6,7 @@ import android.widget.Switch;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
-import personalprojects.seakyluo.randommenu.helpers.Helper;
+import personalprojects.seakyluo.randommenu.utils.BackupUtils;
 import personalprojects.seakyluo.randommenu.models.Settings;
 
 public class MoreSettingsActivity extends SwipeBackActivity {
@@ -35,7 +35,7 @@ public class MoreSettingsActivity extends SwipeBackActivity {
 
     @Override
     public void finish() {
-        if (updated) Helper.save();
+        if (updated) BackupUtils.save();
         updated = false;
         super.finish();
     }

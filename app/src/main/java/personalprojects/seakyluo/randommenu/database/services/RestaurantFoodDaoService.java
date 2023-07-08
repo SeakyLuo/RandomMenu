@@ -41,11 +41,17 @@ public class RestaurantFoodDaoService {
         ImagePathService.deleteByRestaurantFoods(foods.stream().map(RestaurantFoodDAO::getId).collect(Collectors.toList()));
     }
 
-    public static void deleteByConsumeRecord(long consumeRecord){
+    public static void deleteByConsumeRecord(long consumeRecordId){
         RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
-        List<RestaurantFoodDAO> foods = mapper.selectByConsumeRecord(consumeRecord);
-        mapper.deleteByRestaurant(consumeRecord);
+        List<RestaurantFoodDAO> foods = mapper.selectByConsumeRecord(consumeRecordId);
+        mapper.deleteByRestaurant(consumeRecordId);
         ImagePathService.deleteByRestaurantFoods(foods.stream().map(RestaurantFoodDAO::getId).collect(Collectors.toList()));
+    }
+
+    public static List<RestaurantFoodVO> selectByConsumeRecord(long consumeRecordId){
+        RestaurantFoodMapper mapper = AppDatabase.instance.restaurantFoodMapper();
+        List<RestaurantFoodDAO> foods = mapper.selectByConsumeRecord(consumeRecordId);
+        return foods.stream().map(RestaurantFoodDaoService::convert).collect(Collectors.toList());
     }
 
     public static RestaurantFoodVO selectById(Long id){

@@ -48,6 +48,11 @@ public class AddressDaoService {
         return mapper.selectByRestaurant(restaurantId).stream().map(AddressDaoService::convert).collect(Collectors.toList());
     }
 
+    public static AddressVO selectById(long id){
+        AddressMapper mapper = AppDatabase.instance.addressMapper();
+        return convert(mapper.selectById(id));
+    }
+
     public static Map<Long, List<AddressVO>> selectByRestaurants(Collection<Long> restaurantIds){
         AddressMapper mapper = AppDatabase.instance.addressMapper();
         return mapper.selectByRestaurants(restaurantIds).stream()

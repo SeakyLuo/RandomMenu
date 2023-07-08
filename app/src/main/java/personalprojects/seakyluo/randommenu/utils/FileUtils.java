@@ -25,9 +25,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.exceptions.ResourcedException;
 
 public class FileUtils {
 
@@ -216,6 +220,11 @@ public class FileUtils {
         return "";
     }
 
+    public static File exportToFile(String filename, Object data){
+        writeFile(filename, JsonUtils.toJson(data));
+        return getFile(filename);
+    }
+
     public static void writeFile(String filename, String content){
         /* It writes file to root folder */
         fwrite(getPath(filename), content);
@@ -256,20 +265,31 @@ public class FileUtils {
         return FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(path));
     }
 
-    public static void zip(String filename, File... files) throws Exception {
-        FileOutputStream dest = new FileOutputStream(filename);
-        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-        for (File item: files){
-            if (item.isDirectory()){
-                for (File file: item.listFiles()){
-                    addZipFile(out, file, item.getName() + File.separator + file.getName());
+    public static File zip(File folder, String filename, List<File> files) {
+        String path = folder.getAbsolutePath() + File.separator + filename;
+        try (FileOutputStream dest = new FileOutputStream(path)){
+            try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest))){
+                for (File item: files){
+                    if (item.isDirectory()){
+                        for (File file: item.listFiles()){
+                            addZipFile(out, file, item.getName() + File.separator + file.getName());
+                        }
+                    }
+                    else {
+                        addZipFile(out, item, item.getName());
+                    }
                 }
             }
-            else {
-                addZipFile(out, item, item.getName());
-            }
+        } catch (FileNotFoundException e){
+            BackupUtils.Log("zip FileNotFoundException:" + e);
+            Log.w("zip FileNotFoundException:", e);
+            throw new ResourcedException(R.string.file_not_found);
+        } catch (Exception e) {
+            BackupUtils.Log("zip Exception:" + e);
+            Log.w("zip FileNotFoundException:", e);
+            throw new ResourcedException(R.string.export_data_failed);
         }
-        out.close();
+        return new File(folder, filename);
     }
     private static void addZipFile(ZipOutputStream out, File file, String path){
         byte[] data = new byte[1024];

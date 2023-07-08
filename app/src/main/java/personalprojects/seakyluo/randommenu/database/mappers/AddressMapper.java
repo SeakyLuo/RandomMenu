@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
+import personalprojects.seakyluo.randommenu.database.dao.ConsumeRecordDAO;
 
 @Dao
 public interface AddressMapper {
@@ -31,4 +32,7 @@ public interface AddressMapper {
 
     @Query("select * from ADDRESS where restaurantId in (:restaurantIds) ")
     List<AddressDAO> selectByRestaurants(Collection<Long> restaurantIds);
+
+    @Query("select * from ADDRESS where id = :id")
+    AddressDAO selectById(long id);
 }

@@ -1,5 +1,7 @@
 package personalprojects.seakyluo.randommenu.database.services;
 
+import android.util.Log;
+
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
@@ -55,9 +57,12 @@ public class ImagePathDaoService {
                         .collect(Collectors.toList())));
     }
 
-    public static void clearNonExistent(List<String> existing){
+    public static List<ImagePathDAO> clearNonExistent(List<String> existing){
         ImagePathMapper mapper = AppDatabase.instance.imagePathMapper();
+        List<ImagePathDAO> imagePathDAOS = mapper.selectNonExistent(existing);
+        Log.d("clearNonExistent", "images to delete: " + imagePathDAOS.size());
         mapper.clearNonExistent(existing);
+        return imagePathDAOS;
     }
 
     public static List<String> selectPaths(){

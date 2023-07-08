@@ -36,4 +36,7 @@ public interface ConsumeRecordMapper {
 
     @Query("select eaters from consume_record")
     List<String> selectAllEaters();
+
+    @Query("select * from consume_record where id = :id")
+    ConsumeRecordDAO selectById(long id);
 }
