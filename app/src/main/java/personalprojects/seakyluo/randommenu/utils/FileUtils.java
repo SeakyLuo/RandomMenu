@@ -283,11 +283,11 @@ public class FileUtils {
         } catch (FileNotFoundException e){
             BackupUtils.Log("zip FileNotFoundException:" + e);
             Log.w("zip FileNotFoundException:", e);
-            throw new ResourcedException(R.string.file_not_found);
+            throw new ResourcedException(R.string.file_not_found, e);
         } catch (Exception e) {
             BackupUtils.Log("zip Exception:" + e);
             Log.w("zip FileNotFoundException:", e);
-            throw new ResourcedException(R.string.export_data_failed);
+            throw new ResourcedException(R.string.export_data_failed, e);
         }
         return new File(folder, filename);
     }

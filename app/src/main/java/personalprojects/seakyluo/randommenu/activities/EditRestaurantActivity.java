@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import personalprojects.seakyluo.randommenu.R;
@@ -158,7 +159,7 @@ public class EditRestaurantActivity extends AppCompatActivity implements DragDro
 
     private void addressChanged(AddressVO before, AddressVO after){
         for (ConsumeRecordVO record : consumeRecordAdapter.getData()) {
-            if (record.getAddress().equals(before)){
+            if (Objects.equals(record.getAddress(), before)){
                 record.setAddress(after);
             }
         }

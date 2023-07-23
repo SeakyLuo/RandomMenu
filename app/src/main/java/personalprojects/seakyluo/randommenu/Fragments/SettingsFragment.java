@@ -171,9 +171,9 @@ public class SettingsFragment extends Fragment {
         try {
             File file = FileUtils.zip(FileUtils.EXPORTED_DATA_FOLDER, filename, files);
             showShortToast(dialog, R.string.export_data_msg);
-            IntentUtils.shareFile(getContext(), file);
+//            IntentUtils.shareFile(getContext(), file);
         } catch (ResourcedException e){
-            showShortToast(dialog, e.getResourceId());
+            showExceptionToast(dialog, e.getResourceId(), e.getOriginal());
         }
     }
 
@@ -280,7 +280,11 @@ public class SettingsFragment extends Fragment {
     }
 
     private void showExceptionToast(LoadingDialog dialog, int message, Exception e){
-        showToast(dialog, getString(message) + "：" + (e.getMessage() == null ? e.toString() : e.getMessage()), Toast.LENGTH_LONG);
+        String baseMessage = getString(message);
+        if (e != null){
+            baseMessage +=  "：" + (e.getMessage() == null ? e.toString() : e.getMessage());
+        }
+        showToast(dialog, baseMessage, Toast.LENGTH_LONG);
     }
 
     private void showExceptionToast(LoadingDialog dialog, String message, Exception e){

@@ -48,6 +48,9 @@ public class SelfFoodAdapter extends CustomAdapter<SelfMadeFood> {
 
     public void setFoodLiked(SelfMadeFood food) {
         CustomViewHolder viewHolder = viewHolders.first(vh -> vh.getData().equals(food));
+        if (viewHolder == null){
+            return;
+        }
         setFoodLiked(viewHolder.getView(), food.isFavorite());
     }
 

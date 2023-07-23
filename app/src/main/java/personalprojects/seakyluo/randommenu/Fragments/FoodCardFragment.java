@@ -178,6 +178,7 @@ public class FoodCardFragment extends Fragment {
         showFoodFavorite(isFavorite);
         if (food.getFoodClass() == FoodClass.SELF_MADE){
             SelfMadeFood selfMadeFood = food.asSelfMadeFood();
+            selfMadeFood.setFavorite(isFavorite);
             SelfMadeFoodService.updateFood(selfMadeFood);
             if (foodLikedChangedListener != null) foodLikedChangedListener.accept(selfMadeFood);
         }

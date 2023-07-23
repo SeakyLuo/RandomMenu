@@ -3,6 +3,8 @@ package personalprojects.seakyluo.randommenu.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,5 +115,17 @@ public class SelfMadeFood implements Parcelable {
             dest.writeLong(dateAdded);
         }
         dest.writeInt(hideCount);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (!(o instanceof SelfMadeFood)){
+            return false;
+        }
+        SelfMadeFood food = (SelfMadeFood) o;
+        if (id == 0 && food.getId() == 0){
+            return StringUtils.equals(name, food.getName());
+        }
+        return id == food.getId();
     }
 }
