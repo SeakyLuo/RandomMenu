@@ -12,6 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -69,7 +70,7 @@ public class RestaurantUtils {
                 exifInterface = null;
             }
             record.setConsumeTime(getConsumeTime(exifInterface, path));
-            record.setAddress(getAddress(exifInterface, context));
+            record.setAddress(AddressUtils.getAddress(exifInterface, context));
         }
         return records;
     }
@@ -86,17 +87,6 @@ public class RestaurantUtils {
             Log.w("buildRestaurantFromImages", "consumeTime", e);
             return 0;
         }
-    }
-
-    private static AddressVO getAddress(ExifInterface exifInterface, Context context){
-        if (exifInterface == null){
-            return null;
-        }
-        String latValue = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-        String lonValue = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-        String latRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-        String lonRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-        return AddressUtils.getAddress(context, latValue, latRef, lonValue, lonRef);
     }
 
     private static List<ConsumeRecordVO> reduceConsumeRecords(List<ConsumeRecordVO> records){

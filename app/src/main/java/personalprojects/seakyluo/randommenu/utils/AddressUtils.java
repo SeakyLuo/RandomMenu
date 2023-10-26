@@ -3,6 +3,7 @@ package personalprojects.seakyluo.randommenu.utils;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.ExifInterface;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -12,6 +13,17 @@ import java.util.Locale;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 
 public class AddressUtils {
+
+    public static AddressVO getAddress(ExifInterface exifInterface, Context context){
+        if (exifInterface == null){
+            return null;
+        }
+        String latValue = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+        String lonValue = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+        String latRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+        String lonRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+        return getAddress(context, latValue, latRef, lonValue, lonRef);
+    }
 
     public static AddressVO getAddress(Context context, String latVal, String latRef, String lonVal, String lonRef) {
         if (latVal == null || latRef == null || lonVal == null || lonRef == null){

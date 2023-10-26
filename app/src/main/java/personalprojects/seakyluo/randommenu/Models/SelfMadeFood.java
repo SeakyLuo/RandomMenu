@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -127,5 +128,10 @@ public class SelfMadeFood implements Parcelable {
             return StringUtils.equals(name, food.getName());
         }
         return id == food.getId();
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(id, name);
     }
 }
