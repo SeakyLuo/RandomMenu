@@ -168,7 +168,7 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, R.anim.push_left_out);
+        overridePendingTransition(0, R.anim.push_right_out);
     }
 
     @Override

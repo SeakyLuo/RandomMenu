@@ -294,31 +294,28 @@ public class FileUtils {
         }
     }
 
-    public static void copyDirectory(File src, File dst) throws IOException {
-        if (!dst.isDirectory()){
-            Log.w("copyDirectory", "dst " + dst.getPath() + " is not a directory");
+    public static void moveTo(File src, File dst) throws IOException {
+        if (!src.exists() || !src.isDirectory()) {
             return;
         }
         if (!dst.exists()) {
             dst.mkdirs(); // 创建目标目录
         }
 
-        // 获取源目录下的所有文件和文件夹
         File[] items = src.listFiles();
         if (items != null) {
             for (File item : items) {
                 File destFile = new File(dst, item.getName());
                 if (item.isDirectory()) {
-                    // 如果是文件夹，则递归调用自身进行复制
-                    copyDirectory(item, destFile);
+                    moveTo(item, destFile); // 递归移动子文件夹
+                    item.delete(); // 删除空文件夹
                 } else {
-                    // 如果是文件，则直接复制
-                    copyFile(item, destFile);
+                    item.renameTo(destFile); // 移动文件
                 }
             }
         }
+        src.delete(); // 删除空文件夹
     }
-
 
     public static Uri getFileUri(Context context, String path){
         return FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(path));

@@ -114,7 +114,7 @@ public class RestaurantsFragment extends Fragment {
         Intent intent = new Intent(getActivity(), SearchActivity.class);
         intent.putExtra(SearchActivity.SEARCH_TYPE, FoodClass.RESTAURANT);
         startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
+        getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
     }
 
     private void setData(PagedData<RestaurantVO> pagedData){

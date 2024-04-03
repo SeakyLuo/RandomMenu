@@ -6,12 +6,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,14 +82,33 @@ public class NavigationFragment extends Fragment {
         });
         foodAdapter.setFoodLongClickListener((viewHolder, food) -> editFood(food, false));
         foodDetailView.setAdapter(foodAdapter);
+        getActivity().getWindow().getDecorView().addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            resetGridLayoutSpan();
+        });
         view.findViewById(R.id.navigation_toolbar).setOnClickListener(v -> foodDetailView.smoothScrollToPosition(0));
 
         setData();
+        foodDetailView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                resetGridLayoutSpan();
+                // 在这里使用 recyclerViewWidth
+                foodDetailView.getViewTreeObserver().removeOnGlobalLayoutListener(this); // 移除监听器
+            }
+        });
         if (pendingTag == null) pendingTag = Tag.AllCategoriesTag;
         selectTag(pendingTag);
         selectTagAdapter.highlightTag(pendingTag);
         pendingTag = null;
         return view;
+    }
+
+    private void resetGridLayoutSpan(){
+        int recyclerViewWidth = foodDetailView.getWidth();
+        float viewHolderWidth = getResources().getDimension(R.dimen.listed_food_view_holder_width);
+        int spanCount = (int) (recyclerViewWidth / viewHolderWidth);
+        GridLayoutManager layoutManager = (GridLayoutManager) foodDetailView.getLayoutManager();
+        layoutManager.setSpanCount(spanCount);
     }
 
     private void refresh() {
@@ -100,7 +123,7 @@ public class NavigationFragment extends Fragment {
         Intent intent = new Intent(getContext(), SearchActivity.class);
         intent.putExtra(SearchActivity.SEARCH_TYPE, FoodClass.SELF_MADE);
         startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
+        getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
     }
 
     private void showTagMenu(CustomAdapter<Tag>.CustomViewHolder viewHolder, Tag data){

@@ -205,7 +205,7 @@ public class SettingsFragment extends Fragment {
         } else {
             try {
                 dialog.setMessage("正在导入图片");
-                FileUtils.copyDirectory(imageFolder, FileUtils.ROOT_FOLDER);
+                FileUtils.moveTo(imageFolder, FileUtils.ROOT_FOLDER);
             } catch (IOException e) {
                 showExceptionToast(dialog, R.string.import_data_failed, e);
             }

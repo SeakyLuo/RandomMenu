@@ -8,4 +8,5 @@
     <dimen name="restaurant_display_marginHorizontal">10dp</dimen>
     <dimen name="image_adder_size">75dp</dimen>
     <dimen name="horizontal_image_view_margin">2dp</dimen>
+    <dimen name="listed_food_view_holder_width">120dp</dimen>
 </resources>
