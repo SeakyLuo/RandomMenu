@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import kotlin.Unit;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeFoodAdapter;
@@ -112,7 +113,7 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         confirmButton.setOnClickListener(this::onConfirm);
         consumeTimeText.setOnClickListener(v -> {
             new CardDatePickerDialog.Builder(this)
-                    .setLabelText("年","月","日","时","分")
+                    .setLabelText("年","月","日","时","分", "秒")
                     .setOnChoose("选择", this::setConsumeTime)
                     .setDefaultTime(Optional.ofNullable(consumeTime).orElse(System.currentTimeMillis()))
                     .showBackNow(true)
@@ -225,9 +226,10 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         }
     }
 
-    private void setConsumeTime(long time){
+    private Unit setConsumeTime(long time){
         consumeTime = time;
         consumeTimeText.setText(DateFormatUtils.format(time, ConsumeRecordVO.CONSUME_TIME_FORMAT));
+        return null;
     }
 
     private void setAddress(List<AddressVO> addressList){

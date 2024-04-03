@@ -35,13 +35,25 @@ public class LoadingDialog extends DialogFragment {
     }
 
     public void setMessage(String message) {
-        if (loading_message == null) this.message = message;
-        else loading_message.setText(message);
+        if (loading_message == null){
+            this.message = message;
+        }
+        else {
+            loading_message.post(() -> {
+                loading_message.setText(message);
+            });
+        }
     }
 
     public void setMessage(int resId) {
-        if (loading_message == null) this.message_res_id = resId;
-        else loading_message.setText(resId);
+        if (loading_message == null){
+            this.message_res_id = resId;
+        }
+        else {
+            loading_message.post(() -> {
+                loading_message.setText(resId);
+            });
+        }
     }
 
     public void setIndeterminate(boolean indeterminate) {

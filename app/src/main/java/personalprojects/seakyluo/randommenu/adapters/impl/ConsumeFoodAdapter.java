@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.EditRestaurantFoodActivity;
+import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
@@ -32,7 +33,7 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
     }
 
     @Override
-    protected void fillViewHolder(CustomViewHolder viewHolder, RestaurantFoodVO data, int position) {
+    protected void fillViewHolder(CustomAdapter.CustomViewHolder viewHolder, RestaurantFoodVO data, int position) {
         View view = viewHolder.getView();
         TextView foodName = view.findViewById(R.id.food_name);
         TextView foodPrice = view.findViewById(R.id.food_price);

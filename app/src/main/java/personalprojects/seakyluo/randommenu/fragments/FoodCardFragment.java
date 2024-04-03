@@ -241,6 +241,9 @@ public class FoodCardFragment extends Fragment {
 
     private BaseFood fillFood(BaseFood food){
         this.food = food;
+        if (food == null){
+            return null;
+        }
         if (!isLoaded){
             return food;
         }

@@ -113,6 +113,7 @@
     <string name="file_not_found">File cannot be found!</string>
     <string name="illegal_unzip_target">Only zip files are supported for importing!</string>
     <string name="import_data_failed">Cannot import data：</string>
+    <string name="copy_data_failed">Cannot copy data：</string>
     <string name="no_import_image_folder">No food image folder to import!</string>
     <string name="no_import_settings">No settings file to import!</string>
     <string name="incomplete_address">Address is incomplete</string>

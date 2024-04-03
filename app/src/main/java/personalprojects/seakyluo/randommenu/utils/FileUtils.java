@@ -24,7 +24,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -202,18 +201,41 @@ public class FileUtils {
         return fread(activity, getPath(filename));
     }
     private static String fread(Activity activity, String filename){
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            StringBuilder builder = new StringBuilder();
-            for (String line = reader.readLine(); line != null; line = reader.readLine()){
-                builder.append(line).append('\n');
-            }
-            return builder.toString();
+        try (FileReader fr = new FileReader(filename)){
+            return readFile(fr);
         } catch (FileNotFoundException e) {
             if (activity != null){
                 if (!PermissionUtils.checkAndRequestReadStoragePermission(activity)) {
                     Log.e("fuck", "File not found: " + e);
                 }
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
+    }
+    public static String readFile(Activity activity, File file){
+        try (FileReader fr = new FileReader(file)){
+            return readFile(fr);
+        } catch (FileNotFoundException e) {
+            if (activity != null){
+                if (!PermissionUtils.checkAndRequestReadStoragePermission(activity)) {
+                    Log.e("fuck", "File not found: " + e);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
+    }
+
+    private static String readFile(FileReader fr){
+        try (BufferedReader reader = new BufferedReader(fr)) {
+            StringBuilder builder = new StringBuilder();
+            for (String line = reader.readLine(); line != null; line = reader.readLine()){
+                builder.append(line).append('\n');
+            }
+            return builder.toString();
         } catch (IOException e) {
             Log.e("fuck", "Can not read file: " + e);
         }
@@ -249,9 +271,19 @@ public class FileUtils {
         return folder.exists() || folder.mkdir() ? folder : null;
     }
 
-    public static void copy(File src, File dst) throws IOException {
-        try (InputStream in = Files.newInputStream(src.toPath())) {
-            try (OutputStream out = Files.newOutputStream(dst.toPath())) {
+    public static void copyFile(File src, File dst) throws IOException {
+        if (!dst.isDirectory()){
+            Log.w("copyFile", "dst " + dst.getPath() + " is not a directory");
+            return;
+        }
+        try (InputStream in = new FileInputStream(src)) {
+            File dstDirectory;
+            if (src.isFile()){
+                dstDirectory = new File(dst, src.getName());
+            } else {
+                dstDirectory = dst;
+            }
+            try (OutputStream out = new FileOutputStream(dstDirectory)) {
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
@@ -261,6 +293,33 @@ public class FileUtils {
             }
         }
     }
+
+    public static void copyDirectory(File src, File dst) throws IOException {
+        if (!dst.isDirectory()){
+            Log.w("copyDirectory", "dst " + dst.getPath() + " is not a directory");
+            return;
+        }
+        if (!dst.exists()) {
+            dst.mkdirs(); // 创建目标目录
+        }
+
+        // 获取源目录下的所有文件和文件夹
+        File[] items = src.listFiles();
+        if (items != null) {
+            for (File item : items) {
+                File destFile = new File(dst, item.getName());
+                if (item.isDirectory()) {
+                    // 如果是文件夹，则递归调用自身进行复制
+                    copyDirectory(item, destFile);
+                } else {
+                    // 如果是文件，则直接复制
+                    copyFile(item, destFile);
+                }
+            }
+        }
+    }
+
+
     public static Uri getFileUri(Context context, String path){
         return FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(path));
     }
@@ -310,29 +369,33 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
-    public static void unzip(File zipFile, File targetDirectory) throws Exception {
-        try (FileInputStream fis = new FileInputStream(zipFile)) {
-            try (BufferedInputStream bis = new BufferedInputStream(fis)) {
-                try (ZipInputStream zis = new ZipInputStream(bis)) {
-                    ZipEntry ze;
-                    int count;
-                    byte[] buffer = new byte[1024];
-                    while ((ze = zis.getNextEntry()) != null) {
-                        File file = new File(targetDirectory, ze.getName());
-                        File dir = ze.isDirectory() ? file : file.getParentFile();
-                        if (!dir.isDirectory() && !dir.mkdirs())
-                            throw new FileNotFoundException("Failed to ensure directory: " + dir.getAbsolutePath());
-                        if (ze.isDirectory())
-                            continue;
-                        try (FileOutputStream fout = new FileOutputStream(file)) {
-                            while ((count = zis.read(buffer)) != -1)
-                                fout.write(buffer, 0, count);
-                        }
+
+    public static void unzip(InputStream fis, File targetDirectory) throws IOException {
+        try (BufferedInputStream bis = new BufferedInputStream(fis)) {
+            try (ZipInputStream zis = new ZipInputStream(bis)) {
+                ZipEntry ze;
+                int count;
+                byte[] buffer = new byte[1024];
+                while ((ze = zis.getNextEntry()) != null) {
+                    File file = new File(targetDirectory, ze.getName());
+                    File dir = ze.isDirectory() ? file : file.getParentFile();
+                    if (!dir.isDirectory() && !dir.mkdirs())
+                        throw new FileNotFoundException("Failed to ensure directory: " + dir.getAbsolutePath());
+                    if (ze.isDirectory())
+                        continue;
+                    try (FileOutputStream fout = new FileOutputStream(file)) {
+                        while ((count = zis.read(buffer)) != -1)
+                            fout.write(buffer, 0, count);
                     }
                 }
             }
         }
     }
 
+    public static void unzip(File zipFile, File targetDirectory) throws IOException {
+        try (FileInputStream fis = new FileInputStream(zipFile)) {
+            unzip(fis, targetDirectory);
+        }
+    }
 
 }

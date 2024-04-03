@@ -20,7 +20,7 @@ import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 
 public class BackupUtils {
     private static final String TEMP_BACKUP_NAME = "BackupData";
-    private static final String RESTAURANT_FILENAME = "restaurants.json",
+    public static final String RESTAURANT_FILENAME = "restaurants.json",
             SELF_FOOD_FILENAME = "selfFoods.json",
             AUTO_TAG_MAP_FILENAME = "autoTagMap.json";
 

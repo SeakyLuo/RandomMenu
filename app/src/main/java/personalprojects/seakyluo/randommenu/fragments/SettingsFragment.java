@@ -1,11 +1,14 @@
 package personalprojects.seakyluo.randommenu.fragments;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,13 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.collections.CollectionUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +52,6 @@ import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.ImagePathService;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
-import personalprojects.seakyluo.randommenu.utils.IntentUtils;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -177,22 +177,12 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private void showUnzipDialog(File file){
-        if (!file.getName().endsWith(".zip")){
-            Toast.makeText(getContext(), R.string.illegal_unzip_target, Toast.LENGTH_LONG).show();
-            return;
-        }
-        LoadingDialog dialog = new LoadingDialog();
-        dialog.setOnViewCreatedListener(d -> new Thread(() -> unzip(dialog, file)).start());
-        dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
-        dialog.setMessage(R.string.importing_data);
-    }
-
-    private void unzip(LoadingDialog dialog, File file){
+    private void unzip(LoadingDialog dialog, Uri uri){
         clearFolder(FileUtils.TEMP_UNZIP_FOLDER);
+        FragmentActivity activity = getActivity();
         try {
             dialog.setMessage("正在解压");
-            FileUtils.unzip(file, FileUtils.TEMP_UNZIP_FOLDER);
+            FileUtils.unzip(getContext().getContentResolver().openInputStream(uri), FileUtils.TEMP_UNZIP_FOLDER);
         } catch (Exception e) {
             showExceptionToast(dialog, R.string.import_data_failed, e);
             return;
@@ -204,9 +194,9 @@ public class SettingsFragment extends Fragment {
             return;
         }
         try {
-            FileUtils.copy(settings, FileUtils.ROOT_FOLDER);
+            FileUtils.copyFile(settings, FileUtils.ROOT_FOLDER);
         } catch (IOException e) {
-            showExceptionToast(dialog, R.string.import_data_failed, e);
+            showExceptionToast(dialog, R.string.copy_data_failed, e);
             return;
         }
         File imageFolder = files.first(f -> f.getName().equals(FileUtils.IMAGE_FOLDER.getName()));
@@ -215,14 +205,14 @@ public class SettingsFragment extends Fragment {
         } else {
             try {
                 dialog.setMessage("正在导入图片");
-                FileUtils.copy(imageFolder, FileUtils.ROOT_FOLDER);
+                FileUtils.copyDirectory(imageFolder, FileUtils.ROOT_FOLDER);
             } catch (IOException e) {
                 showExceptionToast(dialog, R.string.import_data_failed, e);
             }
         }
         try {
             dialog.setMessage("正在导入探店记录");
-            String json = FileUtils.readFile(BackupUtils.buildRestaurantFilename());
+            String json = FileUtils.readFile(activity, files.first(f -> BackupUtils.RESTAURANT_FILENAME.equals(f.getName())));
             List<RestaurantVO> list = JsonUtils.fromJson(json, new TypeToken<List<RestaurantVO>>() {});
             RestaurantDaoService.selectAll().forEach(RestaurantDaoService::delete);
             RestaurantDaoService.insert(list);
@@ -231,7 +221,7 @@ public class SettingsFragment extends Fragment {
         }
         try {
             dialog.setMessage("正在导入菜肴");
-            String json = FileUtils.readFile(BackupUtils.buildSelfFoodFilename());
+            String json = FileUtils.readFile(activity, files.first(f -> BackupUtils.SELF_FOOD_FILENAME.equals(f.getName())));
             List<SelfMadeFood> list = JsonUtils.fromJson(json, new TypeToken<List<SelfMadeFood>>() {});
             SelfFoodDaoService.selectAll().forEach(SelfFoodDaoService::delete);
             list.forEach(SelfMadeFoodService::addFood);
@@ -240,16 +230,19 @@ public class SettingsFragment extends Fragment {
         }
         try {
             dialog.setMessage("正在导入标签映射");
-            String json = FileUtils.readFile(BackupUtils.buildAutoTagMapFilename());
+            String json = FileUtils.readFile(activity, files.first(f -> BackupUtils.AUTO_TAG_MAP_FILENAME.equals(f.getName())));
             List<TagMapEntry> list = JsonUtils.fromJson(json, new TypeToken<List<TagMapEntry>>() {});
             AutoTagMapperDaoService.selectAll().forEach(AutoTagMapperDaoService::delete);
             list.forEach(AutoTagMapperDaoService::insert);
         } catch (Exception e){
             showExceptionToast(dialog, "导入标签映射记录失败", e);
         }
-        BackupUtils.init(getActivity());
+        dialog.setMessage("正在整理导入结果");
+        BackupUtils.init(activity);
         BackupUtils.save();
         clearFolder(FileUtils.TEMP_UNZIP_FOLDER);
+        dialog.dismiss();
+        Toast.makeText(activity, "导入结束！", Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -261,11 +254,23 @@ public class SettingsFragment extends Fragment {
                 ((MainActivity)getActivity()).randomFragment.refresh();
                 break;
             case FILE_PICKER:
-                if (data == null || data.getData() == null){
+                if (data == null){
                     return;
                 }
-                File file = new File(data.getData().getPath());
-                showUnzipDialog(file);
+                Uri uri = data.getData();
+                if (uri == null){
+                    return;
+                }
+                Context context = getContext();
+                String path = FileUtils.getPath(context, uri);
+                if (!path.endsWith(".zip")){
+                    Toast.makeText(context, R.string.illegal_unzip_target, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                LoadingDialog dialog = new LoadingDialog();
+                dialog.setOnViewCreatedListener(d -> new Thread(() -> unzip(dialog, uri)).start());
+                dialog.show(getChildFragmentManager(), LoadingDialog.TAG);
+                dialog.setMessage(R.string.importing_data);
                 break;
         }
     }
@@ -285,10 +290,13 @@ public class SettingsFragment extends Fragment {
             baseMessage +=  "：" + (e.getMessage() == null ? e.toString() : e.getMessage());
         }
         showToast(dialog, baseMessage, Toast.LENGTH_LONG);
+        Log.e("showExceptionToast", baseMessage);
     }
 
     private void showExceptionToast(LoadingDialog dialog, String message, Exception e){
-        showToast(dialog, message + "：" + (e.getMessage() == null ? e.toString() : e.getMessage()), Toast.LENGTH_LONG);
+        String baseMessage = message + "：" + (e.getMessage() == null ? e.toString() : e.getMessage());
+        showToast(dialog, baseMessage, Toast.LENGTH_LONG);
+        Log.e("showExceptionToast", baseMessage);
     }
 
     private void showShortToast(LoadingDialog dialog, String message){
