@@ -115,7 +115,7 @@ public class ConsumeRecordDaoService {
         if (StringUtils.isEmpty(comment)){
             return false;
         }
-        return comment.matches("^(?!不).*(好|爱|喜欢|推荐|棒|赞).*") || comment.contains("必点") || comment.contains("还不错") || comment.contains("yyds");
+        return comment.matches("^(?!不).*(好|爱|喜欢|推荐|棒|赞|最佳).*") || comment.contains("必点") || comment.contains("还不错") || comment.contains("yyds");
     }
 
     private static boolean isNotBadComment(String comment){

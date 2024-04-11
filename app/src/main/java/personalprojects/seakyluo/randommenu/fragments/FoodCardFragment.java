@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +87,14 @@ public class FoodCardFragment extends Fragment {
             tagsFragment = (TagsFragment) fragmentManager.getFragment(savedInstanceState, TagsFragment.TAG);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
         }
-
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        // 宽高比大于3/5的判断为折叠屏
+        if (displayMetrics.widthPixels > displayMetrics.heightPixels * 0.6) {
+            View imageViewerFragmentView = imageViewerFragment.getView();
+            ViewGroup.LayoutParams layoutParams = imageViewerFragmentView.getLayoutParams();
+            layoutParams.width = Math.min(1000, layoutParams.width);
+            imageViewerFragmentView.setLayoutParams(layoutParams);
+        }
         isLoaded = true;
         setFlipProperty();
         foodNameText.setOnLongClickListener(v -> {

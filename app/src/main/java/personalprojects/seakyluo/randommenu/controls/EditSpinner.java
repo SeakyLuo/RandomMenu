@@ -38,6 +38,7 @@ public class EditSpinner extends RelativeLayout {
     private boolean isPopupWindowShowing;
     private Animation mAnimation;
     private Animation mResetAnimation;
+    private boolean inited = false;
 
     public EditSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -130,6 +131,7 @@ public class EditSpinner extends RelativeLayout {
         float textSizeInSP = pixelSize == 0 ? 18 : pixelSize / getResources().getDisplayMetrics().scaledDensity;
         setTextSize(textSizeInSP);
         a.recycle();
+        inited = true;
     }
 
     private ListPopupWindow initPopupWindow(Context context) {
@@ -200,7 +202,9 @@ public class EditSpinner extends RelativeLayout {
             popupWindow.dismiss();
             return;
         }
-        popupWindow.show();
+        if (!inited){
+            popupWindow.show();
+        }
     }
 
     // 关闭弹窗
