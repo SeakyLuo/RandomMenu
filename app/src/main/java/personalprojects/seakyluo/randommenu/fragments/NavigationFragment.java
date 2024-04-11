@@ -11,7 +11,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,7 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.FoodTagDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardBottomDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.activities.EditSelfMadeFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.SelfFoodAdapter;
@@ -74,11 +73,11 @@ public class NavigationFragment extends Fragment {
         foodDetailView = view.findViewById(R.id.detailView);
         foodAdapter = new SelfFoodAdapter();
         foodAdapter.setFoodClickedListener((viewHolder, food) -> {
-            FoodCardDialog dialog = new FoodCardDialog();
+            FoodCardBottomDialog dialog = new FoodCardBottomDialog();
             dialog.setSelfFoodId(food.getId());
             dialog.setFoodEditedListener(after -> foodAdapter.updateFood(after));
             dialog.setFoodLikedListener(after -> foodAdapter.setFoodLiked(after));
-            dialog.showNow(getChildFragmentManager(), FoodCardDialog.TAG);
+            dialog.showNow(getChildFragmentManager(), FoodCardBottomDialog.TAG);
         });
         foodAdapter.setFoodLongClickListener((viewHolder, food) -> editFood(food, false));
         foodDetailView.setAdapter(foodAdapter);

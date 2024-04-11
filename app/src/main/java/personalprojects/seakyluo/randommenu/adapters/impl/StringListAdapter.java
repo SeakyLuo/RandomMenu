@@ -25,12 +25,15 @@ public class StringListAdapter extends CustomAdapter<String> {
         ImageButton deleteButton = view.findViewById(R.id.delete_button);
 
         foodName.setOnClickListener(v -> {
-            if (itemClickedListener != null) itemClickedListener.click(viewHolder, data);
+            if (itemClickedListener != null){
+                itemClickedListener.click(viewHolder, data);
+            }
         });
         foodName.setText(data);
         deleteButton.setOnClickListener(v -> {
-            remove(data);
-            if (itemDeletedListener != null) itemDeletedListener.click(viewHolder, data);
+            if (itemDeletedListener != null){
+                itemDeletedListener.click(viewHolder, data);
+            }
         });
     }
 }

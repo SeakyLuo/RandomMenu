@@ -24,7 +24,7 @@ import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.constants.EmojiConstant;
 import personalprojects.seakyluo.randommenu.database.services.AddressDaoService;
-import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardBottomDialog;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -105,9 +105,9 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
         });
         restaurantFoodAdapter.setOnFoodClickListener((vh, d) -> {
             FragmentActivity activity = getContextAsFragmentActivity();
-            FoodCardDialog dialog = new FoodCardDialog();
+            FoodCardBottomDialog dialog = new FoodCardBottomDialog();
             dialog.setRestaurantFoodId(d.getId());
-            dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
+            dialog.showNow(activity.getSupportFragmentManager(), FoodCardBottomDialog.TAG);
         });
     }
 

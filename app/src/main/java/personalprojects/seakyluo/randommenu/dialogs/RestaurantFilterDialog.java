@@ -30,13 +30,14 @@ import java.util.stream.Collectors;
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.controls.EditSpinner;
+import personalprojects.seakyluo.randommenu.controls.EnhancedBottomSheetDialogFragment;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.RestaurantFilter;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.services.FoodTypeService;
 import personalprojects.seakyluo.randommenu.utils.CityPickerUtils;
 
-public class RestaurantFilterDialog extends BottomSheetDialogFragment {
+public class RestaurantFilterDialog extends EnhancedBottomSheetDialogFragment {
     public static final String TAG = "RestaurantFilterDialog";
     private static final String DATE_FORMAT = "yyyy/MM/dd";
     private TextView provinceTextView, cityTextView, countyTextView, startTimeTextView, endTimeTextView;

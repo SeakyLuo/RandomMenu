@@ -23,7 +23,7 @@
     <string name="all">全部</string>
     <string name="food">菜肴</string>
     <string name="input_content">输入内容</string>
-    <string name="clear">清除</string>
+    <string name="clear">清空</string>
     <string name="confirm">确认</string>
     <string name="prefer_tags">喜欢标签</string>
     <string name="exclude_tags">排除标签</string>

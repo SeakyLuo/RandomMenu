@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,14 +11,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
 import java.util.List;
 import java.util.function.Consumer;
 
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.activities.impl.ChooseFoodActivity;
+import personalprojects.seakyluo.randommenu.controls.EnhancedBottomSheetDialogFragment;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
@@ -27,7 +24,7 @@ import personalprojects.seakyluo.randommenu.R;
 
 import static android.app.Activity.RESULT_CANCELED;
 
-public class MenuDialog extends BottomSheetDialogFragment {
+public class MenuDialog extends EnhancedBottomSheetDialogFragment {
     public static final String TAG = "MenuDialog";
     private FoodListFragment fragment = new FoodListFragment();
     private Button clear_button, add_button;
@@ -39,6 +36,7 @@ public class MenuDialog extends BottomSheetDialogFragment {
     private Consumer<List<SelfMadeFood>> foodAddedListener;
     private TextView header_text;
     private String header;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,9 +49,14 @@ public class MenuDialog extends BottomSheetDialogFragment {
             if (foodRemovedListener != null) foodRemovedListener.accept(data);
             fragment.removeFood(data);
         });
+        fragment.setFoodClickedListener((viewHolder, data) -> {
+            FoodCardBottomDialog dialog = new FoodCardBottomDialog();
+            dialog.setSelfFoodId(data.getId());
+            dialog.showNow(getActivity().getSupportFragmentManager(), FoodCardBottomDialog.TAG);
+        });
         if (savedInstanceState == null){
             getChildFragmentManager().beginTransaction().add(R.id.food_list_frame, fragment).commit();
-        }else{
+        } else {
             fragment = (FoodListFragment) getChildFragmentManager().getFragment(savedInstanceState, FoodListFragment.TAG);
         }
         add_button.setOnClickListener(v -> {

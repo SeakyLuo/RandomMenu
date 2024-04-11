@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,7 +29,7 @@ import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoServi
 import personalprojects.seakyluo.randommenu.database.services.SearchHistoryDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardBottomDialog;
 import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.fragments.SearchFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.SearchRestaurantFragment;
@@ -70,7 +69,10 @@ public class SearchActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> finish());
         historyFragment.setData(SearchHistoryDaoService.list(foodClass));
         historyFragment.setItemClickedListener(this::clickHistoryItem);
-        historyFragment.setItemDeletedListener((viewHolder, data) -> SearchHistoryDaoService.delete(foodClass, data));
+        historyFragment.setItemDeletedListener((viewHolder, data) -> {
+            SearchHistoryDaoService.delete(foodClass, data);
+            historyFragment.remove(data);
+        });
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         viewPager.setAdapter(tabPagerAdapter);
         searchBar.addTextChangedListener(getSearchBarTextWatcher());
@@ -134,7 +136,7 @@ public class SearchActivity extends AppCompatActivity {
             return;
         }
         if (tabLayout.getTabAt(0).isSelected()) tabLayout.getTabAt(1).select();
-        historyFragment.add(keyword);
+        historyFragment.addToFirst(keyword);
     }
 
     private void clearClicked(View v){
@@ -144,7 +146,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private boolean onSearchBarEdited(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            historyFragment.add(getKeyword());
+            historyFragment.addToFirst(getKeyword());
             return true;
         }
         return false;
@@ -262,7 +264,7 @@ public class SearchActivity extends AppCompatActivity {
         fragment.setShowTags(showTags);
         fragment.setShowNote(showNote);
         fragment.setFoodClickedListener((vh, data) -> {
-            FoodCardDialog dialog = new FoodCardDialog();
+            FoodCardBottomDialog dialog = new FoodCardBottomDialog();
             dialog.setSelfFoodId(data.getId());
             dialog.setFoodEditedListener(after -> {
                 getFoodListFragments().forEach(f -> f.updateFood(after));

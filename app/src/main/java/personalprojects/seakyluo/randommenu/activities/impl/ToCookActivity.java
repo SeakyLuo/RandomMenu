@@ -82,7 +82,7 @@ public class ToCookActivity extends SwipeBackActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
-        SelfMadeFood food = (SelfMadeFood) data.getParcelableExtra(EditSelfMadeFoodActivity.DATA);
+        SelfMadeFood food = data.getParcelableExtra(EditSelfMadeFoodActivity.DATA);
         String foodName = food.getName();
         Settings.settings.ToCook.remove(foodName);
         adapter.remove(foodName);

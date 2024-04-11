@@ -23,7 +23,7 @@ public class MoreSettingsActivity extends SwipeBackActivity {
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
         findViewById(R.id.tag_map_button).setOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), TagMapActivity.class));
-            overridePendingTransition(R.anim.push_left_in, 0);
+            overridePendingTransition(R.anim.push_right_in, 0);
         });
 
         autoTagSwitch.setChecked(Settings.settings.AutoTag);

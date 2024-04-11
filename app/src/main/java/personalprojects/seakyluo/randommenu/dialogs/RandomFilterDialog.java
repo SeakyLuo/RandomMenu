@@ -1,26 +1,25 @@
 package personalprojects.seakyluo.randommenu.dialogs;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.function.BiConsumer;
 
 import lombok.Setter;
+import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.ChooseTagActivity;
+import personalprojects.seakyluo.randommenu.controls.EnhancedBottomSheetDialogFragment;
 import personalprojects.seakyluo.randommenu.fragments.ChooseTagFragment;
 import personalprojects.seakyluo.randommenu.models.AList;
 import personalprojects.seakyluo.randommenu.models.Tag;
-import personalprojects.seakyluo.randommenu.R;
 
-public class RandomFilterDialog extends BottomSheetDialogFragment {
+public class RandomFilterDialog extends EnhancedBottomSheetDialogFragment {
     public static final String TAG = "FilterDialog";
     private ChooseTagFragment prefer = new ChooseTagFragment(), exclude = new ChooseTagFragment();
     @Setter
@@ -31,7 +30,7 @@ public class RandomFilterDialog extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_filter, container, false);
+        View view = inflater.inflate(R.layout.dialog_tag_filter, container, false);
         Button confirm_button = view.findViewById(R.id.doneButton);
         Button reset_button = view.findViewById(R.id.resetButton);
 
@@ -42,12 +41,15 @@ public class RandomFilterDialog extends BottomSheetDialogFragment {
         exclude.setChooseTagListener(intent -> intent.putExtra(ChooseTagActivity.EXCLUDED_TAGS, prefer.getData()));
         confirm_button.setOnClickListener(v -> tagFilterListener.accept(prefer.getData(), exclude.getData()));
         reset_button.setOnClickListener(resetListener);
+
         return view;
     }
+
 
     public void setData(AList<Tag> preferred, AList<Tag> excluded){
         prefer.setData(preferred);
         exclude.setData(excluded);
     }
+
 }
 

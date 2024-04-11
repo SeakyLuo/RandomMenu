@@ -2,31 +2,23 @@ package personalprojects.seakyluo.randommenu.dialogs;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.lljjcoder.Interface.OnCityItemClickListener;
 import com.lljjcoder.bean.CityBean;
 import com.lljjcoder.bean.DistrictBean;
 import com.lljjcoder.bean.ProvinceBean;
 import com.lljjcoder.citywheel.CityConfig;
 import com.lljjcoder.citywheel.CityParseHelper;
-import com.lljjcoder.style.citylist.Toast.ToastUtils;
 import com.lljjcoder.style.citypickerview.widget.CanShow;
 import com.lljjcoder.style.citypickerview.widget.wheel.OnWheelChangedListener;
 import com.lljjcoder.style.citypickerview.widget.wheel.WheelView;
@@ -37,9 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.R;
-import personalprojects.seakyluo.randommenu.activities.impl.ChooseTagActivity;
+import personalprojects.seakyluo.randommenu.controls.EnhancedBottomSheetDialogFragment;
 
-public class CityPickerDialog extends BottomSheetDialogFragment implements CanShow, OnWheelChangedListener {
+public class CityPickerDialog extends EnhancedBottomSheetDialogFragment implements CanShow, OnWheelChangedListener {
 
     public static final String TAG = "citypicker_log";
 

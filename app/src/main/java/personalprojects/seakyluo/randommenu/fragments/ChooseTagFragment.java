@@ -46,7 +46,7 @@ public class ChooseTagFragment extends Fragment {
         getChildFragmentManager().beginTransaction().add(R.id.tags_frame, tagsFragment).commit();
         if (StringUtils.isNotEmpty(header)) header_text.setText(header);
         add_tag_button.setOnClickListener(v -> LaunchChooseTagActivity());
-        view.findViewById(R.id.tag_card_view).setOnClickListener(v -> {
+        view.findViewById(R.id.tags_frame).setOnClickListener(v -> {
             if (tagsFragment.getData().size() < Tag.MAX_TAGS)
                 LaunchChooseTagActivity();
         });
@@ -63,7 +63,7 @@ public class ChooseTagFragment extends Fragment {
         intent.putExtra(ChooseTagActivity.SELECTED_TAGS, tagsFragment.getData());
         if (chooseTagListener != null) chooseTagListener.accept(intent);
         startActivityForResult(intent, ActivityCodeConstant.CHOOSE_TAG);
-        getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
+        getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
     }
 
     @Override

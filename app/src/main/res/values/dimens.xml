@@ -9,4 +9,7 @@
     <dimen name="image_adder_size">75dp</dimen>
     <dimen name="horizontal_image_view_margin">2dp</dimen>
     <dimen name="listed_food_view_holder_width">120dp</dimen>
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="toolbar_button_width">48dp</dimen>
+    <dimen name="toolbar_title_text_size">20sp</dimen>
 </resources>

@@ -42,6 +42,7 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.ClipboardUtils;
+import personalprojects.seakyluo.randommenu.utils.DeviceUtils;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
 
@@ -49,6 +50,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class FoodCardFragment extends Fragment {
     public static final String TAG = "FoodCardFragment", FOOD = "Food";
+    private static final int MAX_WIDTH = 960;
     private TagsFragment tagsFragment;
     private ImageViewerFragment imageViewerFragment;
     private TextView foodNameText, foodNoteFrontText, foodNoteBackText;
@@ -88,12 +90,16 @@ public class FoodCardFragment extends Fragment {
             imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
         }
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        // 宽高比大于3/5的判断为折叠屏
-        if (displayMetrics.widthPixels > displayMetrics.heightPixels * 0.6) {
+        if (DeviceUtils.isFoldableScreen(displayMetrics)) {
+            ViewGroup.MarginLayoutParams cardLayoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            // imageLayoutParams.width获取到的是-1，所以得算出来
+            int imageWidth = Math.min(MAX_WIDTH, displayMetrics.widthPixels - cardLayoutParams.leftMargin - cardLayoutParams.rightMargin);
             View imageViewerFragmentView = imageViewerFragment.getView();
-            ViewGroup.LayoutParams layoutParams = imageViewerFragmentView.getLayoutParams();
-            layoutParams.width = Math.min(1000, layoutParams.width);
-            imageViewerFragmentView.setLayoutParams(layoutParams);
+            ViewGroup.LayoutParams imageLayoutParams = imageViewerFragmentView.getLayoutParams();
+            imageLayoutParams.width = imageWidth;
+            imageViewerFragmentView.setLayoutParams(imageLayoutParams);
+            cardLayoutParams.width = imageWidth + cardLayoutParams.leftMargin + cardLayoutParams.rightMargin;
+            view.setLayoutParams(cardLayoutParams);
         }
         isLoaded = true;
         setFlipProperty();
@@ -105,11 +111,13 @@ public class FoodCardFragment extends Fragment {
         tagsFragment.setSpanCount(1);
         tagsFragment.setTagClickedListener(this::tagClicked);
         moreButton.setOnClickListener(this::moreClicked);
+        foodNoteFrontText.setMovementMethod(new ScrollingMovementMethod());
         foodNoteFrontText.setOnClickListener(v -> {
             if (StringUtils.isNotEmpty(foodNoteBackText.getText())){
                 flip();
             }
         });
+        foodNoteBackText.setMovementMethod(new ScrollingMovementMethod());
         foodNoteBackText.setOnClickListener(v -> {
             if (StringUtils.isNotEmpty(foodNoteFrontText.getText())){
                 flip();

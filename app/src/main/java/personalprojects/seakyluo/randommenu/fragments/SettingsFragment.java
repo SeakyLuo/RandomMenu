@@ -66,31 +66,31 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         view.findViewById(R.id.to_cook_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), ToCookActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
+            getActivity().overridePendingTransition(R.anim.push_right_in, 0);
         });
         view.findViewById(R.id.my_favorites_button).setOnClickListener(v -> {
             startActivityForResult(new Intent(getContext(), MyFavoritesActivity.class), MyFavoritesActivity.REQUEST_CODE);
-            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
+            getActivity().overridePendingTransition(R.anim.push_right_in, 0);
         });
         view.findViewById(R.id.to_eat_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), ToEatActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
+            getActivity().overridePendingTransition(R.anim.push_right_in, 0);
         });
         view.findViewById(R.id.dislike_food_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), DislikeActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
+            getActivity().overridePendingTransition(R.anim.push_right_in, 0);
         });
         view.findViewById(R.id.dislike_food_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), DislikeActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
+            getActivity().overridePendingTransition(R.anim.push_right_in, 0);
         });
         view.findViewById(R.id.note_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), NoteActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
+            getActivity().overridePendingTransition(R.anim.push_right_in, 0);
         });
         view.findViewById(R.id.more_settings_button).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), MoreSettingsActivity.class));
-            getActivity().overridePendingTransition(R.anim.push_left_in, 0);
+            getActivity().overridePendingTransition(R.anim.push_right_in, 0);
         });
         view.findViewById(R.id.clear_cache_button).setOnClickListener(v -> clearCache());
         view.findViewById(R.id.import_data_button).setOnClickListener(v -> importData());
