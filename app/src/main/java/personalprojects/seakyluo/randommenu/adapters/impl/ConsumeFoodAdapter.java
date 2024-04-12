@@ -14,7 +14,7 @@ import personalprojects.seakyluo.randommenu.activities.EditRestaurantFoodActivit
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.DraggableAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
-import personalprojects.seakyluo.randommenu.dialogs.FoodCardBottomDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
@@ -58,9 +58,9 @@ public class ConsumeFoodAdapter extends DraggableAdapter<RestaurantFoodVO> {
             activity.startActivityForResult(intent, ActivityCodeConstant.EDIT_RESTAURANT_FOOD);
             activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
         } else {
-            FoodCardBottomDialog dialog = new FoodCardBottomDialog();
+            FoodCardDialog dialog = new FoodCardDialog();
             dialog.setRestaurantFoodId(data.getId());
-            dialog.showNow(activity.getSupportFragmentManager(), FoodCardBottomDialog.TAG);
+            dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
         }
     }
 

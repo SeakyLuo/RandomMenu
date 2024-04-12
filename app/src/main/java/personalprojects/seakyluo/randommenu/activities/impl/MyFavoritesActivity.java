@@ -7,7 +7,7 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.dialogs.FoodCardBottomDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.fragments.FoodListFragment;
 import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
@@ -31,7 +31,7 @@ public class MyFavoritesActivity extends SwipeBackActivity {
         fragment.setRemovable(true);
         fragment.setShowLikeImage(false);
         fragment.setFoodClickedListener((viewHolder, food) -> {
-            FoodCardBottomDialog dialog = new FoodCardBottomDialog();
+            FoodCardDialog dialog = new FoodCardDialog();
             dialog.setSelfFoodId(food.getId());
             dialog.setFoodLikedListener(after -> {
                 fragment.removeFood(after);

@@ -50,9 +50,9 @@ public class MenuDialog extends EnhancedBottomSheetDialogFragment {
             fragment.removeFood(data);
         });
         fragment.setFoodClickedListener((viewHolder, data) -> {
-            FoodCardBottomDialog dialog = new FoodCardBottomDialog();
+            FoodCardDialog dialog = new FoodCardDialog();
             dialog.setSelfFoodId(data.getId());
-            dialog.showNow(getActivity().getSupportFragmentManager(), FoodCardBottomDialog.TAG);
+            dialog.showNow(getActivity().getSupportFragmentManager(), FoodCardDialog.TAG);
         });
         if (savedInstanceState == null){
             getChildFragmentManager().beginTransaction().add(R.id.food_list_frame, fragment).commit();

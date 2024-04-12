@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.dialogs;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDialog;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.function.Consumer;
 
@@ -17,14 +21,26 @@ import personalprojects.seakyluo.randommenu.database.services.RestaurantFoodDaoS
 import personalprojects.seakyluo.randommenu.fragments.FoodCardFragment;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
+import personalprojects.seakyluo.randommenu.utils.DeviceUtils;
 
-public class FoodCardBottomDialog extends EnhancedBottomSheetDialogFragment {
+public class FoodCardDialog extends EnhancedBottomSheetDialogFragment {
     public static final String TAG = "FoodCardDialog";
     private FoodCardFragment foodCardFragment = new FoodCardFragment();
     @Setter
     private Long selfFoodId;
     @Setter
     private Long restaurantFoodId;
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        if (DeviceUtils.isFoldableScreen(getContext())){
+            return new AppCompatDialog(getContext(), getTheme());
+        } else {
+            return new BottomSheetDialog(getContext(), getTheme());
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

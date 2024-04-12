@@ -26,7 +26,7 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.FoodTagDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.dialogs.FoodCardBottomDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.activities.EditSelfMadeFoodActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.SelfFoodAdapter;
@@ -73,11 +73,11 @@ public class NavigationFragment extends Fragment {
         foodDetailView = view.findViewById(R.id.detailView);
         foodAdapter = new SelfFoodAdapter();
         foodAdapter.setFoodClickedListener((viewHolder, food) -> {
-            FoodCardBottomDialog dialog = new FoodCardBottomDialog();
+            FoodCardDialog dialog = new FoodCardDialog();
             dialog.setSelfFoodId(food.getId());
             dialog.setFoodEditedListener(after -> foodAdapter.updateFood(after));
             dialog.setFoodLikedListener(after -> foodAdapter.setFoodLiked(after));
-            dialog.showNow(getChildFragmentManager(), FoodCardBottomDialog.TAG);
+            dialog.showNow(getChildFragmentManager(), FoodCardDialog.TAG);
         });
         foodAdapter.setFoodLongClickListener((viewHolder, food) -> editFood(food, false));
         foodDetailView.setAdapter(foodAdapter);

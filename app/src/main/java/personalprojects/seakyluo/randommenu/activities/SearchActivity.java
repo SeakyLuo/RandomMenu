@@ -29,7 +29,7 @@ import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoServi
 import personalprojects.seakyluo.randommenu.database.services.SearchHistoryDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
-import personalprojects.seakyluo.randommenu.dialogs.FoodCardBottomDialog;
+import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.fragments.SearchFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.SearchRestaurantFragment;
@@ -264,7 +264,7 @@ public class SearchActivity extends AppCompatActivity {
         fragment.setShowTags(showTags);
         fragment.setShowNote(showNote);
         fragment.setFoodClickedListener((vh, data) -> {
-            FoodCardBottomDialog dialog = new FoodCardBottomDialog();
+            FoodCardDialog dialog = new FoodCardDialog();
             dialog.setSelfFoodId(data.getId());
             dialog.setFoodEditedListener(after -> {
                 getFoodListFragments().forEach(f -> f.updateFood(after));

@@ -11,6 +11,9 @@ public class EnhancedBottomSheetDialogFragment extends BottomSheetDialogFragment
     public void onStart() {
         super.onStart();
         View bottomSheet = getDialog().findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet == null){
+            return;
+        }
         BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
         bottomSheet.post(() -> {
