@@ -25,11 +25,15 @@ import personalprojects.seakyluo.randommenu.utils.DeviceUtils;
 
 public class FoodCardDialog extends EnhancedBottomSheetDialogFragment {
     public static final String TAG = "FoodCardDialog";
-    private FoodCardFragment foodCardFragment = new FoodCardFragment();
+    private final FoodCardFragment foodCardFragment = new FoodCardFragment();
     @Setter
     private Long selfFoodId;
     @Setter
     private Long restaurantFoodId;
+
+    public FoodCardDialog(){
+        showCompatDialogOnFoldableScreen = true;
+    }
 
     @NonNull
     @Override
