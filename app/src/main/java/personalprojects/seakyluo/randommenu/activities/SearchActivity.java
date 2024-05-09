@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
 
@@ -23,14 +24,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.adapters.impl.TabPagerAdapter;
+import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SearchHistoryDaoService;
 import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
 import personalprojects.seakyluo.randommenu.enums.FoodClass;
+import personalprojects.seakyluo.randommenu.fragments.RestaurantsFragment;
 import personalprojects.seakyluo.randommenu.fragments.SearchFoodListFragment;
 import personalprojects.seakyluo.randommenu.fragments.SearchRestaurantFragment;
 import personalprojects.seakyluo.randommenu.fragments.StringListFragment;
@@ -290,4 +294,13 @@ public class SearchActivity extends AppCompatActivity {
         return fragment;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) return;
+        if (foodClass == FoodClass.RESTAURANT && requestCode == ActivityCodeConstant.SHOW_RESTAURANT){
+            RestaurantVO restaurantVO = data.getParcelableExtra(ShowRestaurantActivity.DATA);
+            ((SearchRestaurantFragment) tabPagerAdapter.getItem(1)).updateRestaurant(restaurantVO);
+        }
+    }
 }
