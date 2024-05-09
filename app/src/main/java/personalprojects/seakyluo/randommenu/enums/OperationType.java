@@ -1,5 +1,5 @@
 package personalprojects.seakyluo.randommenu.enums;
 
-public enum  OperationType {
+public enum OperationType {
     UPDATE, DELETE
 }

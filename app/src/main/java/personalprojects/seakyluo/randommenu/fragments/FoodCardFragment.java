@@ -41,6 +41,7 @@ import personalprojects.seakyluo.randommenu.models.Tag;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
+import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.ClipboardUtils;
 import personalprojects.seakyluo.randommenu.utils.DeviceUtils;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
@@ -317,6 +318,7 @@ public class FoodCardFragment extends Fragment {
             fillFood(food);
             RestaurantFoodDaoService.update(food);
         }
+        ActivityUtils.spreadOnActivityResult(getActivity(), requestCode, resultCode, data);
     }
 
     @Override

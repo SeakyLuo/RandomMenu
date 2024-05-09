@@ -75,9 +75,9 @@ public class SelfFoodDaoService {
                 .collect(Collectors.toList());
     }
 
-    public static long countFavoriteFoods(){
+    public static long countFavorites(){
         SelfFoodMapper selfFoodMapper = AppDatabase.instance.selfFoodMapper();
-        return selfFoodMapper.countFavorite(true);
+        return selfFoodMapper.countFavorites(true);
     }
 
     public static void decrementHideCount(){

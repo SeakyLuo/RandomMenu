@@ -44,7 +44,7 @@ public interface SelfFoodMapper {
     long count();
 
     @Query("select count(0) from self_food where favorite = :isFavorite")
-    long countFavorite(boolean isFavorite);
+    long countFavorites(boolean isFavorite);
 
     @Query("update self_food set hideCount = hideCount - 1 where hideCount > 0")
     void decrementHideCount();

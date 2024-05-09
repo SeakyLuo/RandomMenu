@@ -37,6 +37,12 @@ public interface RestaurantMapper {
     @Query("SELECT * FROM restaurant order by lastVisitTime desc limit :pageSize offset ((:pageNum - 1) * :pageSize)")
     List<RestaurantDAO> selectByPage(int pageNum, int pageSize);
 
+    @Query("SELECT * FROM restaurant WHERE favorite = :isFavorite order by lastVisitTime desc")
+    List<RestaurantDAO> selectFavorites(boolean isFavorite);
+
+    @Query("select count(0) from restaurant where favorite = :isFavorite")
+    long countFavorites(boolean isFavorite);
+
     @RawQuery(observedEntities = RestaurantDAO.class)
     List<Long> filter(SupportSQLiteQuery query);
 

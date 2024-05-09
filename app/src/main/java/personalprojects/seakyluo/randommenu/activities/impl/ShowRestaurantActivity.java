@@ -37,6 +37,7 @@ import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
+import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
@@ -44,9 +45,11 @@ import personalprojects.seakyluo.randommenu.utils.DoubleUtils;
 public class ShowRestaurantActivity extends SwipeBackActivity {
     public static final String DATA_ID = "RESTAURANT_ID", DATA = "RESTAURANT", OPERATION_TYPE = "OPERATION_TYPE";
     private TextView restaurantNameText, foodTypeText, averagePriceText, restaurantComment, consumeRecordsText, addressText, environmentText;
+    private ImageButton likeButton;
     private ConsumeRecordDisplayAdapter consumeRecordAdapter;
     private RestaurantVO restaurant;
     private HorizontalImageViewFragment envImageViewFragment;
+    private boolean isUpdated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,7 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
 
         ImageButton backButton = findViewById(R.id.back_button);
         ImageButton moreButton = findViewById(R.id.more_button);
+        likeButton = findViewById(R.id.like_button);
         restaurantNameText = findViewById(R.id.restaurant_name);
         addressText = findViewById(R.id.address_text);
         foodTypeText = findViewById(R.id.food_type);
@@ -65,7 +69,7 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
         RecyclerView consumeRecordRecyclerView = findViewById(R.id.consume_record_recycler_view);
         envImageViewFragment = (HorizontalImageViewFragment) getSupportFragmentManager().findFragmentById(R.id.image_viewer_fragment);
 
-        SwipeBackHelper.getCurrentPage(this).setSwipeEdgePercent(0.2f);
+        SwipeBackHelper.getCurrentPage(this).setSwipeEdgePercent(0.25f);
         Intent intent = getIntent();
         long restaurantId = intent.getLongExtra(DATA_ID, 0);
         restaurant = intent.getParcelableExtra(DATA);
@@ -76,7 +80,18 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
 
         setData(restaurant);
         backButton.setOnClickListener(v -> finish());
+        likeButton.setOnClickListener(v -> likeRestaurant());
         moreButton.setOnClickListener(this::showMoreMenu);
+    }
+
+    private void likeRestaurant(){
+        RestaurantDaoService.setRestaurantFavorite(restaurant, !restaurant.isFavorite());
+        setLikeButtonState(restaurant.isFavorite());
+        isUpdated = true;
+    }
+
+    private void setLikeButtonState(boolean isFavorite){
+        likeButton.setImageResource(isFavorite ? R.drawable.ic_undo_like : R.drawable.ic_like);
     }
 
     private void showMoreMenu(View view){
@@ -150,6 +165,7 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
             environmentText.setText(String.format("环境（%d）", environmentPictures.size()));
             envImageViewFragment.setData(environmentPictures);
         }
+        setLikeButtonState(restaurant.isFavorite());
     }
 
     private void setConsumeRecords(){
@@ -169,6 +185,12 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
 
     @Override
     public void finish() {
+        if (isUpdated){
+            Intent intent = new Intent();
+            intent.putExtra(DATA, restaurant);
+            intent.putExtra(OPERATION_TYPE, OperationType.UPDATE);
+            setResult(RESULT_OK, intent);
+        }
         super.finish();
         overridePendingTransition(0, R.anim.push_right_out);
     }
@@ -177,6 +199,7 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
+        isUpdated = true;
         if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT){
             setData(data.getParcelableExtra(EditRestaurantActivity.DATA));
         }
@@ -193,6 +216,21 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
             int index = consumeRecordAdapter.getData().indexOf(r -> r.getId() == recordVO.getId());
             consumeRecordAdapter.set(recordVO, index);
             ConsumeRecordDaoService.update(recordVO);
+        }
+        else if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT_FOOD){
+            // FIXME request code不对，到不了这里，不知道怎么解决了
+            RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
+            for (int i = 0; i < consumeRecordAdapter.getItemCount(); i++){
+                ConsumeRecordVO record = consumeRecordAdapter.getData().get(i);
+                List<RestaurantFoodVO> foods = record.getFoods();
+                for (int j = 0; j < foods.size(); j++){
+                    if (foods.get(j).getId() == food.getId()){
+                        foods.set(j, food);
+                        consumeRecordAdapter.notifyItemChanged(i);
+                        break;
+                    }
+                }
+            }
         }
     }
 

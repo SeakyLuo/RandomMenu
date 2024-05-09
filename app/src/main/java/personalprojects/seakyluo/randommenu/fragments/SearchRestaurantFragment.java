@@ -1,5 +1,6 @@
 package personalprojects.seakyluo.randommenu.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.SearchFragment;
 import personalprojects.seakyluo.randommenu.models.MatchResult;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
+import personalprojects.seakyluo.randommenu.utils.ActivityUtils;
 
 public class SearchRestaurantFragment extends Fragment implements SearchFragment<RestaurantVO> {
     @Setter
@@ -34,7 +36,11 @@ public class SearchRestaurantFragment extends Fragment implements SearchFragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linear_recycler_view, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
-        adapter = new RestaurantAdapter(getContext());
+        if (adapter == null){
+            adapter = new RestaurantAdapter(getContext());
+        } else {
+            adapter.setContext(getContext());
+        }
         recyclerView.setAdapter(adapter);
         return view;
     }
@@ -57,4 +63,30 @@ public class SearchRestaurantFragment extends Fragment implements SearchFragment
                 .collect(Collectors.toList()));
     }
 
+    public void setData(List<RestaurantVO> data){
+        if (adapter == null){
+            adapter = new RestaurantAdapter(null);
+        }
+        adapter.setData(data);
+    }
+
+    public void updateRestaurant(RestaurantVO restaurant){
+        if (restaurant == null){
+            return;
+        }
+        int index = adapter.getData().indexOf(r -> r.getId() == restaurant.getId());
+        if (index != -1){
+            RestaurantVO current = adapter.getDataAt(index);
+            if (current.getFoods() != null){
+                restaurant.setFoods(current.getFoods());
+            }
+            adapter.set(restaurant, index);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ActivityUtils.spreadOnActivityResult(getActivity(), requestCode, resultCode, data);
+    }
 }

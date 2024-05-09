@@ -18,6 +18,7 @@ public class RestaurantDAO {
     private String comment;
     private String link;
     private double averageCost;
+    private boolean favorite;
     private long firstVisitTime;
     private long lastVisitTime;
 

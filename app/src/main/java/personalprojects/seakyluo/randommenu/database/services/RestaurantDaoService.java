@@ -2,13 +2,10 @@ package personalprojects.seakyluo.randommenu.database.services;
 
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,6 +52,19 @@ public class RestaurantDaoService {
             AddressDaoService.insert(addressList, id);
             ConsumeRecordDaoService.insert(vo.getRecords(), id, addressList);
         });
+    }
+
+    public static void setRestaurantFavorite(RestaurantVO vo, boolean favorite){
+        vo.setFavorite(favorite);
+        RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
+        RestaurantDAO dao = convert(vo);
+        dao.setFavorite(favorite);
+        mapper.update(dao);
+    }
+
+    public static long countFavorites(){
+        RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
+        return mapper.countFavorites(true);
     }
 
     public static void update(RestaurantVO vo){
@@ -118,6 +128,18 @@ public class RestaurantDaoService {
         data.setPage(new Page(pageNum, pageSize, count));
         data.setData(voList);
         return data;
+    }
+
+    public static List<RestaurantVO> selectFavorites(){
+        RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
+        List<RestaurantDAO> daoList = mapper.selectFavorites(true);
+        List<RestaurantVO> voList = daoList.stream().map(RestaurantDaoService::convert).collect(Collectors.toList());
+        voList.parallelStream().forEach(vo -> {
+            long restaurantId = vo.getId();
+            vo.setAddressList(AddressDaoService.selectByRestaurant(restaurantId));
+            vo.setFoods(RestaurantFoodDaoService.selectByRestaurantHome(restaurantId));
+        });
+        return voList;
     }
 
     private static SimpleSQLiteQuery buildPagedFilterSQL(int pageNum, int pageSize, RestaurantFilter filter){
@@ -246,6 +268,7 @@ public class RestaurantDaoService {
         dst.setComment(src.getComment());
         dst.setLink(src.getLink());
         dst.setAverageCost(src.getAverageCost());
+        dst.setFavorite(src.isFavorite());
         return dst;
     }
 
@@ -262,6 +285,7 @@ public class RestaurantDaoService {
         double averageCost = src.computeAverageCost();
         src.setAverageCost(averageCost);
         dst.setAverageCost(averageCost);
+        dst.setFavorite(src.isFavorite());
         List<ConsumeRecordVO> records = src.getRecords();
         dst.setFirstVisitTime(records.stream().min(Comparator.comparing(ConsumeRecordVO::getConsumeTime)).map(ConsumeRecordVO::getConsumeTime).orElse(System.currentTimeMillis()));
         dst.setLastVisitTime(records.stream().max(Comparator.comparing(ConsumeRecordVO::getConsumeTime)).map(ConsumeRecordVO::getConsumeTime).orElse(System.currentTimeMillis()));

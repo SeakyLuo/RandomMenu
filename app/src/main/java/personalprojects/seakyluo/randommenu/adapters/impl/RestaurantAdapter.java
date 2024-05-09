@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
@@ -90,9 +91,11 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         TextView averagePrice = view.findViewById(R.id.average_price);
         ExpandableTextView addressTextView = view.findViewById(R.id.address);
         TextView commentText = view.findViewById(R.id.comment_text);
+        ImageView likeIcon = view.findViewById(R.id.like_icon);
 
         restaurantName.setText(data.getName());
         TextViewUtils.highlightTextView(restaurantName, keyword);
+        likeIcon.setVisibility(data.isFavorite() ? View.VISIBLE : View.GONE);
         FoodType foodType = data.getFoodType();
         if (foodType == null){
             foodTypeTextView.setVisibility(View.GONE);
