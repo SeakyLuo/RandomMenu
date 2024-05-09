@@ -22,11 +22,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.R;
+import personalprojects.seakyluo.randommenu.activities.EditConsumeRecordActivity;
 import personalprojects.seakyluo.randommenu.activities.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.activities.EditRestaurantFoodActivity;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.ConsumeRecordDisplayAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.database.services.ConsumeRecordDaoService;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.enums.OperationType;
@@ -185,6 +187,12 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
                 consumeRecordAdapter.removeAt(r -> r.getId() == recordVO.getId());
                 setConsumeRecords();
             }
+        }
+        else if (requestCode == ActivityCodeConstant.EDIT_CONSUME_RECORD){
+            ConsumeRecordVO recordVO = data.getParcelableExtra(EditConsumeRecordActivity.DATA);
+            int index = consumeRecordAdapter.getData().indexOf(r -> r.getId() == recordVO.getId());
+            consumeRecordAdapter.set(recordVO, index);
+            ConsumeRecordDaoService.update(recordVO);
         }
     }
 

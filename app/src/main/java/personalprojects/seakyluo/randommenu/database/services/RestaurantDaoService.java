@@ -109,11 +109,11 @@ public class RestaurantDaoService {
             count = mapper.selectCountByFilter(buildCountFilterSQL(filter));
         }
         List<RestaurantVO> voList = daoList.stream().map(RestaurantDaoService::convert).collect(Collectors.toList());
-        for (RestaurantVO vo : voList){
+        voList.parallelStream().forEach(vo -> {
             long restaurantId = vo.getId();
             vo.setAddressList(AddressDaoService.selectByRestaurant(restaurantId));
             vo.setFoods(RestaurantFoodDaoService.selectByRestaurantHome(restaurantId));
-        }
+        });
         PagedData<RestaurantVO> data = new PagedData<>();
         data.setPage(new Page(pageNum, pageSize, count));
         data.setData(voList);
@@ -223,9 +223,12 @@ public class RestaurantDaoService {
         ids.addAll(foodRestaurantIds);
 
         Map<Long, List<AddressVO>> addressMap = AddressDaoService.selectByRestaurants(ids);
-        for (RestaurantVO restaurant : restaurants){
+        restaurants.parallelStream().forEach(restaurant -> {
             restaurant.setAddressList(addressMap.get(restaurant.getId()));
-        }
+            if (restaurant.getFoods() == null){
+                restaurant.setFoods(RestaurantFoodDaoService.selectByRestaurantHome(restaurant.getId()));
+            }
+        });
         return restaurants;
     }
 

@@ -124,6 +124,7 @@ public class RestaurantUtils {
             if (r.getConsumeTime() < record.getConsumeTime()){
                 if (i == records.size() - 1){
                     records.add(record);
+                    break;
                 }
             } else {
                 records.add(i, record);
