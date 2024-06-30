@@ -21,6 +21,7 @@ public class RestaurantFoodVO implements Parcelable {
     private List<String> images;
     private String comment;
     private double price;
+    private int quantity = 1;
     private int index = -1;
     private int orderInHome = -1;
 
@@ -34,6 +35,7 @@ public class RestaurantFoodVO implements Parcelable {
         images = in.createStringArrayList();
         comment = in.readString();
         price = in.readDouble();
+        quantity = in.readInt();
         index = in.readInt();
         orderInHome = in.readInt();
     }
@@ -66,6 +68,7 @@ public class RestaurantFoodVO implements Parcelable {
         dest.writeStringList(images);
         dest.writeString(comment);
         dest.writeDouble(price);
+        dest.writeInt(quantity);
         dest.writeInt(index);
         dest.writeInt(orderInHome);
     }

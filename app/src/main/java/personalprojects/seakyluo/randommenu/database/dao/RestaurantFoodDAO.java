@@ -20,6 +20,7 @@ public class RestaurantFoodDAO {
     private String pictureUri;
     private String comment;
     private double price;
+    private int quantity;
     private int order;
     private Boolean showInList = false;
     private Integer orderInHome = -1;

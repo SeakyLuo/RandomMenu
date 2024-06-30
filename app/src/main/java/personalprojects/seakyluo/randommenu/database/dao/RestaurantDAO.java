@@ -21,5 +21,6 @@ public class RestaurantDAO {
     private boolean favorite;
     private long firstVisitTime;
     private long lastVisitTime;
+    private int consumeCount;
 
 }

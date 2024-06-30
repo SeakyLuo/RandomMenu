@@ -9,7 +9,7 @@ import com.jude.swipbackhelper.SwipeBackHelper;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
-import personalprojects.seakyluo.randommenu.adapters.impl.StringListAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.SimpleFoodListAdapter;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
 import personalprojects.seakyluo.randommenu.utils.BackupUtils;
@@ -18,7 +18,7 @@ import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class ToEatActivity extends SwipeBackActivity {
     private TextView titleText;
-    private StringListAdapter adapter;
+    private SimpleFoodListAdapter adapter;
     private boolean updated = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class ToEatActivity extends SwipeBackActivity {
         RecyclerView recyclerView = findViewById(R.id.food_list_recycler_view);
         findViewById(R.id.sf_toolbar).setOnClickListener(v -> recyclerView.smoothScrollToPosition(0));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        adapter = new StringListAdapter();
+        adapter = new SimpleFoodListAdapter();
         adapter.setData(Settings.settings.ToEat);
         adapter.setItemDeletedListener((viewHolder, data) -> {
             AskYesNoDialog dialog = new AskYesNoDialog();

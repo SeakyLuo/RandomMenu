@@ -10,7 +10,7 @@ import android.widget.TextView;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.EditSelfMadeFoodActivity;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
-import personalprojects.seakyluo.randommenu.adapters.impl.StringListAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.SimpleFoodListAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.dialogs.AskYesNoDialog;
 import personalprojects.seakyluo.randommenu.dialogs.InputDialog;
@@ -21,7 +21,7 @@ import personalprojects.seakyluo.randommenu.models.Tag;
 
 public class ToCookActivity extends SwipeBackActivity {
     private TextView titleText;
-    private StringListAdapter adapter;
+    private SimpleFoodListAdapter adapter;
     private boolean updated = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class ToCookActivity extends SwipeBackActivity {
         RecyclerView recyclerView = findViewById(R.id.food_list_recycler_view);
         findViewById(R.id.sf_toolbar).setOnClickListener(v -> recyclerView.smoothScrollToPosition(0));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        adapter = new StringListAdapter();
+        adapter = new SimpleFoodListAdapter();
         adapter.setData(Settings.settings.ToCook);
         adapter.setItemClickedListener((viewHolder, data) -> {
             Intent intent = new Intent(this, EditSelfMadeFoodActivity.class);

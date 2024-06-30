@@ -34,8 +34,11 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <data android:scheme="file" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.EditSelfMadeFoodActivity" android:label="EditFoodActivity" />
@@ -56,6 +59,7 @@
         <activity android:name=".activities.impl.ShowRestaurantActivity" android:label="ShowRestaurantActivity" />
         <activity android:name=".activities.impl.ShowConsumeRecordActivity" android:label="ShowConsumeRecordActivity" />
         <activity android:name=".activities.CameraActivity" android:label="CameraActivity" />
+        <activity android:name=".activities.EaterStatsActivity" android:label="EaterStatsActivity" />
     </application>
 
 </manifest>

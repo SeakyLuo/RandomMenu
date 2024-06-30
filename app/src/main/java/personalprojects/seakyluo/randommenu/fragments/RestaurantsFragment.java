@@ -16,12 +16,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.EditRestaurantActivity;
 import personalprojects.seakyluo.randommenu.activities.EditRestaurantFoodActivity;
+import personalprojects.seakyluo.randommenu.activities.EaterStatsActivity;
 import personalprojects.seakyluo.randommenu.activities.SearchActivity;
 import personalprojects.seakyluo.randommenu.activities.impl.ShowRestaurantActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
@@ -32,6 +34,7 @@ import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoServi
 import personalprojects.seakyluo.randommenu.dialogs.RestaurantFilterDialog;
 import personalprojects.seakyluo.randommenu.enums.FoodClass;
 import personalprojects.seakyluo.randommenu.enums.OperationType;
+import personalprojects.seakyluo.randommenu.enums.RestaurantOrderByField;
 import personalprojects.seakyluo.randommenu.helpers.PopupMenuHelper;
 import personalprojects.seakyluo.randommenu.models.RestaurantFilter;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -43,6 +46,8 @@ import personalprojects.seakyluo.randommenu.utils.RestaurantUtils;
 
 import static android.app.Activity.RESULT_OK;
 
+import org.apache.commons.collections.CollectionUtils;
+
 public class RestaurantsFragment extends Fragment {
     public static final String TAG = "RestaurantsFragment";
     private static final int PAGE_SIZE = 10;
@@ -50,7 +55,7 @@ public class RestaurantsFragment extends Fragment {
     private TextView titleTextView;
     private RecyclerView restaurantRecyclerView;
     private RestaurantAdapter restaurantAdapter;
-    private ImageButton filterButton, searchButton;
+    private ImageButton filterButton, searchButton, statsButton;
     private RestaurantFilter restaurantFilter;
 
     @Nullable
@@ -62,21 +67,75 @@ public class RestaurantsFragment extends Fragment {
         restaurantAdapter = new RestaurantAdapter(getContext());
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         restaurantRecyclerView = view.findViewById(R.id.restaurant_recycler_view);
+        statsButton = view.findViewById(R.id.stats_button);
         filterButton = view.findViewById(R.id.filter_button);
         searchButton = view.findViewById(R.id.search_button);
 
         fab.setOnClickListener(this::showCreateRestaurantPopupMenu);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(false);
-            setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
+            setFirstPage();
         });
+        statsButton.setOnClickListener(this::showStatsPopup);
         filterButton.setOnClickListener(this::showFilterDialog);
         searchButton.setOnClickListener(this::showSearchActivity);
         titleTextView.setOnClickListener(v -> restaurantRecyclerView.smoothScrollToPosition(0));
         restaurantRecyclerView.setAdapter(restaurantAdapter);
         RecyclerViewUtils.setAsPaged(restaurantRecyclerView, PAGE_SIZE, ((pageNum, pageSize, filter) -> RestaurantDaoService.selectByPage(pageNum, pageSize, restaurantFilter)), restaurantFilter);
-        setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
+        setFirstPage();
         return view;
+    }
+
+    private void showStatsPopup(View v){
+        PopupMenuHelper helper = new PopupMenuHelper(R.menu.restaurant_stats_menu, getContext(), v);
+        List<RestaurantOrderByField> orderByDesc = restaurantFilter == null ? null : restaurantFilter.getOrderByDesc();
+        if (CollectionUtils.isEmpty(orderByDesc)){
+            helper.removeItems(R.id.cancel_order_by);
+        }
+        else {
+            if (orderByDesc.contains(RestaurantOrderByField.consumeCount)){
+                helper.removeItems(R.id.order_by_consume_count);
+            }
+            if (orderByDesc.contains(RestaurantOrderByField.averageCost)){
+                helper.removeItems(R.id.order_by_price_desc);
+            }
+        }
+        helper.setOnItemSelectedListener((menuBuilder, menuItem) -> {
+            if (restaurantFilter == null){
+                restaurantFilter = new RestaurantFilter();
+            }
+            switch (menuItem.getItemId()){
+                case R.id.order_by_consume_count:
+                    restaurantFilter.setOrderByDesc(Lists.newArrayList(RestaurantOrderByField.consumeCount));
+                    setOrderBy();
+                    return true;
+                case R.id.order_by_price_desc:
+                    restaurantFilter.setOrderByDesc(Lists.newArrayList(RestaurantOrderByField.averageCost));
+                    setOrderBy();
+                    return true;
+                case R.id.cancel_order_by:
+                    restaurantFilter.setOrderByDesc(null);
+                    setFirstPage();
+                    statsButton.setImageResource(R.drawable.ic_stats);
+                    return true;
+                case R.id.show_eater_stats:
+                    showEaterStats();
+                    return true;
+            }
+            return false;
+        });
+        helper.show();
+    }
+
+    private void setOrderBy(){
+        setFirstPage();
+        statsButton.setImageResource(R.drawable.ic_stats_selected);
+    }
+
+    private void showEaterStats(){
+        Intent intent = new Intent(getActivity(), EaterStatsActivity.class);
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
     }
 
     private void showCreateRestaurantPopupMenu(View view){
@@ -105,7 +164,7 @@ public class RestaurantsFragment extends Fragment {
             } else {
                 filterButton.setImageResource(R.drawable.ic_filtering);
             }
-            setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
+            setFirstPage();
         });
         dialog.show(getChildFragmentManager(), RestaurantFilterDialog.TAG);
     }
@@ -115,6 +174,10 @@ public class RestaurantsFragment extends Fragment {
         intent.putExtra(SearchActivity.SEARCH_TYPE, FoodClass.RESTAURANT);
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+    }
+
+    private void setFirstPage(){
+        setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
     }
 
     private void setData(PagedData<RestaurantVO> pagedData){

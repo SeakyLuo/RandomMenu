@@ -92,6 +92,7 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         ExpandableTextView addressTextView = view.findViewById(R.id.address);
         TextView commentText = view.findViewById(R.id.comment_text);
         ImageView likeIcon = view.findViewById(R.id.like_icon);
+        TextView consumeCountText = view.findViewById(R.id.consume_count_text);
 
         restaurantName.setText(data.getName());
         TextViewUtils.highlightTextView(restaurantName, keyword);
@@ -104,6 +105,12 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
             foodTypeTextView.setText(foodType.getName());
         }
         averagePrice.setText("人均￥" + DoubleUtils.truncateZero(data.getAverageCost()));
+        if (data.getConsumeCount() > 1){
+            consumeCountText.setVisibility(View.VISIBLE);
+            consumeCountText.setText("消费" + data.getConsumeCount() +"次");
+        } else {
+            consumeCountText.setVisibility(View.GONE);
+        }
         List<AddressVO> addressList = data.getAddressList();
         if (addressList.isEmpty()){
             addressTextView.setVisibility(View.GONE);

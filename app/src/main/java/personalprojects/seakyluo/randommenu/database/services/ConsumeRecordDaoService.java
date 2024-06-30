@@ -40,7 +40,9 @@ public class ConsumeRecordDaoService {
         List<Long> ids = mapper.insert(daoList);
         setRestaurantIdAndRecordId(voList, restaurantId, ids);
         for (ConsumeRecordVO vo : voList){
-            ImagePathService.insertConsumeRecord(vo.getId(), vo.getEnvironmentPictures());
+            long consumeRecordId = vo.getId();
+            ImagePathService.insertConsumeRecord(consumeRecordId, vo.getEnvironmentPictures());
+            EaterDaoService.insert(restaurantId, consumeRecordId, vo.getEaters());
         }
         computeShowFood(voList);
         List<RestaurantFoodVO> foods = voList.stream().flatMap(vo -> vo.getFoods().stream().peek(f -> f.setId(0))).collect(Collectors.toList());
@@ -131,6 +133,7 @@ public class ConsumeRecordDaoService {
         RestaurantFoodDaoService.deleteByRestaurant(restaurantId);
         List<Long> ids = voList.stream().map(ConsumeRecordVO::getId).collect(Collectors.toList());
         ImagePathService.deleteByConsumeRecords(ids);
+        EaterDaoService.deleteByConsumeRecords(restaurantId, ids);
         insert(voList, restaurantId, addressList);
     }
 
@@ -141,6 +144,7 @@ public class ConsumeRecordDaoService {
         Long id = mapper.insert(dao);
         RestaurantFoodDaoService.insert(vo.getFoods());
         ImagePathService.insertConsumeRecord(id, vo.getEnvironmentPictures());
+        EaterDaoService.insert(vo.getRestaurantId(), id, vo.getEaters());
     }
 
     public static void update(ConsumeRecordVO vo){
@@ -153,6 +157,7 @@ public class ConsumeRecordDaoService {
         mapper.delete(convert(vo));
         RestaurantFoodDaoService.deleteByConsumeRecord(vo.getId());
         ImagePathService.deleteByConsumeRecords(Lists.newArrayList(vo.getId()));
+        EaterDaoService.delete(vo.getRestaurantId(), vo.getId());
     }
 
     public static List<ConsumeRecordVO> selectByRestaurant(long restaurantId){
@@ -177,15 +182,6 @@ public class ConsumeRecordDaoService {
     public static List<ConsumeRecordVO> search(String keyword){
         ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
         return mapper.search(keyword).stream().map(ConsumeRecordDaoService::convert).collect(Collectors.toList());
-    }
-
-    public static List<String> selectAllEaters(){
-        ConsumeRecordMapper mapper = AppDatabase.instance.consumeRecordMapper();
-        return mapper.selectAllEaters().stream()
-                .filter(StringUtils::isNotEmpty)
-                .flatMap(i -> JsonUtils.fromJson(i, new TypeToken<List<String>>(){}).stream())
-                .distinct()
-                .collect(Collectors.toList());
     }
 
     public static ConsumeRecordVO selectById(long id){

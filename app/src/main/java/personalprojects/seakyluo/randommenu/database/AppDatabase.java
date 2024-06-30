@@ -11,6 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import personalprojects.seakyluo.randommenu.database.dao.AddressDAO;
 import personalprojects.seakyluo.randommenu.database.dao.ConsumeRecordDAO;
+import personalprojects.seakyluo.randommenu.database.dao.EaterDAO;
 import personalprojects.seakyluo.randommenu.database.dao.FoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.dao.FoodTypeDAO;
 import personalprojects.seakyluo.randommenu.database.dao.ImagePathDAO;
@@ -22,6 +23,7 @@ import personalprojects.seakyluo.randommenu.database.dao.SelfMadeFoodTagDAO;
 import personalprojects.seakyluo.randommenu.database.dao.TagMapEntryDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.AddressMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.ConsumeRecordMapper;
+import personalprojects.seakyluo.randommenu.database.mappers.EaterMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.FoodTagMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.FoodTypeMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.ImagePathMapper;
@@ -34,8 +36,8 @@ import personalprojects.seakyluo.randommenu.database.mappers.TagMapEntryMapper;
 
 @Database(entities = {RestaurantDAO.class, AddressDAO.class, ConsumeRecordDAO.class, RestaurantFoodDAO.class, FoodTypeDAO.class,
         SelfMadeFoodDAO.class, FoodTagDAO.class, SelfMadeFoodTagDAO.class, TagMapEntryDAO.class, ImagePathDAO.class,
-        SearchHistoryDAO.class },
-        version = 16,
+        SearchHistoryDAO.class, EaterDAO.class },
+        version = 18,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -53,6 +55,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TagMapEntryMapper tagMapEntryMapper();
     public abstract ImagePathMapper imagePathMapper();
     public abstract SearchHistoryMapper searchHistoryMapper();
+    public abstract EaterMapper eaterMapper();
 
     public static void createInstance(Context context){
         instance = Room.databaseBuilder(context, AppDatabase.class, DB_NAME)
@@ -66,6 +69,25 @@ public abstract class AppDatabase extends RoomDatabase {
 //                        Log.d("RoomDebug", "Executed SQL: " + sqlQuery);
 //                    }
 //                }, Executors.newSingleThreadExecutor())
+                .addMigrations(new Migration(17, 18) {
+                    @Override
+                    public void migrate(@NonNull SupportSQLiteDatabase database) {
+                        database.execSQL("alter table restaurant add column consumeCount INTEGER NOT NULL DEFAULT 0");
+                        database.execSQL("create table eater (" +
+                                "id INTEGER PRIMARY KEY NOT NULL, " +
+                                "restaurantId INTEGER NOT NULL," +
+                                "consumeRecordId INTEGER NOT NULL," +
+                                "eater TEXT" +
+                                ")");
+                        database.execSQL("CREATE INDEX index_eater_restaurantId on eater (restaurantId)");
+                    }
+                })
+                .addMigrations(new Migration(16, 17) {
+                    @Override
+                    public void migrate(@NonNull SupportSQLiteDatabase database) {
+                        database.execSQL("alter table restaurant_food add column quantity INTEGER NOT NULL DEFAULT 1");
+                    }
+                })
                 .addMigrations(new Migration(15, 16) {
                     @Override
                     public void migrate(@NonNull SupportSQLiteDatabase database) {

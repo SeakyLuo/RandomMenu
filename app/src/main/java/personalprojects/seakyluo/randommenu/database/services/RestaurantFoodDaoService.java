@@ -1,17 +1,13 @@
 package personalprojects.seakyluo.randommenu.database.services;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantFoodDAO;
-import personalprojects.seakyluo.randommenu.database.mappers.ConsumeRecordMapper;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantFoodMapper;
-import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
 import personalprojects.seakyluo.randommenu.services.ImagePathService;
 
@@ -114,6 +110,7 @@ public class RestaurantFoodDaoService {
         dst.setName(src.getName());
         dst.setComment(src.getComment());
         dst.setPrice(src.getPrice());
+        dst.setQuantity(src.getQuantity());
         dst.setOrderInHome(src.getOrderInHome());
         return dst;
     }
@@ -130,6 +127,7 @@ public class RestaurantFoodDaoService {
         dst.setName(src.getName());
         dst.setComment(src.getComment());
         dst.setPrice(src.getPrice());
+        dst.setQuantity(src.getQuantity());
         dst.setOrderInHome(src.getOrderInHome());
         return dst;
     }

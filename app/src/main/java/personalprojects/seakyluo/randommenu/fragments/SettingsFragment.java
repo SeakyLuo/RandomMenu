@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import personalprojects.seakyluo.randommenu.database.services.SelfFoodDaoService
 import personalprojects.seakyluo.randommenu.dialogs.LoadingDialog;
 import personalprojects.seakyluo.randommenu.activities.impl.DislikeActivity;
 import personalprojects.seakyluo.randommenu.exceptions.ResourcedException;
+import personalprojects.seakyluo.randommenu.helpers.MediaScannerHelper;
 import personalprojects.seakyluo.randommenu.utils.BackupUtils;
 import personalprojects.seakyluo.randommenu.activities.MainActivity;
 import personalprojects.seakyluo.randommenu.models.AList;
@@ -170,6 +172,7 @@ public class SettingsFragment extends Fragment {
         dialog.setMessage("正在打包，请稍候");
         try {
             File file = FileUtils.zip(FileUtils.EXPORTED_DATA_FOLDER, filename, files);
+            MediaScannerHelper.scanFile(getContext(), file.getAbsolutePath());
             showShortToast(dialog, R.string.export_data_msg);
 //            IntentUtils.shareFile(getContext(), file);
         } catch (ResourcedException e){

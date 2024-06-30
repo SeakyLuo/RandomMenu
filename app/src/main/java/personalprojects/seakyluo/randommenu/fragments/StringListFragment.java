@@ -12,12 +12,12 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import personalprojects.seakyluo.randommenu.adapters.impl.StringListAdapter;
+import personalprojects.seakyluo.randommenu.adapters.impl.SimpleFoodListAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.R;
 
 public class StringListFragment extends Fragment {
-    private final StringListAdapter adapter = new StringListAdapter();
+    private final SimpleFoodListAdapter adapter = new SimpleFoodListAdapter();
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linear_recycler_view, container, false);

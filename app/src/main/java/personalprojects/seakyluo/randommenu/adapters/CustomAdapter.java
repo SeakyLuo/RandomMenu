@@ -92,6 +92,7 @@ public abstract class CustomAdapter<T> extends RecyclerView.Adapter<CustomAdapte
     }
 
     public void removeAt(int index){
+        if (index < 0 || index >= data.size()) return;
         data.remove(index);
         dataSizeChanged();
         notifyItemRemoved(index);

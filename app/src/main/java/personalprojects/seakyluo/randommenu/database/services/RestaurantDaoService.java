@@ -2,11 +2,15 @@ package personalprojects.seakyluo.randommenu.database.services;
 
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import personalprojects.seakyluo.randommenu.database.AppDatabase;
@@ -14,6 +18,7 @@ import personalprojects.seakyluo.randommenu.database.dao.Page;
 import personalprojects.seakyluo.randommenu.database.dao.PagedData;
 import personalprojects.seakyluo.randommenu.database.dao.RestaurantDAO;
 import personalprojects.seakyluo.randommenu.database.mappers.RestaurantMapper;
+import personalprojects.seakyluo.randommenu.enums.RestaurantOrderByField;
 import personalprojects.seakyluo.randommenu.models.RestaurantFilter;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
@@ -36,7 +41,7 @@ public class RestaurantDaoService {
         RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
         AppDatabase.instance.runInTransaction(() -> {
             for (RestaurantVO vo : restaurants){
-                insert(vo);
+                insert(mapper, vo);
             }
         });
     }
@@ -44,14 +49,18 @@ public class RestaurantDaoService {
     public static void insert(RestaurantVO vo){
         RestaurantMapper mapper = AppDatabase.instance.restaurantMapper();
         AppDatabase.instance.runInTransaction(() -> {
-            FoodTypeService.save(vo.getFoodType());
-            RestaurantDAO dao = convert(vo);
-            long id = mapper.insert(dao);
-            vo.setId(id);
-            List<AddressVO> addressList = vo.getAddressList();
-            AddressDaoService.insert(addressList, id);
-            ConsumeRecordDaoService.insert(vo.getRecords(), id, addressList);
+            insert(mapper, vo);
         });
+    }
+
+    private static void insert(RestaurantMapper mapper, RestaurantVO vo){
+        FoodTypeService.save(vo.getFoodType());
+        RestaurantDAO dao = convert(vo);
+        long id = mapper.insert(dao);
+        vo.setId(id);
+        List<AddressVO> addressList = vo.getAddressList();
+        AddressDaoService.insert(addressList, id);
+        ConsumeRecordDaoService.insert(vo.getRecords(), id, addressList);
     }
 
     public static void setRestaurantFavorite(RestaurantVO vo, boolean favorite){
@@ -81,7 +90,6 @@ public class RestaurantDaoService {
             if (existedFoodType != null && mapper.countByFoodType(existedFoodType.getId()) == 0){
                 FoodTypeService.delete(existedFoodType);
             }
-
             mapper.update(convert(vo));
             List<AddressVO> addressList = vo.getAddressList();
             AddressDaoService.update(addressList, id);
@@ -115,7 +123,8 @@ public class RestaurantDaoService {
             count = mapper.selectCount();
         } else {
             List<Long> ids = mapper.filter(buildPagedFilterSQL(pageNum, pageSize, filter));
-            daoList = mapper.selectByIds(ids);
+            Map<Long, RestaurantDAO> daoMap = mapper.selectByIds(ids).stream().collect(Collectors.toMap(RestaurantDAO::getId, Function.identity()));
+            daoList = ids.stream().map(daoMap::get).filter(Objects::nonNull).collect(Collectors.toList());
             count = mapper.selectCountByFilter(buildCountFilterSQL(filter));
         }
         List<RestaurantVO> voList = daoList.stream().map(RestaurantDaoService::convert).collect(Collectors.toList());
@@ -143,8 +152,14 @@ public class RestaurantDaoService {
     }
 
     private static SimpleSQLiteQuery buildPagedFilterSQL(int pageNum, int pageSize, RestaurantFilter filter){
-        return new SimpleSQLiteQuery("SELECT distinct restaurant.id FROM restaurant " + buildFilterSQL(filter)
-                + " order by restaurant.lastVisitTime desc limit " + pageSize + " offset " + ((pageNum - 1) * pageSize));
+        List<RestaurantOrderByField> orderByDesc = filter.getOrderByDesc();
+        String orderByDescSQL = "restaurant.lastVisitTime";
+        if (CollectionUtils.isNotEmpty(orderByDesc)){
+            orderByDescSQL = orderByDesc.stream().map(f -> "restaurant." + f.name()).collect(Collectors.joining(","));
+        }
+        String baseSQL = "SELECT distinct restaurant.id FROM restaurant " + buildFilterSQL(filter)
+                + " order by " + orderByDescSQL + " desc limit " + pageSize + " offset " + ((pageNum - 1) * pageSize);
+        return new SimpleSQLiteQuery(baseSQL);
     }
 
     private static SimpleSQLiteQuery buildCountFilterSQL(RestaurantFilter filter){
@@ -193,7 +208,7 @@ public class RestaurantDaoService {
             }
         }
         if (foodType != null){
-            s += "and foodTypeId = " + foodType.getId() + " ";
+            s += "and restaurant.foodTypeId = " + foodType.getId() + " ";
         }
         return s;
     }
@@ -269,6 +284,7 @@ public class RestaurantDaoService {
         dst.setLink(src.getLink());
         dst.setAverageCost(src.getAverageCost());
         dst.setFavorite(src.isFavorite());
+        dst.setConsumeCount(src.getConsumeCount());
         return dst;
     }
 
@@ -287,6 +303,7 @@ public class RestaurantDaoService {
         dst.setAverageCost(averageCost);
         dst.setFavorite(src.isFavorite());
         List<ConsumeRecordVO> records = src.getRecords();
+        dst.setConsumeCount(records.size());
         dst.setFirstVisitTime(records.stream().min(Comparator.comparing(ConsumeRecordVO::getConsumeTime)).map(ConsumeRecordVO::getConsumeTime).orElse(System.currentTimeMillis()));
         dst.setLastVisitTime(records.stream().max(Comparator.comparing(ConsumeRecordVO::getConsumeTime)).map(ConsumeRecordVO::getConsumeTime).orElse(System.currentTimeMillis()));
         return dst;

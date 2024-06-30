@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/order_by_consume_count"
+        android:title="按消费次数降序" />
+
+    <item
+        android:id="@+id/order_by_price_desc"
+        android:title="按照价格降序" />
+
+    <item
+        android:id="@+id/cancel_order_by"
+        android:title="取消排序" />
+
+    <item
+        android:id="@+id/show_eater_stats"
+        android:title="和谁约饭最多" />
+
+</menu>

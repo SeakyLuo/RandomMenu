@@ -1,11 +1,11 @@
 package personalprojects.seakyluo.randommenu.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +27,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
     private EditText editName, editPrice, editComment;
     private RestaurantFoodVO currentFood;
     private ImageViewerFragment imageViewerFragment;
+    private NumberPicker numberPicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,6 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
             currentFood = savedInstanceState.getParcelable(DATA);
             imageViewerFragment = (ImageViewerFragment) fragmentManager.getFragment(savedInstanceState, ImageViewerFragment.TAG);
         }
-
         imageViewerFragment.setEditable(true);
         fillFood(currentFood);
         if (currentFood == null){
@@ -56,6 +56,11 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
         }
         confirmButton.setOnClickListener(this::onConfirm);
         cancelButton.setOnClickListener(v -> finish());
+
+        numberPicker = findViewById(R.id.numberPicker);
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(100);
+        numberPicker.setValue(currentFood.getQuantity());
     }
 
     private void fillFood(RestaurantFoodVO food){
@@ -94,6 +99,7 @@ public class EditRestaurantFoodActivity extends AppCompatActivity {
             dst.setPrice(Double.parseDouble(price));
         }
         dst.setComment(editComment.getText().toString());
+        dst.setQuantity(numberPicker.getValue());
         return dst;
     }
 

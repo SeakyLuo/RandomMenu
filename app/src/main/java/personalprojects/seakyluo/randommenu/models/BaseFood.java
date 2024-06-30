@@ -69,6 +69,9 @@ public class BaseFood implements Parcelable {
         if (price != 0){
             notes.add(EmojiConstant.TOTAL_COST + " 价格：" + DoubleUtils.truncateZero(price));
         }
+        if (src.getQuantity() > 1){
+            notes.add(EmojiConstant.QUANTITY + " 数量：" + src.getQuantity());
+        }
         String comment = src.getComment();
         if (StringUtils.isNotEmpty(comment)){
             notes.add(EmojiConstant.COMMENT + " 评价：" + comment);

@@ -327,8 +327,12 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
         if (!autoCostCheckBox.isChecked()){
             return;
         }
-        String price = DoubleUtils.truncateZero(foodAdapter.getData().stream().mapToDouble(RestaurantFoodVO::getPrice).sum());
-        editTotalCost.setText(price);
+        double price = foodAdapter.getData().stream().mapToDouble(f -> f.getPrice() * f.getQuantity()).sum();
+        String priceText = DoubleUtils.truncateZero(price);
+        if (editTotalCost.getText().toString().equals(priceText)){
+            return;
+        }
+        editTotalCost.setText(priceText);
     }
 
     @Override

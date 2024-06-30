@@ -23,6 +23,7 @@ public class RestaurantVO implements Parcelable {
     private String comment;
     private String link;
     private boolean favorite;
+    private int consumeCount;
     private List<ConsumeRecordVO> records;
     private List<RestaurantFoodVO> foods;
 
@@ -43,6 +44,7 @@ public class RestaurantVO implements Parcelable {
         comment = in.readString();
         link = in.readString();
         favorite = in.readByte() != 0;
+        consumeCount = in.readInt();
         records = in.createTypedArrayList(ConsumeRecordVO.CREATOR);
         foods = in.createTypedArrayList(RestaurantFoodVO.CREATOR);
     }
@@ -74,6 +76,7 @@ public class RestaurantVO implements Parcelable {
         dest.writeString(comment);
         dest.writeString(link);
         dest.writeByte((byte) (favorite ? 1 : 0));
+        dest.writeInt(consumeCount);
         dest.writeTypedList(records);
         dest.writeTypedList(foods);
     }

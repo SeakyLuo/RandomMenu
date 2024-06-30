@@ -28,6 +28,13 @@
                     android:gravity="start|center_vertical" />
 
                 <ImageButton
+                    android:id="@+id/stats_button"
+                    android:layout_width="@dimen/toolbar_button_width"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/ic_stats" />
+
+                <ImageButton
                     android:id="@+id/filter_button"
                     android:layout_width="@dimen/toolbar_button_width"
                     android:layout_height="match_parent"
