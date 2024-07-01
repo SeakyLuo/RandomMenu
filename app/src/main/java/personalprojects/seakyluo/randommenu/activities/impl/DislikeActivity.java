@@ -21,12 +21,12 @@ public class DislikeActivity extends SwipeBackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_simple_food_list);
+        setContentView(R.layout.activity_recycler_view);
 
         titleText = findViewById(R.id.title_text_view);
         findViewById(R.id.back_button).setOnClickListener(v -> finish());
 
-        RecyclerView recyclerView = findViewById(R.id.food_list_recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new SimpleFoodListAdapter();
         adapter.setData(Settings.settings.DislikeFood);
@@ -42,7 +42,7 @@ public class DislikeActivity extends SwipeBackActivity {
             dialog.showNow(getSupportFragmentManager(), AskYesNoDialog.TAG);
         });
         recyclerView.setAdapter(adapter);
-        findViewById(R.id.sf_fab).setOnClickListener(v -> {
+        findViewById(R.id.fab).setOnClickListener(v -> {
             InputDialog dialog = new InputDialog();
             dialog.SetHint(getString(R.string.food_name));
             dialog.setConfirmListener(text -> {

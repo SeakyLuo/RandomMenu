@@ -9,7 +9,9 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 
+@Setter
 public class SimpleStringListAdapter extends CustomAdapter<String> {
+    private DataItemClickedListener<String> onItemClickedListener;
 
     @Override
     protected int getLayout(int viewType) {
@@ -21,5 +23,8 @@ public class SimpleStringListAdapter extends CustomAdapter<String> {
         View view = viewHolder.getView();
         TextView textContent = view.findViewById(R.id.text_content);
         textContent.setText(data);
+        textContent.setOnClickListener(v -> {
+            if (onItemClickedListener != null) onItemClickedListener.click(viewHolder, data);
+        });
     }
 }

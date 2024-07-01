@@ -60,6 +60,7 @@
         <activity android:name=".activities.impl.ShowConsumeRecordActivity" android:label="ShowConsumeRecordActivity" />
         <activity android:name=".activities.CameraActivity" android:label="CameraActivity" />
         <activity android:name=".activities.EaterStatsActivity" android:label="EaterStatsActivity" />
+        <activity android:name=".activities.impl.RestaurantListActivity" android:label="RestaurantListActivity" />
     </application>
 
 </manifest>

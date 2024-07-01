@@ -21,7 +21,10 @@ public interface EaterMapper {
     @Query("delete from eater where restaurantId = :restaurantId and consumeRecordId in (:consumeRecordIds)")
     int deleteByConsumeRecords(long restaurantId, List<Long> consumeRecordIds);
 
+    @Query("select count(*) from eater where eater = :eater")
+    int countByEater(String eater);
+
     @Query("SELECT eater, COUNT(*) AS count FROM eater GROUP BY eater ORDER BY count DESC")
-    List<EaterCount> getEaterCount();
+    List<EaterCount> getEaterCountList();
 
 }

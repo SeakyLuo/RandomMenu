@@ -167,8 +167,9 @@ public class SettingsFragment extends Fragment {
     }
 
     private void exportData(LoadingDialog dialog, String filename){
-        List<File> files = BackupUtils.getBackupDataFiles();
-        files.add(FileUtils.IMAGE_FOLDER);
+//        List<File> files = BackupUtils.getBackupDataFiles();
+//        files.add(FileUtils.IMAGE_FOLDER);
+        List<File> files = new ArrayList<>();
         dialog.setMessage("正在打包，请稍候");
         try {
             File file = FileUtils.zip(FileUtils.EXPORTED_DATA_FOLDER, filename, files);

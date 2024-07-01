@@ -9,8 +9,12 @@ import personalprojects.seakyluo.randommenu.models.EaterCount;
 
 public class EaterDaoService {
 
-    public static List<EaterCount> getCount(){
-        return AppDatabase.instance.eaterMapper().getEaterCount();
+    public static List<EaterCount> getCountList(){
+        return AppDatabase.instance.eaterMapper().getEaterCountList();
+    }
+
+    public static int countByEater(String eater){
+        return AppDatabase.instance.eaterMapper().countByEater(eater);
     }
 
     public static void insert(long restaurantId, long consumeRecordId, List<String> friends){
