@@ -2,6 +2,7 @@ package personalprojects.seakyluo.randommenu.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import java.io.File;
 
@@ -15,5 +16,13 @@ public class IntentUtils {
         shareIntent.setType("*/*");
         shareIntent.putExtra(Intent.EXTRA_STREAM, FileUtils.getFileUri(context, file.getAbsolutePath()));
         context.startActivity(Intent.createChooser(shareIntent, String.format(context.getString(R.string.share_item), file.getName())));
+    }
+
+    public static void shareFile(Context context, Uri uri){
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shareIntent.setType("*/*");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        context.startActivity(Intent.createChooser(shareIntent, String.format(context.getString(R.string.share_item), uri.getPath())));
     }
 }

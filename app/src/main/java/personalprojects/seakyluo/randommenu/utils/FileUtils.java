@@ -2,7 +2,9 @@ package personalprojects.seakyluo.randommenu.utils;
 
 import android.app.Activity;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -347,6 +349,35 @@ public class FileUtils {
         }
         return new File(folder, filename);
     }
+
+    public static Uri zip(Context context, String filename, List<File> files) {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);  // 文件名
+        values.put(MediaStore.MediaColumns.MIME_TYPE, "application/zip");  // MIME类型设置为ZIP
+        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);  // 保存到下载文件夹
+
+        Uri uri = context.getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+        try (FileOutputStream dest = (FileOutputStream) context.getContentResolver().openOutputStream(uri);
+             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest))) {
+            for (File item : files) {
+                if (item.isDirectory()) {
+                    for (File file : item.listFiles()) {
+                        addZipFile(out, file, item.getName() + File.separator + file.getName());
+                    }
+                } else {
+                    addZipFile(out, item, item.getName());
+                }
+            }
+        } catch (FileNotFoundException e) {
+            Log.w("zip FileNotFoundException:", e);
+            throw new RuntimeException("File not found", e);
+        } catch (IOException e) {
+            Log.w("zip IOException:", e);
+            throw new RuntimeException("Failed to zip files", e);
+        }
+        return uri;
+    }
+
     private static void addZipFile(ZipOutputStream out, File file, String path){
         byte[] data = new byte[1024];
         FileInputStream in;
@@ -392,6 +423,40 @@ public class FileUtils {
     public static void unzip(File zipFile, File targetDirectory) throws IOException {
         try (FileInputStream fis = new FileInputStream(zipFile)) {
             unzip(fis, targetDirectory);
+        }
+    }
+
+    public static boolean viewFolder(Context context, String path) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri uri = getFileUri(context, path);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        intent.setDataAndType(uri, "*/*");
+
+        // Verify that the intent will resolve to an activity
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void saveFileToDownloads(Context context, File file) throws IOException {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.MediaColumns.DISPLAY_NAME, file.getName()); // 文件名
+//        values.put(MediaStore.MediaColumns.MIME_TYPE, ); // 文件类型
+        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS); // 相对下载路径
+
+        Uri uri = context.getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+        if (uri != null) {
+            try (OutputStream outputStream = context.getContentResolver().openOutputStream(uri)) {
+                outputStream.write(file.getAbsolutePath().getBytes());
+            } catch (Exception e) {
+                throw new IOException("Failed to save file", e);
+            }
+        } else {
+            throw new IOException("Failed to create new MediaStore record.");
         }
     }
 

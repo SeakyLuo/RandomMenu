@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +53,7 @@ import personalprojects.seakyluo.randommenu.models.vo.RestaurantVO;
 import personalprojects.seakyluo.randommenu.services.ImagePathService;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.FileUtils;
+import personalprojects.seakyluo.randommenu.utils.IntentUtils;
 import personalprojects.seakyluo.randommenu.utils.JsonUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -167,15 +167,13 @@ public class SettingsFragment extends Fragment {
     }
 
     private void exportData(LoadingDialog dialog, String filename){
-//        List<File> files = BackupUtils.getBackupDataFiles();
-//        files.add(FileUtils.IMAGE_FOLDER);
-        List<File> files = new ArrayList<>();
+        List<File> files = BackupUtils.getBackupDataFiles();
+        files.add(FileUtils.IMAGE_FOLDER);
         dialog.setMessage("正在打包，请稍候");
         try {
-            File file = FileUtils.zip(FileUtils.EXPORTED_DATA_FOLDER, filename, files);
-            MediaScannerHelper.scanFile(getContext(), file.getAbsolutePath());
+            Uri uri = FileUtils.zip(getContext(), filename, files);
             showShortToast(dialog, R.string.export_data_msg);
-//            IntentUtils.shareFile(getContext(), file);
+//            IntentUtils.shareFile(getContext(), uri);
         } catch (ResourcedException e){
             showExceptionToast(dialog, e.getResourceId(), e.getOriginal());
         }
