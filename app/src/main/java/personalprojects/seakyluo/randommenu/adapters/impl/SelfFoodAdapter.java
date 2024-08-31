@@ -7,6 +7,7 @@ import android.widget.TextView;
 import lombok.Setter;
 import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
+import personalprojects.seakyluo.randommenu.models.BaseFood;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.utils.ImageUtils;
@@ -46,12 +47,20 @@ public class SelfFoodAdapter extends CustomAdapter<SelfMadeFood> {
         }
     }
 
+    public void updateFood(BaseFood food){
+        updateFood(BaseFood.toSelfMade(food));
+    }
+
     public void setFoodLiked(SelfMadeFood food) {
         CustomViewHolder viewHolder = viewHolders.first(vh -> vh.getData().equals(food));
         if (viewHolder == null){
             return;
         }
         setFoodLiked(viewHolder.getView(), food.isFavorite());
+    }
+
+    public void setFoodLiked(BaseFood food) {
+        setFoodLiked(BaseFood.toSelfMade(food));
     }
 
     private void setFoodLiked(View view, boolean isFavorite){

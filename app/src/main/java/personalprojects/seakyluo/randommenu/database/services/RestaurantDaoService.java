@@ -172,28 +172,28 @@ public class RestaurantDaoService {
         Long endTime = filter.getEndTime();
         List<String> eaterList = filter.getEaters();
         FoodType foodType = filter.getFoodType();
-        if (startTime != null || endTime != null || eaterList != null){
-            s += "left join consume_record cr on restaurant.id = cr.restaurantId ";
+        if (startTime != null || endTime != null || eaterList != null || filter.isEatAlone()){
+            s += "join consume_record cr on restaurant.id = cr.restaurantId ";
+            if (startTime != null){
+                s += "and cr.consumeTime >= " + startTime + " ";
+            }
+            if (endTime != null){
+                s += "and cr.consumeTime <= " + endTime + " ";
+            }
+            if (filter.isEatAlone()){
+                s += "and cr.eaters = '[]' ";
+            }
+            else if (CollectionUtils.isNotEmpty(eaterList)){
+                StringBuilder builder = new StringBuilder();
+                for (String eater : eaterList){
+                    builder.append("and cr.eaters like '%").append(eater).append("%' ");
+                }
+                s += builder.toString();
+            }
         }
         AddressVO address = filter.getAddress();
         if (address != null){
-            s += "left join ADDRESS address on restaurant.id = address.restaurantId ";
-        }
-        s += "where 1 ";
-        if (startTime != null){
-            s += "and cr.consumeTime >= " + startTime + " ";
-        }
-        if (endTime != null){
-            s += "and cr.consumeTime <= " + endTime + " ";
-        }
-        if (eaterList != null){
-            StringBuilder builder = new StringBuilder();
-            for (String eater : eaterList){
-                builder.append("and cr.eaters like '%").append(eater).append("%' ");
-            }
-            s += builder.toString();
-        }
-        if (address != null){
+            s += "join ADDRESS address on restaurant.id = address.restaurantId ";
             String province = address.getProvince();
             String city = address.getCity();
             String county = address.getCounty();
@@ -207,6 +207,7 @@ public class RestaurantDaoService {
                 s += "and address.county = '" + county + "' ";
             }
         }
+        s += "where 1 ";
         if (foodType != null){
             s += "and restaurant.foodTypeId = " + foodType.getId() + " ";
         }

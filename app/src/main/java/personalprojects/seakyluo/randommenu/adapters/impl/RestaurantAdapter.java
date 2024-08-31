@@ -25,6 +25,7 @@ import personalprojects.seakyluo.randommenu.adapters.CustomAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.constants.EmojiConstant;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.models.BaseFood;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.FoodType;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -36,6 +37,7 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
 
     @Setter
     private String keyword;
+    private RestaurantFoodAdapter foodAdapter;
 
     public RestaurantAdapter(Context context){
         this.context = context;
@@ -66,7 +68,15 @@ public class RestaurantAdapter extends CustomAdapter<RestaurantVO> {
         FragmentActivity activity = getContextAsFragmentActivity();
         FoodCardDialog dialog = new FoodCardDialog();
         dialog.setRestaurantFoodId(data.getId());
+        dialog.setFoodEditedListener(this::updateFood);
         dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
+    }
+
+    private void updateFood(BaseFood data){
+        int index = getData().indexOf(f -> f.getId() == data.getId());
+        if (index > -1){
+            foodAdapter.set(BaseFood.toRestaurant(data), index);
+        }
     }
 
     private void showRestaurant(RestaurantVO data){

@@ -47,7 +47,7 @@ public class MenuDialog extends EnhancedBottomSheetDialogFragment {
 
         fragment.setFoodRemovedListener(data -> {
             if (foodRemovedListener != null) foodRemovedListener.accept(data);
-            fragment.removeFood(data);
+            fragment.removeFood(data.getId());
         });
         fragment.setFoodClickedListener((viewHolder, data) -> {
             FoodCardDialog dialog = new FoodCardDialog();

@@ -169,7 +169,7 @@ public class ShowRestaurantActivity extends SwipeBackActivity {
     }
 
     private void setConsumeRecords(){
-        int foodCount = consumeRecordAdapter.getData().stream().mapToInt(r -> r.getFoods().size()).sum();
+        int foodCount = consumeRecordAdapter.getData().stream().filter(r -> r.getFoods() != null).mapToInt(r -> r.getFoods().size()).sum();
         int recordSize = consumeRecordAdapter.getItemCount();
         consumeRecordAdapter.setVertical(recordSize == 1 || foodCount <= 7);
         consumeRecordsText.setText(String.format("消费记录（%d）", consumeRecordAdapter.getItemCount()));

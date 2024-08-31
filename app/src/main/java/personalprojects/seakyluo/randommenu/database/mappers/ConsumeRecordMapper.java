@@ -34,8 +34,8 @@ public interface ConsumeRecordMapper {
     @Query("select * from consume_record where comment like '%' || :keyword || '%'")
     List<ConsumeRecordDAO> search(String keyword);
 
-    @Query("select eaters from consume_record")
-    List<String> selectAllEaters();
+    @Query("select count(0) from consume_record where eaters = '[]'")
+    Long countEatAlone();
 
     @Query("select * from consume_record where id = :id")
     ConsumeRecordDAO selectById(long id);

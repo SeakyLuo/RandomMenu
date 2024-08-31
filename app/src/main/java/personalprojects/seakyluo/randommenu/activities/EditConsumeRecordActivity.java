@@ -188,10 +188,10 @@ public class EditConsumeRecordActivity extends AppCompatActivity implements Drag
             Toast.makeText(this, "总金额不合法！", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (foodAdapter.isEmpty()){
-            Toast.makeText(this, "菜品不能为空！", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (foodAdapter.isEmpty()){
+//            Toast.makeText(this, "菜品不能为空！", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         finishWithData(buildData());
     }
 

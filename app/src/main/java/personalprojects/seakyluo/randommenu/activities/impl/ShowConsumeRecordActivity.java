@@ -130,8 +130,10 @@ public class ShowConsumeRecordActivity extends SwipeBackActivity {
         if (restaurant != null){
             restaurantName.setText(restaurant.getName());
         }
-        foodText.setText(String.format("菜品（%d）", src.getFoods().size()));
-        foodAdapter.setData(src.getFoods());
+        if (CollectionUtils.isNotEmpty(src.getFoods())){
+            foodText.setText(String.format("菜品（%d）", src.getFoods().size()));
+            foodAdapter.setData(src.getFoods());
+        }
         List<String> environmentPictures = src.getEnvironmentPictures();
         if (CollectionUtils.isEmpty(environmentPictures)){
             environmentText.setVisibility(View.GONE);

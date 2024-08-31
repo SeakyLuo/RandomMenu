@@ -12,6 +12,8 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.impl.RestaurantListActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.SimpleStringListAdapter;
 import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
+import personalprojects.seakyluo.randommenu.constants.Constant;
+import personalprojects.seakyluo.randommenu.database.services.ConsumeRecordDaoService;
 import personalprojects.seakyluo.randommenu.database.services.EaterDaoService;
 import personalprojects.seakyluo.randommenu.models.EaterCount;
 
@@ -21,9 +23,11 @@ public class EaterStatsActivity extends SwipeBackActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_eater_stats);
+        findViewById(R.id.back_button).setOnClickListener(v -> finish());
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         SimpleStringListAdapter adapter = new SimpleStringListAdapter();
         List<EaterCount> list = EaterDaoService.getCountList();
+        list.add(0, new EaterCount(Constant.EAT_ALONE, ConsumeRecordDaoService.countEatAlone()));
         List<String> data = list.stream().map(i -> i.getEater() + "（" + i.getCount() + "）").collect(Collectors.toList());
         adapter.setData(data);
         adapter.setOnItemClickedListener((vh, s) -> clickEater(s.split("（")[0]));

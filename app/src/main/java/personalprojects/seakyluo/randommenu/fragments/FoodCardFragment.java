@@ -60,7 +60,7 @@ public class FoodCardFragment extends Fragment {
     @Getter
     private BaseFood food;
     @Setter
-    private Consumer<SelfMadeFood> foodEditedListener, foodLikedChangedListener;
+    private Consumer<BaseFood> foodEditedListener, foodLikedChangedListener;
     @Setter
     private boolean isTagClickable = true;
     private AnimatorSet flipInAnim, flipOutAnim;
@@ -197,7 +197,7 @@ public class FoodCardFragment extends Fragment {
             SelfMadeFood selfMadeFood = food.asSelfMadeFood();
             selfMadeFood.setFavorite(isFavorite);
             SelfMadeFoodService.updateFood(selfMadeFood);
-            if (foodLikedChangedListener != null) foodLikedChangedListener.accept(selfMadeFood);
+            if (foodLikedChangedListener != null) foodLikedChangedListener.accept(food);
         }
     }
     
@@ -231,7 +231,8 @@ public class FoodCardFragment extends Fragment {
     }
 
     private void flip(){
-        if (isBack = !isBack) {
+        isBack = !isBack;
+        if (isBack) {
             flipInAnim.setTarget(foodNoteBackText);
             flipOutAnim.setTarget(foodNoteFrontText);
         } else {
@@ -309,14 +310,15 @@ public class FoodCardFragment extends Fragment {
         if (requestCode == ActivityCodeConstant.EDIT_SELF_FOOD){
             SelfMadeFood food = data.getParcelableExtra(EditSelfMadeFoodActivity.DATA);
             if (food == null) return;
-            fillFood(food);
-            if (foodEditedListener != null) foodEditedListener.accept(food);
+            BaseFood baseFood = fillFood(food);
+            if (foodEditedListener != null) foodEditedListener.accept(baseFood);
         }
         else if (requestCode == ActivityCodeConstant.EDIT_RESTAURANT_FOOD){
             RestaurantFoodVO food = data.getParcelableExtra(EditRestaurantFoodActivity.DATA);
             if (food == null) return;
-            fillFood(food);
+            BaseFood baseFood = fillFood(food);
             RestaurantFoodDaoService.update(food);
+            if (foodEditedListener != null) foodEditedListener.accept(baseFood);
         }
         ActivityUtils.spreadOnActivityResult(getActivity(), requestCode, resultCode, data);
     }

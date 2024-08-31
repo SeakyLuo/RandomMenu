@@ -19,7 +19,7 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.controls.EnhancedBottomSheetDialogFragment;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantFoodDaoService;
 import personalprojects.seakyluo.randommenu.fragments.FoodCardFragment;
-import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
+import personalprojects.seakyluo.randommenu.models.BaseFood;
 import personalprojects.seakyluo.randommenu.services.SelfMadeFoodService;
 import personalprojects.seakyluo.randommenu.utils.DeviceUtils;
 
@@ -59,11 +59,11 @@ public class FoodCardDialog extends EnhancedBottomSheetDialogFragment {
         return view;
     }
 
-    public void setFoodEditedListener(Consumer<SelfMadeFood> listener) {
+    public void setFoodEditedListener(Consumer<BaseFood> listener) {
         foodCardFragment.setFoodEditedListener(listener);
     }
 
-    public void setFoodLikedListener(Consumer<SelfMadeFood> listener) {
+    public void setFoodLikedListener(Consumer<BaseFood> listener) {
         foodCardFragment.setFoodLikedChangedListener(listener);
     }
 

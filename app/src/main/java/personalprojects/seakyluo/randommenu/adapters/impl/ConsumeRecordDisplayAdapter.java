@@ -25,6 +25,7 @@ import personalprojects.seakyluo.randommenu.constants.ActivityCodeConstant;
 import personalprojects.seakyluo.randommenu.constants.EmojiConstant;
 import personalprojects.seakyluo.randommenu.database.services.AddressDaoService;
 import personalprojects.seakyluo.randommenu.dialogs.FoodCardDialog;
+import personalprojects.seakyluo.randommenu.models.BaseFood;
 import personalprojects.seakyluo.randommenu.models.vo.AddressVO;
 import personalprojects.seakyluo.randommenu.models.vo.ConsumeRecordVO;
 import personalprojects.seakyluo.randommenu.models.vo.RestaurantFoodVO;
@@ -37,6 +38,7 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
     private boolean showAddress = false;
     @Setter
     private boolean vertical = true;
+    private RestaurantFoodAdapter restaurantFoodAdapter;
 
     public ConsumeRecordDisplayAdapter(Context context, long restaurantId){
         this.context = context;
@@ -59,7 +61,7 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
         TextView consumeRecordComment = view.findViewById(R.id.consume_record_comment);
         RecyclerView foodRecyclerViewHorizontal = view.findViewById(R.id.food_recycler_view_horizontal);
         RecyclerView foodRecyclerViewVertical = view.findViewById(R.id.food_recycler_view_vertical);
-        RestaurantFoodAdapter restaurantFoodAdapter = new RestaurantFoodAdapter(context);
+        restaurantFoodAdapter = new RestaurantFoodAdapter(context);
         ConsumeFoodAdapter consumeFoodAdapter = new ConsumeFoodAdapter(context, false);
 
         String eaters = formatEater(data.getEaters());
@@ -107,6 +109,7 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
             FragmentActivity activity = getContextAsFragmentActivity();
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.setRestaurantFoodId(d.getId());
+            dialog.setFoodEditedListener(this::updateFood);
             dialog.showNow(activity.getSupportFragmentManager(), FoodCardDialog.TAG);
         });
     }
@@ -117,6 +120,13 @@ public class ConsumeRecordDisplayAdapter extends CustomAdapter<ConsumeRecordVO> 
         intent.putExtra(ShowConsumeRecordActivity.DATA, data);
         activity.startActivityForResult(intent, ActivityCodeConstant.SHOW_CONSUME_RECORD);
         activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+    }
+
+    private void updateFood(BaseFood data){
+        int index = getData().indexOf(f -> f.getId() == data.getId());
+        if (index > -1){
+            restaurantFoodAdapter.set(BaseFood.toRestaurant(data), index);
+        }
     }
 
     private String formatEater(List<String> eaters){

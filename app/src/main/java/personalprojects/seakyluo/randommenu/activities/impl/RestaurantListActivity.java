@@ -15,8 +15,10 @@ import java.util.List;
 import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.activities.SwipeBackActivity;
 import personalprojects.seakyluo.randommenu.adapters.impl.RestaurantAdapter;
+import personalprojects.seakyluo.randommenu.constants.Constant;
 import personalprojects.seakyluo.randommenu.database.dao.Page;
 import personalprojects.seakyluo.randommenu.database.dao.PagedData;
+import personalprojects.seakyluo.randommenu.database.services.ConsumeRecordDaoService;
 import personalprojects.seakyluo.randommenu.database.services.EaterDaoService;
 import personalprojects.seakyluo.randommenu.database.services.RestaurantDaoService;
 import personalprojects.seakyluo.randommenu.models.RestaurantFilter;
@@ -29,7 +31,7 @@ public class RestaurantListActivity extends SwipeBackActivity {
 
     private RestaurantAdapter adapter;
     private TextView titleTextView;
-    private RestaurantFilter restaurantFilter = new RestaurantFilter();
+    private final RestaurantFilter restaurantFilter = new RestaurantFilter();
     private String eater = null;
 
     @Override
@@ -46,7 +48,12 @@ public class RestaurantListActivity extends SwipeBackActivity {
         Intent intent = getIntent();
         eater = intent.getStringExtra(TAG_EATER);
         if (StringUtils.isNotEmpty(eater)){
-            restaurantFilter.setEaters(Lists.newArrayList(eater));
+            if (Constant.EAT_ALONE.equals(eater)){
+                restaurantFilter.setEatAlone(true);
+            }
+            else {
+                restaurantFilter.setEaters(Lists.newArrayList(eater));
+            }
         }
         setData(RestaurantDaoService.selectByPage(1, PAGE_SIZE, restaurantFilter));
     }
@@ -60,11 +67,15 @@ public class RestaurantListActivity extends SwipeBackActivity {
     }
 
     private void setTitle(long total){
-        if (eater != null){
-            int consumeCount = total == 0 ? 0 : EaterDaoService.countByEater(eater);
-            titleTextView.setText(String.format("和%s约饭%d次去过%d家店", eater, consumeCount, total));
+        if (eater == null){
+            titleTextView.setText(total == 0 ? "探店" : String.format("探店（%d）", total));
             return;
         }
-        titleTextView.setText(total == 0 ? "探店" : String.format("探店（%d）", total));
+        if (Constant.EAT_ALONE.equals(eater)){
+            titleTextView.setText(String.format("单独吃饭%d次，去了%d家店", ConsumeRecordDaoService.countEatAlone(), total));
+            return;
+        }
+        int consumeCount = total == 0 ? 0 : EaterDaoService.countByEater(eater);
+        titleTextView.setText(String.format("和%s约饭%d次，去过%d家店", eater, consumeCount, total));
     }
 }

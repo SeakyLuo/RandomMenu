@@ -3,8 +3,6 @@ package personalprojects.seakyluo.randommenu.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.common.collect.Lists;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ public class BaseFood implements Parcelable {
     private Object source;
 
     public boolean hasImage() {
-        return images.size() > 0;
+        return !images.isEmpty();
     }
 
     public SelfMadeFood asSelfMadeFood(){
@@ -54,6 +52,18 @@ public class BaseFood implements Parcelable {
         dst.setFavorite(src.isFavorite());
         dst.setFoodClass(FoodClass.SELF_MADE);
         dst.setSource(src);
+        return dst;
+    }
+
+    public static SelfMadeFood toSelfMade(BaseFood src){
+        SelfMadeFood dst = new SelfMadeFood();
+        dst.setId(src.getId());
+        dst.setName(src.getName());
+        dst.setCover(src.getCover());
+        dst.setImages(src.getImages());
+        dst.setTags(src.getTags());
+        dst.setNote(src.getNote());
+        dst.setFavorite(src.isFavorite());
         return dst;
     }
 
@@ -79,6 +89,16 @@ public class BaseFood implements Parcelable {
         dst.setNote(String.join("\n", notes));
         dst.setFoodClass(FoodClass.RESTAURANT);
         dst.setSource(src);
+        return dst;
+    }
+
+    public static RestaurantFoodVO toRestaurant(BaseFood src){
+        RestaurantFoodVO dst = new RestaurantFoodVO();
+        dst.setId(src.getId());
+        dst.setName(src.getName());
+        dst.setCover(src.getCover());
+        dst.setImages(src.getImages());
+        dst.setComment(src.getNote());
         return dst;
     }
 

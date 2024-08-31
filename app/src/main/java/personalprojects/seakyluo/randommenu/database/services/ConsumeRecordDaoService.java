@@ -196,6 +196,10 @@ public class ConsumeRecordDaoService {
         return record;
     }
 
+    public static long countEatAlone(){
+        return AppDatabase.instance.consumeRecordMapper().countEatAlone();
+    }
+
     private static ConsumeRecordDAO convert(ConsumeRecordVO src){
         if (src == null){
             return null;

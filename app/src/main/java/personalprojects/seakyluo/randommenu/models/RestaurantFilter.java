@@ -20,9 +20,10 @@ public class RestaurantFilter extends PagerFilter<RestaurantVO> {
     private AddressVO address;
     private List<String> eaters;
     private List<RestaurantOrderByField> orderByDesc;
+    private boolean eatAlone;
 
     public boolean isEmpty(){
-        return startTime == null && endTime == null && foodType == null && address == null && eaters == null && CollectionUtils.isEmpty(orderByDesc);
+        return startTime == null && endTime == null && foodType == null && address == null && eaters == null && CollectionUtils.isEmpty(orderByDesc) && !eatAlone;
     }
 
 }

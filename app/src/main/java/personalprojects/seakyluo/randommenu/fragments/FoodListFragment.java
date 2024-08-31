@@ -56,8 +56,8 @@ public class FoodListFragment extends BaseFoodListFragment<SelfFoodListAdapter> 
     public AList<SelfMadeFood> getSelectedFoods(){
         return adapter.getSelectedFoods();
     }
-    public void removeFood(SelfMadeFood food) {
-        int removedIndex = adapter.indexOf(food);
+    public void removeFood(long foodId) {
+        int removedIndex = adapter.indexOf(f -> f.getId() == foodId);
         data.pop(removedIndex);
         adapter.pop(removedIndex);
     }

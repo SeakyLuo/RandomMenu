@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -134,10 +135,11 @@ public class SettingsFragment extends Fragment {
                 clearFolder(FileUtils.LOG_FOLDER);
                 clearFolder(FileUtils.TEMP_FOLDER);
                 clearFolder(FileUtils.TEMP_UNZIP_FOLDER);
-                File[] exportedFiles = FileUtils.EXPORTED_DATA_FOLDER.listFiles();
-                if (exportedFiles != null && exportedFiles.length > 1){
-                    Arrays.stream(exportedFiles).skip(1).forEach(File::delete);
-                }
+                clearFolder(FileUtils.EXPORTED_DATA_FOLDER);
+//                File[] exportedFiles = FileUtils.EXPORTED_DATA_FOLDER.listFiles();
+//                if (exportedFiles != null && exportedFiles.length > 1){
+//                    Arrays.stream(exportedFiles).sorted(Comparator.comparing(File::lastModified).reversed()).skip(1).forEach(File::delete);
+//                }
                 showShortToast(dialog, R.string.clear_cache_msg);
             }).start();
         });

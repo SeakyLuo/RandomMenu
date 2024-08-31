@@ -66,7 +66,7 @@ public class MyFavoritesActivity extends SwipeBackActivity {
             FoodCardDialog dialog = new FoodCardDialog();
             dialog.setSelfFoodId(food.getId());
             dialog.setFoodLikedListener(after -> {
-                foodListFragment.removeFood(after);
+                foodListFragment.removeFood(after.getId());
                 setFoodTabText();
             });
             dialog.showNow(fragmentManager, AskYesNoDialog.TAG);

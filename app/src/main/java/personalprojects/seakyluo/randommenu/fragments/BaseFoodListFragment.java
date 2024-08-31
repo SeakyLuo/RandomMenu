@@ -16,6 +16,7 @@ import personalprojects.seakyluo.randommenu.R;
 import personalprojects.seakyluo.randommenu.adapters.BaseFoodListAdapter;
 import personalprojects.seakyluo.randommenu.interfaces.DataItemClickedListener;
 import personalprojects.seakyluo.randommenu.models.AList;
+import personalprojects.seakyluo.randommenu.models.BaseFood;
 import personalprojects.seakyluo.randommenu.models.SelfMadeFood;
 
 public abstract class BaseFoodListFragment<T extends BaseFoodListAdapter> extends Fragment {
@@ -39,10 +40,10 @@ public abstract class BaseFoodListFragment<T extends BaseFoodListAdapter> extend
         adapter.setFoodClickedListener(listener);
     }
 
-    public void updateFood(SelfMadeFood food){
+    public void updateFood(BaseFood food){
         int index = adapter.getData().indexOf(f -> f.getId() == food.getId());
         if (index > -1){
-            adapter.set(food, index);
+            adapter.set(BaseFood.toSelfMade(food), index);
         }
     }
     public void clear() {
