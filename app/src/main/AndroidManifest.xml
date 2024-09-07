@@ -61,6 +61,9 @@
         <activity android:name=".activities.CameraActivity" android:label="CameraActivity" />
         <activity android:name=".activities.EaterStatsActivity" android:label="EaterStatsActivity" />
         <activity android:name=".activities.impl.RestaurantListActivity" android:label="RestaurantListActivity" />
+<!--        <activity android:name="androidx.test.core.app.InstrumentationActivityInvoker.BootstrapActivity" android:exported="true" />-->
+<!--        <activity android:name="androidx.test.core.app.InstrumentationActivityInvoker.EmptyActivity" android:exported="true" />-->
+<!--        <activity android:name="androidx.test.core.app.InstrumentationActivityInvoker.EmptyFloatingActivity" android:exported="true" />-->
     </application>
 
 </manifest>

@@ -38,6 +38,12 @@ public class FoodTypeDaoService {
     }
 
     private static FoodTypeDAO convert(FoodType src){
-        return src == null ? null : new FoodTypeDAO(src.getId(), src.getName());
+        if (src == null) {
+            return null;
+        }
+        FoodTypeDAO dst = new FoodTypeDAO();
+        dst.setId(src.getId());
+        dst.setName(src.getName());
+        return dst;
     }
 }
